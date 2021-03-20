@@ -62,41 +62,6 @@ public class FastDoubleParser {
     }
 
 
-
-// this is a slow emulation routine for 32-bit Windows
-//
-
-    /**
-     * emulu.
-     *
-     * @param x uint32 x
-     * @param y uint32 y
-     * @return uint64
-     */
-    private static long __emulu(int x, int y) {
-        return (x & 0xffffffffL) * (y & 0xffffffffL);
-    }
-
-    /**
-     * umul128.
-     *
-     * @param ab uint64
-     * @param cd uint64
-     * @param hi output parameter, array of 1
-     * @return uint64
-     */
-    private static long _umul128(long ab, long cd, long[] hi) {
-        long ad = __emulu((int) (ab >> 32), (int) cd);
-        long bd = __emulu((int) ab, (int) cd);
-        long adbc = ad + __emulu((int) ab, (int) (cd >> 32));
-        long adbc_carry = (adbc < ad) ? 0L : -1L;
-        long lo = bd + (adbc << 32);
-        hi[0] = __emulu((int) (ab >> 32), (int) (cd >> 32)) + (adbc >> 32) +
-                (adbc_carry << 32) + ((lo < bd) ? 0L : -1L);
-        return lo;
-    }
-
-
     /**
      * Computes {@code uint128 product = (uint64)x * (uint64)y}.
      * <p>
@@ -111,7 +76,7 @@ public class FastDoubleParser {
      * @param y uint64
      * @return uint128
      */
-    private static value128 Emulate64x64to128(long x, long y) {
+    private static value128 emulate64x64to128(long x, long y) {
         long x0 = x & 0xffffffffL, x1 = x >>> 32;
         long y0 = y & 0xffffffffL, y1 = y >>> 32;
         long p11 = x1 * y1, p01 = x0 * y1;
@@ -135,7 +100,7 @@ public class FastDoubleParser {
      * @return uint128
      */
     private static value128 full_multiplication(long value1, long value2) {
-        return Emulate64x64to128(value1, value2);
+        return emulate64x64to128(value1, value2);
     }
 
 
