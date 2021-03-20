@@ -18,11 +18,7 @@ package ch.randelshofer.math;
  */
 public class FastDoubleParser {
 
-    private final static boolean unlikely(long x) {
-        return x != 0;
-    }
-
-    private final static boolean unlikely(boolean x) {
+    private static boolean unlikely(boolean x) {
         return x;
     }
 
@@ -65,7 +61,7 @@ public class FastDoubleParser {
         }
     }
 
-    ;
+
 
 // this is a slow emulation routine for 32-bit Windows
 //
@@ -136,7 +132,7 @@ public class FastDoubleParser {
     /**
      * @param value1 uint64
      * @param value2 uint64
-     * @return
+     * @return uint128
      */
     private static value128 full_multiplication(long value1, long value2) {
         return Emulate64x64to128(value1, value2);
@@ -156,7 +152,7 @@ public class FastDoubleParser {
      * Precomputed powers of ten from 10^0 to 10^22. These
      * can be represented exactly using the double type.
      */
-    private static final double power_of_ten[] = {
+    private static final double[] power_of_ten = {
             1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11,
             1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22};
 
@@ -183,7 +179,7 @@ public class FastDoubleParser {
      * The mantissa is truncated, and
      * never rounded up. Uses about 5KB.
      */
-    private static final long mantissa_64[] = {
+    private static final long[] mantissa_64 = {
             0xa5ced43b7e3e9188L, 0xcf42894a5dce35eaL,
             0x818995ce7aa0e1b2L, 0xa1ebfb4219491a1fL,
             0xca66fa129f9b60a6L, 0xfd00b897478238d0L,
@@ -506,7 +502,7 @@ public class FastDoubleParser {
      * complete to a 128-bit mantissa.
      * Uses about 5KB but is rarely accessed.
      */
-    private final static long mantissa_128[] = {
+    private final static long[] mantissa_128 = {
             0x419ea3bd35385e2dL, 0x52064cac828675b9L,
             0x7343efebd1940993L, 0x1014ebe6c5f90bf8L,
             0xd41a26e077774ef6L, 0x8920b098955522b4L,
@@ -840,8 +836,8 @@ public class FastDoubleParser {
      * @param success  output parameter
      * @return the computed double
      */
-    private final static double compute_float_64(int power, long i, boolean negative,
-                                                 boolean[] success) {
+    private static double compute_float_64(int power, long i, boolean negative,
+                                           boolean[] success) {
 
         // we start with a fast path
         // It was described in
@@ -1059,20 +1055,22 @@ public class FastDoubleParser {
     /**
      * parse the number at p
      */
-    public static final double parseDouble(CharSequence str) throws NumberFormatException {
+    public static double parseDouble(CharSequence str) throws NumberFormatException {
         int strlen = str.length();
         if (strlen == 0) {
             throw new NumberFormatException("string is empty");
         }
         int ip = 0;
         char p = str.charAt(ip);
-        if (p=='N') {
+        if (p == 'N') {
             p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (p=='a') {
+            if (p == 'a') {
                 p = ++ip < strlen ? str.charAt(ip) : 0;
-                if (p=='N' && ip==strlen-1) return Double.NaN;
+                if (p == 'N' && ip == strlen - 1) {
+                    return Double.NaN;
+                }
             }
-            throw new NumberFormatException(str+" illegal string");
+            throw new NumberFormatException(str + " illegal string");
         }
 
 
@@ -1182,7 +1180,7 @@ public class FastDoubleParser {
                 start = ++istart < strlen ? str.charAt(istart) : 0;
             }
             // we over-decrement by one when there is a decimal separator
-            digit_count -= (int) (istart - istart_digits);
+            digit_count -= istart - istart_digits;
             if (digit_count >= 19) {
                 // Chances are good that we had an overflow!
                 // We start anew.

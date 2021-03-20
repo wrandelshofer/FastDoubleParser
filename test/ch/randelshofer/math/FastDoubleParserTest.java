@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Random;
-import java.util.concurrent.atomic.LongAccumulator;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +45,7 @@ class FastDoubleParserTest {
     Stream<DynamicNode> dynamicTestsRandomInputs() {
         Random r=new Random(0);
       return  r.longs(100)
-                .mapToDouble(longBits->Double.longBitsToDouble(longBits))
+              .mapToDouble(Double::longBitsToDouble)
         .mapToObj(d->dynamicTest(d+"",()->testLegalInput(d+"",d)));
     }
 
@@ -148,7 +147,7 @@ class FastDoubleParserTest {
     public void performanceTest() {
         Random r=new Random(0);
         String[] strings = r.longs(100_000)
-                .mapToDouble(longBits -> Double.longBitsToDouble(longBits))
+                .mapToDouble(Double::longBitsToDouble)
                 .mapToObj(Double::toString)
                 .toArray(String[]::new);
         LongSummaryStatistics doubleParseDoubleStats=new LongSummaryStatistics();
@@ -157,16 +156,16 @@ class FastDoubleParserTest {
         for (int i=0;i<32;i++) {
             {
                 long start = System.nanoTime();
-                for (int j = 0, n = strings.length; j < n; j++) {
-                    Double.parseDouble(strings[j]);
+                for (String string : strings) {
+                    Double.parseDouble(string);
                 }
                 long end = System.nanoTime();
                 doubleParseDoubleStats.accept(end - start);
             }
             {
                 long start = System.nanoTime();
-                for (int j = 0, n = strings.length; j < n; j++) {
-                    FastDoubleParser.parseDouble(strings[j]);
+                for (String string : strings) {
+                    FastDoubleParser.parseDouble(string);
                 }
                 long end = System.nanoTime();
                 fastDoubleParserStats.accept(end - start);
