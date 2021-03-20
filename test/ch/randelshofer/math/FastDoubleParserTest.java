@@ -150,35 +150,50 @@ class FastDoubleParserTest {
                 .mapToDouble(Double::longBitsToDouble)
                 .mapToObj(Double::toString)
                 .toArray(String[]::new);
-        LongSummaryStatistics doubleParseDoubleStats=new LongSummaryStatistics();
+        LongSummaryStatistics baselineStats = new LongSummaryStatistics();
+        LongSummaryStatistics doubleParseDoubleStats = new LongSummaryStatistics();
         LongSummaryStatistics fastDoubleParserStats=new LongSummaryStatistics();
 
+        double d = 0;
         for (int i=0;i<32;i++) {
             {
                 long start = System.nanoTime();
                 for (String string : strings) {
-                    Double.parseDouble(string);
+                    d += string.length();
                 }
                 long end = System.nanoTime();
-                doubleParseDoubleStats.accept(end - start);
+                baselineStats.accept(end - start);
             }
             {
                 long start = System.nanoTime();
                 for (String string : strings) {
-                    FastDoubleParser.parseDouble(string);
+                    d += FastDoubleParser.parseDouble(string);
                 }
                 long end = System.nanoTime();
                 fastDoubleParserStats.accept(end - start);
             }
+            {
+                long start = System.nanoTime();
+                for (String string : strings) {
+                    d += Double.parseDouble(string);
+                }
+                long end = System.nanoTime();
+                doubleParseDoubleStats.accept(end - start);
+            }
         }
+        System.out.println(d);
 
+        System.out.println("baseline (loop + add String length):"
+                + "\n  " + baselineStats
+                + "\n  " + baselineStats.getAverage() / strings.length + "ns per double"
+        );
         System.out.println("Double.parseDouble:"
-                +"\n  "+doubleParseDoubleStats
-                +"\n  "+doubleParseDoubleStats.getAverage()/strings.length+"ns per double"
+                + "\n  " + doubleParseDoubleStats
+                + "\n  " + (doubleParseDoubleStats.getAverage() - baselineStats.getAverage()) / strings.length + "ns per double"
         );
         System.out.println("FastDoubleParser.parseDouble:"
-                +"\n  "+fastDoubleParserStats
-                +"\n  "+fastDoubleParserStats.getAverage()/strings.length+"ns per double"
+                + "\n  " + fastDoubleParserStats
+                + "\n  " + (fastDoubleParserStats.getAverage() - baselineStats.getAverage()) / strings.length + "ns per double"
         );
 
     }
