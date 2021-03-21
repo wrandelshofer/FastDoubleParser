@@ -972,94 +972,111 @@ public class FastDoubleParser {
     public static double parseDouble(CharSequence str) throws NumberFormatException {
         int strlen = str.length();
         if (strlen == 0) {
-            throw new NumberFormatException("string must not be empty.");
+            throw new NumberFormatException("empty String");
         }
-        int ip = 0;
-        char p = str.charAt(ip);
+        int index = 0;
+        char ch = str.charAt(index);
 
         boolean negative = false;
-        if (p == '-') {
+        if (ch == '-') {
             negative = true;
-            p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (p == 0) {
-                throw new NumberFormatException("'-' cannot stand alone.");
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if (ch == 0) {
+                throw new NumberFormatException("'-' cannot stand alone");
             }
         }
-        if (p == '+') {
+        if (ch == '+') {
             if (negative) {
-                throw new NumberFormatException("'-' must not be followed by '+'.");
+                throw new NumberFormatException("'-' must not be followed by '+'");
             }
-            p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (!isInteger(p)) {
-                throw new NumberFormatException("'+' must be followed by a digit.");
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if (!isInteger(ch)) {
+                throw new NumberFormatException("'+' must be followed by a digit");
             }
         }
 
-        if (p == 'N') {
+        if (ch == 'N') {
             return Double.NaN;
-        } else if (p == 'I') {
+        } else if (ch == 'I') {
             return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         }
 
+        // Note that in the code below, a multiplication by 10 is cheaper
+        // than an arbitrary integer multiplication.
 
+        int startOfDigits = index;
         long exponent = 0;
         long i = 0;
-        if (p == '0') {
-            p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (isInteger(p)) {
+        if (ch == '0') {
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if (isInteger(ch)) {
                 throw new NumberFormatException("0 cannot be followed by an integer");
             }
         } else {
-            while (isInteger(p)) {
-                int digit = p - '0';
+            while (isInteger(ch)) {
+                i = 10 * i + ch - '0'; // This might overflow, we deal with it later.
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+        }
+        if (ch == '.') {
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if (!isInteger(ch)) {
+                throw new NumberFormatException("decimal point must be followed by an integer");
+            }
+            while (isInteger(ch)) {
+                i = 10 * i + ch - '0';// This might overflow, we deal with it later.
+                exponent--;
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+        }
+
+        if (index - startOfDigits > 19) {
+            // We might have had an overflow, do it again!
+            index = startOfDigits;
+            ch = str.charAt(index);
+            exponent = 0;
+            i = 0;
+            while (isInteger(ch)) {
                 if (i < MINIMAL_NINETEEN_DIGIT_INTEGER) {
-                    // We avoid overflow by only considering up to 19 digits.
-                    // A multiplication by 10 is cheaper than an arbitrary integer
-                    // multiplication
-                    i = 10 * i + digit;
+                    // We avoid overflow by only considering up to 18 digits.
+                    i = 10 * i + ch - '0';
                 } else {
                     // Adjust exponent for each skipped digit.
                     exponent++;
                 }
-                p = ++ip < strlen ? str.charAt(ip) : 0;
+                ch = ++index < strlen ? str.charAt(index) : 0;
             }
-        }
-        if (p == '.') {
-            p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (!isInteger(p)) {
-                throw new NumberFormatException("decimal point must be follow by an integer");
-            }
-            while (isInteger(p)) {
-                int digit = p - '0';
-                if (i < MINIMAL_NINETEEN_DIGIT_INTEGER) {
-                    // We avoid overflow by only considering up to 19 digits.
-                    // A multiplication by 10 is cheaper than an arbitrary integer
-                    // multiplication
-                    i = 10 * i + digit;
-                    exponent--;
+            if (ch == '.') {
+                ch = ++index < strlen ? str.charAt(index) : 0;
+                while (isInteger(ch)) {
+                    if (i < MINIMAL_NINETEEN_DIGIT_INTEGER) {
+                        // We avoid overflow by only considering up to 18 digits.
+                        i = 10 * i + ch - '0';
+                        exponent--;
+                    }
+                    ch = ++index < strlen ? str.charAt(index) : 0;
                 }
-                p = ++ip < strlen ? str.charAt(ip) : 0;
             }
         }
-        if (('e' == p) || ('E' == p)) {
-            p = ++ip < strlen ? str.charAt(ip) : 0;
+
+        if (('e' == ch) || ('E' == ch)) {
+            ch = ++index < strlen ? str.charAt(index) : 0;
             boolean neg_exp = false;
-            if ('-' == p) {
+            if ('-' == ch) {
                 neg_exp = true;
-                p = ++ip < strlen ? str.charAt(ip) : 0;
-            } else if ('+' == p) {
-                p = ++ip < strlen ? str.charAt(ip) : 0;
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            } else if ('+' == ch) {
+                ch = ++index < strlen ? str.charAt(index) : 0;
             }
-            if (!isInteger(p)) {
-                throw new NumberFormatException("exponent must be follow by an integer");
+            if (!isInteger(ch)) {
+                throw new NumberFormatException("exponent must be followed by an integer");
             }
             long exp_number = 0;
-            while (isInteger(p)) {
+            while (isInteger(ch)) {
                 if (exp_number < 0x100000000L) { // we need to check for overflows
-                    int digit = p - '0';
-                    exp_number = 10 * exp_number + digit;
+                    exp_number = 10 * exp_number + ch - '0';
                 }
-                p = ++ip < strlen ? str.charAt(ip) : 0;
+                ch = ++index < strlen ? str.charAt(index) : 0;
             }
             exponent += (neg_exp ? -exp_number : exp_number);
         }
@@ -1071,6 +1088,7 @@ public class FastDoubleParser {
         }
         // from this point forward, exponent >= FASTFLOAT_SMALLEST_POWER and
         // exponent <= FASTFLOAT_LARGEST_POWER
+
         Double outDouble = computeFloat64((int) exponent, i, negative);
         if (outDouble == null) {
             // we are almost never going to get here.

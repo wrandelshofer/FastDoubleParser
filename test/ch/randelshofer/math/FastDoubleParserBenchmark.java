@@ -17,6 +17,9 @@ public class FastDoubleParserBenchmark {
      * against {@link Double#parseDouble(String)};
      */
     public void runBenchmark() {
+        System.out.println("Benchmark for doubles in regular Java Strings");
+        System.out.println("=============================================");
+
         Random r = new Random(0);
         String[] strings = r.longs(100_000)
                 .mapToDouble(Double::longBitsToDouble)
@@ -71,6 +74,7 @@ public class FastDoubleParserBenchmark {
         );
 
         System.out.println("\nSpeedup factor: " + (doubleParseDoubleNsPerDouble / fastDoubleParserNsPerDouble));
+        System.out.println("\n");
 
     }
 }
