@@ -32,6 +32,10 @@ class FastDoubleParserTest {
         return List.of(
                 dynamicTest("0", () -> testLegalInput("0", 0.0)),
                 dynamicTest("1", () -> testLegalInput("1", 1.0)),
+                dynamicTest("-0", () -> testLegalInput("-0", -0.0)),
+                dynamicTest("-0.0", () -> testLegalInput("-0.0", -0.0)),
+                dynamicTest("-0.0e-22", () -> testLegalInput("-0.0e-22", -0.0e-22)),
+                dynamicTest("-0.0e24", () -> testLegalInput("-0.0e24", -0.0e24)),
                 dynamicTest("10000000000000000000000000000000000000000000e+308",
                         () -> testLegalInput("10000000000000000000000000000000000000000000e+308",
                                 Double.parseDouble("10000000000000000000000000000000000000000000e+308"))),
