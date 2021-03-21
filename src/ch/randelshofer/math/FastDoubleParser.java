@@ -909,7 +909,7 @@ public class FastDoubleParser {
         }
 
         // The final mantissa should be 53 bits with a leading 1.
-        // We shift it so that it occupies 55 bits with a leading 1.
+        // We shift it so that it occupies 54 bits with a leading 1.
         ///////
         long upperbit = upper >>> 63;
         long mantissa = upper >>> (upperbit + 9);
