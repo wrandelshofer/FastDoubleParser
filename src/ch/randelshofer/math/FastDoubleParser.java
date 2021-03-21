@@ -24,10 +24,10 @@ public class FastDoubleParser {
     /**
      * The smallest non-zero float (binary64) is 2^−1074.
      * We take as input numbers of the form w x 10^q where w < 2^64.
-     * We have that w * 10^-343 < 2^(64-344) 5^-343 < 2^-1076.
+     * We have that {@literal w * 10^-343 < 2^(64-344) 5^-343 < 2^-1076}.
      * <p>
      * However, we have that
-     * (2^64-1) * 10^-342 = (2^64-1) * 2^-342 * 5^-342 > 2^−1074.
+     * {@literal (2^64-1) * 10^-342 = (2^64-1) * 2^-342 * 5^-342 > 2^−1074}.
      * Thus it is possible for a number of the form w * 10^-342 where
      * w is a 64-bit value to be a non-zero floating-point number.
      * <p>
@@ -48,20 +48,7 @@ public class FastDoubleParser {
     private final static int FASTFLOAT_LARGEST_POWER = 308;
 
 
-    private static class value128 {
-        /**
-         * uint64.
-         */
-        final long low;
-        /**
-         * uint64.
-         */
-        final long high;
-
-        value128(long high, long low) {
-            this.low = low;
-            this.high = high;
-        }
+    record Value128(long low, long high) {
     }
 
 
@@ -79,7 +66,7 @@ public class FastDoubleParser {
      * @param y uint64 factor y
      * @return uint128 product of x and y
      */
-    private static value128 full_multiplication(long x, long y) {
+    private static Value128 fullMultiplication(long x, long y) {
         long x0 = x & 0xffffffffL, x1 = x >>> 32;
         long y0 = y & 0xffffffffL, y1 = y >>> 32;
         long p11 = x1 * y1, p01 = x0 * y1;
@@ -87,7 +74,7 @@ public class FastDoubleParser {
 
         // 64-bit product + two 32-bit values
         long middle = p10 + (p00 >>> 32) + (p01 & 0xffffffffL);
-        return new value128(
+        return new Value128(
                 // 64-bit product + two 32-bit values
                 p11 + (middle >>> 32) + (p01 >>> 32),
                 // Add LOW PART and lower half of MIDDLE PART
@@ -95,13 +82,11 @@ public class FastDoubleParser {
     }
 
 
-    /* result might be undefined when input_num is zero */
-
     /**
      * Precomputed powers of ten from 10^0 to 10^22. These
      * can be represented exactly using the double type.
      */
-    private static final double[] power_of_ten = {
+    private static final double[] powerOfTen = {
             1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11,
             1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22};
 
@@ -128,7 +113,7 @@ public class FastDoubleParser {
      * The mantissa is truncated, and
      * never rounded up. Uses about 5KB.
      */
-    private static final long[] mantissa_64 = {
+    private static final long[] MANTISSA_64 = {
             0xa5ced43b7e3e9188L, 0xcf42894a5dce35eaL,
             0x818995ce7aa0e1b2L, 0xa1ebfb4219491a1fL,
             0xca66fa129f9b60a6L, 0xfd00b897478238d0L,
@@ -451,7 +436,7 @@ public class FastDoubleParser {
      * complete to a 128-bit mantissa.
      * Uses about 5KB but is rarely accessed.
      */
-    private final static long[] mantissa_128 = {
+    private final static long[] MANTISSA_128 = {
             0x419ea3bd35385e2dL, 0x52064cac828675b9L,
             0x7343efebd1940993L, 0x1014ebe6c5f90bf8L,
             0xd41a26e077774ef6L, 0x8920b098955522b4L,
@@ -786,7 +771,7 @@ public class FastDoubleParser {
      * @param negative whether the number is negative
      * @return the computed double on success, null on failure
      */
-    private static Double compute_float_64(int power, long i, boolean negative) {
+    private static Double computeFloat64(int power, long i, boolean negative) {
         if (i == 0) {
             return negative ? -0.0 : 0.0;
         }
@@ -808,9 +793,9 @@ public class FastDoubleParser {
             // then s * p and s / p will produce correctly rounded values.
             //
             if (power < 0) {
-                d = d / power_of_ten[-power];
+                d = d / powerOfTen[-power];
             } else {
-                d = d * power_of_ten[power];
+                d = d * powerOfTen[power];
             }
             if (negative) {
                 d = -d;
@@ -828,7 +813,7 @@ public class FastDoubleParser {
         // and power <= FASTFLOAT_LARGEST_POWER
         // We recover the mantissa of the power, it has a leading 1. It is always
         // rounded down.
-        long factor_mantissa = mantissa_64[power - FASTFLOAT_SMALLEST_POWER];
+        long factor_mantissa = MANTISSA_64[power - FASTFLOAT_SMALLEST_POWER];
 
 
         // The exponent is 1024 + 63 + power
@@ -865,7 +850,7 @@ public class FastDoubleParser {
         // We want the most significant 64 bits of the product. We know
         // this will be non-zero because the most significant bit of i is
         // 1.
-        value128 product = full_multiplication(i, factor_mantissa);
+        Value128 product = fullMultiplication(i, factor_mantissa);
         long lower = product.low;
         long upper = product.high;
         // We know that upper has at most one leading zero because
@@ -884,10 +869,10 @@ public class FastDoubleParser {
         // lower + i < lower to be true (proba. much higher than 1%).
         if ((upper & 0x1FF) == 0x1FF && (lower + i < lower)) {
             long factor_mantissa_low =
-                    mantissa_128[power - FASTFLOAT_SMALLEST_POWER];
+                    MANTISSA_128[power - FASTFLOAT_SMALLEST_POWER];
             // next, we compute the 64-bit x 128-bit multiplication, getting a 192-bit
             // result (three 64-bit values)
-            product = full_multiplication(i, factor_mantissa_low);
+            product = fullMultiplication(i, factor_mantissa_low);
             long product_low = product.low;
             long product_middle2 = product.high;
             long product_middle1 = lower;
@@ -905,12 +890,11 @@ public class FastDoubleParser {
                 return null;
             }
             upper = product_high;
-            lower = product_middle;
+            //lower = product_middle;
         }
 
         // The final mantissa should be 53 bits with a leading 1.
         // We shift it so that it occupies 54 bits with a leading 1.
-        ///////
         long upperbit = upper >>> 63;
         long mantissa = upper >>> (upperbit + 9);
         lz += (int) (1 ^ upperbit);
@@ -962,11 +946,10 @@ public class FastDoubleParser {
 
         long bits = mantissa | real_exponent << 52
                 | (negative ? -1L << 63 : 0L);
-        double d = Double.longBitsToDouble(bits);
-        return d;
+        return Double.longBitsToDouble(bits);
     }
 
-    private final static long minimal_nineteen_digit_integer = 1000000000000000000L;
+    private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000000000000000000L;
 
     /**
      * Returns a Double object holding the double value represented by the
@@ -1029,7 +1012,7 @@ public class FastDoubleParser {
         } else {
             while (isInteger(p)) {
                 int digit = p - '0';
-                if (i < minimal_nineteen_digit_integer) {
+                if (i < MINIMAL_NINETEEN_DIGIT_INTEGER) {
                     // We avoid overflow by only considering up to 19 digits.
                     // A multiplication by 10 is cheaper than an arbitrary integer
                     // multiplication
@@ -1048,7 +1031,7 @@ public class FastDoubleParser {
             }
             while (isInteger(p)) {
                 int digit = p - '0';
-                if (i < minimal_nineteen_digit_integer) {
+                if (i < MINIMAL_NINETEEN_DIGIT_INTEGER) {
                     // We avoid overflow by only considering up to 19 digits.
                     // A multiplication by 10 is cheaper than an arbitrary integer
                     // multiplication
@@ -1088,7 +1071,7 @@ public class FastDoubleParser {
         }
         // from this point forward, exponent >= FASTFLOAT_SMALLEST_POWER and
         // exponent <= FASTFLOAT_LARGEST_POWER
-        Double outDouble = compute_float_64((int) exponent, i, negative);
+        Double outDouble = computeFloat64((int) exponent, i, negative);
         if (outDouble == null) {
             // we are almost never going to get here.
             BigDecimal bigDecimal = BigDecimal.valueOf(negative ? -i : i)
