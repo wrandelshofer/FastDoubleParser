@@ -18,25 +18,26 @@ package ch.randelshofer.math;
  */
 public class FastDoubleParser {
 
-    private static boolean unlikely(boolean x) {
-        return x;
-    }
-
 
     /**
      * The smallest non-zero float (binary64) is 2^−1074.
      * We take as input numbers of the form w x 10^q where w < 2^64.
      * We have that w * 10^-343 < 2^(64-344) 5^-343 < 2^-1076.
+     * <p>
      * However, we have that
      * (2^64-1) * 10^-342 = (2^64-1) * 2^-342 * 5^-342 > 2^−1074.
      * Thus it is possible for a number of the form w * 10^-342 where
      * w is a 64-bit value to be a non-zero floating-point number.
+     * <p>
      * ********
+     * <p>
      * If we are solely interested in the *normal* numbers then the
      * smallest value is 2^-1022. We can generate a value larger
      * than 2^-1022 with expressions of the form w * 10^-326.
      * Thus we need to pick FASTFLOAT_SMALLEST_POWER >= -326.
+     * <p>
      * ********
+     * <p>
      * Any number of form w * 10^309 where w>= 1 is going to be
      * infinite in binary64 so we never need to worry about powers
      * of 5 greater than 308.
@@ -49,13 +50,13 @@ public class FastDoubleParser {
         /**
          * uint64.
          */
-         final long low;
+        final long low;
         /**
          * uint64.
          */
-         final long high;
+        final long high;
 
-         value128(long high, long low) {
+        value128(long high, long low) {
             this.low = low;
             this.high = high;
         }
@@ -72,11 +73,11 @@ public class FastDoubleParser {
      *         stackoverflow</a></dd>
      * </dl>
      *
-     * @param x uint64
-     * @param y uint64
-     * @return uint128
+     * @param x uint64 factor x
+     * @param y uint64 factor y
+     * @return uint128 product of x and y
      */
-    private static value128 emulate64x64to128(long x, long y) {
+    private static value128 full_multiplication(long x, long y) {
         long x0 = x & 0xffffffffL, x1 = x >>> 32;
         long y0 = y & 0xffffffffL, y1 = y >>> 32;
         long p11 = x1 * y1, p01 = x0 * y1;
@@ -85,33 +86,14 @@ public class FastDoubleParser {
         // 64-bit product + two 32-bit values
         long middle = p10 + (p00 >>> 32) + (p01 & 0xffffffffL);
         return new value128(
-
                 // 64-bit product + two 32-bit values
                 p11 + (middle >>> 32) + (p01 >>> 32),
-
                 // Add LOW PART and lower half of MIDDLE PART
                 (middle << 32) | (p00 & 0xffffffffL));
     }
 
 
-    /**
-     * @param value1 uint64
-     * @param value2 uint64
-     * @return uint128
-     */
-    private static value128 full_multiplication(long value1, long value2) {
-        return emulate64x64to128(value1, value2);
-    }
-
-
     /* result might be undefined when input_num is zero */
-
-    /**
-     * @param input_num uint64
-     */
-    private static int leading_zeroes(long input_num) {
-        return Long.numberOfLeadingZeros(input_num);
-    }
 
     /**
      * Precomputed powers of ten from 10^0 to 10^22. These
@@ -121,7 +103,7 @@ public class FastDoubleParser {
             1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11,
             1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22};
 
-    private static boolean is_integer(char c) {
+    private static boolean isInteger(char c) {
         return '0' <= c && c <= '9';
     }
 
@@ -788,21 +770,24 @@ public class FastDoubleParser {
 
 
     /**
-     * Attempts to compute i * 10^(power) exactly; and if "negative" is
+     * Attempts to compute {@literal i * 10^(power)} exactly; and if "negative" is
      * true, negate the result.
-     * This function will only work in some cases, when it does not work, success is
-     * set to false. This should work *most of the time* (like 99% of the time).
+     * <p>
+     * This function will only work in some cases, when it does not work it
+     * returns null. This should work *most of the time* (like 99% of the time).
      * We assume that power is in the [FASTFLOAT_SMALLEST_POWER,
      * FASTFLOAT_LARGEST_POWER] interval: the caller is responsible for this check.
      *
-     * @param power    int64
-     * @param i        uint64
-     * @param negative boolean
-     * @param success  output parameter
-     * @return the computed double
+     * @param power    int32 the exponent of the number,
+     *                 {@literal power in [FASTFLOAT_SMALLEST_POWER, FASTFLOAT_LARGEST_POWER]};
+     * @param i        uint64 the significand of the number, {@literal (uint64)i >= 0}.
+     * @param negative whether the number is negative
+     * @return the computed double on success, null on failure
      */
-    private static double compute_float_64(int power, long i, boolean negative,
-                                           boolean[] success) {
+    private static Double compute_float_64(int power, long i, boolean negative) {
+        if (i == 0) {
+            return negative ? -0.0 : 0.0;
+        }
 
         // we start with a fast path
         // It was described in
@@ -816,11 +801,9 @@ public class FastDoubleParser {
             // The general idea is as follows.
             // If 0 <= s < 2^53 and if 10^0 <= p <= 10^22 then
             // 1) Both s and p can be represented exactly as 64-bit floating-point
-            // values
-            // (binary64).
+            // values (binary64).
             // 2) Because s and p can be represented exactly as floating-point values,
-            // then s * p
-            // and s / p will produce correctly rounded values.
+            // then s * p and s / p will produce correctly rounded values.
             //
             if (power < 0) {
                 d = d / power_of_ten[-power];
@@ -830,36 +813,11 @@ public class FastDoubleParser {
             if (negative) {
                 d = -d;
             }
-            success[0] = true;
             return d;
         }
-        // When 22 < power && power <  22 + 16, we could
-        // hope for another, secondary fast path.  It wa
-        // described by David M. Gay in  "Correctly rounded
-        // binary-decimal and decimal-binary conversions." (1990)
-        // If you need to compute i * 10^(22 + x) for x < 16,
-        // first compute i * 10^x, if you know that result is exact
-        // (e.g., when i * 10^x < 2^53),
-        // then you can still proceed and do (i * 10^x) * 10^22.
-        // Is this worth your time?
-        // You need  22 < power *and* power <  22 + 16 *and* (i * 10^(x-22) < 2^53)
-        // for this second fast path to work.
-        // If you you have 22 < power *and* power <  22 + 16, and then you
-        // optimistically compute "i * 10^(x-22)", there is still a chance that you
-        // have wasted your time if i * 10^(x-22) >= 2^53. It makes the use cases of
-        // this optimization maybe less common than we would like. Source:
-        // http://www.exploringbinary.com/fast-path-decimal-to-floating-point-conversion/
-        // also used in RapidJSON: https://rapidjson.org/strtod_8h_source.html
 
 
         // The fast path has now failed, so we are failing back on the slower path.
-
-        // In the slow path, we need to adjust i so that it is > 1<<63 which is always
-        // possible, except if i == 0, so we handle i == 0 separately.
-        if (i == 0) {
-            return 0.0;
-        }
-
 
         // We are going to need to do some 64-bit arithmetic to get a more precise product.
         // We use a table lookup approach.
@@ -900,7 +858,7 @@ public class FastDoubleParser {
         //
         long exponent = (((152170 + 65536) * power) >> 16) + 1024 + 63;
         // We want the most significant bit of i to be 1. Shift if needed.
-        int lz = leading_zeroes(i);
+        int lz = Long.numberOfLeadingZeros(i);
         i <<= lz;
         // We want the most significant 64 bits of the product. We know
         // this will be non-zero because the most significant bit of i is
@@ -922,7 +880,7 @@ public class FastDoubleParser {
         // We expect this next branch to be rarely taken (say 1% of the time).
         // When (upper & 0x1FF) == 0x1FF, it can be common for
         // lower + i < lower to be true (proba. much higher than 1%).
-        if (unlikely((upper & 0x1FF) == 0x1FF) && (lower + i < lower)) {
+        if ((upper & 0x1FF) == 0x1FF && (lower + i < lower)) {
             long factor_mantissa_low =
                     mantissa_128[power - FASTFLOAT_SMALLEST_POWER];
             // next, we compute the 64-bit x 128-bit multiplication, getting a 192-bit
@@ -933,9 +891,8 @@ public class FastDoubleParser {
             long product_middle1 = lower;
             long product_high = upper;
             long product_middle = product_middle1 + product_middle2;
-            if (Long.compareUnsigned(product_middle , product_middle1)<0) {
+            if (Long.compareUnsigned(product_middle, product_middle1) < 0) {
                 product_high++; // overflow carry
-
             }
 
 
@@ -943,15 +900,14 @@ public class FastDoubleParser {
             // This does happen, e.g. with 7.3177701707893310e+15
             if (((product_middle + 1 == 0) && ((product_high & 0x1FF) == 0x1FF) &&
                     (product_low + i < product_low))) { // let us be prudent and bail out.
-                success[0] = false;
-                return 0;
+                return null;
             }
             upper = product_high;
             lower = product_middle;
         }
 
         // The final mantissa should be 53 bits with a leading 1.
-        // We shift it so that it occupies 54 bits with a leading 1.
+        // We shift it so that it occupies 55 bits with a leading 1.
         ///////
         long upperbit = upper >>> 63;
         long mantissa = upper >>> (upperbit + 9);
@@ -963,10 +919,8 @@ public class FastDoubleParser {
         // which we guard against.
         // If we have lots of trailing zeros, we may fall right between two
         // floating-point values.
-        if (
-
-                unlikely((lower == 0) && ((upper & 0x1FF) == 0) &&
-                        ((mantissa & 3) == 1))) {
+        if (((upper & 0x1ff) == 0x1ff)
+                || ((upper & 0x1ff) == 0) && (mantissa & 3) == 1) {
             // if mantissa & 1 == 1 we might need to round up.
             //
             // Scenarios:
@@ -984,17 +938,15 @@ public class FastDoubleParser {
             // Note: because the factor_mantissa and factor_mantissa_low are
             // almost always rounded down (except for small positive powers),
             // almost always should round up.
-            success[0] = false;
-            return 0;
+            return null;
         }
 
-        mantissa += mantissa & 1;
-        mantissa >>= 1;
+        mantissa += 1;
+        mantissa >>>= 1;
+
         // Here we have mantissa < (1<<53), unless there was an overflow
         if (mantissa >= (1L << 53)) {
-            //////////
             // This will happen when parsing values such as 7.2057594037927933e+16
-            ////////
             mantissa = (1L << 52);
             lz--; // undo previous addition
         }
@@ -1002,20 +954,17 @@ public class FastDoubleParser {
         mantissa &= ~(1L << 52);
         long real_exponent = exponent - lz;
         // we have to check that real_exponent is in range, otherwise we bail out
-        if (
-
-                unlikely((real_exponent < 1) || (real_exponent > 2046))) {
-            success[0] = false;
-            return 0;
+        if ((real_exponent < 1) || (real_exponent > 2046)) {
+            return null;
         }
 
-        mantissa |= real_exponent << 52;
-        mantissa |= ((negative ? -1L : 0L) << 63);
-        double d = Double.longBitsToDouble(mantissa);
-        success[0] = true;
+        long bits = mantissa | real_exponent << 52
+                | (negative ? -1L << 63 : 0L);
+        double d = Double.longBitsToDouble(bits);
         return d;
     }
 
+    private final static long minimal_nineteen_digit_integer = 1000000000000000000L;
 
     /**
      * parse the number at p
@@ -1023,82 +972,75 @@ public class FastDoubleParser {
     public static double parseDouble(CharSequence str) throws NumberFormatException {
         int strlen = str.length();
         if (strlen == 0) {
-            throw new NumberFormatException("string is empty");
+            throw new NumberFormatException("string must not be empty.");
         }
         int ip = 0;
         char p = str.charAt(ip);
-        if (p == 'N') {
-            p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (p == 'a') {
-                p = ++ip < strlen ? str.charAt(ip) : 0;
-                if (p == 'N' && ip == strlen - 1) {
-                    return Double.NaN;
-                }
-            }
-            throw new NumberFormatException(str + " illegal string");
-        }
 
-
-        boolean found_minus = (p == '-');
         boolean negative = false;
-        int digit_count = 0;
-        if (found_minus) {
-            p = ++ip < strlen ? str.charAt(ip) : 0;
+        if (p == '-') {
             negative = true;
-            if (!is_integer(p)) {
-                throw new NumberFormatException("a negative sign must be followed by an integer");
+            p = ++ip < strlen ? str.charAt(ip) : 0;
+            if (p == 0) {
+                throw new NumberFormatException("'-' cannot stand alone.");
             }
         }
-        final int istart_digits = ip;
+        if (p == '+') {
+            if (negative) {
+                throw new NumberFormatException("'-' must not be followed by '+'.");
+            }
+            p = ++ip < strlen ? str.charAt(ip) : 0;
+            if (!isInteger(p)) {
+                throw new NumberFormatException("'+' must be followed by a digit.");
+            }
+        }
 
-        long i;      // an unsigned int avoids signed overflows (which are bad)
+        if (p == 'N') {
+            return Double.NaN;
+        } else if (p == 'I') {
+            return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        }
+
+
+        long exponent = 0;
+        long i = 0;
         if (p == '0') {
             p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (is_integer(p)) {
+            if (isInteger(p)) {
                 throw new NumberFormatException("0 cannot be followed by an integer");
             }
-            i = 0;
         } else {
-            if (!(is_integer(p))) { // must start with an integer
-                throw new NumberFormatException(str+" must start with an integer");
-            }
-            int digit = p - '0';
-            i = digit;
-            p = ++ip < strlen ? str.charAt(ip) : 0;
-            // the is_made_of_eight_digits_fast routine is unlikely to help here because
-            // we rarely see large integer parts like 123456789
-            while (is_integer(p)) {
-                digit = p - '0';
-                // a multiplication by 10 is cheaper than an arbitrary integer
-                // multiplication
-                i = 10 * i + digit; // might overflow, we will handle the overflow later
-                p = str.charAt(++ip);
+            while (isInteger(p)) {
+                int digit = p - '0';
+                if (i < minimal_nineteen_digit_integer) {
+                    // We avoid overflow by only considering up to 19 digits.
+                    // A multiplication by 10 is cheaper than an arbitrary integer
+                    // multiplication
+                    i = 10 * i + digit;
+                } else {
+                    // Adjust exponent for each skipped digit.
+                    exponent++;
+                }
+                p = ++ip < strlen ? str.charAt(ip) : 0;
             }
         }
-        long exponent = 0;
-        int ifirst_after_period;
         if (p == '.') {
-            digit_count--;
             p = ++ip < strlen ? str.charAt(ip) : 0;
-            ifirst_after_period = ip;
-            if (is_integer(p)) {
-                int digit = p - '0';
-                p = ++ip < strlen ? str.charAt(ip) : 0;
-                i = i * 10 + digit; // might overflow + multiplication by 10 is likely
-                // cheaper than arbitrary mult.
-                // we will handle the overflow later
-            } else {
+            if (!isInteger(p)) {
                 throw new NumberFormatException("decimal point must be follow by an integer");
             }
-            while (is_integer(p)) {
+            while (isInteger(p)) {
                 int digit = p - '0';
+                if (i < minimal_nineteen_digit_integer) {
+                    // We avoid overflow by only considering up to 19 digits.
+                    // A multiplication by 10 is cheaper than an arbitrary integer
+                    // multiplication
+                    i = 10 * i + digit;
+                    exponent--;
+                }
                 p = ++ip < strlen ? str.charAt(ip) : 0;
-                i = i * 10 + digit; // in rare cases, this will overflow, but that's ok
-                // because we have parse_highprecision_float later.
             }
-            exponent = ifirst_after_period - ip;
         }
-        digit_count += (ip - istart_digits); // used later to guard against overflows
         if (('e' == p) || ('E' == p)) {
             p = ++ip < strlen ? str.charAt(ip) : 0;
             boolean neg_exp = false;
@@ -1108,70 +1050,32 @@ public class FastDoubleParser {
             } else if ('+' == p) {
                 p = ++ip < strlen ? str.charAt(ip) : 0;
             }
-            if (!is_integer(p)) {
+            if (!isInteger(p)) {
                 throw new NumberFormatException("exponent must be follow by an integer");
             }
-            int digit = p - '0';
-            long exp_number = digit;
-            p = ++ip < strlen ? str.charAt(ip) : 0;
-            if (is_integer(p)) {
-                digit = p - '0';
-                exp_number = 10 * exp_number + digit;
-                p = ++ip < strlen ? str.charAt(ip) : 0;
-            }
-            if (is_integer(p)) {
-                digit = p - '0';
-                exp_number = 10 * exp_number + digit;
-                p = ++ip < strlen ? str.charAt(ip) : 0;
-            }
-            while (is_integer(p)) {
-                digit = p - '0';
+            long exp_number = 0;
+            while (isInteger(p)) {
                 if (exp_number < 0x100000000L) { // we need to check for overflows
+                    int digit = p - '0';
                     exp_number = 10 * exp_number + digit;
                 }
                 p = ++ip < strlen ? str.charAt(ip) : 0;
             }
             exponent += (neg_exp ? -exp_number : exp_number);
         }
-        // If we frequently had to deal with long strings of digits,
-        // we could extend our code by using a 128-bit integer instead
-        // of a 64-bit integer. However, this is uncommon.
-        if (unlikely((digit_count >= 19))) { // this is uncommon
-            // It is possible that the integer had an overflow.
-            // We have to handle the case where we have 0.0000somenumber.
-            int istart = istart_digits;
-            char start = str.charAt(istart);
-            while (start == '0' || (start == '.')) {
-                start = ++istart < strlen ? str.charAt(istart) : 0;
-            }
-            // we over-decrement by one when there is a decimal separator
-            digit_count -= istart - istart_digits;
-            if (digit_count >= 19) {
-                // Chances are good that we had an overflow!
-                // We start anew.
-                // This will happen in the following examples:
-                // 10000000000000000000000000000000000000000000e+308
-                // 3.1415926535897932384626433832795028841971693993751
-                //
-                return Double.parseDouble(str.toString());
-            }
+        if (exponent < FASTFLOAT_SMALLEST_POWER) {
+            return negative ? -0.0 : 0.0;
         }
-        if (unlikely(exponent < FASTFLOAT_SMALLEST_POWER) ||
-                (exponent > FASTFLOAT_LARGEST_POWER)) {
-            // this is almost never going to get called!!!
-            // exponent could be as low as 325
-            return Double.parseDouble(str.toString());
+        if (exponent > FASTFLOAT_LARGEST_POWER) {
+            return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         }
         // from this point forward, exponent >= FASTFLOAT_SMALLEST_POWER and
         // exponent <= FASTFLOAT_LARGEST_POWER
-        boolean[] success = {true};
-        double outDouble = compute_float_64((int) exponent, i, negative, success);
-        if (!success[0]) {
+        Double outDouble = compute_float_64((int) exponent, i, negative);
+        if (outDouble == null) {
             // we are almost never going to get here.
             return Double.parseDouble(str.toString());
         }
         return outDouble;
     }
-
-
 }
