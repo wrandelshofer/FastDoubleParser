@@ -4,7 +4,20 @@ A straight forward C++ to Java port of Daniel Lemires fast_double_parser.
 
 https://github.com/lemire/fast_double_parser
 
+Usage:
+
+    import ch.randelshofer.math.FastDoubleParser;
+
+    double d = FastDoubleParser.parseDouble("1.2345");
+
+Note: Method parseDouble takes a CharacterSequence as its argument. So, if you have a text inside of a StringBuffer, you
+do not need to convert it to a String, because StringBuffer extends from CharacterSequence.
+
 There is a performance test in class FastDoubleParserTest.performanceTest.
+
+How to run the performance test:
+
+    Run method FastDoubleParserTest.testPerformance() with JUnit 5.
 
 On my Mac mini (2018), 3.2 GHz, 3.2 GHz 6-Core Intel Core i7 I get the following results:
 

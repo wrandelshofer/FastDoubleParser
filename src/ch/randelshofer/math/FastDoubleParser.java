@@ -969,7 +969,22 @@ public class FastDoubleParser {
     private final static long minimal_nineteen_digit_integer = 1000000000000000000L;
 
     /**
-     * parse the number at p
+     * Returns a Double object holding the double value represented by the
+     * argument string s.
+     * <p>
+     * This method can be used as a drop in for method {@link Double#valueOf(String)}.
+     * <p>
+     * FIXME
+     * <ul>
+     *     <li>The method currently does not handle leading and trailing whitespace.</li>
+     *     <li>The method currently does not throw an exception when non-whitespace
+     *     character follow after the number.</li>
+     *     <li>The method currently does not throw an exception for strings
+     *     that start with "+N", "N", "-N", "I", "+I", "-I" but continue
+     *     with other characters.</li>
+     * </ul>
+     *
+     * @param str the string to be parsed
      */
     public static double parseDouble(CharSequence str) throws NumberFormatException {
         int strlen = str.length();
