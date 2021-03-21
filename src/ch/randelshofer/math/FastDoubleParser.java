@@ -4,6 +4,8 @@
 
 package ch.randelshofer.math;
 
+import java.math.BigDecimal;
+
 /**
  * This is a straightforward C++ to Java port of fast_double_parser
  * by Daniel Lemire.
@@ -1074,7 +1076,9 @@ public class FastDoubleParser {
         Double outDouble = compute_float_64((int) exponent, i, negative);
         if (outDouble == null) {
             // we are almost never going to get here.
-            return Double.parseDouble(str.toString());
+            BigDecimal bigDecimal = BigDecimal.valueOf(negative ? -i : i)
+                    .scaleByPowerOfTen((int) exponent);
+            return bigDecimal.doubleValue();
         }
         return outDouble;
     }
