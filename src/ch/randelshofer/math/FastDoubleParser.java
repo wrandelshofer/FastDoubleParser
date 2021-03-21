@@ -48,7 +48,7 @@ public class FastDoubleParser {
     private final static int FASTFLOAT_LARGEST_POWER = 308;
 
 
-    record Value128(long low, long high) {
+    record Value128(long high, long low) {
     }
 
 
