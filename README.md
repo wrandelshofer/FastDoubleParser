@@ -19,7 +19,7 @@ How to run the performance test:
 
     Run method FastDoubleParserTest.testPerformance() with JUnit 5.
 
-On my Mac mini (2018), 3.2 GHz, 3.2 GHz 6-Core Intel Core i7 I get the following results:
+On my Mac mini (2018), 3.2 GHz, 6-Core Intel Core i7 I get the following results:
 
     Double.parseDouble:
     LongSummaryStatistics{count=32, sum=1557205175, min=38329997, average=48662661.718750, max=137904316}
