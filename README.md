@@ -15,9 +15,16 @@ do not need to convert it to a String, because StringBuffer extends from Charact
 
 There is a performance test in class FastDoubleParserTest.performanceTest.
 
-How to run the performance test:
+How to run the performance test on a Mac:
 
-    Run method FastDoubleParserTest.testPerformance() with JUnit 5.
+1. Install Java JDK 16 from [OpenJDK.](https://jdk.java.net/16/)
+2. Install the XCode command line tools from Apple.
+3. Open the Terminal and execute the following commands:
+
+    git clone https://github.com/wrandelshofer/FastDoubleParser.git
+    cd FastDoubleParser 
+    javac -d out -sourcepath src test/ch/randelshofer/math/FastDoubleParserBenchmark.java
+    java -classpath out ch.randelshofer.math.FastDoubleParserBenchmark
 
 On my Mac mini (2018), 3.2 GHz, 6-Core Intel Core i7 I get the following results:
 

@@ -53,24 +53,24 @@ public class FastDoubleParserBenchmark {
                 doubleParseDoubleStats.accept(end - start);
             }
         }
-        System.out.println(d);
+        System.out.println("Sum of random numbers: " + d);
 
-        System.out.println("baseline (loop + add String length):"
+        System.out.println("\nBaseline (loop + add String length):"
                 + "\n  " + baselineStats
                 + "\n  " + baselineStats.getAverage() / strings.length + "ns per double"
         );
         double doubleParseDoubleNsPerDouble = (doubleParseDoubleStats.getAverage() - baselineStats.getAverage()) / strings.length;
-        System.out.println("Double.parseDouble:"
+        System.out.println("\nDouble.parseDouble:"
                 + "\n  " + doubleParseDoubleStats
                 + "\n  " + doubleParseDoubleNsPerDouble + "ns per double (adjusted to baseline)"
         );
         double fastDoubleParserNsPerDouble = (fastDoubleParserStats.getAverage() - baselineStats.getAverage()) / strings.length;
-        System.out.println("FastDoubleParser.parseDouble:"
+        System.out.println("\nFastDoubleParser.parseDouble:"
                 + "\n  " + fastDoubleParserStats
                 + "\n  " + fastDoubleParserNsPerDouble + "ns per double (adjusted to baseline)"
         );
 
-        System.out.println("Speedup factor: " + (doubleParseDoubleNsPerDouble / fastDoubleParserNsPerDouble));
+        System.out.println("\nSpeedup factor: " + (doubleParseDoubleNsPerDouble / fastDoubleParserNsPerDouble));
 
     }
 }
