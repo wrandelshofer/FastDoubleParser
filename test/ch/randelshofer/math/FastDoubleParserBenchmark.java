@@ -44,7 +44,7 @@ public class FastDoubleParserBenchmark {
     }
 
     public void demo(int howmany) {
-        System.out.println("parsing random integers in the range [0,1)");
+        System.out.println("parsing random numbers in the range [0,1)");
         List<String> lines = new Random().doubles(howmany).mapToObj(Double::toString)
                 .collect(Collectors.toList());
         validate(lines);
