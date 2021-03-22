@@ -4,77 +4,153 @@
 
 package ch.randelshofer.math;
 
-import java.util.LongSummaryStatistics;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.DoubleSummaryStatistics;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
+/**
+ * Benchmark for {@link FastDoubleParser}.
+ * <p>
+ * Most of the code in this class stems from
+ * https://github.com/lemire/fast_double_parser/blob/master/benchmarks/benchmark.cpp
+ * <p>
+ * References:
+ * <dl>
+ *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
+ *     Apache License 2.0 or Boost Software License.</dt>
+ *     <dd><a href="https://github.com/lemire/fast_double_parser">github</a></dd>
+ * </dl>
+ */
 public class FastDoubleParserBenchmark {
-    public static void main(String... args) {
-        new FastDoubleParserBenchmark().runBenchmark();
+    public static void main(String... args) throws Exception {
+        System.out.printf("%s\n", getCpuInfo());
+        System.out.printf("%s\n\n", getRtInfo());
+        FastDoubleParserBenchmark benchmark = new FastDoubleParserBenchmark();
+        if (args.length == 0) {
+            benchmark.demo(1_000_000);
+            System.out.println("You can also provide a filename: it should contain one "
+                    + "string per line corresponding to a number.");
+        } else {
+            benchmark.fileload(args[0]);
+        }
     }
 
-    /**
-     * Compares the performance of {@link FastDoubleParser#parseDouble(CharSequence)}
-     * against {@link Double#parseDouble(String)};
-     */
-    public void runBenchmark() {
-        System.out.println("Benchmark for doubles in regular Java Strings");
-        System.out.println("=============================================");
+    public void demo(int howmany) {
+        System.out.println("parsing random integers in the range [0,1)");
+        List<String> lines = new Random().doubles(howmany).mapToObj(Double::toString)
+                .collect(Collectors.toList());
+        validate(lines);
+        process(lines);
+    }
 
-        Random r = new Random(0);
-        String[] strings = r.longs(100_000)
-                .mapToDouble(Double::longBitsToDouble)
-                .mapToObj(Double::toString)
-                .toArray(String[]::new);
-        LongSummaryStatistics baselineStats = new LongSummaryStatistics();
-        LongSummaryStatistics doubleParseDoubleStats = new LongSummaryStatistics();
-        LongSummaryStatistics fastDoubleParserStats = new LongSummaryStatistics();
+    private double findmaxFastDoubleParserParseDouble(List<String> s) {
+        double answer = 0;
+        for (String st : s) {
+            double x = FastDoubleParser.parseDouble(st);
+            answer = answer > x ? answer : x;
+        }
+        return answer;
+    }
 
-        double d = 0;
-        for (int i = 0; i < 32; i++) {
-            {
-                long start = System.nanoTime();
-                for (String string : strings) {
-                    d += string.length();
-                }
-                long end = System.nanoTime();
-                baselineStats.accept(end - start);
+    private double findmaxDoubleParseDouble(List<String> s) {
+        double answer = 0;
+        for (String st : s) {
+            double x = Double.parseDouble(st);
+            answer = answer > x ? answer : x;
+        }
+        return answer;
+    }
+
+    private void process(List<String> lines) {
+        double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
+        long t1, t2;
+        double dif, ts;
+        DoubleSummaryStatistics fastDoubleParserStats = new DoubleSummaryStatistics();
+        DoubleSummaryStatistics doubleStats = new DoubleSummaryStatistics();
+        int numberOfTrials = 32;
+        System.out.printf("=== number of trials %d =====\n", numberOfTrials);
+        for (int i = 0; i < numberOfTrials; i++) {
+            t1 = System.nanoTime();
+            ts = findmaxFastDoubleParserParseDouble(lines);
+            t2 = System.nanoTime();
+            if (ts == 0) {
+                System.out.print("bug\n");
             }
-            {
-                long start = System.nanoTime();
-                for (String string : strings) {
-                    d += FastDoubleParser.parseDouble(string);
-                }
-                long end = System.nanoTime();
-                fastDoubleParserStats.accept(end - start);
+            dif = t2 - t1;
+            if (i > 0) {
+                fastDoubleParserStats.accept(volumeMB * 1000000000 / dif);
             }
-            {
-                long start = System.nanoTime();
-                for (String string : strings) {
-                    d += Double.parseDouble(string);
-                }
-                long end = System.nanoTime();
-                doubleParseDoubleStats.accept(end - start);
+            t1 = System.nanoTime();
+            ts = findmaxDoubleParseDouble(lines);
+            t2 = System.nanoTime();
+            if (ts == 0) {
+                System.out.print("bug\n");
+            }
+            dif = t2 - t1;
+            if (i > 0) {
+                doubleStats.accept(volumeMB * 1000000000 / dif);
             }
         }
-        System.out.println("Sum of random numbers: " + d);
-
-        System.out.println("\nBaseline (loop + add String length):"
-                + "\n  " + baselineStats
-                + "\n  " + baselineStats.getAverage() / strings.length + "ns per double"
-        );
-        double doubleParseDoubleNsPerDouble = (doubleParseDoubleStats.getAverage() - baselineStats.getAverage()) / strings.length;
-        System.out.println("\nDouble.parseDouble:"
-                + "\n  " + doubleParseDoubleStats
-                + "\n  " + doubleParseDoubleNsPerDouble + "ns per double (adjusted to baseline)"
-        );
-        double fastDoubleParserNsPerDouble = (fastDoubleParserStats.getAverage() - baselineStats.getAverage()) / strings.length;
-        System.out.println("\nFastDoubleParser.parseDouble:"
-                + "\n  " + fastDoubleParserStats
-                + "\n  " + fastDoubleParserNsPerDouble + "ns per double (adjusted to baseline)"
-        );
-
-        System.out.println("\nSpeedup factor: " + (doubleParseDoubleNsPerDouble / fastDoubleParserNsPerDouble));
-        System.out.println("\n");
-
+        System.out.printf("FastDoubleParser.parseDouble  MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserStats.getAverage(), fastDoubleParserStats.getMin(), fastDoubleParserStats.getMax());
+        System.out.printf("Double.parseDouble            MB/s avg: %2f, min: %.2f, max: %.2f\n", doubleStats.getAverage(), doubleStats.getMin(), doubleStats.getMax());
+        System.out.printf("Speedup FastDoubleParser vs Double: %2f\n", fastDoubleParserStats.getAverage() / doubleStats.getAverage());
+        System.out.print("\n\n");
     }
+
+    private void validate(List<String> lines) {
+        for (String line : lines) {
+            double expected = Double.parseDouble(line);
+            double actual = FastDoubleParser.parseDouble(line);
+            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
+                System.err.println("FastDoubleParser disagrees. input=" + line + " expected=" + expected + " actual=" + actual);
+            }
+        }
+    }
+
+    public void fileload(String filename) throws IOException {
+        Path path = Path.of(filename).toAbsolutePath();
+        System.out.printf("parsing integers in file %s\n", path);
+        List<String> lines = Files.lines(path).collect(Collectors.toList());
+        System.out.printf("read %d lines\n", lines.size());
+        validate(lines);
+        process(lines);
+    }
+
+    private static String getCpuInfo() {
+        final Runtime rt = Runtime.getRuntime();
+
+        final String osName = System.getProperty("os.name").toLowerCase();
+        final String cmd;
+        if (osName.startsWith("mac")) {
+            cmd = "sysctl -n machdep.cpu.brand_string";
+        } else if (osName.startsWith("win")) {
+            cmd = "wmic cpu get name";
+        } else {
+            return "Unknown Processor";
+        }
+        final StringBuilder buf = new StringBuilder();
+        try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec(cmd).getInputStream()))) {
+            for (String line = in.readLine(); line != null; line = in.readLine()) {
+                buf.append(line);
+            }
+        } catch (final IOException ex) {
+            return ex.getMessage();
+        }
+        return buf.toString();
+    }
+
+    private static String getRtInfo() {
+        final RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();
+        return mxbean.getVmName() + ", " + mxbean.getVmVendor() + ", " + mxbean.getVmVersion();
+    }
+
+
 }

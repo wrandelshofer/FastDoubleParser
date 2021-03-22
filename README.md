@@ -21,19 +21,25 @@ How to run the performance test on a Mac:
 2. Install the XCode command line tools from Apple.
 3. Open the Terminal and execute the following commands:
 
-    git clone https://github.com/wrandelshofer/FastDoubleParser.git
-    cd FastDoubleParser 
-    javac -d out -sourcepath src test/ch/randelshofer/math/FastDoubleParserBenchmark.java
-    java -classpath out ch.randelshofer.math.FastDoubleParserBenchmark
+   git clone https://github.com/wrandelshofer/FastDoubleParser.git
+   cd FastDoubleParser javac -d out -sourcepath src test/ch/randelshofer/math/FastDoubleParserBenchmark.java java
+   -classpath out ch.randelshofer.math.FastDoubleParserBenchmark java -classpath out
+   ch.randelshofer.math.FastDoubleParserBenchmark data/canada.txt
 
-On my Mac mini (2018), 3.2 GHz, 6-Core Intel Core i7 I get the following results:
+On my Mac mini (2018) I get the following results:
 
-    Double.parseDouble:
-    LongSummaryStatistics{count=32, sum=1557205175, min=38329997, average=48662661.718750, max=137904316}
-    486.6266171875ns per double
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
 
-    FastDoubleParser.parseDouble:
-    LongSummaryStatistics{count=32, sum=283691480, min=6561467, average=8865358.750000, max=51711911}
-    88.6535875ns per double
+    parsing random integers in the range [0,1)
+    === number of trials 32 =====
+    FastDoubleParser.parseDouble  MB/s avg: 388.873390, min: 331.77, max: 418.60
+    Double.parseDouble            MB/s avg: 84.108783, min: 77.34, max: 90.35
+    Speedup FastDoubleParser vs Double: 4.623458
 
-This shows that FastDoubleParser.parseDouble is roughly 5.5 times faster than Double.parseDouble.
+    parsing integers in file /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/data/canada.txt
+    === number of trials 32 =====
+    FastDoubleParser.parseDouble  MB/s avg: 276.744401, min: 174.85, max: 328.97
+    Double.parseDouble            MB/s avg: 68.303959, min: 43.39, max: 85.70
+    Speedup FastDoubleParser vs Double: 4.051660
+
