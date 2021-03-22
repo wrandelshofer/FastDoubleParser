@@ -117,7 +117,7 @@ public class FastDoubleParserBenchmark {
 
     public void fileload(String filename) throws IOException {
         Path path = Path.of(filename).toAbsolutePath();
-        System.out.printf("parsing integers in file %s\n", path);
+        System.out.printf("parsing numbers in file %s\n", path);
         List<String> lines = Files.lines(path).collect(Collectors.toList());
         System.out.printf("read %d lines\n", lines.size());
         validate(lines);
