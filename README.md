@@ -38,7 +38,8 @@ On my Mac mini (2018) I get the following results:
     Double.parseDouble            MB/s avg: 84.108783, min: 77.34, max: 90.35
     Speedup FastDoubleParser vs Double: 4.623458
 
-    parsing integers in file /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/data/canada.txt
+    parsing integers in file data/canada.txt
+    read 111126 lines
     === number of trials 32 =====
     FastDoubleParser.parseDouble  MB/s avg: 276.744401, min: 174.85, max: 328.97
     Double.parseDouble            MB/s avg: 68.303959, min: 43.39, max: 85.70
