@@ -34,13 +34,13 @@ On my Mac mini (2018) I get the following results:
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
     OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
 
-    parsing random integers in the range [0,1)
+    parsing random numbers in the range [0,1)
     === number of trials 32 =====
     FastDoubleParser.parseDouble  MB/s avg: 388.873390, min: 331.77, max: 418.60
     Double.parseDouble            MB/s avg: 84.108783, min: 77.34, max: 90.35
     Speedup FastDoubleParser vs Double: 4.623458
 
-    parsing integers in file data/canada.txt
+    parsing numbers in file data/canada.txt
     read 111126 lines
     === number of trials 32 =====
     FastDoubleParser.parseDouble  MB/s avg: 276.744401, min: 174.85, max: 328.97
