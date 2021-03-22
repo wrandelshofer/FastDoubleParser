@@ -1004,7 +1004,7 @@ public class FastDoubleParser {
         // Note that in the code below, a multiplication by 10 is cheaper
         // than an arbitrary integer multiplication.
 
-        int startOfDigits = index;
+        int startOfDigits;
         long exponent = 0;
         long i = 0;
         if (ch == '0') {
@@ -1012,7 +1012,9 @@ public class FastDoubleParser {
             if (isInteger(ch)) {
                 throw new NumberFormatException("0 cannot be followed by an integer");
             }
+            startOfDigits = index;
         } else {
+            startOfDigits = index;
             while (isInteger(ch)) {
                 i = 10 * i + ch - '0'; // This might overflow, we deal with it later.
                 ch = ++index < strlen ? str.charAt(index) : 0;
