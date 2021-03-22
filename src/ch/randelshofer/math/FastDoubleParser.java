@@ -1038,7 +1038,7 @@ public class FastDoubleParser {
             i = 0;
             while (isInteger(ch)) {
                 if (i < MINIMAL_NINETEEN_DIGIT_INTEGER) {
-                    // We avoid overflow by only considering up to 18 digits.
+                    // We avoid overflow by only considering up to 19 digits.
                     i = 10 * i + ch - '0';
                 } else {
                     // Adjust exponent for each skipped digit.
@@ -1050,7 +1050,7 @@ public class FastDoubleParser {
                 ch = ++index < strlen ? str.charAt(index) : 0;
                 while (isInteger(ch)) {
                     if (i < MINIMAL_NINETEEN_DIGIT_INTEGER) {
-                        // We avoid overflow by only considering up to 18 digits.
+                        // We avoid overflow by only considering up to 19 digits.
                         i = 10 * i + ch - '0';
                         exponent--;
                     }
