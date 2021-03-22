@@ -22,10 +22,12 @@ How to run the performance test on a Mac:
 3. Open the Terminal and execute the following commands: 
 
 
-    git clone https://github.com/wrandelshofer/FastDoubleParser.git
-    cd FastDoubleParser javac -d out -sourcepath src test/ch/randelshofer/math/FastDoubleParserBenchmark.java 
-    java -classpath out ch.randelshofer.math.FastDoubleParserBenchmark 
-    java -classpath out ch.randelshofer.math.FastDoubleParserBenchmark data/canada.txt
+Command:
+
+     git clone https://github.com/wrandelshofer/FastDoubleParser.git
+     cd FastDoubleParser javac -d out -sourcepath src test/ch/randelshofer/math/FastDoubleParserBenchmark.java 
+     java -classpath out ch.randelshofer.math.FastDoubleParserBenchmark 
+     java -classpath out ch.randelshofer.math.FastDoubleParserBenchmark data/canada.txt
 
 On my Mac mini (2018) I get the following results:
 
