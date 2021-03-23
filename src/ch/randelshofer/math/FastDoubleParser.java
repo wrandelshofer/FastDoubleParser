@@ -1039,7 +1039,7 @@ public class FastDoubleParser {
             exponent = 0;
             digits = 0;
             while (isInteger(ch)) {
-                if (digits >= 0 && digits < MINIMAL_NINETEEN_DIGIT_INTEGER) {
+                if (Long.compareUnsigned(digits,MINIMAL_NINETEEN_DIGIT_INTEGER)< 0) {
                     // We avoid overflow by only considering up to 19 digits.
                     digits = 10 * digits + ch - '0';
                 } else {
@@ -1051,7 +1051,7 @@ public class FastDoubleParser {
             if (ch == '.') {
                 ch = ++index < strlen ? str.charAt(index) : 0;
                 while (isInteger(ch)) {
-                    if (digits >= 0 && digits < MINIMAL_NINETEEN_DIGIT_INTEGER) {
+                    if (Long.compareUnsigned(digits,MINIMAL_NINETEEN_DIGIT_INTEGER)< 0) {
                         // We avoid overflow by only considering up to 19 digits.
                         digits = 10 * digits + ch - '0';
                         exponent--;
