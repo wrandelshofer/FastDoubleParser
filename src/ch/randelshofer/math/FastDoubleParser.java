@@ -1082,7 +1082,8 @@ public class FastDoubleParser {
             }
             exponent += (neg_exp ? -exp_number : exp_number);
         }
-        if (exponent < FASTFLOAT_SMALLEST_POWER) {
+
+        if (digits==0 || exponent < FASTFLOAT_SMALLEST_POWER) {
             return negative ? -0.0 : 0.0;
         }
         if (exponent > FASTFLOAT_LARGEST_POWER) {

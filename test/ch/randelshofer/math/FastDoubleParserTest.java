@@ -37,6 +37,8 @@ class FastDoubleParserTest {
                 dynamicTest("-0.0", () -> testLegalInput("-0.0", -0.0)),
                 dynamicTest("-0.0e-22", () -> testLegalInput("-0.0e-22", -0.0e-22)),
                 dynamicTest("-0.0e24", () -> testLegalInput("-0.0e24", -0.0e24)),
+                dynamicTest("0e555", () -> testLegalInput("0e555", 0.0)),
+                dynamicTest("-0e555", () -> testLegalInput("-0e555", -0.0)),
                 dynamicTest("1", () -> testLegalInput("1", 1.0)),
                 dynamicTest("-1", () -> testLegalInput("-1", -1.0)),
                 dynamicTest("+1", () -> testLegalInput("+1", +1.0)),
