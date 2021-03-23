@@ -906,8 +906,8 @@ public class FastDoubleParser {
         // which we guard against.
         // If we have lots of trailing zeros, we may fall right between two
         // floating-point values.
-        if (((upper & 0x1ff) == 0x1ff)
-                || ((upper & 0x1ff) == 0) && (mantissa & 3) == 1) {
+        if (((lower == 0) && ((upper & 0x1FF) == 0) &&
+                ((mantissa & 3) == 1))) {
             // if mantissa & 1 == 1 we might need to round up.
             //
             // Scenarios:
@@ -1006,7 +1006,6 @@ public class FastDoubleParser {
 
         // Note that in the code below, a multiplication by 10 is cheaper
         // than an arbitrary integer multiplication.
-
         int startOfDigits;
         long exponent = 0;
         long digits = 0;
@@ -1038,26 +1037,35 @@ public class FastDoubleParser {
             ch = str.charAt(index);
             exponent = 0;
             digits = 0;
+            boolean overflow=false;
             while (isInteger(ch)) {
-                if (Long.compareUnsigned(digits,MINIMAL_NINETEEN_DIGIT_INTEGER)< 0) {
+                if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                     // We avoid overflow by only considering up to 19 digits.
                     digits = 10 * digits + ch - '0';
                 } else {
                     // Adjust exponent for each skipped digit.
                     exponent++;
+                    overflow=true;
                 }
                 ch = ++index < strlen ? str.charAt(index) : 0;
             }
             if (ch == '.') {
                 ch = ++index < strlen ? str.charAt(index) : 0;
                 while (isInteger(ch)) {
-                    if (Long.compareUnsigned(digits,MINIMAL_NINETEEN_DIGIT_INTEGER)< 0) {
+                    if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                         // We avoid overflow by only considering up to 19 digits.
                         digits = 10 * digits + ch - '0';
                         exponent--;
+                    }else{
+                        overflow=true;
                     }
                     ch = ++index < strlen ? str.charAt(index) : 0;
                 }
+            }
+            if (overflow) {
+                // If we had an overflow, we underestimate the digits.
+                // So we add one for compensation.
+                digits++;
             }
         }
 
@@ -1094,29 +1102,31 @@ public class FastDoubleParser {
         }
         if (outDouble == null) {
             // we are almost never going to get here.
-            BigDecimal bigDecimal = toBigDecimal(negative, (int) exponent, digits);
-            return bigDecimal.doubleValue();
+            return toBigDecimal(negative, digits, (int) exponent).doubleValue();
         }
         return outDouble;
     }
 
-    private static BigDecimal toBigDecimal(boolean negative, int exponent, long digits) {
-        BigDecimal bigDecimal;
-        if (digits < 0) {// digits is a uint64
+    /**
+     * Creates a big decimal representing {@literal (negative?-1:1) * digits * 10^exponent}.
+     *
+     * @param negative true if the number is negative
+     * @param digits   uint64 the digits of the number
+     * @param exponent the exponent of the number
+     * @return a big decimal
+     */
+    private static BigDecimal toBigDecimal(boolean negative, long digits, int exponent) {
+        if (digits < 0) {
+            // digits is a uint64 with high-bit set
             int upper = (int) (digits >>> 32);
             int lower = (int) digits;
-            bigDecimal =
-                    new BigDecimal((BigInteger.valueOf(Integer.toUnsignedLong(upper))).shiftLeft(32).
-                            add(BigInteger.valueOf(Integer.toUnsignedLong(lower))))
-                            .scaleByPowerOfTen(exponent);
-            if (negative) {
-                bigDecimal = bigDecimal.negate();
-            }
-
-        } else {
-            bigDecimal = BigDecimal.valueOf(negative ? -digits : digits)
+            BigDecimal bigDecimal = new BigDecimal(
+                    (BigInteger.valueOf(Integer.toUnsignedLong(upper))).shiftLeft(32).
+                    add(BigInteger.valueOf(Integer.toUnsignedLong(lower))))
                     .scaleByPowerOfTen(exponent);
+            return negative ? bigDecimal.negate() : bigDecimal;
+        } else {
+           return BigDecimal.valueOf(negative ? -digits : digits,-exponent);
         }
-        return bigDecimal;
     }
 }

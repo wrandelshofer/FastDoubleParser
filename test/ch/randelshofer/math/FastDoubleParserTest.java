@@ -112,8 +112,6 @@ class FastDoubleParserTest {
         return Files.lines(Path.of("data/FastDoubleParser_errorcases.txt"))
                 .flatMap(line->Arrays.stream(line.split(",")))
         .map(str->dynamicTest(str,()->testLegalInput(str,Double.parseDouble(str))));
-
-
     }
 
     @TestFactory
