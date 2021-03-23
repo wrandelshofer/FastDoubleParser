@@ -5,6 +5,7 @@
 package ch.randelshofer.math;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * This is a straightforward C++ to Java port of fast_double_parser
@@ -780,7 +781,7 @@ public class FastDoubleParser {
         // It was described in
         // Clinger WD. How to read floating point numbers accurately.
         // ACM SIGPLAN Notices. 1990
-        if (-22 <= power && power <= 22 && digits <= 9007199254740991L) {
+        if (-22 <= power && power <= 22 && digits >= 0 && digits <= 9007199254740991L) {
             // convert the integer into a double. This is lossless since
             // 0 <= i <= 2^53 - 1.
             double d = (double) digits;
@@ -867,7 +868,7 @@ public class FastDoubleParser {
         // We expect this next branch to be rarely taken (say 1% of the time).
         // When (upper & 0x1FF) == 0x1FF, it can be common for
         // lower + i < lower to be true (proba. much higher than 1%).
-        if ((upper & 0x1FF) == 0x1FF && (lower + digits < lower)) {
+        if ((upper & 0x1FF) == 0x1FF && Long.compareUnsigned(lower + digits, lower) < 0) {
             long factor_mantissa_low =
                     MANTISSA_128[power - FASTFLOAT_SMALLEST_POWER];
             // next, we compute the 64-bit x 128-bit multiplication, getting a 192-bit
@@ -959,6 +960,8 @@ public class FastDoubleParser {
      * <p>
      * FIXME
      * <ul>
+     *     <li>The method currently only supports a small subset of the grammar
+     *     supported by {@link Double#valueOf(String)}.</li>
      *     <li>The method currently does not handle leading and trailing whitespace.</li>
      *     <li>The method currently does not throw an exception when non-whitespace
      *     character follow after the number.</li>
@@ -1022,9 +1025,6 @@ public class FastDoubleParser {
         }
         if (ch == '.') {
             ch = ++index < strlen ? str.charAt(index) : 0;
-            if (!isInteger(ch)) {
-                throw new NumberFormatException("decimal point must be followed by an integer");
-            }
             while (isInteger(ch)) {
                 digits = 10 * digits + ch - '0';// This might overflow, we deal with it later.
                 exponent--;
@@ -1039,7 +1039,7 @@ public class FastDoubleParser {
             exponent = 0;
             digits = 0;
             while (isInteger(ch)) {
-                if (digits < MINIMAL_NINETEEN_DIGIT_INTEGER) {
+                if (digits >= 0 && digits < MINIMAL_NINETEEN_DIGIT_INTEGER) {
                     // We avoid overflow by only considering up to 19 digits.
                     digits = 10 * digits + ch - '0';
                 } else {
@@ -1051,7 +1051,7 @@ public class FastDoubleParser {
             if (ch == '.') {
                 ch = ++index < strlen ? str.charAt(index) : 0;
                 while (isInteger(ch)) {
-                    if (digits < MINIMAL_NINETEEN_DIGIT_INTEGER) {
+                    if (digits >= 0 && digits < MINIMAL_NINETEEN_DIGIT_INTEGER) {
                         // We avoid overflow by only considering up to 19 digits.
                         digits = 10 * digits + ch - '0';
                         exponent--;
@@ -1083,22 +1083,40 @@ public class FastDoubleParser {
             exponent += (neg_exp ? -exp_number : exp_number);
         }
 
-        if (digits==0 || exponent < FASTFLOAT_SMALLEST_POWER) {
+        if (digits == 0) {
             return negative ? -0.0 : 0.0;
         }
-        if (exponent > FASTFLOAT_LARGEST_POWER) {
-            return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        Double outDouble;
+        if (FASTFLOAT_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_LARGEST_POWER) {
+            outDouble = computeFloat64((int) exponent, digits, negative);
+        } else {
+            outDouble = null;
         }
-        // from this point forward, exponent >= FASTFLOAT_SMALLEST_POWER and
-        // exponent <= FASTFLOAT_LARGEST_POWER
-
-        Double outDouble = computeFloat64((int) exponent, digits, negative);
         if (outDouble == null) {
             // we are almost never going to get here.
-            BigDecimal bigDecimal = BigDecimal.valueOf(negative ? -digits : digits)
-                    .scaleByPowerOfTen((int) exponent);
+            BigDecimal bigDecimal = toBigDecimal(negative, (int) exponent, digits);
             return bigDecimal.doubleValue();
         }
         return outDouble;
+    }
+
+    private static BigDecimal toBigDecimal(boolean negative, int exponent, long digits) {
+        BigDecimal bigDecimal;
+        if (digits < 0) {// digits is a uint64
+            int upper = (int) (digits >>> 32);
+            int lower = (int) digits;
+            bigDecimal =
+                    new BigDecimal((BigInteger.valueOf(Integer.toUnsignedLong(upper))).shiftLeft(32).
+                            add(BigInteger.valueOf(Integer.toUnsignedLong(lower))))
+                            .scaleByPowerOfTen(exponent);
+            if (negative) {
+                bigDecimal = bigDecimal.negate();
+            }
+
+        } else {
+            bigDecimal = BigDecimal.valueOf(negative ? -digits : digits)
+                    .scaleByPowerOfTen(exponent);
+        }
+        return bigDecimal;
     }
 }

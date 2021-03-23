@@ -7,6 +7,10 @@ package ch.randelshofer.math;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -46,6 +50,8 @@ class FastDoubleParserTest {
                 dynamicTest("1e1", () -> testLegalInput("1e1", 1e1)),
                 dynamicTest("1e+1", () -> testLegalInput("1e+1", 1e+1)),
                 dynamicTest("1e-1", () -> testLegalInput("1e-1", 1e-1)),
+                dynamicTest("3.7587182468424695418288325e-309", () -> testLegalInput("3.7587182468424695418288325e-309", 3.7587182468424695418288325e-309)),
+                dynamicTest("9007199254740992.e-256", () -> testLegalInput("9007199254740992.e-256", 9007199254740992.e-256)),
                 dynamicTest("0.00000000000000000000000000000000000000000001e+46",
                         () -> testLegalInput("0.00000000000000000000000000000000000000000001e+46",
                                 100.0)),
@@ -99,6 +105,15 @@ class FastDoubleParserTest {
                 dynamicTest(-4.559067278662733E288 + "", () -> testLegalInput(
                         -4.559067278662733E288))
         );
+    }
+
+    @TestFactory
+    Stream<DynamicNode> testErrorCases() throws IOException {
+        return Files.lines(Path.of("data/FastDoubleParser_errorcases.txt"))
+                .flatMap(line->Arrays.stream(line.split(",")))
+        .map(str->dynamicTest(str,()->testLegalInput(str,Double.parseDouble(str))));
+
+
     }
 
     @TestFactory
