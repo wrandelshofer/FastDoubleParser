@@ -15,7 +15,12 @@ import java.math.BigInteger;
  * <dl>
  *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
  *     Apache License 2.0 or Boost Software License.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github</a></dd>
+ *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
+ * </dl>
+ * <dl>
+ *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second.
+ *     arXiv.2101.11408v3 [cs.DS] 24 Feb 2021</dt>
+ *     <dd><a href="https://arxiv.org/pdf/2101.11408.pdf">arxiv.org</a></dd>
  * </dl>
  * </p>
  */
@@ -47,42 +52,6 @@ public class FastDoubleParser {
      */
     private final static int FASTFLOAT_SMALLEST_POWER = -325;
     private final static int FASTFLOAT_LARGEST_POWER = 308;
-
-
-    record Value128(long high, long low) {
-    }
-
-
-    /**
-     * Computes {@code uint128 product = (uint64)x * (uint64)y}.
-     * <p>
-     * References:
-     * <dl>
-     *     <dt>Getting the high part of 64 bit integer multiplication</dt>
-     *     <dd><a href="https://stackoverflow.com/questions/28868367/getting-the-high-part-of-64-bit-integer-multiplication">
-     *         stackoverflow</a></dd>
-     * </dl>
-     *
-     * @param x uint64 factor x
-     * @param y uint64 factor y
-     * @return uint128 product of x and y
-     */
-    private static Value128 fullMultiplication(long x, long y) {
-        long x0 = x & 0xffffffffL, x1 = x >>> 32;
-        long y0 = y & 0xffffffffL, y1 = y >>> 32;
-        long p11 = x1 * y1, p01 = x0 * y1;
-        long p10 = x1 * y0, p00 = x0 * y0;
-
-        // 64-bit product + two 32-bit values
-        long middle = p10 + (p00 >>> 32) + (p01 & 0xffffffffL);
-        return new Value128(
-                // 64-bit product + two 32-bit values
-                p11 + (middle >>> 32) + (p01 >>> 32),
-                // Add LOW PART and lower half of MIDDLE PART
-                (middle << 32) | (p00 & 0xffffffffL));
-    }
-
-
     /**
      * Precomputed powers of ten from 10^0 to 10^22. These
      * can be represented exactly using the double type.
@@ -90,12 +59,6 @@ public class FastDoubleParser {
     private static final double[] powerOfTen = {
             1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11,
             1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22};
-
-    private static boolean isInteger(char c) {
-        return '0' <= c && c <= '9';
-    }
-
-
     /**
      * When mapping numbers from decimal to binary,
      * we go from w * 10^q to m * 2^p but we have
@@ -755,7 +718,7 @@ public class FastDoubleParser {
             0xd30560258f54e6baL, 0x47c6b82ef32a2069L,
             0x4cdc331d57fa5441L, 0xe0133fe4adf8e952L,
             0x58180fddd97723a6L, 0x570f09eaa7ea7648L};
-
+    private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000000000000000000L;
 
     /**
      * Attempts to compute {@literal digits * 10^(power)} exactly;
@@ -950,7 +913,38 @@ public class FastDoubleParser {
         return Double.longBitsToDouble(bits);
     }
 
-    private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000000000000000000L;
+    /**
+     * Computes {@code uint128 product = (uint64)x * (uint64)y}.
+     * <p>
+     * References:
+     * <dl>
+     *     <dt>Getting the high part of 64 bit integer multiplication</dt>
+     *     <dd><a href="https://stackoverflow.com/questions/28868367/getting-the-high-part-of-64-bit-integer-multiplication">
+     *         stackoverflow</a></dd>
+     * </dl>
+     *
+     * @param x uint64 factor x
+     * @param y uint64 factor y
+     * @return uint128 product of x and y
+     */
+    private static Value128 fullMultiplication(long x, long y) {
+        long x0 = x & 0xffffffffL, x1 = x >>> 32;
+        long y0 = y & 0xffffffffL, y1 = y >>> 32;
+        long p11 = x1 * y1, p01 = x0 * y1;
+        long p10 = x1 * y0, p00 = x0 * y0;
+
+        // 64-bit product + two 32-bit values
+        long middle = p10 + (p00 >>> 32) + (p01 & 0xffffffffL);
+        return new Value128(
+                // 64-bit product + two 32-bit values
+                p11 + (middle >>> 32) + (p01 >>> 32),
+                // Add LOW PART and lower half of MIDDLE PART
+                (middle << 32) | (p00 & 0xffffffffL));
+    }
+
+    private static boolean isInteger(char c) {
+        return '0' <= c && c <= '9';
+    }
 
     /**
      * Returns a Double object holding the double value represented by the
@@ -958,17 +952,129 @@ public class FastDoubleParser {
      * <p>
      * This method can be used as a drop in for method {@link Double#valueOf(String)}.
      * <p>
+     * Parses the following productions:
+     * <blockquote>
+     * <dl>
+     * <dt><i>FloatValue:</i>
+     * <dd><i>[Sign]</i> {@code NaN}
+     * <dd><i>[Sign]</i> {@code Infinity}
+     * <dd><i>[Sign] FloatingPointLiteral</i>
+     * <dd><i>[Sign] HexFloatingPointLiteral</i>
+     * <dd><i>SignedInteger</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>HexFloatingPointLiteral</i>:
+     * <dd> <i>HexSignificand BinaryExponent [FloatTypeSuffix]</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>HexSignificand:</i>
+     * <dd><i>HexNumeral</i>
+     * <dd><i>HexNumeral</i> {@code .}
+     * <dd>{@code 0x} <i>[HexDigits]
+     *     </i>{@code .}<i> HexDigits</i>
+     * <dd>{@code 0X}<i> [HexDigits]
+     *     </i>{@code .} <i>HexDigits</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>BinaryExponent:</i>
+     * <dd><i>BinaryExponentIndicator SignedInteger</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>BinaryExponentIndicator:</i>
+     * <dd>{@code p}
+     * <dd>{@code P}
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>FloatingPointLiteral:</i>
+     * <dd><i>DecimalFloatingPointLiteral</i>
+     * <dd><i>HexadecimalFloatingPointLiteral</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>DecimalFloatingPointLiteral:</i>
+     * <dd><i>Digits {@code .} [Digits] [ExponentPart] [FloatTypeSuffix]</i>
+     * <dd><i>{@code .} Digits [ExponentPart] [FloatTypeSuffix]</i>
+     * <dd><i>{@code .} Digits [ExponentPart] [FloatTypeSuffix]</i>
+     * <dd><i>Digits ExponentPart [FloatTypeSuffix]</i>
+     * <dd><i>Digits [ExponentPart] FloatTypeSuffix</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>ExponentPart:</i>
+     * <dd><i>ExponentIndicator SignedInteger</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>ExponentIndicator:</i>
+     * <dd><i>(one of)</i>
+     * <dd><i>e E</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>SignedInteger:</i>
+     * <dd><i>[Sign] Digits</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>Sign:</i>
+     * <dd><i>(one of)</i>
+     * <dd><i>+ -</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>FloatTypeSuffix:</i>
+     * <dd><i>(one of)</i>
+     * <dd><i>f F d D</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>Digits:</i>
+     * <dd><i>Digit</i>
+     * <dd><i>Digit [DigitsAndUnderscores] Digit</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>DigitsAndUnderscores:</i>
+     * <dd><i>DigitOrUnderscore {DigitOrUnderscore}</i>
+     * <dd><i>Digit [DigitsAndUnderscores] Digit</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>DigitOrUnderscore:</i>
+     * <dd><i>Digit</i>
+     * <dd>{@code _}</i>
+     * </dl>
+     *
+     * <dl>
+     * <dt><i>Underscores:</i>
+     * <dd>{@code _} <i>{</i>{@code _}<i>}</i></i>
+     * </dl>
+     * </dl>
+     *
+     *
+     *
+     * </blockquote>
+     *
+     * <p>
      * FIXME
      * <ul>
      *     <li>The method currently only supports a small subset of the grammar
-     *     supported by {@link Double#valueOf(String)}.</li>
+     *     described above.</li>
      *     <li>The method currently does not handle leading and trailing whitespace.</li>
      *     <li>The method currently does not throw an exception when non-whitespace
      *     character follow after the number.</li>
      *     <li>The method currently does not throw an exception for strings
      *     that start with "+N", "N", "-N", "I", "+I", "-I" but continue
      *     with other characters.</li>
+     *     <li>The method will not always create the best approximation
+     *     if the input string has more than 19 digits.</li>
      * </ul>
+     *
      *
      * @param str the string to be parsed
      */
@@ -980,22 +1086,11 @@ public class FastDoubleParser {
         int index = 0;
         char ch = str.charAt(index);
 
-        boolean negative = false;
-        if (ch == '-') {
-            negative = true;
+        boolean negative = ch=='-';
+        if (negative||ch=='+') {
             ch = ++index < strlen ? str.charAt(index) : 0;
-            if (ch == 0) {
-                throw new NumberFormatException("'-' cannot stand alone");
-            }
-        }
-        if (ch == '+') {
-            if (negative) {
-                throw new NumberFormatException("'-' must not be followed by '+'");
-            }
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            if (!isInteger(ch)) {
-                throw new NumberFormatException("'+' must be followed by a digit");
-            }
+            if (ch==0)
+                throw new NumberFormatException("sign cannot stand alone");
         }
 
         if (ch == 'N') {
@@ -1007,7 +1102,7 @@ public class FastDoubleParser {
         // Note that in the code below, a multiplication by 10 is cheaper
         // than an arbitrary integer multiplication.
         int startOfDigits;
-        long exponent = 0;
+        int exponent = 0;
         long digits = 0;
         if (ch == '0') {
             ch = ++index < strlen ? str.charAt(index) : 0;
@@ -1031,13 +1126,35 @@ public class FastDoubleParser {
             }
         }
 
+        int exp_number = 0;
+        boolean neg_exp = false;
+        if (('e' == ch) || ('E' == ch)) {
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if ('-' == ch) {
+                neg_exp = true;
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            } else if ('+' == ch) {
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            if (!isInteger(ch)) {
+                throw new NumberFormatException("exponent must be followed by an integer");
+            }
+            while (isInteger(ch)) {
+                if (exp_number < 999) { // we need to check for overflows
+                    exp_number = 10 * exp_number + ch - '0';
+                }
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            exponent += (neg_exp ? -exp_number : exp_number);
+        }
+
+        boolean truncated = false;
         if (index - startOfDigits > 19) {
             // We might have had an overflow, do it again!
             index = startOfDigits;
             ch = str.charAt(index);
-            exponent = 0;
+            exponent = (neg_exp ? -exp_number : exp_number);
             digits = 0;
-            boolean overflow=false;
             while (isInteger(ch)) {
                 if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                     // We avoid overflow by only considering up to 19 digits.
@@ -1045,7 +1162,7 @@ public class FastDoubleParser {
                 } else {
                     // Adjust exponent for each skipped digit.
                     exponent++;
-                    overflow=true;
+                    truncated = true;
                 }
                 ch = ++index < strlen ? str.charAt(index) : 0;
             }
@@ -1056,39 +1173,19 @@ public class FastDoubleParser {
                         // We avoid overflow by only considering up to 19 digits.
                         digits = 10 * digits + ch - '0';
                         exponent--;
-                    }else{
-                        overflow=true;
+                    } else {
+                        truncated = true;
+                        break;
                     }
                     ch = ++index < strlen ? str.charAt(index) : 0;
                 }
             }
-            if (overflow) {
-                // If we had an overflow, we underestimate the digits.
-                // So we add one for compensation.
+            if (truncated) {
+                // If we have too many digits, we might need to round up.
+                // As an approximation, we add 1 here.
+                // For an exact result, we have to examine up to 768 digits.
                 digits++;
             }
-        }
-
-        if (('e' == ch) || ('E' == ch)) {
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            boolean neg_exp = false;
-            if ('-' == ch) {
-                neg_exp = true;
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            } else if ('+' == ch) {
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            if (!isInteger(ch)) {
-                throw new NumberFormatException("exponent must be followed by an integer");
-            }
-            long exp_number = 0;
-            while (isInteger(ch)) {
-                if (exp_number < 0x100000000L) { // we need to check for overflows
-                    exp_number = 10 * exp_number + ch - '0';
-                }
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            exponent += (neg_exp ? -exp_number : exp_number);
         }
 
         if (digits == 0) {
@@ -1102,7 +1199,7 @@ public class FastDoubleParser {
         }
         if (outDouble == null) {
             // we are almost never going to get here.
-            return toBigDecimal(negative, digits, (int) exponent).doubleValue();
+            return toBigDecimal(negative, digits,  exponent).doubleValue();
         }
         return outDouble;
     }
@@ -1122,11 +1219,14 @@ public class FastDoubleParser {
             int lower = (int) digits;
             BigDecimal bigDecimal = new BigDecimal(
                     (BigInteger.valueOf(Integer.toUnsignedLong(upper))).shiftLeft(32).
-                    add(BigInteger.valueOf(Integer.toUnsignedLong(lower))))
+                            add(BigInteger.valueOf(Integer.toUnsignedLong(lower))))
                     .scaleByPowerOfTen(exponent);
             return negative ? bigDecimal.negate() : bigDecimal;
         } else {
-           return BigDecimal.valueOf(negative ? -digits : digits,-exponent);
+            return BigDecimal.valueOf(negative ? -digits : digits, -exponent);
         }
+    }
+
+    record Value128(long high, long low) {
     }
 }
