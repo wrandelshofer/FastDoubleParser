@@ -2,7 +2,7 @@
  * Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package ch.randelshofer.math;
+package org.fastdoubleparser.parser;
 
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
@@ -47,11 +47,15 @@ class FastDoubleParserTest {
                 dynamicTest("-1", () -> testLegalInput("-1", -1.0)),
                 dynamicTest("+1", () -> testLegalInput("+1", +1.0)),
                 dynamicTest("1e0", () -> testLegalInput("1e0", 1e0)),
+                dynamicTest("1.e0", () -> testLegalInput("1.e0", 1e0)),
+                dynamicTest(".e2", () -> testLegalInput(".e2", 0)),
                 dynamicTest("1e1", () -> testLegalInput("1e1", 1e1)),
                 dynamicTest("1e+1", () -> testLegalInput("1e+1", 1e+1)),
                 dynamicTest("1e-1", () -> testLegalInput("1e-1", 1e-1)),
+                dynamicTest("0049", () -> testLegalInput("0049", 49)),
                 dynamicTest("3.7587182468424695418288325e-309", () -> testLegalInput("3.7587182468424695418288325e-309", 3.7587182468424695418288325e-309)),
                 dynamicTest("9007199254740992.e-256", () -> testLegalInput("9007199254740992.e-256", 9007199254740992.e-256)),
+                dynamicTest("0x1.921fb54442d18p1", () -> testLegalInput("0x1.921fb54442d18p1", 0x1.921fb54442d18p1)),
                 dynamicTest("0.00000000000000000000000000000000000000000001e+46",
                         () -> testLegalInput("0.00000000000000000000000000000000000000000001e+46",
                                 100.0)),
@@ -108,24 +112,24 @@ class FastDoubleParserTest {
     }
 
     @TestFactory
-    Stream<DynamicNode> testErrorCases() throws IOException {
-        return Files.lines(Path.of("data/FastDoubleParser_errorcases.txt"))
-                .flatMap(line->Arrays.stream(line.split(",")))
-        .map(str->dynamicTest(str,()->testLegalInput(str,Double.parseDouble(str))));
+    Stream<DynamicNode> dynamicTestsPowerOfTen() {
+        return IntStream.range(-307, 309).mapToObj(i -> "1e" + i)
+                .map(d -> dynamicTest(d, () -> testLegalInput(d, Double.parseDouble(d))));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsRandomInputs() {
-        Random r=new Random(0);
+        Random r = new Random(0);
         return r.longs(20_000)
                 .mapToDouble(Double::longBitsToDouble)
                 .mapToObj(d -> dynamicTest(d + "", () -> testLegalInput(d)));
     }
 
     @TestFactory
-    Stream<DynamicNode> dynamicTestsPowerOfTen() {
-        return IntStream.range(-307, 309).mapToObj(i -> "1e" + i)
-                .map(d -> dynamicTest(d, () -> testLegalInput(d, Double.parseDouble(d))));
+    Stream<DynamicNode> testErrorCases() throws IOException {
+        return Files.lines(Path.of("data/FastDoubleParser_errorcases.txt"))
+                .flatMap(line -> Arrays.stream(line.split(",")))
+                .map(str -> dynamicTest(str, () -> testLegalInput(str, Double.parseDouble(str))));
     }
 
     private void testIllegalInput(String s) {

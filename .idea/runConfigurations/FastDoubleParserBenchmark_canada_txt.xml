@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FastDoubleParserBenchmark canada.txt" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="ch.randelshofer.math.FastDoubleParserBenchmark" />
+    <option name="MAIN_CLASS_NAME" value="org.fastdoubleparser.parser.FastDoubleParserBenchmark" />
     <module name="FastDoubleParser" />
     <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
     <extension name="coverage">

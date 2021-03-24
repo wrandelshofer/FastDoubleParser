@@ -2,9 +2,7 @@
  * Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package ch.randelshofer.math;
-
-import java.io.BufferedReader;
+package org.fastdoubleparser.parser;import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
@@ -17,10 +15,14 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
- * Benchmark for {@link FastDoubleParser}.
+ * This benchmark for {@link FastDoubleParser} aims to provide results that
+ * can be compared easily with the benchmark of Daniel Lemire's fast_double_parser.
  * <p>
  * Most of the code in this class stems from
  * https://github.com/lemire/fast_double_parser/blob/master/benchmarks/benchmark.cpp
+ * <p>
+ * The code runs the benchmark {@value NUMBER_OF_TRIALS} times and prints
+ * the average, minimal and maximal times.
  * <p>
  * References:
  * <dl>
@@ -30,6 +32,9 @@ import java.util.stream.Collectors;
  * </dl>
  */
 public class FastDoubleParserBenchmark {
+
+    public static final int NUMBER_OF_TRIALS = 32;
+
     public static void main(String... args) throws Exception {
         System.out.printf("%s\n", getCpuInfo());
         System.out.printf("%s\n\n", getRtInfo());
@@ -55,7 +60,7 @@ public class FastDoubleParserBenchmark {
         double answer = 0;
         for (String st : s) {
             double x = FastDoubleParser.parseDouble(st);
-            answer = answer > x ? answer : x;
+            answer = Math.max(answer, x);
         }
         return answer;
     }
@@ -64,7 +69,7 @@ public class FastDoubleParserBenchmark {
         double answer = 0;
         for (String st : s) {
             double x = Double.parseDouble(st);
-            answer = answer > x ? answer : x;
+            answer = Math.max(answer, x);
         }
         return answer;
     }
@@ -75,7 +80,7 @@ public class FastDoubleParserBenchmark {
         double dif, ts;
         DoubleSummaryStatistics fastDoubleParserStats = new DoubleSummaryStatistics();
         DoubleSummaryStatistics doubleStats = new DoubleSummaryStatistics();
-        int numberOfTrials = 32;
+        int numberOfTrials = NUMBER_OF_TRIALS;
         System.out.printf("=== number of trials %d =====\n", numberOfTrials);
         for (int i = 0; i < numberOfTrials; i++) {
             t1 = System.nanoTime();

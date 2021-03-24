@@ -2,22 +2,27 @@
  * Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package ch.randelshofer.math;
+package org.fastdoubleparser.parser;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * This is a straightforward C++ to Java port of fast_double_parser
- * by Daniel Lemire.
+ * This is a C++ to Java port of Daniel Lemire's fast double parser.
+ * <p>
+ * The code has been changed, so that it parses the same syntax as
+ * {@link Double#parseDouble(String)}.
  * <p>
  * References:
  * <dl>
  *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
  *     Apache License 2.0 or Boost Software License.</dt>
  *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
- * </dl>
- * <dl>
+ *
+ *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
+ *     Apache License 2.0.</dt>
+ *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
+ *
  *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second.
  *     arXiv.2101.11408v3 [cs.DS] 24 Feb 2021</dt>
  *     <dd><a href="https://arxiv.org/pdf/2101.11408.pdf">arxiv.org</a></dd>
@@ -1056,8 +1061,34 @@ public class FastDoubleParser {
      * </dl>
      * </dl>
      *
+     * <dl>
+     *     <dt><i>HexNumeral:</i>
+     *     <dd>{@code 0} {@code x} <i>HexDigits</i>
+     *     <dd>{@code 0} {@code X} <i>HexDigits</i>
+     * </dl>
      *
+     * <dl>
+     *     <dt><i>HexDigits:</i>
+     *     <dd><i>HexDigit</i>
+     *     <dd><i> HexDigit [HexDigitsAndUnderscores] HexDigit</i>
+     * </dl>
      *
+     * <dl>
+     *     <dt><i>HexDigit:</i>
+     *     <dd><i>(one of)</i>
+     *     <dd><{@code 0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F}
+     * </dl>
+     *
+     * <dl>
+     *     <dt><i>HexDigitsAndUnderscores:</i>
+     *     <dd><i>HexDigitOrUnderscore {HexDigitOrUnderscore}</i>
+     * </dl>
+     *
+     * <dl>
+     *     <dt><i>HexDigitOrUnderscore:</i>
+     *     <dd><i>HexDigit</i>
+     *     <dd>{@code _}
+     * </dl>
      * </blockquote>
      *
      * <p>
@@ -1075,7 +1106,6 @@ public class FastDoubleParser {
      *     if the input string has more than 19 digits.</li>
      * </ul>
      *
-     *
      * @param str the string to be parsed
      */
     public static double parseDouble(CharSequence str) throws NumberFormatException {
@@ -1086,46 +1116,220 @@ public class FastDoubleParser {
         int index = 0;
         char ch = str.charAt(index);
 
-        boolean negative = ch=='-';
-        if (negative||ch=='+') {
+        // Parse optional sign
+        // -------------------
+        boolean negative = ch == '-';
+        if (negative || ch == '+') {
             ch = ++index < strlen ? str.charAt(index) : 0;
-            if (ch==0)
+            if (ch == 0) {
                 throw new NumberFormatException("sign cannot stand alone");
+            }
         }
 
+        // Parse NaN or Infinity
+        // ---------------------
         if (ch == 'N') {
-            return Double.NaN;
+            return parseNaN(str, index, strlen);
         } else if (ch == 'I') {
-            return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+            return parseInfinity(str, ch, index, strlen, negative);
         }
 
-        // Note that in the code below, a multiplication by 10 is cheaper
-        // than an arbitrary integer multiplication.
-        int startOfDigits;
-        int exponent = 0;
-        long digits = 0;
+        // Parse optional leading zero (could be all there is too)
+        // ---------------------------
         if (ch == '0') {
             ch = ++index < strlen ? str.charAt(index) : 0;
-            if (isInteger(ch)) {
-                throw new NumberFormatException("0 cannot be followed by an integer");
-            }
-            startOfDigits = index;
-        } else {
-            startOfDigits = index;
-            while (isInteger(ch)) {
-                digits = 10 * digits + ch - '0'; // This might overflow, we deal with it later.
-                ch = ++index < strlen ? str.charAt(index) : 0;
+            if (ch == 'x' || ch == 'X') {
+                return parseHexFloatingPointLiteral(str, ch, index, strlen, negative);
             }
         }
+
+        // Parse integer part of digits
+        // ----------------------------
+        // Note a multiplication by 10 is cheaper than an arbitrary integer
+        // multiplication.
+
+        long digits = 0;// digits is treated as an unsigned long
+        int exponent = 0;
+        int startOfIntegerDigits = index;
+        while (isInteger(ch)) {
+            // This might overflow, we deal with it later.
+            digits = 10 * digits + ch - '0';
+            ch = ++index < strlen ? str.charAt(index) : 0;
+        }
+        int endOfIntegerDigits = index;
+
+        // Parse fractional part of digits
+        // -------------------------------
+        int digitCount;
         if (ch == '.') {
             ch = ++index < strlen ? str.charAt(index) : 0;
             while (isInteger(ch)) {
-                digits = 10 * digits + ch - '0';// This might overflow, we deal with it later.
-                exponent--;
+                // This might overflow, we deal with it later.
+                digits = 10 * digits + ch - '0';
                 ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            exponent = endOfIntegerDigits - index + 1;
+            digitCount = index - startOfIntegerDigits - 1;
+        } else {
+            digitCount = index - startOfIntegerDigits;
+        }
+
+        // Parse exponent number
+        // ---------------------
+        int exp_number = 0;
+        boolean neg_exp = false;
+        if ((ch == 'e') || (ch == 'E')) {
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if (ch == '-') {
+                neg_exp = true;
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            } else if (ch == '+') {
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            if (!isInteger(ch)) {
+                throw new NumberFormatException("exponent must be followed by an integer");
+            }
+            // An exp_number > 308 is always infinity
+            while (isInteger(ch) && exp_number < 999) {
+                exp_number = 10 * exp_number + ch - '0';
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            // Skip remaining exp_number digits
+            while (isInteger(ch)) {
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            exponent += (neg_exp ? -exp_number : exp_number);
+        }
+
+        // Re-parse digits in case of a potential overflow
+        // -----------------------------------------------
+        boolean truncated = false;
+        if (digitCount > 19) {
+            index = startOfIntegerDigits;
+            ch = str.charAt(index);
+            exponent = (neg_exp ? -exp_number : exp_number);
+            Integer exponentX = null;
+            digits = 0;
+            while (isInteger(ch)) {
+                if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
+                    digits = 10 * digits + ch - '0';
+                } else {
+                    exponent += endOfIntegerDigits - index;
+                    truncated = true;
+                    break;
+                }
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            if (ch == '.') {
+                ch = ++index < strlen ? str.charAt(index) : 0;
+                while (isInteger(ch)) {
+                    if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
+                        digits = 10 * digits + ch - '0';
+                    } else {
+                        truncated = true;
+                        break;
+                    }
+                    ch = ++index < strlen ? str.charAt(index) : 0;
+                }
+                exponent -= index - endOfIntegerDigits - 1;
+            }
+            if (truncated) {
+                // If we have too many digits, we might need to round up.
+                // As an approximation, we add 1 here.
+                // For an exact result, we have to examine up to 768 digits.
+                digits++;
+
+                // XXX As a temporary solution we fall back to class Double.
+                return Double.parseDouble(str.toString());
             }
         }
 
+        if (digits == 0) {
+            return negative ? -0.0 : 0.0;
+        }
+        Double outDouble;
+        if (FASTFLOAT_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_LARGEST_POWER) {
+            outDouble = computeFloat64((int) exponent, digits, negative);
+        } else {
+            outDouble = null;
+        }
+        if (outDouble == null) {
+            // we are almost never going to get here.
+            return toBigDecimal(negative, digits, exponent).doubleValue();
+        }
+        return outDouble;
+    }
+
+    public static double parseDoubleOld(CharSequence str) throws NumberFormatException {
+        int strlen = str.length();
+        if (strlen == 0) {
+            throw new NumberFormatException("empty String");
+        }
+        int index = 0;
+        char ch = str.charAt(index);
+
+        // Parse optional sign
+        // -------------------
+        boolean negative = ch == '-';
+        if (negative || ch == '+') {
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if (ch == 0) {
+                throw new NumberFormatException("sign cannot stand alone");
+            }
+        }
+
+        // Parse NaN or Infinity
+        // ---------------------
+        if (ch == 'N') {
+            return parseNaN(str, index, strlen);
+        } else if (ch == 'I') {
+            return parseInfinity(str, ch, index, strlen, negative);
+        }
+
+        // Parse optional leading zero (could be all there is too)
+        // ---------------------------
+        if (ch == '0') {
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            if (ch == 'x' || ch == 'X') {
+                return parseHexFloatingPointLiteral(str, ch, index, strlen, negative);
+            } else if (isInteger(ch)) {
+                throw new NumberFormatException("0 cannot be followed by an integer");
+            }
+        }
+
+        // Parse integer part of digits
+        // ----------------------------
+        // Note a multiplication by 10 is cheaper than an arbitrary integer
+        // multiplication.
+
+        long digits = 0;
+        int exponent = 0;
+        int startOfDigits = index;
+        while (isInteger(ch)) {
+            // This might overflow, we deal with it later.
+            digits = 10 * digits + ch - '0';
+            ch = ++index < strlen ? str.charAt(index) : 0;
+        }
+
+        // Parse fractional part of digits
+        // -------------------------------
+        int digitCount;
+        if (ch == '.') {
+            ch = ++index < strlen ? str.charAt(index) : 0;
+            int startOfFractionDigits = index;
+            while (isInteger(ch)) {
+                // This might overflow, we deal with it later.
+                digits = 10 * digits + ch - '0';
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            exponent = startOfFractionDigits - index;
+            digitCount = index - startOfDigits - 1;
+        } else {
+            digitCount = index - startOfDigits;
+        }
+
+        // Parse exponent number
+        // ---------------------
         int exp_number = 0;
         boolean neg_exp = false;
         if (('e' == ch) || ('E' == ch)) {
@@ -1139,25 +1343,28 @@ public class FastDoubleParser {
             if (!isInteger(ch)) {
                 throw new NumberFormatException("exponent must be followed by an integer");
             }
+            // An exp_number > 308 is always infinity
+            while (isInteger(ch) && exp_number < 999) {
+                exp_number = 10 * exp_number + ch - '0';
+                ch = ++index < strlen ? str.charAt(index) : 0;
+            }
+            // Skip remaining exp_number digits
             while (isInteger(ch)) {
-                if (exp_number < 999) { // we need to check for overflows
-                    exp_number = 10 * exp_number + ch - '0';
-                }
                 ch = ++index < strlen ? str.charAt(index) : 0;
             }
             exponent += (neg_exp ? -exp_number : exp_number);
         }
 
+        // Re-parse digits in case of a potential overflow
+        // -----------------------------------------------
         boolean truncated = false;
-        if (index - startOfDigits > 19) {
-            // We might have had an overflow, do it again!
+        if (digitCount > 19) {
             index = startOfDigits;
             ch = str.charAt(index);
             exponent = (neg_exp ? -exp_number : exp_number);
             digits = 0;
             while (isInteger(ch)) {
                 if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                    // We avoid overflow by only considering up to 19 digits.
                     digits = 10 * digits + ch - '0';
                 } else {
                     // Adjust exponent for each skipped digit.
@@ -1170,7 +1377,6 @@ public class FastDoubleParser {
                 ch = ++index < strlen ? str.charAt(index) : 0;
                 while (isInteger(ch)) {
                     if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        // We avoid overflow by only considering up to 19 digits.
                         digits = 10 * digits + ch - '0';
                         exponent--;
                     } else {
@@ -1199,9 +1405,44 @@ public class FastDoubleParser {
         }
         if (outDouble == null) {
             // we are almost never going to get here.
-            return toBigDecimal(negative, digits,  exponent).doubleValue();
+            return toBigDecimal(negative, digits, exponent).doubleValue();
         }
         return outDouble;
+    }
+
+    private static double parseNaN(CharSequence str, int index, int strlen) {
+        if (index + 2 < strlen
+                //   && str.charAt(index) == 'N'
+                && str.charAt(index + 1) == 'a'
+                && str.charAt(index + 2) == 'N') {
+            return Double.NaN;
+        } else {
+            throw new NumberFormatException("unexpected text after 'N'");
+        }
+
+    }
+
+    private static double parseHexFloatingPointLiteral(CharSequence str, char ch, int index, int strlen, boolean negative) {
+        // XXX As a temporary solution we fall back to class Double.
+        return Double.parseDouble(str.toString());
+
+    }
+
+    private static double parseInfinity(CharSequence str, char ch, int index, int strlen, boolean negative) {
+        if (index + 7 < strlen
+                //  && str.charAt(index) == 'I'
+                && str.charAt(index + 1) == 'n'
+                && str.charAt(index + 2) == 'f'
+                && str.charAt(index + 3) == 'i'
+                && str.charAt(index + 4) == 'n'
+                && str.charAt(index + 5) == 'i'
+                && str.charAt(index + 6) == 't'
+                && str.charAt(index + 7) == 'y'
+        ) {
+            return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        } else {
+            throw new NumberFormatException("unexpected text after 'I'");
+        }
     }
 
     /**
