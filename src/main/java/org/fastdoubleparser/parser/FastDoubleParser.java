@@ -1231,7 +1231,7 @@ public class FastDoubleParser {
                 digits++;
 
                 // XXX As a temporary solution we fall back to class Double.
-                //return Double.parseDouble(str.toString());
+                return Double.parseDouble(str.toString());
             }
         }
 
