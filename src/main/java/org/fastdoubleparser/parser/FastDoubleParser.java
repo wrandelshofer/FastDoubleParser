@@ -723,7 +723,8 @@ public class FastDoubleParser {
             0xd30560258f54e6baL, 0x47c6b82ef32a2069L,
             0x4cdc331d57fa5441L, 0xe0133fe4adf8e952L,
             0x58180fddd97723a6L, 0x570f09eaa7ea7648L};
-    private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000000000000000000L;
+    private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000_00000_00000_00000L;
+    private final static int MINIMAL_EIGHT_DIGIT_INTEGER = 100_00000;
 
     /**
      * Attempts to compute {@literal digits * 10^(power)} exactly;
@@ -1149,98 +1150,88 @@ public class FastDoubleParser {
         // multiplication.
 
         long digits = 0;// digits is treated as an unsigned long
-        int exponent = 0;
-        int startOfIntegerDigits = index;
-        while (isInteger(ch)) {
-            // This might overflow, we deal with it later.
-            digits = 10 * digits + ch - '0';
-            ch = ++index < strlen ? str.charAt(index) : 0;
-        }
-        int endOfIntegerDigits = index;
-
-        // Parse fractional part of digits
-        // -------------------------------
-        int digitCount;
-        if (ch == '.') {
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            while (isInteger(ch)) {
-                // This might overflow, we deal with it later.
-                digits = 10 * digits + ch - '0';
-                ch = ++index < strlen ? str.charAt(index) : 0;
+        long exponent = 0;
+        int indexOfFirstDigit = index;
+        int virtualIndexOfPoint = -1;
+        int skipCount = 0;//counts non-digit characters on and after '.'
+        for (; index < strlen; index++) {
+            ch = str.charAt(index);
+            if (isInteger(ch)) {
+                digits = 10 * digits + ch - '0';// This might overflow, we deal with it later.
+            } else if (ch == '.') {
+                if (virtualIndexOfPoint != -1) {
+                    throw new NumberFormatException("multiple points");
+                }
+                virtualIndexOfPoint = index;
+                skipCount++;
+            } else if (ch == '_') {
+                if (virtualIndexOfPoint != -1) {
+                    skipCount++;
+                }
+            } else {
+                break;
             }
-            exponent = endOfIntegerDigits - index + 1;
-            digitCount = index - startOfIntegerDigits - 1;
+        }
+        int indexAfterDigits = index;
+        if (virtualIndexOfPoint == -1) {
+            virtualIndexOfPoint = indexAfterDigits;
         } else {
-            digitCount = index - startOfIntegerDigits;
+            exponent = virtualIndexOfPoint - index + skipCount;
         }
 
         // Parse exponent number
         // ---------------------
-        int exp_number = 0;
-        boolean neg_exp = false;
+        long exp_number = 0;
         if ((ch == 'e') || (ch == 'E')) {
             ch = ++index < strlen ? str.charAt(index) : 0;
-            if (ch == '-') {
-                neg_exp = true;
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            } else if (ch == '+') {
+            boolean neg_exp = ch == '-';
+            if (neg_exp || ch == '+') {
                 ch = ++index < strlen ? str.charAt(index) : 0;
             }
             if (!isInteger(ch)) {
                 throw new NumberFormatException("exponent must be followed by an integer");
             }
-            // An exp_number > 308 is always infinity
-            while (isInteger(ch) && exp_number < 999) {
-                exp_number = 10 * exp_number + ch - '0';
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            // Skip remaining exp_number digits
             while (isInteger(ch)) {
+                if (exp_number < MINIMAL_EIGHT_DIGIT_INTEGER) {
+                    // Guard against overflow of exp_number
+                    exp_number = 10 * exp_number + ch - '0';
+                }
                 ch = ++index < strlen ? str.charAt(index) : 0;
             }
-            exponent += (neg_exp ? -exp_number : exp_number);
+            if (neg_exp) {
+                exp_number = -exp_number;
+            }
+            exponent += exp_number;
         }
 
         // Re-parse digits in case of a potential overflow
         // -----------------------------------------------
-        boolean truncated = false;
-        if (digitCount > 19) {
-            index = startOfIntegerDigits;
-            ch = str.charAt(index);
-            exponent = (neg_exp ? -exp_number : exp_number);
-            Integer exponentX = null;
+        if (indexAfterDigits - indexOfFirstDigit - skipCount > 19) {
             digits = 0;
-            while (isInteger(ch)) {
-                if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                    digits = 10 * digits + ch - '0';
+            skipCount = 0;
+            for (index = indexOfFirstDigit; index < indexAfterDigits; index++) {
+                ch = str.charAt(index);
+                if (ch == '_' || ch == '.') {
+                    skipCount++;
                 } else {
-                    exponent += endOfIntegerDigits - index;
-                    truncated = true;
-                    break;
-                }
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            if (ch == '.') {
-                ch = ++index < strlen ? str.charAt(index) : 0;
-                while (isInteger(ch)) {
                     if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                         digits = 10 * digits + ch - '0';
                     } else {
-                        truncated = true;
                         break;
                     }
-                    ch = ++index < strlen ? str.charAt(index) : 0;
                 }
-                exponent -= index - endOfIntegerDigits - 1;
             }
-            if (truncated) {
+
+            if (index < indexAfterDigits) {
+                exponent = virtualIndexOfPoint - index + skipCount + exp_number;
+
                 // If we have too many digits, we might need to round up.
                 // As an approximation, we add 1 here.
                 // For an exact result, we have to examine up to 768 digits.
                 digits++;
 
                 // XXX As a temporary solution we fall back to class Double.
-                return Double.parseDouble(str.toString());
+                //return Double.parseDouble(str.toString());
             }
         }
 
@@ -1255,157 +1246,7 @@ public class FastDoubleParser {
         }
         if (outDouble == null) {
             // we are almost never going to get here.
-            return toBigDecimal(negative, digits, exponent).doubleValue();
-        }
-        return outDouble;
-    }
-
-    public static double parseDoubleOld(CharSequence str) throws NumberFormatException {
-        int strlen = str.length();
-        if (strlen == 0) {
-            throw new NumberFormatException("empty String");
-        }
-        int index = 0;
-        char ch = str.charAt(index);
-
-        // Parse optional sign
-        // -------------------
-        boolean negative = ch == '-';
-        if (negative || ch == '+') {
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            if (ch == 0) {
-                throw new NumberFormatException("sign cannot stand alone");
-            }
-        }
-
-        // Parse NaN or Infinity
-        // ---------------------
-        if (ch == 'N') {
-            return parseNaN(str, index, strlen);
-        } else if (ch == 'I') {
-            return parseInfinity(str, ch, index, strlen, negative);
-        }
-
-        // Parse optional leading zero (could be all there is too)
-        // ---------------------------
-        if (ch == '0') {
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            if (ch == 'x' || ch == 'X') {
-                return parseHexFloatingPointLiteral(str, ch, index, strlen, negative);
-            } else if (isInteger(ch)) {
-                throw new NumberFormatException("0 cannot be followed by an integer");
-            }
-        }
-
-        // Parse integer part of digits
-        // ----------------------------
-        // Note a multiplication by 10 is cheaper than an arbitrary integer
-        // multiplication.
-
-        long digits = 0;
-        int exponent = 0;
-        int startOfDigits = index;
-        while (isInteger(ch)) {
-            // This might overflow, we deal with it later.
-            digits = 10 * digits + ch - '0';
-            ch = ++index < strlen ? str.charAt(index) : 0;
-        }
-
-        // Parse fractional part of digits
-        // -------------------------------
-        int digitCount;
-        if (ch == '.') {
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            int startOfFractionDigits = index;
-            while (isInteger(ch)) {
-                // This might overflow, we deal with it later.
-                digits = 10 * digits + ch - '0';
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            exponent = startOfFractionDigits - index;
-            digitCount = index - startOfDigits - 1;
-        } else {
-            digitCount = index - startOfDigits;
-        }
-
-        // Parse exponent number
-        // ---------------------
-        int exp_number = 0;
-        boolean neg_exp = false;
-        if (('e' == ch) || ('E' == ch)) {
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            if ('-' == ch) {
-                neg_exp = true;
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            } else if ('+' == ch) {
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            if (!isInteger(ch)) {
-                throw new NumberFormatException("exponent must be followed by an integer");
-            }
-            // An exp_number > 308 is always infinity
-            while (isInteger(ch) && exp_number < 999) {
-                exp_number = 10 * exp_number + ch - '0';
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            // Skip remaining exp_number digits
-            while (isInteger(ch)) {
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            exponent += (neg_exp ? -exp_number : exp_number);
-        }
-
-        // Re-parse digits in case of a potential overflow
-        // -----------------------------------------------
-        boolean truncated = false;
-        if (digitCount > 19) {
-            index = startOfDigits;
-            ch = str.charAt(index);
-            exponent = (neg_exp ? -exp_number : exp_number);
-            digits = 0;
-            while (isInteger(ch)) {
-                if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                    digits = 10 * digits + ch - '0';
-                } else {
-                    // Adjust exponent for each skipped digit.
-                    exponent++;
-                    truncated = true;
-                }
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            if (ch == '.') {
-                ch = ++index < strlen ? str.charAt(index) : 0;
-                while (isInteger(ch)) {
-                    if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        digits = 10 * digits + ch - '0';
-                        exponent--;
-                    } else {
-                        truncated = true;
-                        break;
-                    }
-                    ch = ++index < strlen ? str.charAt(index) : 0;
-                }
-            }
-            if (truncated) {
-                // If we have too many digits, we might need to round up.
-                // As an approximation, we add 1 here.
-                // For an exact result, we have to examine up to 768 digits.
-                digits++;
-            }
-        }
-
-        if (digits == 0) {
-            return negative ? -0.0 : 0.0;
-        }
-        Double outDouble;
-        if (FASTFLOAT_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_LARGEST_POWER) {
-            outDouble = computeFloat64((int) exponent, digits, negative);
-        } else {
-            outDouble = null;
-        }
-        if (outDouble == null) {
-            // we are almost never going to get here.
-            return toBigDecimal(negative, digits, exponent).doubleValue();
+            return toBigDecimal(negative, digits, (int) exponent).doubleValue();
         }
         return outDouble;
     }
