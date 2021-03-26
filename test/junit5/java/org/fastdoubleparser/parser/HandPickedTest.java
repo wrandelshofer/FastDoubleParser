@@ -29,7 +29,11 @@ class HandPickedTest {
                 dynamicTest("1e", () -> testIllegalInput("1e")),
                 dynamicTest("1_000", () -> testIllegalInput("1_000")),
                 dynamicTest("0.000_1", () -> testIllegalInput("0.000_1")),
-                dynamicTest("-e-55", () -> testIllegalInput("-e-55"))
+                dynamicTest("-e-55", () -> testIllegalInput("-e-55")),
+                dynamicTest("1 x", () -> testIllegalInput("1 x")),
+                dynamicTest("x 1", () -> testIllegalInput("x 1")),
+                dynamicTest("NaN x", () -> testIllegalInput("NaN x")),
+                dynamicTest("Infinity x", () -> testIllegalInput("Infinity x"))
         );
     }
 
