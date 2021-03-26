@@ -47,7 +47,7 @@ class RandomLexicallyGeneratedTest {
     @TestFactory
     Stream<DynamicTest> dynamicTestsRandomStringsOfIncreasingLengthWithWhitespace() {
                     Random rng = new Random();
-        return IntStream.range(1, 1_000).mapToObj(i -> {
+        return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = produceRandomInputStringFromLexicalRuleWithWhitespace(i, rng);
                     return dynamicTest(i + ": " + str,
                             () -> testAgainstDoubleParseDouble(str));
@@ -57,8 +57,8 @@ class RandomLexicallyGeneratedTest {
 
     @TestFactory
     Stream<DynamicTest> dynamicTestsRandomStringFrom1SyntaxRuleWithoutWhitespace() {
-                    Random rng = new Random(0);
-        return IntStream.range(1, 100_000).mapToObj(i -> {
+                    Random rng = new Random();
+        return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = produceRandomInputStringFromLexicalRuleWithoutWhitespace(1, rng);
                     return dynamicTest(i + ": " + str,
                             () -> testAgainstDoubleParseDouble(str));
@@ -68,8 +68,8 @@ class RandomLexicallyGeneratedTest {
 
     @TestFactory
     Stream<DynamicTest> dynamicTestsRandomStringFrom10SyntaxRuleWithoutWhitespace() {
-                    Random rng = new Random(0);
-        return IntStream.range(1, 100_000).mapToObj(i -> {
+                    Random rng = new Random();
+        return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = produceRandomInputStringFromLexicalRuleWithoutWhitespace(10, rng);
                     return dynamicTest(i + ": " + str,
                             () -> testAgainstDoubleParseDouble(str));

@@ -6,6 +6,7 @@ package org.fastdoubleparser.parser;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 
 /**
  * This is a C++ to Java port of Daniel Lemire's fast double parser.
@@ -1168,7 +1169,7 @@ public class FastDoubleParser {
         long exponent = 0;
         int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
-        int skipCount = 0;//counts non-digit characters on and after '.'
+        int skipCount = 0;//counts non-digit characters
         for (; index < strlen; index++) {
             ch = str.charAt(index);
             if (isInteger(ch)) {
@@ -1201,7 +1202,7 @@ public class FastDoubleParser {
             if (neg_exp || ch == '+') {
                 ch = ++index < strlen ? str.charAt(index) : 0;
             }
-            if (!isInteger(ch) || !hasLeadingZero && digitCount == 0) {
+            if (!isInteger(ch)) {
                 throwNumberFormatException(str);
             }
             while (isInteger(ch)) {
@@ -1225,7 +1226,7 @@ public class FastDoubleParser {
         }
         if (index < strlen) {
             throwNumberFormatException(str);
-        } else if (digitCount == 0 && !hasLeadingZero) {
+        } else if ( !hasLeadingZero  && digitCount==0&&str.charAt(virtualIndexOfPoint)!='.') {
             return throwNumberFormatException(str);
         }
 
@@ -1249,14 +1250,20 @@ public class FastDoubleParser {
             }
 
             if (index < indexAfterDigits) {
+                // We have too many digits. We may have to round up.
+                // To do this, we may have to examine up to 768 digits.
+
+                // There are cases, in which rounding up has no effect.
                 exponent = virtualIndexOfPoint - index + skipCount + exp_number;
+                if (FASTFLOAT_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_LARGEST_POWER) {
+                    Double withoutRounding = computeFloat64((int) exponent, digits, negative);
+                    Double roundedUp = computeFloat64((int) exponent, digits + 1, negative);
+                    if (withoutRounding!=null&&Objects.equals(roundedUp, withoutRounding)) {
+                        return withoutRounding;
+                    }
+                }
 
-                // If we have too many digits, we might need to round up.
-                // As an approximation, we add 1 here.
-                // For an exact result, we have to examine up to 768 digits.
-                digits++;
-
-                // XXX As a temporary solution we fall back to class Double.
+               // We have to take the slow path.
                 return Double.parseDouble(str.toString());
             }
         }
@@ -1271,7 +1278,7 @@ public class FastDoubleParser {
             outDouble = null;
         }
         if (outDouble == null) {
-            // we are almost never going to get here.
+            // We have to take the slow path.
             return toBigDecimal(negative, digits, (int) exponent).doubleValue();
         }
         return outDouble;
