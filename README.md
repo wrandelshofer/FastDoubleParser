@@ -37,14 +37,14 @@ On my Mac mini (2018) I get the following results:
 
     parsing random numbers in the range [0,1)
     === number of trials 32 =====
-    FastDoubleParser.parseDouble  MB/s avg: 388.873390, min: 331.77, max: 418.60
-    Double.parseDouble            MB/s avg: 84.108783, min: 77.34, max: 90.35
-    Speedup FastDoubleParser vs Double: 4.623458
+    FastDoubleParser.parseDouble  MB/s avg: 341.838343, min: 311.14, max: 367.31
+    Double.parseDouble            MB/s avg: 82.909605, min: 75.72, max: 89.24
+    Speedup FastDoubleParser vs Double: 4.123025
 
     parsing numbers in file data/canada.txt
     read 111126 lines
     === number of trials 32 =====
-    FastDoubleParser.parseDouble  MB/s avg: 276.744401, min: 174.85, max: 328.97
-    Double.parseDouble            MB/s avg: 68.303959, min: 43.39, max: 85.70
-    Speedup FastDoubleParser vs Double: 4.051660
+    FastDoubleParser.parseDouble  MB/s avg: 327.656597, min: 238.82, max: 386.00
+    Double.parseDouble            MB/s avg: 70.606008, min: 47.66, max: 85.86
+    Speedup FastDoubleParser vs Double: 4.640633
 

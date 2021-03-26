@@ -958,30 +958,44 @@ public class FastDoubleParser {
      * <p>
      * This method can be used as a drop in for method {@link Double#valueOf(String)}.
      * <p>
-     * Parses the following productions:
+     * Leading and trailing whitespace characters in {@code str} are ignored.
+     * Whitespace is removed as if by the {@link String#trim()} method;
+     * that is, characters in the range [U+0000,U+0020].
+     * <p>
+     * The rest of {@code str} should constitute a FloatValue as described by the
+     * lexical syntax rules shown below with the following exceptions:
+     * <ul>
+     *     <li>underscores are not accepted between digits</li>
+     *     <li>FloatTypeSuffix: may not be specified</li>
+     * </ul>
      * <blockquote>
      * <dl>
      * <dt><i>FloatValue:</i>
      * <dd><i>[Sign]</i> {@code NaN}
      * <dd><i>[Sign]</i> {@code Infinity}
-     * <dd><i>[Sign] FloatingPointLiteral</i>
-     * <dd><i>[Sign] HexFloatingPointLiteral</i>
+     * <dd><i>[Sign] DecimalFloatingPointLiteral</i>
+     * <dd><i>[Sign] HexadecimalFloatingPointLiteral</i>
      * <dd><i>SignedInteger</i>
      * </dl>
      *
      * <dl>
-     * <dt><i>HexFloatingPointLiteral</i>:
-     * <dd> <i>HexSignificand BinaryExponent [FloatTypeSuffix]</i>
+     * <dt><i>HexadecimalFloatingPointLiteral</i>:
+     * <dd><i>HexSignificand BinaryExponent [FloatTypeSuffix]</i>
      * </dl>
      *
      * <dl>
      * <dt><i>HexSignificand:</i>
      * <dd><i>HexNumeral</i>
      * <dd><i>HexNumeral</i> {@code .}
-     * <dd>{@code 0x} <i>[HexDigits]
-     *     </i>{@code .}<i> HexDigits</i>
-     * <dd>{@code 0X}<i> [HexDigits]
-     *     </i>{@code .} <i>HexDigits</i>
+     * <dd>{@code 0x} <i>[HexDigits]</i> {@code .} <i>HexDigits</i>
+     * <dd>{@code 0X} <i>[HexDigits]</i> {@code .} <i>HexDigits</i>
+     * </dl>
+     * <dl>
+     * <dt><i>HexSignificand:</i>
+     * <dd><i>HexNumeral</i>
+     * <dd><i>HexNumeral</i> {@code .}
+     * <dd>{@code 0x} <i>[HexDigits]</i> {@code .} <i>HexDigits</i>
+     * <dd>{@code 0X} <i>[HexDigits]</i> {@code .} <i>HexDigits</i>
      * </dl>
      *
      * <dl>
@@ -996,15 +1010,8 @@ public class FastDoubleParser {
      * </dl>
      *
      * <dl>
-     * <dt><i>FloatingPointLiteral:</i>
-     * <dd><i>DecimalFloatingPointLiteral</i>
-     * <dd><i>HexadecimalFloatingPointLiteral</i>
-     * </dl>
-     *
-     * <dl>
      * <dt><i>DecimalFloatingPointLiteral:</i>
      * <dd><i>Digits {@code .} [Digits] [ExponentPart] [FloatTypeSuffix]</i>
-     * <dd><i>{@code .} Digits [ExponentPart] [FloatTypeSuffix]</i>
      * <dd><i>{@code .} Digits [ExponentPart] [FloatTypeSuffix]</i>
      * <dd><i>Digits ExponentPart [FloatTypeSuffix]</i>
      * <dd><i>Digits [ExponentPart] FloatTypeSuffix</i>
@@ -1063,32 +1070,32 @@ public class FastDoubleParser {
      * </dl>
      *
      * <dl>
-     *     <dt><i>HexNumeral:</i>
-     *     <dd>{@code 0} {@code x} <i>HexDigits</i>
-     *     <dd>{@code 0} {@code X} <i>HexDigits</i>
+     * <dt><i>HexNumeral:</i>
+     * <dd>{@code 0} {@code x} <i>HexDigits</i>
+     * <dd>{@code 0} {@code X} <i>HexDigits</i>
      * </dl>
      *
      * <dl>
-     *     <dt><i>HexDigits:</i>
-     *     <dd><i>HexDigit</i>
-     *     <dd><i> HexDigit [HexDigitsAndUnderscores] HexDigit</i>
+     * <dt><i>HexDigits:</i>
+     * <dd><i>HexDigit</i>
+     * <dd><i> HexDigit [HexDigitsAndUnderscores] HexDigit</i>
      * </dl>
      *
      * <dl>
-     *     <dt><i>HexDigit:</i>
-     *     <dd><i>(one of)</i>
-     *     <dd><{@code 0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F}
+     * <dt><i>HexDigit:</i>
+     * <dd><i>(one of)</i>
+     * <dd>{@code 0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F}
      * </dl>
      *
      * <dl>
-     *     <dt><i>HexDigitsAndUnderscores:</i>
-     *     <dd><i>HexDigitOrUnderscore {HexDigitOrUnderscore}</i>
+     * <dt><i>HexDigitsAndUnderscores:</i>
+     * <dd><i>HexDigitOrUnderscore {HexDigitOrUnderscore}</i>
      * </dl>
      *
      * <dl>
-     *     <dt><i>HexDigitOrUnderscore:</i>
-     *     <dd><i>HexDigit</i>
-     *     <dd>{@code _}
+     * <dt><i>HexDigitOrUnderscore:</i>
+     * <dd><i>HexDigit</i>
+     * <dd>{@code _}
      * </dl>
      * </blockquote>
      *
@@ -1111,10 +1118,17 @@ public class FastDoubleParser {
      */
     public static double parseDouble(CharSequence str) throws NumberFormatException {
         int strlen = str.length();
-        if (strlen == 0) {
+        int index = 0;
+
+        // Skip leading whitespace
+        for (; index < strlen; index++) {
+            if (str.charAt(index) > 0x20) {
+                break;
+            }
+        }
+        if (index == strlen) {
             throw new NumberFormatException("empty String");
         }
-        int index = 0;
         char ch = str.charAt(index);
 
         // Parse optional sign
@@ -1123,7 +1137,7 @@ public class FastDoubleParser {
         if (negative || ch == '+') {
             ch = ++index < strlen ? str.charAt(index) : 0;
             if (ch == 0) {
-                throw new NumberFormatException("sign cannot stand alone");
+                throwNumberFormatException(str);
             }
         }
 
@@ -1137,7 +1151,8 @@ public class FastDoubleParser {
 
         // Parse optional leading zero (could be all there is too)
         // ---------------------------
-        if (ch == '0') {
+        boolean hasLeadingZero = ch == '0';
+        if (hasLeadingZero) {
             ch = ++index < strlen ? str.charAt(index) : 0;
             if (ch == 'x' || ch == 'X') {
                 return parseHexFloatingPointLiteral(str, ch, index, strlen, negative);
@@ -1160,19 +1175,16 @@ public class FastDoubleParser {
                 digits = 10 * digits + ch - '0';// This might overflow, we deal with it later.
             } else if (ch == '.') {
                 if (virtualIndexOfPoint != -1) {
-                    throw new NumberFormatException("multiple points");
+                    throwNumberFormatException(str);
                 }
                 virtualIndexOfPoint = index;
                 skipCount++;
-            } else if (ch == '_') {
-                if (virtualIndexOfPoint != -1) {
-                    skipCount++;
-                }
             } else {
                 break;
             }
         }
         int indexAfterDigits = index;
+        int digitCount = indexAfterDigits - indexOfFirstDigit - skipCount;
         if (virtualIndexOfPoint == -1) {
             virtualIndexOfPoint = indexAfterDigits;
         } else {
@@ -1182,14 +1194,15 @@ public class FastDoubleParser {
         // Parse exponent number
         // ---------------------
         long exp_number = 0;
-        if ((ch == 'e') || (ch == 'E')) {
+        boolean hasExponent = (ch == 'e') || (ch == 'E');
+        if (hasExponent) {
             ch = ++index < strlen ? str.charAt(index) : 0;
             boolean neg_exp = ch == '-';
             if (neg_exp || ch == '+') {
                 ch = ++index < strlen ? str.charAt(index) : 0;
             }
-            if (!isInteger(ch)) {
-                throw new NumberFormatException("exponent must be followed by an integer");
+            if (!isInteger(ch) || !hasLeadingZero && digitCount == 0) {
+                throwNumberFormatException(str);
             }
             while (isInteger(ch)) {
                 if (exp_number < MINIMAL_EIGHT_DIGIT_INTEGER) {
@@ -1204,14 +1217,27 @@ public class FastDoubleParser {
             exponent += exp_number;
         }
 
+        // Skip trailing whitespace
+        for (; index < strlen; index++) {
+            if (str.charAt(index) > 0x20) {
+                break;
+            }
+        }
+        if (index < strlen) {
+            throwNumberFormatException(str);
+        } else if (digitCount == 0 && !hasLeadingZero) {
+            return throwNumberFormatException(str);
+        }
+
+
         // Re-parse digits in case of a potential overflow
         // -----------------------------------------------
-        if (indexAfterDigits - indexOfFirstDigit - skipCount > 19) {
+        if (digitCount > 19) {
             digits = 0;
             skipCount = 0;
             for (index = indexOfFirstDigit; index < indexAfterDigits; index++) {
                 ch = str.charAt(index);
-                if (ch == '_' || ch == '.') {
+                if (ch == '.') {
                     skipCount++;
                 } else {
                     if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
@@ -1249,6 +1275,10 @@ public class FastDoubleParser {
             return toBigDecimal(negative, digits, (int) exponent).doubleValue();
         }
         return outDouble;
+    }
+
+    private static double throwNumberFormatException(CharSequence str) {
+        throw new NumberFormatException("For input string: \"" + str.toString().trim() + "\"");
     }
 
     private static double parseNaN(CharSequence str, int index, int strlen) {

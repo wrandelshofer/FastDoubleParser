@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -20,14 +19,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-class FastDoubleParserTest {
+class HandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsIllegalInputs() {
         return List.of(
                 dynamicTest("empty", () -> testIllegalInput("")),
                 dynamicTest("-", () -> testIllegalInput("-")),
                 dynamicTest("+", () -> testIllegalInput("+")),
-                dynamicTest("1e", () -> testIllegalInput("1e"))
+                dynamicTest("1e", () -> testIllegalInput("1e")),
+                dynamicTest("1_000", () -> testIllegalInput("1_000")),
+                dynamicTest("0.000_1", () -> testIllegalInput("0.000_1")),
+                dynamicTest("-e-55", () -> testIllegalInput("-e-55"))
         );
     }
 
@@ -53,8 +55,6 @@ class FastDoubleParserTest {
                 dynamicTest("1e+1", () -> testLegalInput("1e+1", 1e+1)),
                 dynamicTest("1e-1", () -> testLegalInput("1e-1", 1e-1)),
                 dynamicTest("0049", () -> testLegalInput("0049", 49)),
-                dynamicTest("1_000", () -> testLegalInput("1_000", 1_000)),
-                dynamicTest("0.000_1", () -> testLegalInput("0.000_1", 0.000_1)),
                 dynamicTest("9999999999999999999", () -> testLegalInput("9999999999999999999", 9999999999999999999d)),
                 dynamicTest("3.7587182468424695418288325e-309", () -> testLegalInput("3.7587182468424695418288325e-309", 3.7587182468424695418288325e-309)),
                 dynamicTest("9007199254740992.e-256", () -> testLegalInput("9007199254740992.e-256", 9007199254740992.e-256)),
@@ -123,13 +123,6 @@ class FastDoubleParserTest {
                 .map(d -> dynamicTest(d, () -> testLegalInput(d, Double.parseDouble(d))));
     }
 
-    @TestFactory
-    Stream<DynamicNode> dynamicTestsRandomInputs() {
-        Random r = new Random(0);
-        return r.longs(20_000)
-                .mapToDouble(Double::longBitsToDouble)
-                .mapToObj(d -> dynamicTest(d + "", () -> testLegalInput(d)));
-    }
 
     @TestFactory
     Stream<DynamicNode> testErrorCases() throws IOException {

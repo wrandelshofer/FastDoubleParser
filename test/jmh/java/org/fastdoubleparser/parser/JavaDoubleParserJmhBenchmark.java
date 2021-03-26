@@ -32,10 +32,9 @@ public class JavaDoubleParserJmhBenchmark {
      * </pre>
      */
     @org.openjdk.jmh.annotations.Benchmark
-    public void benchmarkDouble() {
+    public void benchmarkDouble19DigitsWithoutExp() {
         String str = "123.4567890123456789";
         Double.parseDouble(str);
-
     }
 
 }
