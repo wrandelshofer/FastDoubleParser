@@ -33,12 +33,13 @@ class HandPickedTest {
                 dynamicTest("1 x", () -> testIllegalInput("1 x")),
                 dynamicTest("x 1", () -> testIllegalInput("x 1")),
                 dynamicTest("NaN x", () -> testIllegalInput("NaN x")),
-                dynamicTest("Infinity x", () -> testIllegalInput("Infinity x"))
+                dynamicTest("Infinity x", () -> testIllegalInput("Infinity x")),
+                dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde"))
         );
     }
 
     @TestFactory
-    List<DynamicNode> dynamicTestsLegalInputs() {
+    List<DynamicNode> dynamicTestsLegalDecFloatLiterals() {
         return List.of(
                 dynamicTest("1e23", () -> testLegalInput("1e23", 1e23)),
                 dynamicTest("0", () -> testLegalInput("0", 0.0)),
@@ -60,11 +61,10 @@ class HandPickedTest {
                 dynamicTest("1e-1", () -> testLegalInput("1e-1", 1e-1)),
                 dynamicTest("0049", () -> testLegalInput("0049", 49)),
                 dynamicTest("9999999999999999999", () -> testLegalInput("9999999999999999999", 9999999999999999999d)),
+                dynamicTest("972150611626518208.0", () -> testLegalInput("972150611626518208.0", 9.7215061162651827E17)),
                 dynamicTest("3.7587182468424695418288325e-309", () -> testLegalInput("3.7587182468424695418288325e-309", 3.7587182468424695418288325e-309)),
                 dynamicTest("9007199254740992.e-256", () -> testLegalInput("9007199254740992.e-256", 9007199254740992.e-256)),
-                dynamicTest("0x1.921fb54442d18p1", () -> testLegalInput("0x1.921fb54442d18p1", 0x1.921fb54442d18p1)),
-                dynamicTest("0.1e+3",
-                        () -> testLegalInput("0.1e+3",
+                dynamicTest("0.1e+3",                        () -> testLegalInput("0.1e+3",
                                 100.0)),
                 dynamicTest("0.00000000000000000000000000000000000000000001e+46",
                         () -> testLegalInput("0.00000000000000000000000000000000000000000001e+46",
@@ -84,40 +84,108 @@ class HandPickedTest {
                         "1e-325", 0.0)),
                 dynamicTest("1e310", () -> testLegalInput(
                         "1e310", Double.POSITIVE_INFINITY)),
-                dynamicTest(Double.MIN_VALUE + "", () -> testLegalInput(
-                        Double.MIN_VALUE)),
-                dynamicTest(Double.MAX_VALUE + "", () -> testLegalInput(
-                        Double.MAX_VALUE)),
-                dynamicTest(Double.POSITIVE_INFINITY + "", () -> testLegalInput(
-                        Double.MIN_VALUE)),
-                dynamicTest(Double.NEGATIVE_INFINITY + "", () -> testLegalInput(
-                        Double.NEGATIVE_INFINITY)),
-                dynamicTest(Double.NaN + "", () -> testLegalInput(
-                        Double.NaN)),
-                dynamicTest(7.2057594037927933e+16 + "", () -> testLegalInput(
+                dynamicTest(7.2057594037927933e+16 + "", () -> testLegalDecInput(
                         7.2057594037927933e+16)),
-                dynamicTest(-7.2057594037927933e+16 + "", () -> testLegalInput(
+                dynamicTest(-7.2057594037927933e+16 + "", () -> testLegalDecInput(
                         -7.2057594037927933e+16)),
-                dynamicTest(-4.8894481170331026E-173 + "", () -> testLegalInput(
+                dynamicTest(-4.8894481170331026E-173 + "", () -> testLegalDecInput(
                         -4.8894481170331026E-173)),
-                dynamicTest(4.8894481170331026E-173 + "", () -> testLegalInput(
+                dynamicTest(4.8894481170331026E-173 + "", () -> testLegalDecInput(
                         4.8894481170331026E-173)),
-                dynamicTest(-4.889448117033103E-173 + "", () -> testLegalInput(
+                dynamicTest(-4.889448117033103E-173 + "", () -> testLegalDecInput(
                         -4.889448117033103E-173)),
-                dynamicTest(4.889448117033103E-173 + "", () -> testLegalInput(
+                dynamicTest(4.889448117033103E-173 + "", () -> testLegalDecInput(
                         4.889448117033103E-173)),
-                dynamicTest(2.348957380189919E-199 + "", () -> testLegalInput(
+                dynamicTest(2.348957380189919E-199 + "", () -> testLegalDecInput(
                         2.348957380189919E-199)),
-                dynamicTest(-2.348957380189919E-199 + "", () -> testLegalInput(
+                dynamicTest(-2.348957380189919E-199 + "", () -> testLegalDecInput(
                         -2.348957380189919E-199)),
-                dynamicTest(-6.658066127037204E87 + "", () -> testLegalInput(
+                dynamicTest(-6.658066127037204E87 + "", () -> testLegalDecInput(
                         -6.658066127037204E87)),
-                dynamicTest(6.658066127037204E87 + "", () -> testLegalInput(
+                dynamicTest(6.658066127037204E87 + "", () -> testLegalDecInput(
                         6.658066127037204E87)),
-                dynamicTest(4.559067278662733E288 + "", () -> testLegalInput(
+                dynamicTest(4.559067278662733E288 + "", () -> testLegalDecInput(
                         4.559067278662733E288)),
-                dynamicTest(-4.559067278662733E288 + "", () -> testLegalInput(
+                dynamicTest(-4.559067278662733E288 + "", () -> testLegalDecInput(
                         -4.559067278662733E288))
+        );
+    }
+
+    @TestFactory
+    List<DynamicNode> dynamicTestsLegalHexFloatLiterals() {
+        return List.of(
+                dynamicTest( "0x1.0p8", () -> testLegalInput( "0x1.0p8", 256))
+        );
+    }
+
+    @TestFactory
+    List<DynamicNode> dynamicTestsLegalDecFloatLiteralsExtremeValues() {
+        return List.of(
+                dynamicTest(Double.toString(Double.MIN_VALUE), () -> testLegalDecInput(
+                        Double.MIN_VALUE)),
+                dynamicTest(Double.toString(Double.MAX_VALUE), () -> testLegalDecInput(
+                        Double.MAX_VALUE)),
+                dynamicTest(Double.toString(Double.POSITIVE_INFINITY), () -> testLegalDecInput(
+                        Double.POSITIVE_INFINITY)),
+                dynamicTest(Double.toString(Double.NEGATIVE_INFINITY), () -> testLegalDecInput(
+                        Double.NEGATIVE_INFINITY)),
+                dynamicTest(Double.toString(Double.NaN), () -> testLegalDecInput(
+                        Double.NaN))
+        );
+    }
+
+    /**
+     * Tests input classes that execute different code branches in
+     * method {@link FastDoubleMath#tryDecToDoubleWithFastAlgorithm(boolean, long, int)}.
+     */
+    @TestFactory
+    List<DynamicNode> dynamicTestsDecFloatLiteralClingerInputClasses() {
+        return List.of(
+                //
+                dynamicTest("Inside Clinger fast path (max_clinger_significand, max_clinger_exponent)", () -> testLegalInput(
+                        "9007199254740991e22")),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand, max_clinger_exponent + 1)", () -> testLegalInput(
+                        "9007199254740991e23")),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand + 1, max_clinger_exponent)", () -> testLegalInput(
+                        "9007199254740992e22")),
+                dynamicTest("Inside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent)", () -> testLegalInput(
+                        "1e-22")),
+                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInput(
+                        "1e-23"))
+        );
+    }
+    /**
+     * Tests input classes that execute different code branches in
+     * method {@link FastDoubleMath#tryHexToDoubleWithFastAlgorithm(boolean, long, int)}.
+     */
+    @TestFactory
+    List<DynamicNode> dynamicTestsHexFloatLiteralClingerInputClasses() {
+        return List.of(
+                dynamicTest("Inside Clinger fast path (max_clinger_significand)", () -> testLegalInput(
+                        "0x1fffffffffffffp74",0x1fffffffffffffp74)),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand, max_clinger_exponent + 1)", () -> testLegalInput(
+                        "0x1fffffffffffffp74",0x1fffffffffffffp74)),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand + 1, max_clinger_exponent)", () -> testLegalInput(
+                        "0x20000000000000p74",0x20000000000000p74)),
+                dynamicTest("Inside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent)", () -> testLegalInput(
+                        "0x1p-74",0x1p-74)),
+                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInput(
+                        "0x1p-75",0x1p-75))
+        );
+    }
+    @TestFactory
+    List<DynamicNode> dynamicTestsLegalHexFloatLiteralsExtremeValues() {
+        return List.of(
+                dynamicTest(Double.toHexString(Double.MIN_VALUE), () -> testLegalHexInput(
+                        Double.MIN_VALUE)),
+                dynamicTest(Double.toHexString(Double.MAX_VALUE), () -> testLegalHexInput(
+                        Double.MAX_VALUE)),
+                dynamicTest(Double.toHexString(Double.POSITIVE_INFINITY), () -> testLegalHexInput(
+                        Double.POSITIVE_INFINITY)),
+                dynamicTest(Double.toHexString(Double.NEGATIVE_INFINITY), () -> testLegalHexInput(
+                        Double.NEGATIVE_INFINITY)),
+                dynamicTest(Double.toHexString(Double.NaN), () -> testLegalHexInput(
+                        Double.NaN))
         );
     }
 
@@ -144,8 +212,14 @@ class HandPickedTest {
         }
     }
 
-    private void testLegalInput(double expected) {
+    private void testLegalDecInput(double expected) {
         testLegalInput(expected + "", expected);
+    }
+    private void testLegalHexInput(double expected) {
+        testLegalInput(Double.toHexString(expected), expected);
+    }
+    private void testLegalInput(String str) {
+        testLegalInput(str,Double.valueOf(str));
     }
 
     private void testLegalInput(String str, double expected) {

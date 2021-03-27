@@ -44,7 +44,26 @@ On my Mac mini (2018) I get the following results:
     parsing numbers in file data/canada.txt
     read 111126 lines
     === number of trials 32 =====
-    FastDoubleParser.parseDouble  MB/s avg: 327.656597, min: 238.82, max: 386.00
-    Double.parseDouble            MB/s avg: 70.606008, min: 47.66, max: 85.86
-    Speedup FastDoubleParser vs Double: 4.640633
+    FastDoubleParser.parseDouble  MB/s avg: 319.496176, min: 216.37, max: 365.83
+    Double.parseDouble            MB/s avg: 71.851737, min: 46.78, max: 82.76
+    Speedup FastDoubleParser vs Double: 4.446603
+
+FastDoubleParser also speeds up parsing of hexadecimal float literals:
+
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
+
+    parsing numbers in file data/0to1_hexfloats.txt
+    read 100000 lines
+    === number of trials 32 =====
+    FastDoubleParser.parseDouble  MB/s avg: 256.321683, min: 204.29, max: 294.19
+    Double.parseDouble            MB/s avg: 44.747641, min: 27.28, max: 53.00
+    Speedup FastDoubleParser vs Double: 5.728161
+
+    parsing numbers in file data/canada_hexfloats.txt
+    read 111126 lines
+    === number of trials 32 =====
+    FastDoubleParser.parseDouble  MB/s avg: 255.023209, min: 210.57, max: 286.97
+    Double.parseDouble            MB/s avg: 45.355415, min: 26.25, max: 52.34
+    Speedup FastDoubleParser vs Double: 5.622773
 
