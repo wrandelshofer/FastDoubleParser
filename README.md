@@ -13,7 +13,9 @@ Usage:
 Note: Method parseDouble takes a CharacterSequence as its argument. So, if you have a text inside of a StringBuffer, you
 do not need to convert it to a String, because StringBuffer extends from CharacterSequence.
 
-There is a performance test in class FastDoubleParserTest.performanceTest.
+The test directory contains some functional tests, and some performance tests.
+**At this stage, the test suite is quite incomplete. 
+For now, I do not recommend using the code in a production environment (!)**
 
 How to run the performance test on a Mac:
 
