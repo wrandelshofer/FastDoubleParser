@@ -865,9 +865,8 @@ class FastDoubleMath {
      * FASTFLOAT_LARGEST_POWER] interval: the caller is responsible for this check.
      *
      * @param isNegative whether the number is negative
-     * @param digits     uint64 the digits of the number, {@literal (uint64)digits >= 0}.
-     * @param power      int32 the exponent of the number,
-     *                   {@literal power in [FASTFLOAT_SMALLEST_POWER, FASTFLOAT_LARGEST_POWER]};
+     * @param digits     uint64 the digits of the number
+     * @param power      int32 the exponent of the number
      * @return the computed double on success, null on failure
      */
      static Double tryDecToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
@@ -1048,6 +1047,18 @@ class FastDoubleMath {
         return Double.longBitsToDouble(bits);
     }
 
+    /**
+     * Attempts to compute {@literal digits * 2^(power)} exactly;
+     * and if "negative" is true, negate the result.
+     * <p>
+     * This function will only work in some cases, when it does not work it
+     * returns null.
+     *
+     * @param isNegative whether the number is negative
+     * @param digits     uint64 the digits of the number
+     * @param power      int32 the exponent of the number
+     * @return the computed double on success, null on failure
+     */
     static Double tryHexToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
         if (digits == 0||power<Double.MIN_EXPONENT-54) {
             return isNegative ? -0.0 : 0.0;
