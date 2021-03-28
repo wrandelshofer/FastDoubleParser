@@ -2,7 +2,9 @@
  * Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package org.fastdoubleparser.parser;import java.io.BufferedReader;
+package org.fastdoubleparser.parser;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
@@ -37,7 +39,6 @@ public class FastDoubleParserBenchmark {
 
     public static void main(String... args) throws Exception {
         System.out.printf("%s\n", getCpuInfo());
-        //Thread.sleep(10_000);
         System.out.printf("%s\n\n", getRtInfo());
         FastDoubleParserBenchmark benchmark = new FastDoubleParserBenchmark();
         if (args.length == 0) {
@@ -157,6 +158,5 @@ public class FastDoubleParserBenchmark {
         final RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();
         return mxbean.getVmName() + ", " + mxbean.getVmVendor() + ", " + mxbean.getVmVersion();
     }
-
 
 }

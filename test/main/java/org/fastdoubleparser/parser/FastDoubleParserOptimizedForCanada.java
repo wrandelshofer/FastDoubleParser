@@ -5,6 +5,9 @@
 package org.fastdoubleparser.parser;
 
 /**
+ * This version contains optimizations that make it faster for the
+ * canada.txt data set at the expense of other data sets.
+ * <p>
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
  * <p>
  * The code has been changed, so that it parses the same syntax as
@@ -24,16 +27,28 @@ package org.fastdoubleparser.parser;
  *     arXiv.2101.11408v3 [cs.DS] 24 Feb 2021</dt>
  *     <dd><a href="https://arxiv.org/pdf/2101.11408.pdf">arxiv.org</a></dd>
  * </dl>
- * </p>
+ * <p>
+ * <pre>
+ * Benchmark                                 Mode  Cnt   Score   Error  Units
+ * FastDoubleParserZero                      avgt   25    2.837 ± 0.018  ns/op
+ * FastDoubleParserOnePointZero              avgt   25   12.148 ± 0.213  ns/op
+ * FastDoubleParser3Digits                   avgt   25   11.457 ± 0.037  ns/op
+ * FastDoubleParser3DigitsWithDecimalPoint   avgt   25   13.834 ± 0.134  ns/op
+ * FastDoubleParser14HexDigitsWith3DigitExp  avgt   25   39.241 ± 0.293  ns/op
+ * FastDoubleParser17DigitsWith3DigitExp     avgt   25   33.619 ± 0.252  ns/op
+ * FastDoubleParser19DigitsWith3DigitExp     avgt   25   34.794 ± 0.105  ns/op
+ * FastDoubleParser19DigitsWithoutExp        avgt   25   29.315 ± 0.250  ns/op
+ *
+ * </pre>
  */
-public class FastDoubleParser {
+public class FastDoubleParserOptimizedForCanada {
     private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000_00000_00000_00000L;
     private final static int MINIMAL_EIGHT_DIGIT_INTEGER = 100_00000;
 
     /**
      * Prevents instantiation.
      */
-    private FastDoubleParser() {
+    private FastDoubleParserOptimizedForCanada() {
 
     }
 
@@ -219,7 +234,7 @@ public class FastDoubleParser {
      * @param hasLeadingZero if the digit '0' has been consumed
      * @return a double representation
      */
-    private static double parseRestOfDecimalFloatLiteral(CharSequence str, int strlen, int index, char ch, boolean isNegative, boolean hasLeadingZero) {
+     private static double parseRestOfDecimalFloatLiteral(CharSequence str, int strlen, int index, char ch, boolean isNegative, boolean hasLeadingZero) {
         // Parse digits
         // ------------
         // Note: a multiplication by 10 is cheaper than an arbitrary integer
@@ -228,29 +243,35 @@ public class FastDoubleParser {
         long digits = 0;// digits is treated as an unsigned long
         long exponent = 0;
         final int indexOfFirstDigit = index;
-        int virtualIndexOfPoint = -1;
         final int digitCount;
+
+        // Two simple loops perform better than one loop if we expect that
+        // many numbers do not have a decimal point.
         for (; index < strlen; index++) {
             ch = str.charAt(index);
             if (isInteger(ch)) {
                 digits = 10 * digits + ch - '0';// This might overflow, we deal with it later.
-            } else if (ch == '.') {
-                if (virtualIndexOfPoint != -1) {
-                    throw newNumberFormatException(str);
-                }
-                virtualIndexOfPoint = index;
             } else {
                 break;
             }
         }
-        final int indexAfterDigits = index;
-        if (virtualIndexOfPoint == -1) {
-            digitCount = indexAfterDigits - indexOfFirstDigit;
-            virtualIndexOfPoint = indexAfterDigits;
-        } else {
-            digitCount = indexAfterDigits - indexOfFirstDigit - 1;
+        final int virtualIndexOfPoint = index;
+        if (ch == '.') {
+            index++;
+            for (; index < strlen; index++) {
+                ch = str.charAt(index);
+                if (isInteger(ch)) {
+                    digits = 10 * digits + ch - '0';// This might overflow, we deal with it later.
+                } else {
+                    break;
+                }
+            }
+            digitCount = index - indexOfFirstDigit - 1;
             exponent = virtualIndexOfPoint - index + 1;
+        } else {
+            digitCount = index - indexOfFirstDigit;
         }
+        final int indexAfterDigits = index;
 
         // Parse exponent number
         // ---------------------
@@ -311,6 +332,7 @@ public class FastDoubleParser {
 
         return FastDoubleMath.decFloatLiteralToDouble(str, index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
     }
+
 
     /**
      * Special value in {@link #CHAR_TO_HEX_MAP} for
