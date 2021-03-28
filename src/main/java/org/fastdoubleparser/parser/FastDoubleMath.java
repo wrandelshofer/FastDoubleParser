@@ -726,6 +726,7 @@ class FastDoubleMath {
             0xd30560258f54e6baL, 0x47c6b82ef32a2069L,
             0x4cdc331d57fa5441L, 0xe0133fe4adf8e952L,
             0x58180fddd97723a6L, 0x570f09eaa7ea7648L};
+
     /**
      * Prevents instantiation.
      */
@@ -733,21 +734,22 @@ class FastDoubleMath {
 
     }
 
-     static double decFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static double decFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
         final Double outDouble;
         if (isDigitsTruncated) {
-            final long truncatedExponent = virtualIndexOfPoint - index + skipCountInTruncatedDigits + exp_number;
+            final long exponentOfTruncatedDigits = virtualIndexOfPoint - index + skipCountInTruncatedDigits + exp_number;
 
             // We have too many digits. We may have to round up.
             // To know whether rounding up is needed, we may have to examine up to 768 digits.
 
             // There are cases, in which rounding has no effect.
-            if (FASTFLOAT_DEC_SMALLEST_POWER <= truncatedExponent && truncatedExponent <= FASTFLOAT_DEC_LARGEST_POWER) {
-                Double withoutRounding = tryDecToDoubleWithFastAlgorithm(isNegative, digits, (int) truncatedExponent);
-                Double roundedUp = tryDecToDoubleWithFastAlgorithm(isNegative, digits + 1, (int) truncatedExponent);
+            if (FASTFLOAT_DEC_SMALLEST_POWER <= exponentOfTruncatedDigits
+                    && exponentOfTruncatedDigits <= FASTFLOAT_DEC_LARGEST_POWER) {
+                Double withoutRounding = tryDecToDoubleWithFastAlgorithm(isNegative, digits, (int) exponentOfTruncatedDigits);
+                Double roundedUp = tryDecToDoubleWithFastAlgorithm(isNegative, digits + 1, (int) exponentOfTruncatedDigits);
                 if (withoutRounding != null && Objects.equals(roundedUp, withoutRounding)) {
                     return withoutRounding;
                 }
@@ -819,13 +821,13 @@ class FastDoubleMath {
                 (middle << 32) | (p00 & 0xffffffffL));
     }
 
-     static double hexFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static double hexFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
         final Double outDouble;
         if (isDigitsTruncated) {
-            final long truncatedExponent = (virtualIndexOfPoint - index + skipCountInTruncatedDigits)*4L
+            final long truncatedExponent = (virtualIndexOfPoint - index + skipCountInTruncatedDigits) * 4L
                     + exp_number;
 
             // We have too many digits. We may have to round up.
@@ -869,19 +871,19 @@ class FastDoubleMath {
      * @param power      int32 the exponent of the number
      * @return the computed double on success, null on failure
      */
-     static Double tryDecToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
-         if (digits == 0||power<-380-19) {
+    static Double tryDecToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
+        if (digits == 0 || power < -380 - 19) {
             return isNegative ? -0.0 : 0.0;
         }
-         if (power>380) {
-             return isNegative?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
-         }
+        if (power > 380) {
+            return isNegative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        }
 
         // we start with a fast path
         // It was described in
         // Clinger WD. How to read floating point numbers accurately.
         // ACM SIGPLAN Notices. 1990
-        if (-22 <= power && power <= 22 && Long.compareUnsigned(digits , 0x1fffffffffffffL)<=0) {
+        if (-22 <= power && power <= 22 && Long.compareUnsigned(digits, 0x1fffffffffffffL) <= 0) {
             // convert the integer into a double. This is lossless since
             // 0 <= i <= 2^53 - 1.
             double d = (double) digits;
@@ -898,7 +900,7 @@ class FastDoubleMath {
             } else {
                 d = d * powerOfTen[power];
             }
-            return (isNegative)?-d:d;
+            return (isNegative) ? -d : d;
         }
 
 
@@ -984,7 +986,7 @@ class FastDoubleMath {
             // we want to check whether mantissa *i + i would affect our result
             // This does happen, e.g. with 7.3177701707893310e+15
             if (((product_middle + 1 == 0) && ((product_high & 0x1ff) == 0x1ff) &&
-                    (product_low + Long.compareUnsigned(digits, product_low)<0))) { // let us be prudent and bail out.
+                    (product_low + Long.compareUnsigned(digits, product_low) < 0))) { // let us be prudent and bail out.
                 return null;
             }
             upper = product_high;
@@ -1003,8 +1005,8 @@ class FastDoubleMath {
         // which we guard against.
         // If we have lots of trailing zeros, we may fall right between two
         // floating-point values.
-         if (((upper & 0x1ff) == 0x1ff)
-                 || ((upper & 0x1ff) == 0) && (mantissa & 3) == 1) {
+        if (((upper & 0x1ff) == 0x1ff)
+                || ((upper & 0x1ff) == 0) && (mantissa & 3) == 1) {
             // if mantissa & 1 == 1 we might need to round up.
             //
             // Scenarios:
@@ -1060,18 +1062,18 @@ class FastDoubleMath {
      * @return the computed double on success, null on failure
      */
     static Double tryHexToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
-        if (digits == 0||power<Double.MIN_EXPONENT-54) {
+        if (digits == 0 || power < Double.MIN_EXPONENT - 54) {
             return isNegative ? -0.0 : 0.0;
         }
-        if (power>Double.MAX_EXPONENT) {
-            return isNegative?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
+        if (power > Double.MAX_EXPONENT) {
+            return isNegative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         }
 
         // we start with a fast path
         // We try to mimic the fast described by Clinger WD for decimal
         // float number literals. How to read floating point numbers accurately.
         // ACM SIGPLAN Notices. 1990
-        if ( Long.compareUnsigned(digits, 0x1fffffffffffffL)<=0) {
+        if (Long.compareUnsigned(digits, 0x1fffffffffffffL) <= 0) {
             // convert the integer into a double. This is lossless since
             // 0 <= i <= 2^53 - 1.
             double d = (double) digits;
@@ -1084,9 +1086,9 @@ class FastDoubleMath {
             // then s * p and s / p will produce correctly rounded values.
             //
             if (power < 0) {
-                d = d / Math.pow(2,-power);
+                d = d / Math.pow(2, -power);
             } else {
-                d = d * Math.pow(2,power);
+                d = d * Math.pow(2, power);
             }
             if (isNegative) {
                 d = -d;
