@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ @(#)build-FastDoubleParser.xml
+  ~ Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
+  -->
+<project name="fastdoubleparser" basedir="." default="all"
+>
+    <!-- gobal build properties -->
+    <property file="build.properties"/>
+
+    <!-- ignore system classpath to get consistent builds on different platforms -->
+    <property name="build.sysclasspath" value="ignore"/>
+
+
+    <exec executable="git" outputproperty="git.hash.date.author" failifexecutionfails="false" errorproperty="">
+        <arg value="log"/>
+        <arg value="-1"/>
+        <arg value="--pretty=format:%h %cI %cn"/>
+    </exec>
+    <exec executable="git" outputproperty="git.describe" failifexecutionfails="false" errorproperty="">
+        <arg value="describe"/>
+        <arg value="--tags"/>
+        <arg value="--always"/>
+        <arg value="HEAD"/>
+    </exec>
+    <exec executable="git" outputproperty="git.version" failifexecutionfails="false" errorproperty="">
+        <arg value="log"/>
+        <arg value="--max-count=1"/>
+        <arg value="--date=short"/>
+        <arg value="--pretty=format:%cd_%h"/>
+    </exec>
+
+    <tstamp>
+        <format property="pub-year" pattern="yyyy" locale="en,GB"/>
+    </tstamp>
+    <property name="name" value="${ant.project.name}"/>
+    <property name="copyright" value="Copyright © ${pub-year} ${author}."/>
+    <property name="version" value="${git.version}"/>
+
+    <property name="manifest.application-name" value="${ant.project.name}"/>
+    <property name="manifest.implementation-version" value="${version}"/>
+    <property name="manifest.implementation-vendor" value="${vendor}"/>
+
+    <property name="src" value="src/main/java"/>
+    <property name="build" value="build"/>
+    <property name="dist" value="dist/${name}-${version}"/>
+
+
+    <target name="init">
+        <echo message="app.name ${name}"/>
+        <echo message="app.author ${author}"/>
+        <echo message="app.vendor ${vendor}"/>
+        <echo message="app.license ${license}"/>
+        <echo message="app.version ${version} / desc:${git.describe} rev:${git.hash.date.author}"/>
+        <echo>java.home: ${java.home}</echo>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${build}"/>
+        <javac encoding="UTF-8" destdir="${build}"
+               debug="true"
+               verbose="false"
+        >
+            <src path="${src}"/>
+            <compilerarg value="-Xlint"/>
+            <compilerarg value="-version"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${dist}"/>
+        <jar destfile="${dist}/${ant.project.name}.jar">
+            <!-- The attributes are structured into section has described here:
+            https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html#Main_Attributes
+            https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/manifest.html
+            -->
+            <manifest>
+                <!--
+                  ~ Main Attributes
+                -->
+                <!-- general main attributes -->
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Created-By" value="${manifest.implementation-vendor}"/>
+                <attribute name="Signature-Version" value="1.0"/>
+                <!--attribute name="Class-Path" value="${manifest.class-path}"/-->
+
+                <!-- attribute defined for stand-alone applications (non-modular)  -->
+                <!--attribute name="Main-Class" value="${manifest.main-class}"/-->
+
+                <!-- attribute defined for extension identification -->
+                <!-- attribute name="Extension-Name" value="..."/-->
+
+                <!-- attributes defined for extension and package versioning and sealing information -->
+                <attribute name="Implementation-Title" value="${manifest.application-name}"/>
+                <attribute name="Implementation-Version" value="${manifest.implementation-version}"/>
+                <attribute name="Implementation-Vendor" value="${manifest.implementation-vendor}"/>
+                <attribute name="Specification-Title" value="${manifest.application-name}"/>
+                <attribute name="Specification-Version" value="${manifest.implementation-version}"/>
+                <attribute name="Specification-Vendor" value="${manifest.implementation-vendor}"/>
+                <attribute name="Sealed" value="false"/>
+
+                <!-- attributes for security -->
+                <attribute name="Permissions" value="sandboxed"/>
+                <attribute name="Codebase" value="*"/>
+                <attribute name="Application-Name" value="${manifest.application-name}"/>
+                <attribute name="Application-Library-Allowable-Codebase" value="*"/>
+                <attribute name="Caller-Allowable-Codebase" value="*"/>
+                <!--attribute name="Entry-Point" value="${manifest.main-class}"/-->
+                <attribute name="Trusted-Only" value="false"/>
+                <attribute name="Trusted-Library" value="false"/>
+            </manifest>
+            <fileset dir="${build}">
+                <exclude name=".*"/>
+            </fileset>
+        </jar>
+
+        <jar file="${dist}/${ant.project.name}-sources.jar">
+            <fileset dir="${src}">
+                <exclude name=".*"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="dist" depends="jar">
+        <copy file="fastdoubleparser.pom"
+              tofile="${dist}/fastdoubleparser.pom" >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+    </target>
+    <target name="all" depends="dist"/>
+
+</project>
+

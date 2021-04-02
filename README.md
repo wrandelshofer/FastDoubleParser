@@ -67,3 +67,25 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
     Double.parseDouble            MB/s avg: 45.355415, min: 26.25, max: 52.34
     Speedup FastDoubleParser vs Double: 5.622773
 
+Please note that the performance gains depend a lot on the shape of the input
+data. Below are two test sets that are less favorable for the current implementation
+of the code:
+
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
+
+    parsing numbers in data/shorts.txt
+    read 100000 lines
+    === number of trials 32 =====
+    FastDoubleParser.parseDouble  MB/s avg: 124.894498, min: 69.98, max: 167.59
+    Double.parseDouble            MB/s avg: 88.799489, min: 51.79, max: 122.16
+    Speedup FastDoubleParser vs Double: 1.406478
+
+
+    parsing numbers in file data/FastDoubleParser_errorcases.txt
+    read 26916 lines
+    === number of trials 32 =====
+    FastDoubleParser.parseDouble  MB/s avg: 73.687863, min: 26.99, max: 97.97
+    Double.parseDouble            MB/s avg: 81.740633, min: 35.64, max: 109.20
+    Speedup FastDoubleParser vs Double: 0.901484
+
