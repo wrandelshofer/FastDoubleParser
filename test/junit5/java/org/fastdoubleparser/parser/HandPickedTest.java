@@ -130,9 +130,14 @@ class HandPickedTest {
                 dynamicTest(Double.toString(Double.NEGATIVE_INFINITY), () -> testLegalDecInput(
                         Double.NEGATIVE_INFINITY)),
                 dynamicTest(Double.toString(Double.NaN), () -> testLegalDecInput(
-                        Double.NaN))
+                        Double.NaN)),
+                dynamicTest("Just above MAX_VALUE: 1.7976931348623159E308", () -> testLegalInput(
+                        "1.7976931348623159E308",Double.POSITIVE_INFINITY)),
+                dynamicTest("Just below MIN_VALUE: 2.47E-324", () -> testLegalInput(
+                        "2.47E-324",0.0))
         );
     }
+
 
     /**
      * Tests input classes that execute different code branches in
@@ -185,7 +190,11 @@ class HandPickedTest {
                 dynamicTest(Double.toHexString(Double.NEGATIVE_INFINITY), () -> testLegalHexInput(
                         Double.NEGATIVE_INFINITY)),
                 dynamicTest(Double.toHexString(Double.NaN), () -> testLegalHexInput(
-                        Double.NaN))
+                        Double.NaN)),
+                dynamicTest("Just above MAX_VALUE: 0x1.fffffffffffff8p1023", () -> testLegalInput(
+                        "0x1.fffffffffffff8p1023",Double.POSITIVE_INFINITY)),
+                dynamicTest("Just below MIN_VALUE: 0x0.00000000000008p-1022", () -> testLegalInput(
+                        "0x0.00000000000008p-1022",0.0))
         );
     }
 

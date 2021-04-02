@@ -39,6 +39,7 @@ public class FastDoubleParserBenchmark {
 
     public static void main(String... args) throws Exception {
         System.out.printf("%s\n", getCpuInfo());
+        Thread.sleep(10_000);
         System.out.printf("%s\n\n", getRtInfo());
         FastDoubleParserBenchmark benchmark = new FastDoubleParserBenchmark();
         if (args.length == 0) {

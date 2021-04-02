@@ -734,7 +734,7 @@ class FastDoubleMath {
 
     }
 
-    static double decFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static Double decFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
@@ -756,17 +756,19 @@ class FastDoubleMath {
             }
 
             // We have to take a slow path.
-            return Double.parseDouble(str.toString());
+            //return Double.parseDouble(str.toString());
+            outDouble = null;
 
         } else if (FASTFLOAT_DEC_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_DEC_LARGEST_POWER) {
             outDouble = tryDecToDoubleWithFastAlgorithm(isNegative, digits, (int) exponent);
         } else {
             outDouble = null;
         }
+        /*
         if (outDouble == null) {
             // We have to take a slow path.
             return decFloatToBigDecimal(isNegative, digits, (int) exponent).doubleValue();
-        }
+        }*/
         return outDouble;
     }
 
