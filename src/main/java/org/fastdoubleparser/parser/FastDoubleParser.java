@@ -53,7 +53,7 @@ public class FastDoubleParser {
 
     /**
      * Returns a Double object holding the double value represented by the
-     * argument string s.
+     * argument string {@code str}.
      * <p>
      * This method can be used as a drop in for method
      * {@link Double#valueOf(String)}. (Assuming that the API of this method
@@ -160,6 +160,7 @@ public class FastDoubleParser {
      * </blockquote>
      *
      * @param str the string to be parsed
+     * @throws NumberFormatException if the string can not be parsed
      */
     public static double parseDouble(CharSequence str) throws NumberFormatException {
         final int strlen = str.length();
