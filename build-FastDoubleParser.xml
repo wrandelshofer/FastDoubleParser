@@ -35,7 +35,7 @@
     </tstamp>
     <property name="name" value="${ant.project.name}"/>
     <property name="copyright" value="Copyright © ${pub-year} ${author}."/>
-    <property name="version" value="${git.version}"/>
+    <property name="version" value="${git.describe}"/>
 
     <property name="manifest.application-name" value="${ant.project.name}"/>
     <property name="manifest.implementation-version" value="${version}"/>
@@ -43,7 +43,9 @@
 
     <property name="src" value="src/main/java"/>
     <property name="build" value="build"/>
-    <property name="dist" value="dist/${name}-${version}"/>
+    <property name="classes" value="build/classes"/>
+    <property name="javadoc" value="build/javadoc"/>
+    <property name="dist" value="build/dist/${name}-${version}"/>
 
 
     <target name="init">
@@ -59,9 +61,9 @@
         <delete dir="${build}"/>
     </target>
 
-    <target name="compile" depends="clean">
-        <mkdir dir="${build}"/>
-        <javac encoding="UTF-8" destdir="${build}"
+    <target name="compile">
+        <mkdir dir="${classes}"/>
+        <javac encoding="UTF-8" destdir="${classes}"
                debug="true"
                verbose="false"
         >
@@ -69,6 +71,25 @@
             <compilerarg value="-Xlint"/>
             <compilerarg value="-version"/>
         </javac>
+    </target>
+
+    <target name="javadoc">
+        <mkdir dir="${javadoc}"/>
+        <javadoc encoding="UTF-8" destdir="${javadoc}"
+               verbose="false"
+                 charset="UTF-8"
+                 footer="&lt;font size=-2&gt;${copyright}&lt;/font&gt;"
+                 header="${ant.project.name} ${version}"
+                 windowtitle="${ant.project.name} ${version}"
+        >
+            <sourcepath path="${src}"/>
+        </javadoc>
+
+        <jar file="${dist}/${ant.project.name}-javadoc.jar">
+            <fileset dir="${javadoc}">
+                <exclude name=".*"/>
+            </fileset>
+        </jar>
     </target>
 
     <target name="jar" depends="compile">
@@ -113,7 +134,7 @@
                 <attribute name="Trusted-Only" value="false"/>
                 <attribute name="Trusted-Library" value="false"/>
             </manifest>
-            <fileset dir="${build}">
+            <fileset dir="${classes}">
                 <exclude name=".*"/>
             </fileset>
         </jar>
@@ -125,7 +146,7 @@
         </jar>
     </target>
 
-    <target name="dist" depends="jar">
+    <target name="dist" depends="jar,javadoc">
         <copy file="fastdoubleparser.pom"
               tofile="${dist}/fastdoubleparser.pom" >
             <filterchain>
@@ -134,7 +155,8 @@
         </copy>
 
     </target>
-    <target name="all" depends="dist"/>
+
+    <target name="all" depends="clean,dist"/>
 
 </project>
 
