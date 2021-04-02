@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -63,7 +64,7 @@ class LexicalGenerator {
             path=null;
             System.exit(10);
         } else {
-            path=Path.of(args[0]);
+            path= FileSystems.getDefault().getPath(args[0]);
         }
         Random rng = new Random(0);
         LexicalGenerator gen = new LexicalGenerator(false, false);
@@ -79,8 +80,8 @@ class LexicalGenerator {
         }
     }
     public static void main(String... args) throws IOException {
-        Path outPath=Path.of("data/canada_hexfloats.txt");
-        Path inPath=Path.of("data/canada.txt");
+        Path outPath=FileSystems.getDefault().getPath("data/canada_hexfloats.txt");
+        Path inPath=FileSystems.getDefault().getPath("data/canada.txt");
         try (BufferedReader r = Files.newBufferedReader(inPath, StandardCharsets.UTF_8);
              BufferedWriter w = Files.newBufferedWriter(outPath, StandardCharsets.UTF_8)) {
             for (String line=r.readLine();line!=null;line=r.readLine()) {

@@ -330,7 +330,7 @@ public class FastDoubleParserOptimizedForCanada {
             isDigitsTruncated = false;
         }
 
-        return FastDoubleMath.decFloatLiteralToDouble(str, index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
+        return FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
     }
 
 

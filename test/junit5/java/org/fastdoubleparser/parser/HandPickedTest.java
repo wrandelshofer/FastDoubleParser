@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 class HandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsIllegalInputs() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest("empty", () -> testIllegalInput("")),
                 dynamicTest("-", () -> testIllegalInput("-")),
                 dynamicTest("+", () -> testIllegalInput("+")),
@@ -40,7 +40,7 @@ class HandPickedTest {
 
     @TestFactory
     List<DynamicNode> dynamicTestsLegalDecFloatLiterals() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest("1e23", () -> testLegalInput("1e23", 1e23)),
                 dynamicTest("0", () -> testLegalInput("0", 0.0)),
                 dynamicTest("-0", () -> testLegalInput("-0", -0.0)),
@@ -113,14 +113,14 @@ class HandPickedTest {
 
     @TestFactory
     List<DynamicNode> dynamicTestsLegalHexFloatLiterals() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest( "0x1.0p8", () -> testLegalInput( "0x1.0p8", 256))
         );
     }
 
     @TestFactory
     List<DynamicNode> dynamicTestsLegalDecFloatLiteralsExtremeValues() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest(Double.toString(Double.MIN_VALUE), () -> testLegalDecInput(
                         Double.MIN_VALUE)),
                 dynamicTest(Double.toString(Double.MAX_VALUE), () -> testLegalDecInput(
@@ -145,7 +145,7 @@ class HandPickedTest {
      */
     @TestFactory
     List<DynamicNode> dynamicTestsDecFloatLiteralClingerInputClasses() {
-        return List.of(
+        return Arrays.asList(
                 //
                 dynamicTest("Inside Clinger fast path (max_clinger_significand, max_clinger_exponent)", () -> testLegalInput(
                         "9007199254740991e22")),
@@ -165,7 +165,7 @@ class HandPickedTest {
      */
     @TestFactory
     List<DynamicNode> dynamicTestsHexFloatLiteralClingerInputClasses() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest("Inside Clinger fast path (max_clinger_significand)", () -> testLegalInput(
                         "0x1fffffffffffffp74",0x1fffffffffffffp74)),
                 dynamicTest("Outside Clinger fast path (max_clinger_significand, max_clinger_exponent + 1)", () -> testLegalInput(
@@ -180,7 +180,7 @@ class HandPickedTest {
     }
     @TestFactory
     List<DynamicNode> dynamicTestsLegalHexFloatLiteralsExtremeValues() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest(Double.toHexString(Double.MIN_VALUE), () -> testLegalHexInput(
                         Double.MIN_VALUE)),
                 dynamicTest(Double.toHexString(Double.MAX_VALUE), () -> testLegalHexInput(
@@ -207,7 +207,7 @@ class HandPickedTest {
 
     @TestFactory
     Stream<DynamicNode> testErrorCases() throws IOException {
-        return Files.lines(Path.of("data/FastDoubleParser_errorcases.txt"))
+        return Files.lines(FileSystems.getDefault().getPath("data/FastDoubleParser_errorcases.txt"))
                 .flatMap(line -> Arrays.stream(line.split(",")))
                 .map(str -> dynamicTest(str, () -> testLegalInput(str, Double.parseDouble(str))));
     }
@@ -228,7 +228,7 @@ class HandPickedTest {
         testLegalInput(Double.toHexString(expected), expected);
     }
     private void testLegalInput(String str) {
-        testLegalInput(str,Double.valueOf(str));
+        testLegalInput(str,Double.parseDouble(str));
     }
 
     private void testLegalInput(String str, double expected) {

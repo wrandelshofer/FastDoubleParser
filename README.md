@@ -14,12 +14,10 @@ Note: Method parseDouble takes a CharacterSequence as its argument. So, if you h
 do not need to convert it to a String, because StringBuffer extends from CharacterSequence.
 
 The test directory contains some functional tests, and some performance tests.
-**At this stage, the test suite is quite incomplete. 
-For now, I do not recommend using the code in a production environment (!)**
 
 How to run the performance test on a Mac:
 
-1. Install Java JDK 16 from [OpenJDK.](https://jdk.java.net/16/)
+1. Install Java JDK 8 or higher, for example [OpenJDK.](https://jdk.java.net/16/)
 2. Install the XCode command line tools from Apple.
 3. Open the Terminal and execute the following commands: 
 

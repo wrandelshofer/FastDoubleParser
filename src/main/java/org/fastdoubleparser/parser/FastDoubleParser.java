@@ -309,9 +309,9 @@ public class FastDoubleParser {
             isDigitsTruncated = false;
         }
 
-        Double result = FastDoubleMath.decFloatLiteralToDouble(str, index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
+        Double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
         if (result==null) {
-           return parseRestOfDecimalFloatLiteralTheHardWay(str,strlen,indexOfFirstDigit,isNegative,hasLeadingZero);
+           return parseRestOfDecimalFloatLiteralTheHardWay(str);
         }
        return result;
     }
@@ -533,90 +533,10 @@ public class FastDoubleParser {
      * <dd><i>{@code .} Digits [ExponentPart]</i>
      * <dd><i>[Digits] ExponentPart</i>
      * </dl>
+     *  @param str            the input string
      *
-     * @param str            the input string
-     * @param index          index to the first character of RestOfHexFloatingPointLiteral
-     * @param strlen         the length of the string
-     * @param isNegative     if the resulting number is negative
-     * @param hasLeadingZero if the digit '0' has been consumed
      */
-    private static double parseRestOfDecimalFloatLiteralTheHardWay(CharSequence str, int strlen, int index,  boolean isNegative, boolean hasLeadingZero)  {
-        // It looks like Double.valueOf() is pretty fast in the hard cases,
-        // it performs 10 times faster than our own Decimal class on
-        // the errorcases.txt data set.
-
-        return Double.valueOf(str.toString());
-
-        /*
-        Decimal answer=new Decimal();
-        answer.negative=isNegative;
-        char ch= str.charAt(index);
-        int virtualIndexOfPoint=-1;
-        int num_digits=0;
-        byte[]digits= answer.digits;
-        int startOfNonZeroDigits=index;
-        for (; index < strlen; index++) {
-            ch = str.charAt(index);
-            if (isInteger(ch)) {
-                if (num_digits==0&&ch=='0') {
-                    // skip leading zeroes
-                    startOfNonZeroDigits++;
-                } else {
-                    if (num_digits<digits.length) {
-                        digits[num_digits++] = (byte) (ch - '0');
-                    }
-                }
-            } else if (ch == '.') {
-                if (virtualIndexOfPoint != -1) {
-                    throw newNumberFormatException(str);
-                }
-                virtualIndexOfPoint = index;
-            } else {
-                break;
-            }
-        }
-        int endOfDigits=index;
-        if (virtualIndexOfPoint == -1) {
-            virtualIndexOfPoint=index;
-            answer.truncated=(endOfDigits-startOfNonZeroDigits)>digits.length;
-        }else{
-            answer.truncated=(endOfDigits-startOfNonZeroDigits-1)>digits.length;
-        }
-        answer.decimal_point=virtualIndexOfPoint-startOfNonZeroDigits;
-        answer.num_digits=num_digits;
-
-        // Parse exponent number
-        // ---------------------
-        long exp_number = 0;
-        final boolean hasExponent = (ch == 'e') || (ch == 'E');
-        if (hasExponent) {
-            ch = ++index < strlen ? str.charAt(index) : 0;
-            boolean neg_exp = ch == '-';
-            if (neg_exp || ch == '+') {
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            if (!isInteger(ch)) {
-                throw newNumberFormatException(str);
-            }
-            while (isInteger(ch)) {
-                // Guard against overflow of exp_number
-                if (exp_number < MINIMAL_EIGHT_DIGIT_INTEGER) {
-                    exp_number = 10 * exp_number + ch - '0';
-                }
-                ch = ++index < strlen ? str.charAt(index) : 0;
-            }
-            if (neg_exp) {
-                exp_number = -exp_number;
-            }
-            answer.decimal_point+=exp_number;
-        }
-
-        skipWhitespace(str,strlen,index);
-        if (index!=strlen) {
-            throw newNumberFormatException(str);
-        }
-
-        return answer.toDouble();
-        */
+    private static double parseRestOfDecimalFloatLiteralTheHardWay(CharSequence str)  {
+        return Double.parseDouble(str.toString());
     }
 }

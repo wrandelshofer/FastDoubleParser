@@ -4,8 +4,6 @@
 
 package org.fastdoubleparser.parser;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -734,7 +732,7 @@ class FastDoubleMath {
 
     }
 
-    static Double decFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static Double decFloatLiteralToDouble(int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
@@ -770,28 +768,6 @@ class FastDoubleMath {
             return decFloatToBigDecimal(isNegative, digits, (int) exponent).doubleValue();
         }*/
         return outDouble;
-    }
-
-    /**
-     * Creates a big decimal representing {@literal (negative?-1:1) * digits * 10^exponent}.
-     *
-     * @param negative true if the number is negative
-     * @param digits   uint64 the digits of the number
-     * @param exponent the exponent of the number
-     * @return a big decimal
-     */
-    static BigDecimal decFloatToBigDecimal(boolean negative, long digits, int exponent) {
-        if (digits < 0) {
-            int upper = (int) (digits >>> 32);
-            int lower = (int) digits;
-            BigDecimal bigDecimal = new BigDecimal(
-                    (BigInteger.valueOf(Integer.toUnsignedLong(upper))).shiftLeft(32).
-                            add(BigInteger.valueOf(Integer.toUnsignedLong(lower))))
-                    .scaleByPowerOfTen(exponent);
-            return negative ? bigDecimal.negate() : bigDecimal;
-        } else {
-            return BigDecimal.valueOf(negative ? -digits : digits, -exponent);
-        }
     }
 
     /**
@@ -1098,11 +1074,17 @@ class FastDoubleMath {
             return d;
         }
 
-
-        // The fast path has now failed, so we are falling back on the slower path.
+        // The fast path has failed
         return null;
     }
 
-    record Value128(long high, long low) {
+    private static class Value128{
+
+    final long high, low;
+
+        private Value128(long high, long low) {
+            this.high = high;
+            this.low = low;
+        }
     }
 }

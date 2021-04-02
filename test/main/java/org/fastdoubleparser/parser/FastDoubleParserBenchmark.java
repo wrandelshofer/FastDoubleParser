@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.DoubleSummaryStatistics;
@@ -123,7 +124,7 @@ public class FastDoubleParserBenchmark {
     }
 
     public void fileload(String filename) throws IOException {
-        Path path = Path.of(filename).toAbsolutePath();
+        Path path = FileSystems.getDefault().getPath(filename).toAbsolutePath();
         System.out.printf("parsing numbers in file %s\n", path);
         List<String> lines = Files.lines(path).collect(Collectors.toList());
         System.out.printf("read %d lines\n", lines.size());

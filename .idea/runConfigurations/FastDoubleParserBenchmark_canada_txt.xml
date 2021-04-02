@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FastDoubleParserBenchmark canada.txt" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="16" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="org.fastdoubleparser.parser.FastDoubleParserBenchmark" />
     <module name="FastDoubleParser" />
     <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
