@@ -40,7 +40,6 @@
 
     <!-- we have to remove the leading 'v' from the tag 'v1.2.3', so that
          we get a version number '1.2.3' -->
-    <!--property name="version" value="${git.describe}"/-->
     <loadresource property="version">
         <propertyresource name="git.describe"/>
         <filterchain>
@@ -50,9 +49,11 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
+    <property name="buildVersion" value="${version}_${git.version}"/>
 
     <property name="manifest.application-name" value="${artifactId}"/>
-    <property name="manifest.implementation-version" value="${version}"/>
+    <property name="manifest.implementation-version" value="${buildVersion}"/>
+    <property name="manifest.specification-version" value="${version}"/>
     <property name="manifest.implementation-vendor" value="${groupId}"/>
 
     <property name="src" value="src/main/java"/>
@@ -69,6 +70,7 @@
         <echo message="app.vendor ${groupId}"/>
         <echo message="app.license ${licenseName}"/>
         <echo message="app.version ${version} / desc:${git.describe} rev:${git.hash.date.author}"/>
+        <echo message="build.version ${buildVersion}"/>
         <echo>java.home: ${java.home}</echo>
     </target>
 
@@ -129,7 +131,7 @@
                 <attribute name="Implementation-Version" value="${manifest.implementation-version}"/>
                 <attribute name="Implementation-Vendor" value="${manifest.implementation-vendor}"/>
                 <attribute name="Specification-Title" value="${manifest.application-name}"/>
-                <attribute name="Specification-Version" value="${manifest.implementation-version}"/>
+                <attribute name="Specification-Version" value="${manifest.specification-version}"/>
                 <attribute name="Specification-Vendor" value="${manifest.implementation-vendor}"/>
                 <attribute name="Sealed" value="false"/>
 
