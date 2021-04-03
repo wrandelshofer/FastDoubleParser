@@ -36,7 +36,19 @@
     </tstamp>
     <property name="name" value="${artifactId}"/>
     <property name="copyright" value="Copyright © ${year} ${author}."/>
-    <property name="version" value="${git.describe}"/>
+
+    <!-- we have to remove the leading 'v' from the tag 'v1.2.3', so that
+         we get a version number '1.2.3' -->
+    <!--property name="version" value="${git.describe}"/-->
+    <loadresource property="version">
+        <propertyresource name="git.describe"/>
+        <filterchain>
+            <tokenfilter>
+                <filetokenizer/>
+                <replacestring from="v" to=""/>
+            </tokenfilter>
+        </filterchain>
+    </loadresource>
 
     <property name="manifest.application-name" value="${artifactId}"/>
     <property name="manifest.implementation-version" value="${version}"/>
