@@ -5,6 +5,7 @@
   -->
 <project name="fastdoubleparser" basedir="." default="all"
          xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+         xmlns:unless="ant:unless"
 >
     <!-- gobal build properties -->
     <property file="build.properties"/>
@@ -193,33 +194,70 @@
         </artifact:mvn>
     </target>
 
-    <!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
-    <target name="stage" depends="clean,dist"
+    <target name="deployRelease" depends="clean,dist"
             description="deploy release version to Maven staging repository">
-        <property name="versionId" value="${version}-SNAPSHOT"/>
+        <property name="versionId" value="${version}"/>
 
         <copy file="${artifactId}.pom"
-              tofile="${dist}/${artifactId}.pom" >
+              tofile="${dist}/${artifactId}.pom">
             <filterchain>
-                <expandproperties />
+                <expandproperties/>
             </filterchain>
         </copy>
         <sign-and-deploy file="${dist}/${artifactId}-${version}.jar"/>
-        <sign-and-deploy file="${dist}/${artifactId}-${version}-javadoc.jar"/>
-        <sign-and-deploy file="${dist}/${artifactId}-${version}-sources.jar"/>
+        <sign-and-deploy file="${dist}/${artifactId}-${version}-javadoc.jar" classifier="javadoc"/>
+        <sign-and-deploy file="${dist}/${artifactId}-${version}-sources.jar" classifier="sources"/>
     </target>
 
     <macrodef name="sign-and-deploy">
         <attribute name="file"/>
+        <attribute name="classifier" default=""/>
         <sequential>
+            <!-- On macOs you need to install the following packages with brew
+            gpg
+            pinentry-mac
+            -->
+            <!-- gpg needs the following line in ~/.zshrc
+                # In order for gpg to find gpg-agent, gpg-agent must be running, and there must be an env
+                # variable pointing GPG to the gpg-agent socket. This little script, which must be sourced
+                # in your shell's init script (ie, .bash_profile, .zshrc, whatever), will either start
+                # gpg-agent or set up the GPG_AGENT_INFO variable if it's already running.
+
+                # Add the following to your shell init to set up gpg-agent automatically for every shell
+                if [ -f ~/.gnupg/.gpg-agent-info ] && [ -n "$(pgrep gpg-agent)" ]; then
+                    source ~/.gnupg/.gpg-agent-info
+                    export GPG_AGENT_INFO
+                else
+                    eval $(gpg-agent - -daemon - -write-env-file ~/.gnupg/.gpg-agent-info)
+                fi
+            -->
+            <!-- gpg needs the following line in ~/.gnupg/gpg.conf
+                 use-agent
+            -->
+            <!-- gpg needs the following lines in ~/.gnupg/gpg-agent.conf
+                # Enables GPG to find gpg-agent
+                use-standard-socket
+
+                # Connects gpg-agent to the OSX keychain via the brew-installed
+                # pinentry program from GPGtools. This is the OSX 'magic sauce',
+                # allowing the gpg key's passphrase to be stored in the login
+                # keychain, enabling automatic key signing.
+                pinentry-program /usr/local/bin/pinentry-mac
+            -->
+            <!--
+            Then you must restart your computer, because otherwise gpg will still
+            try to use tty for the passwort prompt instead of a dialog box.
+            -->
+            <echo message="file @{file}"/>
+
             <artifact:mvn>
-                <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-                <arg value="-Durl=${stagingRepositoryUrl}" />
-                <arg value="-DrepositoryId=${repositoryServerId}" />
-                <arg value="-DpomFile=${dist}/${artifactId}.pom" />
-                <arg value="-Dfile=@{file}" />
-                <arg value="-Dclassifier=javadoc" />
-                <arg value="-Pgpg" />
+                <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file"/>
+                <arg value="-Durl=${stagingRepositoryUrl}"/>
+                <arg value="-DrepositoryId=${repositoryServerId}"/>
+                <arg value="-DpomFile=${dist}/${artifactId}.pom"/>
+                <arg value="-Dfile=@{file}"/>
+                <arg unless:blank="@{classifier}" value="-Dclassifier=@{classifier}"/>
+                <arg value="-Pgpg"/>
             </artifact:mvn>
         </sequential>
     </macrodef>
