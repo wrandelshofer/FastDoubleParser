@@ -150,13 +150,6 @@
     </target>
 
     <target name="dist" depends="jar,javadoc">
-        <copy file="${artifactId}.pom"
-              tofile="${dist}/${artifactId}.pom" >
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
         <copy file="${jars}/${artifactId}.jar"
               tofile="${dist}/${artifactId}-${version}.jar" />
 
@@ -173,20 +166,44 @@
         </jar>
     </target>
 
-    <target name="deploy" depends="dist"
+    <target name="deploySnapshot" depends="dist"
             description="deploy snapshot version to Maven snapshot repository">
+
+        <property name="versionId" value="${version}-SNAPSHOT"/>
+
+        <copy file="${dist}/${artifactId}-${version}.jar"
+              tofile="${dist}-SNAPSHOT/${artifactId}-${version}.jar" />
+        <copy file="${dist}/${artifactId}-${version}-sources.jar"
+              tofile="${dist}-SNAPSHOT/${artifactId}-${version}-sources.jar" />
+        <copy file="${dist}/${artifactId}-${version}-javadoc.jar"
+              tofile="${dist}-SNAPSHOT/${artifactId}-${version}-javadoc.jar" />
+        <copy file="${artifactId}.pom"
+              tofile="${dist}-SNAPSHOT/${artifactId}.pom" >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
         <artifact:mvn>
             <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
             <arg value="-Durl=${snapshotsRepositoryUrl}" />
             <arg value="-DrepositoryId=${repositoryServerId}" />
-            <arg value="-DpomFile=${dist}/${artifactId}.pom" />
-            <arg value="-Dfile=${dist}/${artifactId}-${version}.jar" />
+            <arg value="-DpomFile=${dist}-SNAPSHOT/${artifactId}.pom" />
+            <arg value="-Dfile=${dist}-SNAPSHOT/${artifactId}-${version}.jar" />
         </artifact:mvn>
     </target>
 
     <!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
     <target name="stage" depends="dist" 
             description="deploy release version to Maven staging repository">
+        <property name="versionId" value="${version}-SNAPSHOT"/>
+
+        <copy file="${artifactId}.pom"
+              tofile="${dist}-SNAPSHOT/${artifactId}.pom" >
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
         <sign-and-deploy file="${dist}/${artifactId}-${version}.jar"/>
         <sign-and-deploy file="${dist}/${artifactId}-${version}-javadoc.jar"/>
         <sign-and-deploy file="${dist}/${artifactId}-${version}-sources.jar"/>
