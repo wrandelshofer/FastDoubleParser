@@ -166,7 +166,7 @@
         </jar>
     </target>
 
-    <target name="deploySnapshot" depends="dist"
+    <target name="deploySnapshot" depends="clean,dist"
             description="deploy snapshot version to Maven snapshot repository">
 
         <property name="versionId" value="${version}-SNAPSHOT"/>
@@ -194,12 +194,12 @@
     </target>
 
     <!-- before this, update project version (both build.xml and pom.xml) from SNAPSHOT to RELEASE -->
-    <target name="stage" depends="dist" 
+    <target name="stage" depends="clean,dist"
             description="deploy release version to Maven staging repository">
         <property name="versionId" value="${version}-SNAPSHOT"/>
 
         <copy file="${artifactId}.pom"
-              tofile="${dist}-SNAPSHOT/${artifactId}.pom" >
+              tofile="${dist}/${artifactId}.pom" >
             <filterchain>
                 <expandproperties />
             </filterchain>
