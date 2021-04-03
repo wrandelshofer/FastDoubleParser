@@ -27,5 +27,11 @@
     </developer>
   </developers>
 
+  <scm>
+    <connection>scm:git:git://github.com/wrandelshofer/FastDoubleParser.git</connection>
+    <developerConnection>scm:git:ssh://github.com/wrandelshofer/FastDoubleParser.git</developerConnection>
+    <url>https://github.com/wrandelshofer/FastDoubleParser/tree/master</url>
+  </scm>
+
   <dependencies/>
 </project>
