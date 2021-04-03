@@ -27,8 +27,8 @@ Command:
      git clone https://github.com/wrandelshofer/FastDoubleParser.git
      cd FastDoubleParser 
      javac -d out -encoding utf8 -sourcepath src/main/java test/main/java/org/fastdoubleparser/parser/FastDoubleParserBenchmark.java 
-     java -classpath out org.fastdoubleparser.parser.FastDoubleParserBenchmark 
-     java -classpath out org.fastdoubleparser.parser.FastDoubleParserBenchmark data/canada.txt
+     java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark 
+     java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
 
 On my Mac mini (2018) I get the following results:
 

@@ -3,7 +3,7 @@
  * Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package org.fastdoubleparser.parser;
+package ch.randelshofer.fastdoubleparser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

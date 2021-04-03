@@ -22,7 +22,7 @@ jobs:
       - name: Compile FastDoubleParser
         run: javac -d out -encoding utf8 -sourcepath src/main/java test/main/java/org/fastdoubleparser/parser/FastDoubleParserBenchmark.java  
       - name: Run Test 1
-        run: java -classpath out org.fastdoubleparser.parser.FastDoubleParserBenchmark
+        run: java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark
       - name: Run Test 2
-        run: java -classpath out org.fastdoubleparser.parser.FastDoubleParserBenchmark data/canada.txt
+        run: java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
 ...
