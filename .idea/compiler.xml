@@ -10,8 +10,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FastDoubleParser" target="1.5" />
-      <module name="fastdoubleparser" target="1.5" />
+      <module name="FastDoubleParser"  />
+      <module name="fastdoubleparser" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FastDoubleParserBenchmark [0,1)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark" />
-    <module name="FastDoubleParser" />
+    <module name="FastDoubleParserX" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="ch.randelshofer.math.*" />

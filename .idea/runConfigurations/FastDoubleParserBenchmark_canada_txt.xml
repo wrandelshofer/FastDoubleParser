@@ -2,7 +2,7 @@
   <configuration default="false" name="FastDoubleParserBenchmark canada.txt" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="16" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark" />
-    <module name="FastDoubleParser" />
+    <module name="FastDoubleParserX" />
     <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
     <extension name="coverage">
       <pattern>
