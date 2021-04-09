@@ -61,21 +61,23 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
     parsing numbers in file data/minusOneToOne_hexfloats.txt
     read 100000 lines
+    === warmup 1000 times =====
     === number of trials 32 =====
-    FastDoubleParser               MB/s avg: 326.090217, min: 243.24, max: 354.16
-    FastDoubleParserFromByteArray  MB/s avg: 534.037476, min: 368.69, max: 571.57
-    Double                         MB/s avg: 44.642579, min: 27.15, max: 50.89
-    Speedup FastDoubleParser              vs Double: 7.304466
-    Speedup FastDoubleParserFromByteArray vs Double: 11.962514
+    FastDoubleParser               MB/s avg: 374.358458, min: 346.14, max: 401.62
+    FastDoubleParserFromByteArray  MB/s avg: 571.240149, min: 538.05, max: 616.63
+    Double                         MB/s avg: 47.143733, min: 31.27, max: 52.07
+    Speedup FastDoubleParser              vs Double: 7.940789
+    Speedup FastDoubleParserFromByteArray vs Double: 12.116990
 
     parsing numbers in file data/canada_hexfloats.txt
     read 111126 lines
+    === warmup 1000 times =====
     === number of trials 32 =====
-    FastDoubleParser               MB/s avg: 343.409712, min: 275.95, max: 383.22
-    FastDoubleParserFromByteArray  MB/s avg: 561.691464, min: 451.36, max: 617.61
-    Double                         MB/s avg: 44.749041, min: 30.28, max: 51.08
-    Speedup FastDoubleParser              vs Double: 7.674125
-    Speedup FastDoubleParserFromByteArray vs Double: 12.552034
+    FastDoubleParser               MB/s avg: 391.324926, min: 335.17, max: 420.64
+    FastDoubleParserFromByteArray  MB/s avg: 601.523250, min: 536.01, max: 659.40
+    Double                         MB/s avg: 46.716107, min: 32.31, max: 52.26
+    Speedup FastDoubleParser              vs Double: 8.376660
+    Speedup FastDoubleParserFromByteArray vs Double: 12.876143
 
 Please note that the performance gains depend a lot on the shape of the input
 data. Below are two test sets that are less favorable for the current implementation
