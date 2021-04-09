@@ -800,7 +800,7 @@ class FastDoubleMath {
                 (middle << 32) | (p00 & 0xffffffffL));
     }
 
-    static double hexFloatLiteralToDouble(CharSequence str, int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static Double hexFloatLiteralToDouble(int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
@@ -822,16 +822,12 @@ class FastDoubleMath {
             }
 
             // We have to take a slow path.
-            return Double.parseDouble(str.toString());
+            return null;
 
         } else if (FASTFLOAT_HEX_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_HEX_LARGEST_POWER) {
             outDouble = tryHexToDoubleWithFastAlgorithm(isNegative, digits, (int) exponent);
         } else {
             outDouble = null;
-        }
-        if (outDouble == null) {
-            // We have to take a slow path.
-            return Double.parseDouble(str.toString());
         }
         return outDouble;
     }

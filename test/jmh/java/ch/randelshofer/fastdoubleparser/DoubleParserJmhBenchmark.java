@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Benchmarks for selected floating point strings.
  * <p>
- * FIXME Add benchmarks for floating point strings that trigger
+ * FIXME Add measures for floating point strings that trigger
  * slow paths in {@link FastDoubleMath} once we have implement them.
  * <pre>
  * # JMH version: 1.28
@@ -35,8 +35,8 @@ import java.util.concurrent.TimeUnit;
  * FastDoubleParserZero                       avgt   25   2.369 ± 0.008  ns/op
  * FastDoubleParserOnePointZero               avgt   25  12.851 ± 0.124  ns/op
  * FastDoubleParser3Digits                    avgt   25  11.227 ± 0.105  ns/op
- * FastDoubleParser3DigitsWithDecimalPoint    avgt   25  13.606 ± 0.043  ns/op
- * FastDoubleParser14HexDigitsWith3DigitExp   avgt   25  39.805 ± 0.586  ns/op
+ * FastDoubleParser14HexDigitsWith3DigitExp   avgt   25  21.629 ± 0.112  ns/op
+ * FastDoubleParser14HexDigitsWith3DigitExp   avgt   25  36.332 ± 0.254  ns/op
  * FastDoubleParser17DigitsWith3DigitExp      avgt   25  31.923 ± 0.102  ns/op
  * FastDoubleParser19DigitsWith3DigitExp      avgt   25  33.912 ± 0.642  ns/op
  * FastDoubleParser19DigitsWithoutExp         avgt   25  29.793 ± 0.221  ns/op
@@ -44,72 +44,72 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  */
 public class DoubleParserJmhBenchmark {
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDouble14HexDigitsWith3DigitExp() {
+    public void measureDouble14HexDigitsWith3DigitExp() {
         String str = "0x123.456789abcdep123";
         Double.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDouble17DigitsWith3DigitExp() {
+    public void measureDouble17DigitsWith3DigitExp() {
         String str = "123.45678901234567e123";
         Double.parseDouble(str);
     }
 
-    //  @Benchmark @OutputTimeUnit(TimeUnit.NANOSECONDS)  @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDouble19DigitsWith3DigitExp() {
+    //  //@Benchmark @OutputTimeUnit(TimeUnit.NANOSECONDS)  @BenchmarkMode(Mode.AverageTime)
+    public void measureDouble19DigitsWith3DigitExp() {
         String str = "123.4567890123456789e123";
         Double.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDouble19DigitsWithoutExp() {
+    public void measureDouble19DigitsWithoutExp() {
         String str = "123.4567890123456789";
         Double.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDouble3Digits() {
+    public void measureDouble3Digits() {
         String str = "365";
         Double.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDouble3DigitsWithDecimalPoint() {
+    public void measureDouble3DigitsWithDecimalPoint() {
         String str = "10.1";
         Double.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDoubleNegative18DigitsWithoutExp() {
+    public void measureDoubleNegative18DigitsWithoutExp() {
         String str = "-0.29235596393453456";
         Double.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDoubleOnePointZero() {
+    public void measureDoubleOnePointZero() {
         String str = "1.0";
         Double.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkDoubleZero() {
+    public void measureDoubleZero() {
         String str = "0";
         Double.parseDouble(str);
     }
@@ -117,7 +117,7 @@ public class DoubleParserJmhBenchmark {
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParser14HexDigitsWith3DigitExp() {
+    public void measureFastDoubleParser14HexDigitsWith3DigitExp() {
         String str = "0x123.456789abcdep123";
         FastDoubleParser.parseDouble(str);
     }
@@ -125,63 +125,63 @@ public class DoubleParserJmhBenchmark {
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParser17DigitsWith3DigitExp() {
+    public void measureFastDoubleParser17DigitsWith3DigitExp() {
         String str = "123.45678901234567e123";
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParser19DigitsWith3DigitExp() {
+    public void measureFastDoubleParser19DigitsWith3DigitExp() {
         String str = "123.4567890123456789e123";
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParser19DigitsWithoutExp() {
+    public void measureFastDoubleParser19DigitsWithoutExp() {
         String str = "123.4567890123456789";
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParser3Digits() {
+    public void measureFastDoubleParser3Digits() {
         String str = "365";
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParser3DigitsWithDecimalPoint() {
+    public void measureFastDoubleParser3DigitsWithDecimalPoint() {
         String str = "10.1";
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParserNegative18DigitsWithoutExp() {
+    public void measureFastDoubleParserNegative18DigitsWithoutExp() {
         String str = "-0.29235596393453456";
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParserOnePointZero() {
+    public void measureFastDoubleParserOnePointZero() {
         String str = "1.0";
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void benchmarkFastDoubleParserZero() {
+    public void measureFastDoubleParserZero() {
         String str = "0";
         FastDoubleParser.parseDouble(str);
     }

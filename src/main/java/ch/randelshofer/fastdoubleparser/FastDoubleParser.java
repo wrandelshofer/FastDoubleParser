@@ -226,7 +226,7 @@ public class FastDoubleParser {
         // ------------
         // Note: a multiplication by constant 10 is cheaper than an
         //       arbitrary integer multiplication.
-        char ch = index<strlen?str.charAt(index):0;
+        char ch = index < strlen ? str.charAt(index) : 0;
         long digits = 0;// digits is treated as an unsigned long
         long exponent = 0;
         final int indexOfFirstDigit = index;
@@ -312,10 +312,10 @@ public class FastDoubleParser {
         }
 
         Double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-        if (result==null) {
-           return parseRestOfDecimalFloatLiteralTheHardWay(str);
+        if (result == null) {
+            return parseRestOfDecimalFloatLiteralTheHardWay(str);
         }
-       return result;
+        return result;
     }
 
     /**
@@ -475,8 +475,8 @@ public class FastDoubleParser {
             isDigitsTruncated = false;
         }
 
-        return FastDoubleMath.hexFloatLiteralToDouble(str, index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-
+        Double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
+        return d == null ? Double.parseDouble(str.toString()) : d;
     }
 
     private static double parseInfinity(CharSequence str, int index, int strlen, boolean negative) {
@@ -536,9 +536,8 @@ public class FastDoubleParser {
      * <dd><i>[Digits] ExponentPart</i>
      * </dl>
      *  @param str            the input string
-     *
      */
-    private static double parseRestOfDecimalFloatLiteralTheHardWay(CharSequence str)  {
+    private static double parseRestOfDecimalFloatLiteralTheHardWay(CharSequence str) {
         return Double.parseDouble(str.toString());
     }
 }

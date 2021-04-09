@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,6 +70,15 @@ public class FastDoubleParserBenchmark {
         return answer;
     }
 
+    private double findmaxFastDoubleParserFromByteArrayParseDouble(List<String> s) {
+        double answer = 0;
+        for (String st : s) {
+            double x = FastDoubleParserFromByteArray.parseDouble(st.getBytes(StandardCharsets.ISO_8859_1));
+            answer = Math.max(answer, x);
+        }
+        return answer;
+    }
+
     private double findmaxDoubleParseDouble(List<String> s) {
         double answer = 0;
         for (String st : s) {
@@ -83,6 +93,7 @@ public class FastDoubleParserBenchmark {
         long t1, t2;
         double dif, ts;
         DoubleSummaryStatistics fastDoubleParserStats = new DoubleSummaryStatistics();
+        DoubleSummaryStatistics fastDoubleParserFromByteArrayStats = new DoubleSummaryStatistics();
         DoubleSummaryStatistics doubleStats = new DoubleSummaryStatistics();
         int numberOfTrials = NUMBER_OF_TRIALS;
         System.out.printf("=== number of trials %d =====\n", numberOfTrials);
@@ -97,6 +108,18 @@ public class FastDoubleParserBenchmark {
             if (i > 0) {
                 fastDoubleParserStats.accept(volumeMB * 1000000000 / dif);
             }
+
+            t1 = System.nanoTime();
+            ts = findmaxFastDoubleParserParseDouble(lines);
+            t2 = System.nanoTime();
+            if (ts == 0) {
+                System.out.print("bug\n");
+            }
+            dif = t2 - t1;
+            if (i > 0) {
+                fastDoubleParserFromByteArrayStats.accept(volumeMB * 1000000000 / dif);
+            }
+
             t1 = System.nanoTime();
             ts = findmaxDoubleParseDouble(lines);
             t2 = System.nanoTime();
@@ -108,9 +131,11 @@ public class FastDoubleParserBenchmark {
                 doubleStats.accept(volumeMB * 1000000000 / dif);
             }
         }
-        System.out.printf("FastDoubleParser.parseDouble  MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserStats.getAverage(), fastDoubleParserStats.getMin(), fastDoubleParserStats.getMax());
-        System.out.printf("Double.parseDouble            MB/s avg: %2f, min: %.2f, max: %.2f\n", doubleStats.getAverage(), doubleStats.getMin(), doubleStats.getMax());
-        System.out.printf("Speedup FastDoubleParser vs Double: %2f\n", fastDoubleParserStats.getAverage() / doubleStats.getAverage());
+        System.out.printf("FastDoubleParser.parseDouble               MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserStats.getAverage(), fastDoubleParserStats.getMin(), fastDoubleParserStats.getMax());
+        System.out.printf("FastDoubleParserFromByteArray.parseDouble  MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserFromByteArrayStats.getAverage(), fastDoubleParserFromByteArrayStats.getMin(), fastDoubleParserFromByteArrayStats.getMax());
+        System.out.printf("Double.parseDouble                         MB/s avg: %2f, min: %.2f, max: %.2f\n", doubleStats.getAverage(), doubleStats.getMin(), doubleStats.getMax());
+        System.out.printf("Speedup FastDoubleParser              vs Double: %2f\n", fastDoubleParserStats.getAverage() / doubleStats.getAverage());
+        System.out.printf("Speedup FastDoubleParserFromByteArray vs Double: %2f\n", fastDoubleParserFromByteArrayStats.getAverage() / doubleStats.getAverage());
         System.out.print("\n\n");
     }
 
@@ -120,6 +145,10 @@ public class FastDoubleParserBenchmark {
             double actual = FastDoubleParser.parseDouble(line);
             if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
                 System.err.println("FastDoubleParser disagrees. input=" + line + " expected=" + expected + " actual=" + actual);
+            }
+            double actualFromByteArray = FastDoubleParserFromByteArray.parseDouble(line.getBytes(StandardCharsets.ISO_8859_1));
+            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actualFromByteArray)) {
+                System.err.println("FastDoubleParserFromByteArray disagrees. input=" + line + " expected=" + expected + " actual=" + actual);
             }
         }
     }
