@@ -1062,13 +1062,9 @@ class FastDoubleMath {
             // 1) Both s and p can be represented exactly as 64-bit floating-point
             // values (binary64).
             // 2) Because s and p can be represented exactly as floating-point values,
-            // then s * p and s / p will produce correctly rounded values.
+            // then s * p will produce correctly rounded values.
             //
-            if (power < 0) {
-                d = d / Math.pow(2, -power);
-            } else {
-                d = d * Math.pow(2, power);
-            }
+            d = d * Math.scalb(1d, power);
             if (isNegative) {
                 d = -d;
             }
