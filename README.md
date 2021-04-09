@@ -37,16 +37,20 @@ On my Mac mini (2018) I get the following results:
 
     parsing random numbers in the range [0,1)
     === number of trials 32 =====
-    FastDoubleParser.parseDouble  MB/s avg: 341.838343, min: 311.14, max: 367.31
-    Double.parseDouble            MB/s avg: 82.909605, min: 75.72, max: 89.24
-    Speedup FastDoubleParser vs Double: 4.123025
+    FastDoubleParser               MB/s avg: 349.692124, min: 319.69, max: 365.69
+    FastDoubleParserFromByteArray  MB/s avg: 524.594249, min: 488.33, max: 554.92
+    Double                         MB/s avg: 83.616813, min: 74.75, max: 87.82
+    Speedup FastDoubleParser              vs Double: 4.182079
+    Speedup FastDoubleParserFromByteArray vs Double: 6.273789
 
     parsing numbers in file data/canada.txt
     read 111126 lines
     === number of trials 32 =====
-    FastDoubleParser.parseDouble  MB/s avg: 319.496176, min: 216.37, max: 365.83
-    Double.parseDouble            MB/s avg: 71.851737, min: 46.78, max: 82.76
-    Speedup FastDoubleParser vs Double: 4.446603
+    FastDoubleParser               MB/s avg: 305.171797, min: 240.77, max: 351.33
+    FastDoubleParserFromByteArray  MB/s avg: 435.606485, min: 280.09, max: 516.14
+    Double                         MB/s avg: 71.206249, min: 42.22, max: 85.21
+    Speedup FastDoubleParser              vs Double: 4.285745
+    Speedup FastDoubleParserFromByteArray vs Double: 6.117532
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
@@ -56,16 +60,20 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
     parsing numbers in file data/minusOneToOne_hexfloats.txt
     read 100000 lines
     === number of trials 32 =====
-    FastDoubleParser.parseDouble   MB/s avg: 350.574900, min: 270.54, max: 403.85
-    Double.parseDouble             MB/s avg: 45.100857, min: 28.56, max: 51.61
-    Speedup FastDoubleParser vs Double: 7.773132
+    FastDoubleParser               MB/s avg: 326.090217, min: 243.24, max: 354.16
+    FastDoubleParserFromByteArray  MB/s avg: 534.037476, min: 368.69, max: 571.57
+    Double                         MB/s avg: 44.642579, min: 27.15, max: 50.89
+    Speedup FastDoubleParser              vs Double: 7.304466
+    Speedup FastDoubleParserFromByteArray vs Double: 11.962514
 
     parsing numbers in file data/canada_hexfloats.txt
     read 111126 lines
     === number of trials 32 =====
-    FastDoubleParser.parseDouble   MB/s avg: 370.487497, min: 267.66, max: 425.03
-    Double.parseDouble             MB/s avg: 45.634442, min: 30.91, max: 53.08
-    Speedup FastDoubleParser  vs Double: 8.118594
+    FastDoubleParser               MB/s avg: 343.409712, min: 275.95, max: 383.22
+    FastDoubleParserFromByteArray  MB/s avg: 561.691464, min: 451.36, max: 617.61
+    Double                         MB/s avg: 44.749041, min: 30.28, max: 51.08
+    Speedup FastDoubleParser              vs Double: 7.674125
+    Speedup FastDoubleParserFromByteArray vs Double: 12.552034
 
 Please note that the performance gains depend a lot on the shape of the input
 data. Below are two test sets that are less favorable for the current implementation

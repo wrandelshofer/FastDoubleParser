@@ -8,6 +8,7 @@ package ch.randelshofer.fastdoubleparser;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -95,7 +96,15 @@ class LexicallyGeneratedTest {
     private void testAgainstDoubleParseDouble(String str) {
         double expected = Double.parseDouble(str);
         double actual = FastDoubleParser.parseDouble(str);
-        assertEquals(expected, actual, str);
+        assertEquals(expected, actual, "str=" + str);
+        assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actual),
+                "longBits of " + expected);
+
+        double actualFromByteArray = FastDoubleParserFromByteArray.parseDouble(str.getBytes(StandardCharsets.ISO_8859_1));
+        assertEquals(expected, actualFromByteArray, "str=" + str);
+        assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actualFromByteArray),
+                "longBits of " + expected);
+
     }
 
 

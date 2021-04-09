@@ -70,10 +70,10 @@ public class FastDoubleParserBenchmark {
         return answer;
     }
 
-    private double findmaxFastDoubleParserFromByteArrayParseDouble(List<String> s) {
+    private double findmaxFastDoubleParserFromByteArrayParseDouble(List<byte[]> s) {
         double answer = 0;
-        for (String st : s) {
-            double x = FastDoubleParserFromByteArray.parseDouble(st.getBytes(StandardCharsets.ISO_8859_1));
+        for (byte[] st : s) {
+            double x = FastDoubleParserFromByteArray.parseDouble(st);
             answer = Math.max(answer, x);
         }
         return answer;
@@ -96,6 +96,7 @@ public class FastDoubleParserBenchmark {
         DoubleSummaryStatistics fastDoubleParserFromByteArrayStats = new DoubleSummaryStatistics();
         DoubleSummaryStatistics doubleStats = new DoubleSummaryStatistics();
         int numberOfTrials = NUMBER_OF_TRIALS;
+        List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.ISO_8859_1)).collect(Collectors.toList());
         System.out.printf("=== number of trials %d =====\n", numberOfTrials);
         for (int i = 0; i < numberOfTrials; i++) {
             t1 = System.nanoTime();
@@ -110,7 +111,7 @@ public class FastDoubleParserBenchmark {
             }
 
             t1 = System.nanoTime();
-            ts = findmaxFastDoubleParserParseDouble(lines);
+            ts = findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
             t2 = System.nanoTime();
             if (ts == 0) {
                 System.out.print("bug\n");
@@ -131,9 +132,9 @@ public class FastDoubleParserBenchmark {
                 doubleStats.accept(volumeMB * 1000000000 / dif);
             }
         }
-        System.out.printf("FastDoubleParser.parseDouble               MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserStats.getAverage(), fastDoubleParserStats.getMin(), fastDoubleParserStats.getMax());
-        System.out.printf("FastDoubleParserFromByteArray.parseDouble  MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserFromByteArrayStats.getAverage(), fastDoubleParserFromByteArrayStats.getMin(), fastDoubleParserFromByteArrayStats.getMax());
-        System.out.printf("Double.parseDouble                         MB/s avg: %2f, min: %.2f, max: %.2f\n", doubleStats.getAverage(), doubleStats.getMin(), doubleStats.getMax());
+        System.out.printf("FastDoubleParser               MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserStats.getAverage(), fastDoubleParserStats.getMin(), fastDoubleParserStats.getMax());
+        System.out.printf("FastDoubleParserFromByteArray  MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserFromByteArrayStats.getAverage(), fastDoubleParserFromByteArrayStats.getMin(), fastDoubleParserFromByteArrayStats.getMax());
+        System.out.printf("Double                         MB/s avg: %2f, min: %.2f, max: %.2f\n", doubleStats.getAverage(), doubleStats.getMin(), doubleStats.getMax());
         System.out.printf("Speedup FastDoubleParser              vs Double: %2f\n", fastDoubleParserStats.getAverage() / doubleStats.getAverage());
         System.out.printf("Speedup FastDoubleParserFromByteArray vs Double: %2f\n", fastDoubleParserFromByteArrayStats.getAverage() / doubleStats.getAverage());
         System.out.print("\n\n");
