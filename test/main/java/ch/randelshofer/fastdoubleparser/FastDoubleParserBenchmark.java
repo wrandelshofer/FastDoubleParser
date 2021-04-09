@@ -46,7 +46,7 @@ public class FastDoubleParserBenchmark {
         System.out.printf("%s\n\n", getRtInfo());
         FastDoubleParserBenchmark benchmark = new FastDoubleParserBenchmark();
         if (args.length == 0) {
-            benchmark.demo(1_000_000);
+            benchmark.demo(100_000);
             System.out.println("You can also provide a filename: it should contain one "
                     + "string per line corresponding to a number.");
         } else {
