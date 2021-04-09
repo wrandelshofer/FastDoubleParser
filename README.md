@@ -36,21 +36,23 @@ On my Mac mini (2018) I get the following results:
     OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
 
     parsing random numbers in the range [0,1)
+    === warmup 1000 times =====
     === number of trials 32 =====
-    FastDoubleParser               MB/s avg: 349.692124, min: 319.69, max: 365.69
-    FastDoubleParserFromByteArray  MB/s avg: 524.594249, min: 488.33, max: 554.92
-    Double                         MB/s avg: 83.616813, min: 74.75, max: 87.82
-    Speedup FastDoubleParser              vs Double: 4.182079
-    Speedup FastDoubleParserFromByteArray vs Double: 6.273789
+    FastDoubleParser               MB/s avg: 351.624440, min: 342.72, max: 355.81
+    FastDoubleParserFromByteArray  MB/s avg: 548.781224, min: 516.85, max: 559.28
+    Double                         MB/s avg: 85.386048, min: 79.06, max: 87.35
+    Speedup FastDoubleParser              vs Double: 4.118055
+    Speedup FastDoubleParserFromByteArray vs Double: 6.427060
 
     parsing numbers in file data/canada.txt
     read 111126 lines
+    === warmup 1000 times =====
     === number of trials 32 =====
-    FastDoubleParser               MB/s avg: 305.171797, min: 240.77, max: 351.33
-    FastDoubleParserFromByteArray  MB/s avg: 435.606485, min: 280.09, max: 516.14
-    Double                         MB/s avg: 71.206249, min: 42.22, max: 85.21
-    Speedup FastDoubleParser              vs Double: 4.285745
-    Speedup FastDoubleParserFromByteArray vs Double: 6.117532
+    FastDoubleParser               MB/s avg: 341.740221, min: 303.93, max: 366.63
+    FastDoubleParserFromByteArray  MB/s avg: 460.556911, min: 405.39, max: 481.79
+    Double                         MB/s avg: 80.854956, min: 68.74, max: 85.77
+    Speedup FastDoubleParser              vs Double: 4.226583
+    Speedup FastDoubleParserFromByteArray vs Double: 5.696088
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
@@ -84,16 +86,21 @@ of the code:
 
     parsing numbers in data/shorts.txt
     read 100000 lines
+    === warmup 1000 times =====
     === number of trials 32 =====
-    FastDoubleParser.parseDouble  MB/s avg: 124.894498, min: 69.98, max: 167.59
-    Double.parseDouble            MB/s avg: 88.799489, min: 51.79, max: 122.16
-    Speedup FastDoubleParser vs Double: 1.406478
+    FastDoubleParser               MB/s avg: 191.784259, min: 113.94, max: 198.19
+    FastDoubleParserFromByteArray  MB/s avg: 221.088167, min: 168.39, max: 228.36
+    Double                         MB/s avg: 135.928399, min: 73.02, max: 144.00
+    Speedup FastDoubleParser              vs Double: 1.410921
+    Speedup FastDoubleParserFromByteArray vs Double: 1.626505
 
 
     parsing numbers in file data/FastDoubleParser_errorcases.txt
     read 26916 lines
+    === warmup 1000 times =====
     === number of trials 32 =====
-    FastDoubleParser.parseDouble  MB/s avg: 73.687863, min: 26.99, max: 97.97
-    Double.parseDouble            MB/s avg: 81.740633, min: 35.64, max: 109.20
-    Speedup FastDoubleParser vs Double: 0.901484
-
+    FastDoubleParser               MB/s avg: 84.076217, min: 72.19, max: 87.22
+    FastDoubleParserFromByteArray  MB/s avg: 89.844292, min: 79.29, max: 92.94
+    Double                         MB/s avg: 96.746817, min: 31.57, max: 102.75
+    Speedup FastDoubleParser              vs Double: 0.869033
+    Speedup FastDoubleParserFromByteArray vs Double: 0.928654

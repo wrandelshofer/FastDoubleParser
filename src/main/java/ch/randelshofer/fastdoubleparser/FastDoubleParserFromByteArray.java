@@ -354,11 +354,13 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, off, strlen - off);
                 }
                 virtualIndexOfPoint = index;
-                if (index < strlen - 9) {
+                while (index < strlen - 9) {
                     long val = (long) mh.get(str, index + 1);
                     if (isMadeOfEightDigits(val)) {
                         digits = digits * 100_000_000L + parseEightDigits(val);
                         index += 8;
+                    } else {
+                        break;
                     }
                 }
             } else {

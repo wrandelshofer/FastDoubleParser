@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 public class FastDoubleParserBenchmark {
 
     public static final int NUMBER_OF_TRIALS = 32;
+    public static final int NUMBER_OF_WARMUPS = 1_000;
 
     public static void main(String... args) throws Exception {
         System.out.printf("%s\n", getCpuInfo());
@@ -95,42 +96,43 @@ public class FastDoubleParserBenchmark {
         DoubleSummaryStatistics fastDoubleParserStats = new DoubleSummaryStatistics();
         DoubleSummaryStatistics fastDoubleParserFromByteArrayStats = new DoubleSummaryStatistics();
         DoubleSummaryStatistics doubleStats = new DoubleSummaryStatistics();
+        int numberOfWarmups = NUMBER_OF_WARMUPS;
         int numberOfTrials = NUMBER_OF_TRIALS;
         List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.ISO_8859_1)).collect(Collectors.toList());
+
+        System.out.printf("=== warmup %d times =====\n", numberOfWarmups);
+        for (int i = 0; i < numberOfWarmups; i++) {
+            ts = findmaxFastDoubleParserParseDouble(lines);
+            if (ts == 0) {
+                System.out.print("bug\n");
+            }
+            ts = findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
+            if (ts == 0) {
+                System.out.print("bug\n");
+            }
+            if (ts == 0) {
+                System.out.print("bug\n");
+            }
+        }
         System.out.printf("=== number of trials %d =====\n", numberOfTrials);
         for (int i = 0; i < numberOfTrials; i++) {
             t1 = System.nanoTime();
-            ts = findmaxFastDoubleParserParseDouble(lines);
+            findmaxFastDoubleParserParseDouble(lines);
             t2 = System.nanoTime();
-            if (ts == 0) {
-                System.out.print("bug\n");
-            }
             dif = t2 - t1;
-            if (i > 0) {
-                fastDoubleParserStats.accept(volumeMB * 1000000000 / dif);
-            }
+            fastDoubleParserStats.accept(volumeMB * 1000000000 / dif);
 
             t1 = System.nanoTime();
-            ts = findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
+            findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
             t2 = System.nanoTime();
-            if (ts == 0) {
-                System.out.print("bug\n");
-            }
             dif = t2 - t1;
-            if (i > 0) {
                 fastDoubleParserFromByteArrayStats.accept(volumeMB * 1000000000 / dif);
-            }
 
             t1 = System.nanoTime();
-            ts = findmaxDoubleParseDouble(lines);
+            findmaxDoubleParseDouble(lines);
             t2 = System.nanoTime();
-            if (ts == 0) {
-                System.out.print("bug\n");
-            }
             dif = t2 - t1;
-            if (i > 0) {
                 doubleStats.accept(volumeMB * 1000000000 / dif);
-            }
         }
         System.out.printf("FastDoubleParser               MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserStats.getAverage(), fastDoubleParserStats.getMin(), fastDoubleParserStats.getMax());
         System.out.printf("FastDoubleParserFromByteArray  MB/s avg: %2f, min: %.2f, max: %.2f\n", fastDoubleParserFromByteArrayStats.getAverage(), fastDoubleParserFromByteArrayStats.getMin(), fastDoubleParserFromByteArrayStats.getMax());

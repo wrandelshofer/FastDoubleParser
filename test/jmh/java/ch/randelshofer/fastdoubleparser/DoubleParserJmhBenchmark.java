@@ -45,10 +45,10 @@ import java.util.concurrent.TimeUnit;
  * FromByteArray3Digits                       avgt   25  12.288 ± 0.131  ns/op
  * FromByteArray14HexDigitsWith3DigitExp      avgt   25  25.375 ± 0.348  ns/op
  * FromByteArray17DigitsWith3DigitExp         avgt   25  36.262 ± 2.224  ns/op
- * FromByteArray19DigitsWith3DigitExp         avgt   25  37.765 ± 1.761  ns/op
- * FromByteArray19DigitsWithoutExp            avgt   25  40.751 ± 7.009  ns/op
+ * FromByteArray19DigitsWith3DigitExp         avgt   25  33.603 ± 0.106  ns/op
+ * FromByteArray19DigitsWithoutExp            avgt   25  31.576 ± 0.321  ns/op
  * FromByteArray3DigitsWithDecimalPoint       avgt   25  14.278 ± 0.238  ns/op
- * FromByteArrayNegative18DigitsWithoutExp    avgt   25  43.030 ± 5.598  ns/op
+ * FromByteArrayNegative18DigitsWithoutExp    avgt   25  22.149 ± 0.254  ns/op
  *
  * </pre>
  */
@@ -181,66 +181,66 @@ public class DoubleParserJmhBenchmark {
         FastDoubleParser.parseDouble(str);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArray14HexDigitsWith3DigitExp() {
+    public void measureFromByteArray14HexDigitsWith3DigitExp() {
         FastDoubleParserFromByteArray.parseDouble(ISO_14_HEX_DIGITS_WITH_3_DIGIT_EXP);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArray17DigitsWith3DigitExp() {
+    public void measureFromByteArray17DigitsWith3DigitExp() {
         FastDoubleParserFromByteArray.parseDouble(ISO_17_DIGITS_WITH_3_DIGIT_EXP);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArray19DigitsWith3DigitExp() {
+    public void measureFromByteArray19DigitsWith3DigitExp() {
         FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITH_3_DIGIT_EX);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArray19DigitsWithoutExp() {
+    public void measureFromByteArray19DigitsWithoutExp() {
         FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITHOUT_EXP);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArray3Digits() {
+    public void measureFromByteArray3Digits() {
         FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArray3DigitsWithDecimalPoint() {
+    public void measureFromByteArray3DigitsWithDecimalPoint() {
         FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS_WITH_DECIMAL_POINT);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArrayNegative18DigitsWithoutExp() {
+    public void measureFromByteArrayNegative18DigitsWithoutExp() {
         FastDoubleParserFromByteArray.parseDouble(ISO_18_DIGITS_WITHOUT_EXP);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArrayOnePointZero() {
+    public void measureFromByteArrayOnePointZero() {
         FastDoubleParserFromByteArray.parseDouble(ISO_ONE_POINT_ZERO);
     }
 
-    @Benchmark
+    //@Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFastDoubleParserFromByteArrayZero() {
+    public void measureFromByteArrayZero() {
         FastDoubleParserFromByteArray.parseDouble(ISO_ZERO);
     }
 
