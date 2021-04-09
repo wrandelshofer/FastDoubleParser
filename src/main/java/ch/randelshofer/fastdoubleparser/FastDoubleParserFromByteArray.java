@@ -53,7 +53,7 @@ public class FastDoubleParserFromByteArray {
      * if this table has exactly 256 entries.
      */
     private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
-    private final static VarHandle mh =
+    private final static VarHandle readLongFromByteArray =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
 
     static {
@@ -232,7 +232,7 @@ public class FastDoubleParserFromByteArray {
 
         // Skip leading whitespace
         // -------------------
-        int index = skipWhitespace(str, strlen, off);
+        int index = off;//skipWhitespace(str, strlen, off);
         if (index == strlen) {
             throw new NumberFormatException("empty String");
         }
@@ -348,15 +348,17 @@ public class FastDoubleParserFromByteArray {
         for (; index < strlen; index++) {
             ch = str[index];
             if (isInteger(ch)) {
-                digits = 10 * digits + ch - '0';// This might overflow, we deal with it later.
+                // This might overflow, we deal with it later.
+                digits = 10 * digits + ch - '0';
             } else if (ch == '.') {
                 if (virtualIndexOfPoint != -1) {
                     throw newNumberFormatException(str, off, strlen - off);
                 }
                 virtualIndexOfPoint = index;
                 while (index < strlen - 9) {
-                    long val = (long) mh.get(str, index + 1);
+                    long val = (long) readLongFromByteArray.get(str, index + 1);
                     if (isMadeOfEightDigits(val)) {
+                        // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parseEightDigits(val);
                         index += 8;
                     } else {
@@ -404,7 +406,7 @@ public class FastDoubleParserFromByteArray {
 
         // Skip trailing whitespace
         // ------------------------
-        index = skipWhitespace(str, strlen, index);
+        //  index = skipWhitespace(str, strlen, index);
         if (index < strlen
                 || !hasLeadingZero && digitCount == 0 && str[virtualIndexOfPoint] != '.') {
             throw newNumberFormatException(str, off, strlen - off);
@@ -543,7 +545,7 @@ public class FastDoubleParserFromByteArray {
 
         // Skip trailing whitespace
         // ------------------------
-        index = skipWhitespace(str, strlen, index);
+        // index = skipWhitespace(str, strlen, index);
         if (index < strlen
                 || digitCount == 0 && str[virtualIndexOfPoint] != '.'
                 || !hasExponent) {
