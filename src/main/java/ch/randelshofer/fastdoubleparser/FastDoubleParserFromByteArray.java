@@ -430,7 +430,7 @@ public class FastDoubleParserFromByteArray {
                     }
                 }
             }
-            isDigitsTruncated = (index < indexAfterDigits);
+            isDigitsTruncated = index < indexAfterDigits;
         } else {
             isDigitsTruncated = false;
         }

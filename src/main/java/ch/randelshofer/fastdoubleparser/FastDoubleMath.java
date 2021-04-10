@@ -1020,7 +1020,7 @@ class FastDoubleMath {
         }
 
         long bits = mantissa | real_exponent << 52
-                | (isNegative ? -1L << 63 : 0L);
+                | (isNegative ? 1L << 63 : 0L);
         return Double.longBitsToDouble(bits);
     }
 
