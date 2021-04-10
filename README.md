@@ -30,7 +30,9 @@ Command:
      java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark 
      java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
 
-On my Mac mini (2018) I get the following results:
+On my Mac mini (2018) I get the results shown below. FastDoubleParser.parseDouble() is up to 4 times faster than
+Double.parseDouble(). If your input is a byte array with characters in ISO-8859-1, ASCII or UTF-8 encoding you can use
+FastDoubleParserFromByteArray.parseDouble() which is up to 6 times faster than Double.parseDouble().
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
     OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
