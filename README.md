@@ -17,7 +17,7 @@ The test directory contains some functional tests, and some performance tests.
 
 How to run the performance test on a Mac:
 
-1. Install Java JDK 8 or higher, for example [OpenJDK.](https://jdk.java.net/16/)
+1. Install Java JDK 11 or higher, for example [OpenJDK.](https://jdk.java.net/16/)
 2. Install the XCode command line tools from Apple.
 3. Open the Terminal and execute the following commands: 
 
