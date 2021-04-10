@@ -29,6 +29,43 @@ package ch.randelshofer.fastdoubleparser;
 public class FastDoubleParser {
     private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000_00000_00000_00000L;
     private final static int MINIMAL_EIGHT_DIGIT_INTEGER = 10_000_000;
+    /**
+     * Special value in {@link #CHAR_TO_HEX_MAP} for
+     * the decimal point character.
+     */
+    private static final byte DECIMAL_POINT_CLASS = -4;
+    /**
+     * Special value in {@link #CHAR_TO_HEX_MAP} for
+     * characters that are neither a hex digit nor
+     * a decimal point character..
+     */
+    private static final byte OTHER_CLASS = -1;
+    /**
+     * A table of 128 entries or of entries up to including
+     * character 'p' would suffice.
+     * <p>
+     * However for some reason, performance is best,
+     * if this table has exactly 256 entries.
+     */
+    private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
+
+    static {
+        for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
+            CHAR_TO_HEX_MAP[ch] = OTHER_CLASS;
+        }
+        for (char ch = '0'; ch <= '9'; ch++) {
+            CHAR_TO_HEX_MAP[ch] = (byte) (ch - '0');
+        }
+        for (char ch = 'A'; ch <= 'F'; ch++) {
+            CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'A' + 10);
+        }
+        for (char ch = 'a'; ch <= 'f'; ch++) {
+            CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'a' + 10);
+        }
+        for (char ch = '.'; ch <= '.'; ch++) {
+            CHAR_TO_HEX_MAP[ch] = DECIMAL_POINT_CLASS;
+        }
+    }
 
     /**
      * Prevents instantiation.
@@ -204,6 +241,44 @@ public class FastDoubleParser {
         return parseRestOfDecimalFloatLiteral(str, endIndex, index, isNegative, hasLeadingZero);
     }
 
+    private static double parseInfinity(CharSequence str, int index, int endIndex, boolean negative) {
+        if (index + 7 < endIndex
+                //  && str.charAt(index) == 'I'
+                && str.charAt(index + 1) == 'n'
+                && str.charAt(index + 2) == 'f'
+                && str.charAt(index + 3) == 'i'
+                && str.charAt(index + 4) == 'n'
+                && str.charAt(index + 5) == 'i'
+                && str.charAt(index + 6) == 't'
+                && str.charAt(index + 7) == 'y'
+        ) {
+            index = skipWhitespace(str, index + 8, endIndex);
+            if (index < endIndex) {
+                throw newNumberFormatException(str);
+            }
+            return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+        } else {
+            throw newNumberFormatException(str);
+        }
+    }
+
+    private static double parseNaN(CharSequence str, int index, int endIndex) {
+        if (index + 2 < endIndex
+                //   && str.charAt(index) == 'N'
+                && str.charAt(index + 1) == 'a'
+                && str.charAt(index + 2) == 'N') {
+
+            index = skipWhitespace(str, index + 3, endIndex);
+            if (index < endIndex) {
+                throw newNumberFormatException(str);
+            }
+
+            return Double.NaN;
+        } else {
+            throw newNumberFormatException(str);
+        }
+    }
+
     /**
      * Parses the following rules
      * (more rules are defined in {@link #parseDouble(CharSequence)}):
@@ -215,7 +290,7 @@ public class FastDoubleParser {
      * </dl>
      *
      * @param str            the input string
-     * @param endIndex         the length of the string
+     * @param endIndex       the length of the string
      * @param index          index to the first character of RestOfHexFloatingPointLiteral
      * @param isNegative     if the resulting number is negative
      * @param hasLeadingZero if the digit '0' has been consumed
@@ -320,41 +395,18 @@ public class FastDoubleParser {
     }
 
     /**
-     * Special value in {@link #CHAR_TO_HEX_MAP} for
-     * the decimal point character.
+     * Parses the following rules
+     * (more rules are defined in {@link #parseDouble(CharSequence)}):
+     * <dl>
+     * <dt><i>RestOfDecimalFloatingPointLiteral</i>:
+     * <dd><i>[Digits] {@code .} [Digits] [ExponentPart]</i>
+     * <dd><i>{@code .} Digits [ExponentPart]</i>
+     * <dd><i>[Digits] ExponentPart</i>
+     * </dl>
+     *  @param str            the input string
      */
-    private static final byte DECIMAL_POINT_CLASS = -4;
-    /**
-     * Special value in {@link #CHAR_TO_HEX_MAP} for
-     * characters that are neither a hex digit nor
-     * a decimal point character..
-     */
-    private static final byte OTHER_CLASS = -1;
-    /**
-     * A table of 128 entries or of entries up to including
-     * character 'p' would suffice.
-     * <p>
-     * However for some reason, performance is best,
-     * if this table has exactly 256 entries.
-     */
-    private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
-
-    static {
-        for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
-            CHAR_TO_HEX_MAP[ch] = OTHER_CLASS;
-        }
-        for (char ch = '0'; ch <= '9'; ch++) {
-            CHAR_TO_HEX_MAP[ch] = (byte) (ch - '0');
-        }
-        for (char ch = 'A'; ch <= 'F'; ch++) {
-            CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'A' + 10);
-        }
-        for (char ch = 'a'; ch <= 'f'; ch++) {
-            CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'a' + 10);
-        }
-        for (char ch = '.'; ch <= '.'; ch++) {
-            CHAR_TO_HEX_MAP[ch] = DECIMAL_POINT_CLASS;
-        }
+    private static double parseRestOfDecimalFloatLiteralTheHardWay(CharSequence str) {
+        return Double.parseDouble(str.toString());
     }
 
     /**
@@ -374,7 +426,7 @@ public class FastDoubleParser {
      *
      * @param str        the input string
      * @param index      index to the first character of RestOfHexFloatingPointLiteral
-     * @param endIndex     the end index of the string
+     * @param endIndex   the end index of the string
      * @param isNegative if the resulting number is negative
      * @return a double representation
      */
@@ -480,44 +532,6 @@ public class FastDoubleParser {
         return d == null ? Double.parseDouble(str.toString()) : d;
     }
 
-    private static double parseInfinity(CharSequence str, int index, int endIndex, boolean negative) {
-        if (index + 7 < endIndex
-                //  && str.charAt(index) == 'I'
-                && str.charAt(index + 1) == 'n'
-                && str.charAt(index + 2) == 'f'
-                && str.charAt(index + 3) == 'i'
-                && str.charAt(index + 4) == 'n'
-                && str.charAt(index + 5) == 'i'
-                && str.charAt(index + 6) == 't'
-                && str.charAt(index + 7) == 'y'
-        ) {
-            index = skipWhitespace(str, index + 8, endIndex);
-            if (index < endIndex) {
-                throw newNumberFormatException(str);
-            }
-            return negative ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
-        } else {
-            throw newNumberFormatException(str);
-        }
-    }
-
-    private static double parseNaN(CharSequence str, int index, int endIndex) {
-        if (index + 2 < endIndex
-                //   && str.charAt(index) == 'N'
-                && str.charAt(index + 1) == 'a'
-                && str.charAt(index + 2) == 'N') {
-
-            index = skipWhitespace(str, index + 3, endIndex);
-            if (index < endIndex) {
-                throw newNumberFormatException(str);
-            }
-
-            return Double.NaN;
-        } else {
-            throw newNumberFormatException(str);
-        }
-    }
-
     private static int skipWhitespace(CharSequence str, int index, int endIndex) {
         for (; index < endIndex; index++) {
             if (str.charAt(index) > 0x20) {
@@ -525,20 +539,5 @@ public class FastDoubleParser {
             }
         }
         return index;
-    }
-
-    /**
-     * Parses the following rules
-     * (more rules are defined in {@link #parseDouble(CharSequence)}):
-     * <dl>
-     * <dt><i>RestOfDecimalFloatingPointLiteral</i>:
-     * <dd><i>[Digits] {@code .} [Digits] [ExponentPart]</i>
-     * <dd><i>{@code .} Digits [ExponentPart]</i>
-     * <dd><i>[Digits] ExponentPart</i>
-     * </dl>
-     *  @param str            the input string
-     */
-    private static double parseRestOfDecimalFloatLiteralTheHardWay(CharSequence str) {
-        return Double.parseDouble(str.toString());
     }
 }

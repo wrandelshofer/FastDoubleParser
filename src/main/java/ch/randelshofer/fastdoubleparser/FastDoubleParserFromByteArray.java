@@ -328,7 +328,7 @@ public class FastDoubleParserFromByteArray {
      * </dl>
      *
      * @param str            the input string
-     * @param endIndex         the length of the string
+     * @param endIndex       the length of the string
      * @param index          index to the first character of RestOfHexFloatingPointLiteral
      * @param isNegative     if the resulting number is negative
      * @param hasLeadingZero if the digit '0' has been consumed
@@ -474,7 +474,7 @@ public class FastDoubleParserFromByteArray {
      *
      * @param str        the input string
      * @param index      index to the first character of RestOfHexFloatingPointLiteral
-     * @param endIndex     the end index of the string
+     * @param endIndex   the end index of the string
      * @param isNegative if the resulting number is negative
      * @param off        offset from the start where character of interest start
      * @return a double representation
