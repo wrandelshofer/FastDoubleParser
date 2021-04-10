@@ -34,6 +34,7 @@ class HandPickedTest {
                 dynamicTest("-e-55", () -> testIllegalInput("-e-55")),
                 dynamicTest("1 x", () -> testIllegalInput("1 x")),
                 dynamicTest("x 1", () -> testIllegalInput("x 1")),
+                dynamicTest("1§", () -> testIllegalInput("1§")),
                 dynamicTest("NaN x", () -> testIllegalInput("NaN x")),
                 dynamicTest("Infinity x", () -> testIllegalInput("Infinity x")),
                 dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde"))
@@ -44,6 +45,8 @@ class HandPickedTest {
     List<DynamicNode> dynamicTestsLegalDecFloatLiterals() {
         return Arrays.asList(
                 dynamicTest("1e23", () -> testLegalInput("1e23", 1e23)),
+                dynamicTest("whitespace before 1", () -> testLegalInput(" 1")),
+                dynamicTest("whitespace after 1", () -> testLegalInput("1 ")),
                 dynamicTest("0", () -> testLegalInput("0", 0.0)),
                 dynamicTest("-0", () -> testLegalInput("-0", -0.0)),
                 dynamicTest("+0", () -> testLegalInput("+0", +0.0)),

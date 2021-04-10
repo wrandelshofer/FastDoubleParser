@@ -151,7 +151,9 @@ public class FastDoubleParserBenchmark {
             }
             double actualFromByteArray = FastDoubleParserFromByteArray.parseDouble(line.getBytes(StandardCharsets.ISO_8859_1));
             if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actualFromByteArray)) {
-                System.err.println("FastDoubleParserFromByteArray disagrees. input=" + line + " expected=" + expected + " actual=" + actual);
+                System.err.println("FastDoubleParserFromByteArray disagrees. input="
+                        + line + " expected=" + expected + " actual=" + actualFromByteArray
+                );
             }
         }
     }
