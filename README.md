@@ -114,8 +114,7 @@ of the code:
 ## JVM tweaks
 
 Disabling the Compact Strings feature with the option `-XX:-CompactStrings` may improve the performance of the parser,
-because this affects the performance of String.charAt(index)
-method:
+because this affects the performance of the String.charAt(index) method:
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
     OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
