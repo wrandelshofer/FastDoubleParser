@@ -56,6 +56,8 @@ FastDoubleParserFromByteArray.parseDouble() which is up to 6 times faster than D
     Speedup FastDoubleParser              vs Double: 4.226583
     Speedup FastDoubleParserFromByteArray vs Double: 5.696088
 
+
+
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
@@ -108,3 +110,23 @@ of the code:
     Double                         MB/s avg: 96.746817, min: 31.57, max: 102.75
     Speedup FastDoubleParser              vs Double: 0.869033
     Speedup FastDoubleParserFromByteArray vs Double: 0.928654
+
+## JVM tweaks
+
+Disabling the Compact Strings feature with the option `-XX:-CompactStrings` may improve the performance of the parser,
+because this affects the performance of String.charAt(index)
+method:
+
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
+
+    parsing random numbers in the range [0,1)
+    === warmup 1000 times =====
+    === number of trials 32 =====
+    FastDoubleParser               MB/s avg: 442.370478, min: 387.23, max: 481.27
+    FastDoubleParserFromByteArray  MB/s avg: 506.825698, min: 443.88, max: 559.29
+    Double                         MB/s avg: 91.292798, min: 82.55, max: 97.96
+    Speedup FastDoubleParser              vs Double: 4.845623
+    Speedup FastDoubleParserFromByteArray vs Double: 5.551650
+  
+

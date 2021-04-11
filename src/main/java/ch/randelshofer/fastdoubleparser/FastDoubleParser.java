@@ -301,12 +301,12 @@ public class FastDoubleParser {
         // ------------
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
-        char ch = index < endIndex ? str.charAt(index) : 0;
         long digits = 0;// digits is treated as an unsigned long
         long exponent = 0;
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
+        char ch = 0;
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
             if (isInteger(ch)) {
@@ -386,7 +386,6 @@ public class FastDoubleParser {
         } else {
             isDigitsTruncated = false;
         }
-
         Double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
         if (result == null) {
             return parseRestOfDecimalFloatLiteralTheHardWay(str);
@@ -435,7 +434,6 @@ public class FastDoubleParser {
         if (index >= endIndex) {
             throw newNumberFormatException(str);
         }
-        char ch = str.charAt(index);
 
         // Parse digits
         // ------------
@@ -444,6 +442,7 @@ public class FastDoubleParser {
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
+        char ch = 0;
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
             // Table look up is faster than a sequence of if-else-branches.

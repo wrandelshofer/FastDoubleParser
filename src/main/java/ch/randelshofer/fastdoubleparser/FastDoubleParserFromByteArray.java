@@ -339,12 +339,12 @@ public class FastDoubleParserFromByteArray {
         // ------------
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
-        byte ch = index < endIndex ? str[index] : 0;
         long digits = 0;// digits is treated as an unsigned long
         long exponent = 0;
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
+        byte ch = 0;
         for (; index < endIndex; index++) {
             ch = str[index];
             if (isInteger(ch)) {
@@ -484,7 +484,6 @@ public class FastDoubleParserFromByteArray {
         if (index >= endIndex) {
             throw newNumberFormatException(str, off, endIndex - off);
         }
-        byte ch = str[index];
 
         // Parse digits
         // ------------
@@ -493,6 +492,7 @@ public class FastDoubleParserFromByteArray {
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
+        byte ch = 0;
         for (; index < endIndex; index++) {
             ch = str[index];
             // Table look up is faster than a sequence of if-else-branches.
