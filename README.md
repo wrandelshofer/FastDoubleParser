@@ -26,7 +26,7 @@ Command:
 
      git clone https://github.com/wrandelshofer/FastDoubleParser.git
      cd FastDoubleParser 
-     javac -d out -encoding utf8 -sourcepath src/main/java test/main/java/ch/randelshofer/fastdoubleparser/FastDoubleParserBenchmark.java 
+     javac -d out -encoding utf8 -sourcepath src/main/java:test/main/java test/main/java/ch/randelshofer/fastdoubleparser/FastDoubleParserBenchmark.java 
      java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark 
      java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
 
