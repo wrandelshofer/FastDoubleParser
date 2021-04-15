@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ ubuntu-latest, macOS-latest ]
         java: [16]
       fail-fast: false
       max-parallel: 4
@@ -20,7 +20,7 @@ jobs:
           java-version: ${{ matrix.java }}
 
       - name: Compile FastDoubleParser
-        run: javac -d out -encoding utf8 -sourcepath src/main/java${{ path.sep }}test/main/java test/main/java/ch/randelshofer/fastdoubleparser/FastDoubleParserBenchmark.java
+        run: javac -d out -encoding utf8 -sourcepath src/main/java:test/main/java test/main/java/ch/randelshofer/fastdoubleparser/FastDoubleParserBenchmark.java
       - name: Run Test 1
         run: java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark
       - name: Run Test 2
