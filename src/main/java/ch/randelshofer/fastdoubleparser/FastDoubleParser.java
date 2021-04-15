@@ -302,7 +302,7 @@ public class FastDoubleParser {
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
         long digits = 0;// digits is treated as an unsigned long
-        long exponent = 0;
+        int exponent = 0;
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
@@ -343,13 +343,13 @@ public class FastDoubleParser {
             if (!isInteger(ch)) {
                 throw newNumberFormatException(str);
             }
-            while (isInteger(ch)) {
+            do {
                 // Guard against overflow of exp_number
                 if (exp_number < MINIMAL_EIGHT_DIGIT_INTEGER) {
                     exp_number = 10 * exp_number + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
-            }
+            } while (isInteger(ch));
             if (neg_exp) {
                 exp_number = -exp_number;
             }
@@ -438,7 +438,7 @@ public class FastDoubleParser {
         // Parse digits
         // ------------
         long digits = 0;// digits is treated as an unsigned long
-        long exponent = 0;
+        int exponent = 0;
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
@@ -464,7 +464,7 @@ public class FastDoubleParser {
             virtualIndexOfPoint = indexAfterDigits;
         } else {
             digitCount = indexAfterDigits - indexOfFirstDigit - 1;
-            exponent = (virtualIndexOfPoint - index + 1) * 4L;
+            exponent = Math.min(virtualIndexOfPoint - index + 1, MINIMAL_EIGHT_DIGIT_INTEGER) * 4;
         }
 
         // Parse exponent number
@@ -480,13 +480,13 @@ public class FastDoubleParser {
             if (!isInteger(ch)) {
                 throw newNumberFormatException(str);
             }
-            while (isInteger(ch)) {
+            do {
                 // Guard against overflow of exp_number
                 if (exp_number < MINIMAL_EIGHT_DIGIT_INTEGER) {
                     exp_number = 10 * exp_number + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
-            }
+            } while (isInteger(ch));
             if (neg_exp) {
                 exp_number = -exp_number;
             }

@@ -733,7 +733,7 @@ class FastDoubleMath {
 
     }
 
-    static Double decFloatLiteralToDouble(int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static Double decFloatLiteralToDouble(int index, boolean isNegative, long digits, int exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
@@ -759,7 +759,7 @@ class FastDoubleMath {
             outDouble = null;
 
         } else if (FASTFLOAT_DEC_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_DEC_LARGEST_POWER) {
-            outDouble = tryDecToDoubleWithFastAlgorithm(isNegative, digits, (int) exponent);
+            outDouble = tryDecToDoubleWithFastAlgorithm(isNegative, digits, exponent);
         } else {
             outDouble = null;
         }
