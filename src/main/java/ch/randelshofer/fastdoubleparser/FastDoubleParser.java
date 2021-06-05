@@ -386,11 +386,8 @@ public class FastDoubleParser {
         } else {
             isDigitsTruncated = false;
         }
-        Double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-        if (result == null) {
-            return parseRestOfDecimalFloatLiteralTheHardWay(str);
-        }
-        return result;
+        double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
+        return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str) : result;
     }
 
     /**
@@ -527,8 +524,8 @@ public class FastDoubleParser {
             isDigitsTruncated = false;
         }
 
-        Double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-        return d == null ? Double.parseDouble(str.toString()) : d;
+        double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
+        return Double.isNaN(d) ? Double.parseDouble(str.toString()) : d;
     }
 
     private static int skipWhitespace(CharSequence str, int index, int endIndex) {

@@ -733,11 +733,11 @@ class FastDoubleMath {
 
     }
 
-    static Double decFloatLiteralToDouble(int index, boolean isNegative, long digits, int exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static double decFloatLiteralToDouble(int index, boolean isNegative, long digits, int exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
-        final Double outDouble;
+        final double outDouble;
         if (isDigitsTruncated) {
             final long exponentOfTruncatedDigits = virtualIndexOfPoint - index + skipCountInTruncatedDigits + exp_number;
 
@@ -747,27 +747,22 @@ class FastDoubleMath {
             // There are cases, in which rounding has no effect.
             if (FASTFLOAT_DEC_SMALLEST_POWER <= exponentOfTruncatedDigits
                     && exponentOfTruncatedDigits <= FASTFLOAT_DEC_LARGEST_POWER) {
-                Double withoutRounding = tryDecToDoubleWithFastAlgorithm(isNegative, digits, (int) exponentOfTruncatedDigits);
-                Double roundedUp = tryDecToDoubleWithFastAlgorithm(isNegative, digits + 1, (int) exponentOfTruncatedDigits);
-                if (withoutRounding != null && Objects.equals(roundedUp, withoutRounding)) {
+                double withoutRounding = tryDecToDoubleWithFastAlgorithm(isNegative, digits, (int) exponentOfTruncatedDigits);
+                double roundedUp = tryDecToDoubleWithFastAlgorithm(isNegative, digits + 1, (int) exponentOfTruncatedDigits);
+                if (!Double.isNaN(withoutRounding) && Objects.equals(roundedUp, withoutRounding)) {
                     return withoutRounding;
                 }
             }
 
             // We have to take a slow path.
             //return Double.parseDouble(str.toString());
-            outDouble = null;
+            outDouble = Double.NaN;
 
         } else if (FASTFLOAT_DEC_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_DEC_LARGEST_POWER) {
             outDouble = tryDecToDoubleWithFastAlgorithm(isNegative, digits, exponent);
         } else {
-            outDouble = null;
+            outDouble = Double.NaN;
         }
-        /*
-        if (outDouble == null) {
-            // We have to take a slow path.
-            return decFloatToBigDecimal(isNegative, digits, (int) exponent).doubleValue();
-        }*/
         return outDouble;
     }
 
@@ -800,11 +795,11 @@ class FastDoubleMath {
                 (middle << 32) | (p00 & 0xffffffffL));
     }
 
-    static Double hexFloatLiteralToDouble(int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
+    static double hexFloatLiteralToDouble(int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
         if (digits == 0) {
             return isNegative ? -0.0 : 0.0;
         }
-        final Double outDouble;
+        final double outDouble;
         if (isDigitsTruncated) {
             final long truncatedExponent = (virtualIndexOfPoint - index + skipCountInTruncatedDigits) * 4L
                     + exp_number;
@@ -814,20 +809,20 @@ class FastDoubleMath {
 
             // There are cases, in which rounding has no effect.
             if (FASTFLOAT_HEX_SMALLEST_POWER <= truncatedExponent && truncatedExponent <= FASTFLOAT_HEX_LARGEST_POWER) {
-                Double withoutRounding = tryHexToDoubleWithFastAlgorithm(isNegative, digits, (int) truncatedExponent);
-                Double roundedUp = tryHexToDoubleWithFastAlgorithm(isNegative, digits + 1, (int) truncatedExponent);
-                if (withoutRounding != null && Objects.equals(roundedUp, withoutRounding)) {
+                double withoutRounding = tryHexToDoubleWithFastAlgorithm(isNegative, digits, (int) truncatedExponent);
+                double roundedUp = tryHexToDoubleWithFastAlgorithm(isNegative, digits + 1, (int) truncatedExponent);
+                if (!Double.isNaN(withoutRounding) && Objects.equals(roundedUp, withoutRounding)) {
                     return withoutRounding;
                 }
             }
 
             // We have to take a slow path.
-            return null;
+            outDouble = Double.NaN;
 
         } else if (FASTFLOAT_HEX_SMALLEST_POWER <= exponent && exponent <= FASTFLOAT_HEX_LARGEST_POWER) {
             outDouble = tryHexToDoubleWithFastAlgorithm(isNegative, digits, (int) exponent);
         } else {
-            outDouble = null;
+            outDouble = Double.NaN;
         }
         return outDouble;
     }
@@ -844,9 +839,9 @@ class FastDoubleMath {
      * @param isNegative whether the number is negative
      * @param digits     uint64 the digits of the number
      * @param power      int32 the exponent of the number
-     * @return the computed double on success, null on failure
+     * @return the computed double on success, {@link Double#NaN} on failure
      */
-    static Double tryDecToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
+    static double tryDecToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
         if (digits == 0 || power < -380 - 19) {
             return isNegative ? -0.0 : 0.0;
         }
@@ -962,7 +957,7 @@ class FastDoubleMath {
             // This does happen, e.g. with 7.3177701707893310e+15
             if (((product_middle + 1 == 0) && ((product_high & 0x1ff) == 0x1ff) &&
                     (product_low + Long.compareUnsigned(digits, product_low) < 0))) { // let us be prudent and bail out.
-                return null;
+                return Double.NaN;
             }
             upper = product_high;
             //lower = product_middle;
@@ -999,7 +994,7 @@ class FastDoubleMath {
             // Note: because the factor_mantissa and factor_mantissa_low are
             // almost always rounded down (except for small positive powers),
             // almost always should round up.
-            return null;
+            return Double.NaN;
         }
 
         mantissa += 1;
@@ -1016,7 +1011,7 @@ class FastDoubleMath {
         long real_exponent = exponent - lz;
         // we have to check that real_exponent is in range, otherwise we bail out
         if ((real_exponent < 1) || (real_exponent > 2046)) {
-            return null;
+            return Double.NaN;
         }
 
         long bits = mantissa | real_exponent << 52
@@ -1036,7 +1031,7 @@ class FastDoubleMath {
      * @param power      int32 the exponent of the number
      * @return the computed double on success, null on failure
      */
-    static Double tryHexToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
+    static double tryHexToDoubleWithFastAlgorithm(boolean isNegative, long digits, int power) {
         if (digits == 0 || power < Double.MIN_EXPONENT - 54) {
             return isNegative ? -0.0 : 0.0;
         }
@@ -1068,7 +1063,7 @@ class FastDoubleMath {
         }
 
         // The fast path has failed
-        return null;
+        return Double.NaN;
     }
 
     private static class Value128{

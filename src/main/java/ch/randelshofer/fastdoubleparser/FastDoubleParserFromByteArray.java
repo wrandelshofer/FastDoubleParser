@@ -435,11 +435,8 @@ public class FastDoubleParserFromByteArray {
             isDigitsTruncated = false;
         }
 
-        Double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-        if (result == null) {
-            return parseRestOfDecimalFloatLiteralTheHardWay(str, off, endIndex - off);
-        }
-        return result;
+        double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
+        return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str, off, endIndex - off) : result;
     }
 
     /**
@@ -577,8 +574,8 @@ public class FastDoubleParserFromByteArray {
             isDigitsTruncated = false;
         }
 
-        Double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-        return d == null ? Double.parseDouble(new String(str, off, endIndex - off)) : d;
+        double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
+        return Double.isNaN(d) ? Double.parseDouble(new String(str, off, endIndex - off)) : d;
     }
 
     private static int skipWhitespace(byte[] str, int index, int endIndex) {
