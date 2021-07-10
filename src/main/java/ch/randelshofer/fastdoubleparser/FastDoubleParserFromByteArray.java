@@ -26,7 +26,8 @@ import java.nio.charset.StandardCharsets;
  *     Apache License 2.0.</dt>
  *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
  *
- *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second.
+ *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second,
+ *     Software: Practice and Experience 51 (8), 2021.
  *     arXiv.2101.11408v3 [cs.DS] 24 Feb 2021</dt>
  *     <dd><a href="https://arxiv.org/pdf/2101.11408.pdf">arxiv.org</a></dd>
  * </dl>
