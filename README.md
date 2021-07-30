@@ -30,32 +30,32 @@ Command:
      java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark 
      java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
 
-On my Mac mini (2018) I get the results shown below. FastDoubleParser.parseDouble() is up to 4 times faster than
-Double.parseDouble(). If your input is a byte array with characters in ISO-8859-1, ASCII or UTF-8 encoding you can use
-FastDoubleParserFromByteArray.parseDouble() which is up to 6 times faster than Double.parseDouble().
+On my Mac mini (2018) I get the results shown below. The results vary on the JVM and platform being used.
+FastDoubleParser.parseDouble() is roughly 4 times faster than Double.parseDouble(). If your input is a byte array with
+characters in ISO-8859-1, ASCII or UTF-8 encoding you can use FastDoubleParserFromByteArray.parseDouble() which is
+roughly 6 times faster than Double.parseDouble().
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-    OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
-
+    OpenJDK 64-Bit Server VM, Oracle Corporation, 17-ea+33-2705
+    
     parsing random numbers in the range [0,1)
     Trying to reach a confidence level of 98.0 % which only deviates by 2 % from the average measured duration.
     === number of trials … =====
-    FastDoubleParser               MB/s avg: 326.160054, stdev: ±31.29, conf98.0%: ±5.25
-    FastDoubleParserFromByteArray  MB/s avg: 501.993346, stdev: ±52.28, conf98.0%: ±8.78
-    Double                         MB/s avg: 81.105124, stdev: ±8.53, conf98.0%: ±1.43
-    Speedup FastDoubleParser              vs Double: 4.02
-    Speedup FastDoubleParserFromByteArray vs Double: 6.19
+    FastDoubleParser               MB/s avg: 435.341486, stdev: ±55.49, conf98.0%: ±8.07
+    FastDoubleParserFromByteArray  MB/s avg: 521.370267, stdev: ±47.86, conf98.0%: ±6.96
+    Double                         MB/s avg: 89.756653, stdev: ±11.03, conf98.0%: ±1.60
+    Speedup FastDoubleParser              vs Double: 4.85
+    Speedup FastDoubleParserFromByteArray vs Double: 5.81
 
     parsing numbers in file data/canada.txt
     read 111126 lines
     Trying to reach a confidence level of 98,0 % which only deviates by 2 % from the average measured duration.
     === number of trials … =====
-    FastDoubleParser               MB/s avg: 333,739272, stdev: ±29,07, conf98,0%: ±4,88
-    FastDoubleParserFromByteArray  MB/s avg: 413,799896, stdev: ±37,49, conf98,0%: ±6,29
-    Double                         MB/s avg: 79,596150, stdev: ±8,17, conf98,0%: ±1,37
-    Speedup FastDoubleParser              vs Double: 4,19
-    Speedup FastDoubleParserFromByteArray vs Double: 5,20
-
+    FastDoubleParser               MB/s avg: 338.604619, stdev: ±31.76, conf98.0%: ±4.94
+    FastDoubleParserFromByteArray  MB/s avg: 462.815049, stdev: ±39.13, conf98.0%: ±6.08
+    Double                         MB/s avg: 78.991570, stdev: ±8.92, conf98.0%: ±1.39
+    Speedup FastDoubleParser              vs Double: 4.29
+    Speedup FastDoubleParserFromByteArray vs Double: 5.86
 
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
@@ -67,49 +67,50 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
     read 100000 lines
     Trying to reach a confidence level of 98,0 % which only deviates by 2 % from the average measured duration.
     === number of trials … =====
-    FastDoubleParser               MB/s avg: 296,625012, stdev: ±23,01, conf98,0%: ±4,73
-    FastDoubleParserFromByteArray  MB/s avg: 472,163855, stdev: ±36,25, conf98,0%: ±7,45
-    Double                         MB/s avg: 45,257612, stdev: ±3,87, conf98,0%: ±0,80
-    Speedup FastDoubleParser              vs Double: 6,55
-    Speedup FastDoubleParserFromByteArray vs Double: 10,43
+    FastDoubleParser               MB/s avg: 373.772432, stdev: ±42.60, conf98.0%: ±8.76
+    FastDoubleParserFromByteArray  MB/s avg: 527.835675, stdev: ±39.57, conf98.0%: ±8.14
+    Double                         MB/s avg: 48.710004, stdev: ±4.46, conf98.0%: ±0.92
+    Speedup FastDoubleParser              vs Double: 7.67
+    Speedup FastDoubleParserFromByteArray vs Double: 10.84
 
     parsing numbers in file data/canada_hexfloats.txt
     read 111126 lines
     Trying to reach a confidence level of 98,0 % which only deviates by 2 % from the average measured duration.
     === number of trials … =====
-    FastDoubleParser               MB/s avg: 317,536089, stdev: ±23,00, conf98,0%: ±4,73
-    FastDoubleParserFromByteArray  MB/s avg: 470,532405, stdev: ±35,86, conf98,0%: ±7,37
-    Double                         MB/s avg: 45,145076, stdev: ±4,03, conf98,0%: ±0,83
-    Speedup FastDoubleParser              vs Double: 7,03
-    Speedup FastDoubleParserFromByteArray vs Double: 10,42
+    FastDoubleParser               MB/s avg: 337,405327, stdev: ±32,30, conf98,0%: ±6,64
+    FastDoubleParserFromByteArray  MB/s avg: 478,021478, stdev: ±39,24, conf98,0%: ±8,07
+    Double                         MB/s avg: 47,085025, stdev: ±4,34, conf98,0%: ±0,89
+    Speedup FastDoubleParser              vs Double: 7,17
+    Speedup FastDoubleParserFromByteArray vs Double: 10,15
 
 Please note that the performance gains depend a lot on the shape of the input
 data. Below are two test sets that are less favorable for the current implementation
 of the code:
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-    OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
+    OpenJDK 64-Bit Server VM, Oracle Corporation, 17-ea+33-2705
 
     parsing numbers in data/shorts.txt
     read 100000 lines
     Trying to reach a confidence level of 98,0 % which only deviates by 2 % from the average measured duration.
     === number of trials … =====
-    FastDoubleParser               MB/s avg: 143,258115, stdev: ±19,81, conf98,0%: ±2,58
-    FastDoubleParserFromByteArray  MB/s avg: 167,969568, stdev: ±23,10, conf98,0%: ±3,00
-    Double                         MB/s avg: 96,505807, stdev: ±14,23, conf98,0%: ±1,85
-    Speedup FastDoubleParser              vs Double: 1,48
-    Speedup FastDoubleParserFromByteArray vs Double: 1,74
+    FastDoubleParser               MB/s avg: 176.329049, stdev: ±20.89, conf98.0%: ±2.30
+    FastDoubleParserFromByteArray  MB/s avg: 223.173540, stdev: ±20.11, conf98.0%: ±2.21
+    Double                         MB/s avg: 128.639261, stdev: ±21.84, conf98.0%: ±2.40
+    Speedup FastDoubleParser              vs Double: 1.37
+    Speedup FastDoubleParserFromByteArray vs Double: 1.73
+    
 
 
     parsing numbers in file data/FastDoubleParser_errorcases.txt
     read 26916 lines
     Trying to reach a confidence level of 98,0 % which only deviates by 2 % from the average measured duration.
     === number of trials … =====
-    FastDoubleParser               MB/s avg: 77,284029, stdev: ±9,33, conf98,0%: ±1,57
-    FastDoubleParserFromByteArray  MB/s avg: 82,390297, stdev: ±9,32, conf98,0%: ±1,57
-    Double                         MB/s avg: 91,186581, stdev: ±9,99, conf98,0%: ±1,68
-    Speedup FastDoubleParser              vs Double: 0,85
-    Speedup FastDoubleParserFromByteArray vs Double: 0,90
+    FastDoubleParser               MB/s avg: 82.988551, stdev: ±8.50, conf98.0%: ±1.43
+    FastDoubleParserFromByteArray  MB/s avg: 88.221805, stdev: ±9.93, conf98.0%: ±1.67
+    Double                         MB/s avg: 96.613648, stdev: ±10.97, conf98.0%: ±1.84
+    Speedup FastDoubleParser              vs Double: 0.86
+    Speedup FastDoubleParserFromByteArray vs Double: 0.91
 
 ## JVM tweaks
 
@@ -117,15 +118,15 @@ Disabling the Compact Strings feature with the option `-XX:-CompactStrings` may 
 because this affects the performance of the String.charAt(index) method:
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-    OpenJDK 64-Bit Server VM, Oracle Corporation, 16+36-2231
+    OpenJDK 64-Bit Server VM, Oracle Corporation, 17-ea+33-2705
 
     parsing random numbers in the range [0,1)
     Trying to reach a confidence level of 98.0 % which only deviates by 2 % from the average measured duration.
     === number of trials … =====
-    FastDoubleParser               MB/s avg: 405.695648, stdev: ±50.29, conf98.0%: ±8.44
-    FastDoubleParserFromByteArray  MB/s avg: 469.423160, stdev: ±49.12, conf98.0%: ±8.25
-    Double                         MB/s avg: 86.056767, stdev: ±9.80, conf98.0%: ±1.64
-    Speedup FastDoubleParser              vs Double: 4.71
-    Speedup FastDoubleParserFromByteArray vs Double: 5.45
+    FastDoubleParser               MB/s avg: 433.352974, stdev: ±52.01, conf98.0%: ±8.08
+    FastDoubleParserFromByteArray  MB/s avg: 494.257921, stdev: ±42.51, conf98.0%: ±6.61
+    Double                         MB/s avg: 90.175554, stdev: ±10.16, conf98.0%: ±1.58
+    Speedup FastDoubleParser              vs Double: 4.81
+    Speedup FastDoubleParserFromByteArray vs Double: 5.48
   
 
