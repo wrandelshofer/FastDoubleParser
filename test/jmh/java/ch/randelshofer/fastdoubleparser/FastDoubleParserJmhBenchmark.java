@@ -16,18 +16,67 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
+ * # VM version: JDK 17-ea, OpenJDK 64-Bit Server VM, 17-ea+25-2252
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * Benchmark                                   Mode  Cnt   Score   Error  Units
+ * FastDoubleParserZero                        avgt   25   1.896 ± 0.015  ns/op
+ * FastDoubleParserOnePointZero                avgt   25  11.655 ± 0.135  ns/op
+ * FastDoubleParser3Digits                     avgt   25  10.434 ± 0.086  ns/op
+ * FastDoubleParser3DigitsWithDecimalPoint     avgt   25  12.722 ± 0.249  ns/op
+ * FastDoubleParser17DigitsWith3DigitExp       avgt   25  33.023 ± 0.675  ns/op
+ * FastDoubleParser19DigitsWithoutExp          avgt   25  29.308 ± 0.261  ns/op
+ * FastDoubleParser19DigitsWith3DigitExp       avgt   25  35.139 ± 0.588  ns/op
+ * FastDoubleParserNegative18DigitsWithoutExp  avgt   25  27.445 ± 0.087  ns/op
+ * FastDoubleParser14HexDigitsWith3DigitExp    avgt   25  22.833 ± 0.789  ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.28
  * # VM version: JDK 16, OpenJDK 64-Bit Server VM, 16+36-2231
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * Benchmark                                  Mode  Cnt    Score   Error  Units
- * FastDoubleParserZero                       avgt   25   2.369 ± 0.008  ns/op
- * FastDoubleParserOnePointZero               avgt   25  12.851 ± 0.124  ns/op
- * FastDoubleParser3Digits                    avgt   25  11.227 ± 0.105  ns/op
- * FastDoubleParser14HexDigitsWith3DigitExp   avgt   25  21.629 ± 0.112  ns/op
- * FastDoubleParser17DigitsWith3DigitExp      avgt   25  31.923 ± 0.102  ns/op
- * FastDoubleParser19DigitsWith3DigitExp      avgt   25  33.912 ± 0.642  ns/op
- * FastDoubleParser19DigitsWithoutExp         avgt   25  29.793 ± 0.221  ns/op
- * FastDoubleParserNegative18DigitsWithoutExp avgt   25  28.023 ± 0.218  ns/op
+ * Benchmark                                   Mode  Cnt   Score   Error  Units
+ * FastDoubleParserZero                        avgt   25   1.818 ± 0.007  ns/op
+ * FastDoubleParserOnePointZero                avgt   25  11.265 ± 0.043  ns/op
+ * FastDoubleParser3Digits                     avgt   25  10.102 ± 0.097  ns/op
+ * FastDoubleParser3DigitsWithDecimalPoint     avgt   25  11.932 ± 0.106  ns/op
+ * FastDoubleParser17DigitsWith3DigitExp       avgt   25  31.393 ± 0.116  ns/op
+ * FastDoubleParserNegative18DigitsWithoutExp  avgt   25  25.988 ± 0.102  ns/op
+ * FastDoubleParser19DigitsWithoutExp          avgt   25  28.314 ± 0.292  ns/op
+ * FastDoubleParser19DigitsWith3DigitExp       avgt   25  32.941 ± 0.153  ns/op
+ * FastDoubleParser14HexDigitsWith3DigitExp    avgt   25  21.606 ± 0.197  ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.28
+ * # VM version: JDK 11.0.8, Java HotSpot(TM) 64-Bit Server VM, 11.0.8+10-LTS
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * Benchmark                                   Mode  Cnt   Score   Error  Units
+ * FastDoubleParserZero                        avgt   25   1.818 ± 0.007  ns/op
+ * FastDoubleParserOnePointZero                avgt   25  11.265 ± 0.043  ns/op
+ * FastDoubleParser3Digits                     avgt   25  10.102 ± 0.097  ns/op
+ * FastDoubleParser3DigitsWithDecimalPoint     avgt   25  11.932 ± 0.106  ns/op
+ * FastDoubleParser17DigitsWith3DigitExp       avgt   25  31.393 ± 0.116  ns/op
+ * FastDoubleParser19DigitsWith3DigitExp       avgt   25  32.941 ± 0.153  ns/op
+ * FastDoubleParser19DigitsWithoutExp          avgt   25  28.314 ± 0.292  ns/op
+ * FastDoubleParserNegative18DigitsWithoutExp  avgt   25  25.988 ± 0.102  ns/op
+ * FastDoubleParser14HexDigitsWith3DigitExp    avgt   25  21.606 ± 0.197  ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.28
+ * # VM version: JDK 11.0.8, Java HotSpot(TM) 64-Bit Server VM, 11.0.8+10-LTS
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * Benchmark                                   Mode  Cnt   Score   Error  Units
+ * FastDoubleParserZero                        avgt   25   1,822 ± 0,010  ns/op
+ * FastDoubleParserOnePointZero                avgt   25  11,889 ± 0,076  ns/op
+ * FastDoubleParser3Digits                     avgt   25  10,324 ± 0,128  ns/op
+ * FastDoubleParser3DigitsWithDecimalPoint     avgt   25  12,437 ± 0,324  ns/op
+ * FastDoubleParser17DigitsWith3DigitExp       avgt   25  37,022 ± 0,339  ns/op
+ * FastDoubleParserNegative18DigitsWithoutExp  avgt   25  28,039 ± 0,192  ns/op
+ * FastDoubleParser19DigitsWithoutExp          avgt   25  29,121 ± 0,728  ns/op
+ * FastDoubleParser19DigitsWith3DigitExp       avgt   25  38,763 ± 0,219  ns/op
+ * FastDoubleParser14HexDigitsWith3DigitExp    avgt   25  23,396 ± 0,314  ns/op
  * </pre>
  */
 public class FastDoubleParserJmhBenchmark {
