@@ -256,16 +256,6 @@ public class FastDoubleParserFromCharArray {
         return parseRestOfDecimalFloatLiteral(str, endIndex, index, isNegative, hasLeadingZero, off);
     }
 
-    private static int parseEightDigits(long val) {
-        long mask = 0x000000FF000000FFL;
-        long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
-        long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
-        val -= 0x3030303030303030L;
-        val = (val * 10) + (val >>> 8); // val = (val * 2561) >> 8;
-        val = (((val & mask) * mul1) + (((val >>> 16) & mask) * mul2)) >>> 32;
-        return (int) (val);
-    }
-
     private static double parseInfinity(char[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
                 //  && str.charAt(index) == 'I'

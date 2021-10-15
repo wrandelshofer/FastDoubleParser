@@ -5,9 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -43,7 +40,7 @@ public class FastDoubleParserFromByteArray {
     /**
      * Special value in {@link #CHAR_TO_HEX_MAP} for
      * characters that are neither a hex digit nor
-     * a decimal point character..
+     * a decimal point character.
      */
     private static final byte OTHER_CLASS = -1;
     /**
@@ -54,8 +51,6 @@ public class FastDoubleParserFromByteArray {
      * if this table has exactly 256 entries.
      */
     private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
-    private final static VarHandle readLongFromByteArray =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
 
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
@@ -84,12 +79,6 @@ public class FastDoubleParserFromByteArray {
 
     private static boolean isDigit(byte c) {
         return (byte) '0' <= c && c <= (byte) '9';
-    }
-
-    private static boolean isMadeOfEightDigits(long val) {
-        long l = ((val + 0x4646464646464646L) | (val - 0x3030303030303030L)) &
-                0x8080808080808080L;
-        return l == 0L;
     }
 
     private static NumberFormatException newNumberFormatException(byte[] str, int off, int len) {
@@ -270,29 +259,6 @@ public class FastDoubleParserFromByteArray {
         return parseRestOfDecimalFloatLiteral(str, endIndex, index, isNegative, hasLeadingZero, off);
     }
 
-    /**
-     * Tries to parse eight digits from a byte array provided in a long.
-     *
-     * @param value an array of 8 bytes in a long
-     * @return the parsed digits or -1 on failure
-     */
-    private static int tryToParseEightDigits(long value) {
-        long val = value - 0x3030303030303030L;
-        long l = ((value + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (l != 0L) {
-            return -1;
-        }
-
-
-        long mask = 0x000000FF000000FFL;
-        long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
-        long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
-        val = (val * 10) + (val >>> 8); // val = (val * 2561) >> 8;
-        val = (((val & mask) * mul1) + (((val >>> 16) & mask) * mul2)) >>> 32;
-        return (int) (val);
-    }
-
     private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
                 //  && str.charAt(index) == 'I'
@@ -369,17 +335,6 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, off, endIndex - off);
                 }
                 virtualIndexOfPoint = index;
-                while (index < endIndex - 9) {
-                    long val = (long) readLongFromByteArray.get(str, index + 1);
-                    int parsed = tryToParseEightDigits(val);
-                    if (parsed >= 0) {
-                        // This might overflow, we deal with it later.
-                        digits = digits * 100_000_000L + parsed;
-                        index += 8;
-                    } else {
-                        break;
-                    }
-                }
             } else {
                 break;
             }

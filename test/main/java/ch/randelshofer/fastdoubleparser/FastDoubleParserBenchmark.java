@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * is smaller than {@value DESIRED_CONFIDENCE_INTERVAL_WIDTH} of the average
  * measured time.
  * <p>
- * It then prints the the average times, standard deviations and confidence intervals.
+ * It then prints the average times, standard deviations and confidence intervals.
  * <p>
  * References:
  * <dl>

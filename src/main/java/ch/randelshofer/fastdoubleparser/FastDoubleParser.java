@@ -89,7 +89,7 @@ public class FastDoubleParser {
     }
 
     /**
-     * Convenience method for calling {@link #parseDouble(str, int, int)}.
+     * Convenience method for calling {@link #parseDouble(CharSequence, int, int)}.
      *
      * @param str the string to be parsed
      * @return the parsed double value
