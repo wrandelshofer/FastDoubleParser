@@ -82,7 +82,7 @@ public class FastDoubleParserFromByteArray {
 
     }
 
-    private static boolean isInteger(byte c) {
+    private static boolean isDigit(byte c) {
         return (byte) '0' <= c && c <= (byte) '9';
     }
 
@@ -270,11 +270,24 @@ public class FastDoubleParserFromByteArray {
         return parseRestOfDecimalFloatLiteral(str, endIndex, index, isNegative, hasLeadingZero, off);
     }
 
-    private static int parseEightDigits(long val) {
+    /**
+     * Tries to parse eight digits from a byte array provided in a long.
+     *
+     * @param value an array of 8 bytes in a long
+     * @return the parsed digits or -1 on failure
+     */
+    private static int tryToParseEightDigits(long value) {
+        long val = value - 0x3030303030303030L;
+        long l = ((value + 0x4646464646464646L) | val) &
+                0x8080808080808080L;
+        if (l != 0L) {
+            return -1;
+        }
+
+
         long mask = 0x000000FF000000FFL;
         long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
         long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
-        val -= 0x3030303030303030L;
         val = (val * 10) + (val >>> 8); // val = (val * 2561) >> 8;
         val = (((val & mask) * mul1) + (((val >>> 16) & mask) * mul2)) >>> 32;
         return (int) (val);
@@ -329,7 +342,7 @@ public class FastDoubleParserFromByteArray {
      * </dl>
      *
      * @param str            the input string
-     * @param endIndex       the length of the string
+     * @param endIndex       the end index of the string
      * @param index          index to the first character of RestOfHexFloatingPointLiteral
      * @param isNegative     if the resulting number is negative
      * @param hasLeadingZero if the digit '0' has been consumed
@@ -348,7 +361,7 @@ public class FastDoubleParserFromByteArray {
         byte ch = 0;
         for (; index < endIndex; index++) {
             ch = str[index];
-            if (isInteger(ch)) {
+            if (isDigit(ch)) {
                 // This might overflow, we deal with it later.
                 digits = 10 * digits + ch - '0';
             } else if (ch == '.') {
@@ -358,9 +371,10 @@ public class FastDoubleParserFromByteArray {
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 9) {
                     long val = (long) readLongFromByteArray.get(str, index + 1);
-                    if (isMadeOfEightDigits(val)) {
+                    int parsed = tryToParseEightDigits(val);
+                    if (parsed >= 0) {
                         // This might overflow, we deal with it later.
-                        digits = digits * 100_000_000L + parseEightDigits(val);
+                        digits = digits * 100_000_000L + parsed;
                         index += 8;
                     } else {
                         break;
@@ -389,7 +403,7 @@ public class FastDoubleParserFromByteArray {
             if (neg_exp || ch == '+') {
                 ch = ++index < endIndex ? str[index] : 0;
             }
-            if (!isInteger(ch)) {
+            if (!isDigit(ch)) {
                 throw newNumberFormatException(str, off, endIndex - off);
             }
             do {
@@ -398,7 +412,7 @@ public class FastDoubleParserFromByteArray {
                     exp_number = 10 * exp_number + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
-            } while (isInteger(ch));
+            } while (isDigit(ch));
             if (neg_exp) {
                 exp_number = -exp_number;
             }
@@ -525,7 +539,7 @@ public class FastDoubleParserFromByteArray {
             if (neg_exp || ch == '+') {
                 ch = ++index < endIndex ? str[index] : 0;
             }
-            if (!isInteger(ch)) {
+            if (!isDigit(ch)) {
                 throw newNumberFormatException(str, off, endIndex - off);
             }
             do {
@@ -534,7 +548,7 @@ public class FastDoubleParserFromByteArray {
                     exp_number = 10 * exp_number + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
-            } while (isInteger(ch));
+            } while (isDigit(ch));
             if (neg_exp) {
                 exp_number = -exp_number;
             }

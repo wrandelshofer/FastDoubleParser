@@ -8,15 +8,15 @@ package ch.randelshofer.fastdoubleparser;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-class NumericallyGeneratedTest {
-    /** Seed for random number generator.
+abstract class AbstractNumericallyGeneratedTest {
+    /**
+     * Seed for random number generator.
      * Specify a literal number to obtain repeatable tests.
      * Specify System.nanoTime to explore the input space.
      * (Make sure to take a note of the seed value if
@@ -45,14 +45,11 @@ class NumericallyGeneratedTest {
     }
 
     private void testLegalInput(String str, double expected) {
-        double actual = FastDoubleParser.parseDouble(str);
+        double actual = parse(str);
         assertEquals(expected, actual, "str=" + str);
         assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actual),
                 "longBits of " + expected);
-
-        double actualFromByteArray = FastDoubleParserFromByteArray.parseDouble(str.getBytes(StandardCharsets.ISO_8859_1));
-        assertEquals(expected, actualFromByteArray, "str=" + str);
-        assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actualFromByteArray),
-                "longBits of " + expected);
     }
+
+    protected abstract double parse(String str);
 }

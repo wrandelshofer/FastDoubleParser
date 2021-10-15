@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -21,36 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-class HandPickedTest {
-    private static class MaxLengthCharSequence implements CharSequence {
-        private final String str;
+abstract class AbstractHandPickedTest {
 
-        private MaxLengthCharSequence(String str) {
-            this.str = str;
-        }
-
-        @Override
-        public int length() {
-            return Integer.MAX_VALUE;
-        }
-
-        @Override
-        public char charAt(int index) {
-            return index < Integer.MAX_VALUE - str.length()
-                    ? ' '
-                    : str.charAt(index - (Integer.MAX_VALUE - str.length()));
-        }
-
-        @Override
-        public CharSequence subSequence(int start, int end) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String toString() {
-            return str;
-        }
-    }
+    abstract double parse(CharSequence str);
 
     @TestFactory
     List<DynamicNode> dynamicTestsIllegalInputs() {
@@ -68,25 +40,6 @@ class HandPickedTest {
                 dynamicTest("NaN x", () -> testIllegalInput("NaN x")),
                 dynamicTest("Infinity x", () -> testIllegalInput("Infinity x")),
                 dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde"))
-        );
-    }
-
-    @TestFactory
-    List<DynamicNode> dynamicTestsIllegalMaxLengthInputs() {
-        return Arrays.asList(
-                dynamicTest("empty", () -> testIllegalMaxLengthInput("")),
-                dynamicTest("-", () -> testIllegalMaxLengthInput("-")),
-                dynamicTest("+", () -> testIllegalMaxLengthInput("+")),
-                dynamicTest("1e", () -> testIllegalMaxLengthInput("1e")),
-                dynamicTest("1_000", () -> testIllegalMaxLengthInput("1_000")),
-                dynamicTest("0.000_1", () -> testIllegalMaxLengthInput("0.000_1")),
-                dynamicTest("-e-55", () -> testIllegalMaxLengthInput("-e-55")),
-                dynamicTest("1 x", () -> testIllegalMaxLengthInput("1 x")),
-                dynamicTest("x 1", () -> testIllegalMaxLengthInput("x 1")),
-                dynamicTest("1§", () -> testIllegalMaxLengthInput("1§")),
-                dynamicTest("NaN x", () -> testIllegalMaxLengthInput("NaN x")),
-                dynamicTest("Infinity x", () -> testIllegalMaxLengthInput("Infinity x")),
-                dynamicTest("0x123.456789abcde", () -> testIllegalMaxLengthInput("0x123.456789abcde"))
         );
     }
 
@@ -165,49 +118,12 @@ class HandPickedTest {
         );
     }
 
-    @TestFactory
-    List<DynamicNode> dynamicTestsLegalDecFloatMaxLengthLiterals() {
-        return Arrays.asList(
-                dynamicTest("1e23", () -> testLegalMaxLengthInput("1e23", 1e23)),
-                dynamicTest("whitespace after 1", () -> testLegalMaxLengthInput("1 ", 1)),
-                dynamicTest("0", () -> testLegalMaxLengthInput("0", 0.0)),
-                dynamicTest("-0", () -> testLegalMaxLengthInput("-0", -0.0)),
-                dynamicTest("+0", () -> testLegalMaxLengthInput("+0", +0.0)),
-                dynamicTest("-0.0", () -> testLegalMaxLengthInput("-0.0", -0.0)),
-                dynamicTest("-0.0e-22", () -> testLegalMaxLengthInput("-0.0e-22", -0.0e-22)),
-                dynamicTest("-0.0e24", () -> testLegalMaxLengthInput("-0.0e24", -0.0e24)),
-                dynamicTest("0e555", () -> testLegalMaxLengthInput("0e555", 0.0)),
-                dynamicTest("-0e555", () -> testLegalMaxLengthInput("-0e555", -0.0)),
-                dynamicTest("1", () -> testLegalMaxLengthInput("1", 1.0)),
-                dynamicTest("-1", () -> testLegalMaxLengthInput("-1", -1.0)),
-                dynamicTest("+1", () -> testLegalMaxLengthInput("+1", +1.0)),
-                dynamicTest("1e0", () -> testLegalMaxLengthInput("1e0", 1e0)),
-                dynamicTest("1.e0", () -> testLegalMaxLengthInput("1.e0", 1e0)),
-                dynamicTest(".e2", () -> testLegalMaxLengthInput(".e2", 0)),
-                dynamicTest("1e1", () -> testLegalMaxLengthInput("1e1", 1e1)),
-                dynamicTest("1e+1", () -> testLegalMaxLengthInput("1e+1", 1e+1)),
-                dynamicTest("1e-1", () -> testLegalMaxLengthInput("1e-1", 1e-1)),
-                dynamicTest("0049", () -> testLegalMaxLengthInput("0049", 49)),
-                dynamicTest("9999999999999999999", () -> testLegalMaxLengthInput("9999999999999999999", 9999999999999999999d)),
-                dynamicTest("972150611626518208.0", () -> testLegalMaxLengthInput("972150611626518208.0", 9.7215061162651827E17)),
-                dynamicTest("3.7587182468424695418288325e-309", () -> testLegalMaxLengthInput("3.7587182468424695418288325e-309", 3.7587182468424695418288325e-309)),
-                dynamicTest("9007199254740992.e-256", () -> testLegalMaxLengthInput("9007199254740992.e-256", 9007199254740992.e-256)),
-                dynamicTest("0.1e+3", () -> testLegalMaxLengthInput("0.1e+3",
-                        100.0))
-        );
-    }
+
 
     @TestFactory
     List<DynamicNode> dynamicTestsLegalHexFloatLiterals() {
         return Arrays.asList(
                 dynamicTest("0x1.0p8", () -> testLegalInput("0x1.0p8", 256))
-        );
-    }
-
-    @TestFactory
-    List<DynamicNode> dynamicTestsLegalHexFloatMaxLengthLiterals() {
-        return Arrays.asList(
-                dynamicTest("0x1.0p8", () -> testLegalMaxLengthInput("0x1.0p8", 256))
         );
     }
 
@@ -309,22 +225,7 @@ class HandPickedTest {
 
     private void testIllegalInput(String s) {
         try {
-            FastDoubleParser.parseDouble(s);
-            fail();
-        } catch (NumberFormatException e) {
-            // success
-        }
-        try {
-            FastDoubleParserFromByteArray.parseDouble(s.getBytes(StandardCharsets.ISO_8859_1));
-            fail();
-        } catch (NumberFormatException e) {
-            // success
-        }
-    }
-
-    private void testIllegalMaxLengthInput(String s) {
-        try {
-            FastDoubleParser.parseDouble(new MaxLengthCharSequence(s));
+            parse(s);
             fail();
         } catch (NumberFormatException e) {
             // success
@@ -344,21 +245,10 @@ class HandPickedTest {
     }
 
     private void testLegalInput(String str, double expected) {
-        double actual = FastDoubleParser.parseDouble(str);
+        double actual = parse(str);
         assertEquals(expected, actual, "str=" + str);
         assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actual),
                 "longBits of " + expected);
-
-        double actualFromByteArray = FastDoubleParserFromByteArray.parseDouble(str.getBytes(StandardCharsets.ISO_8859_1));
-        assertEquals(expected, actualFromByteArray, "str=" + str);
-        assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actualFromByteArray),
-                "longBits of " + expected);
     }
 
-    private void testLegalMaxLengthInput(String str, double expected) {
-        double actual = FastDoubleParser.parseDouble(new MaxLengthCharSequence(str));
-        assertEquals(expected, actual, "str(length=Integer.MAX_VALUE)=" + str);
-        assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actual),
-                "longBits of " + expected);
-    }
 }

@@ -17,19 +17,19 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
- * # VM version: JDK 16, OpenJDK 64-Bit Server VM, 16+36-2231
+ * # VM version: JDK 17, OpenJDK 64-Bit Server VM, 17+35-2724
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark                                Mode  Cnt   Score   Error  Units
- * FromByteArrayZero                        avgt   25   2.713 ± 0.012  ns/op
- * FromByteArrayOnePointZero                avgt   25  11.731 ± 0.102  ns/op
- * FromByteArray3Digits                     avgt   25  10.991 ± 0.170  ns/op
- * FromByteArray3DigitsWithDecimalPoint     avgt   25  12.375 ± 0.059  ns/op
- * FromByteArray17DigitsWith3DigitExp       avgt   25  39.556 ± 2.835  ns/op
- * FromByteArray19DigitsWith3DigitExp       avgt   25  31.361 ± 0.439  ns/op
- * FromByteArray19DigitsWithoutExp          avgt   25  28.946 ± 0.377  ns/op
- * FromByteArrayNegative18DigitsWithoutExp  avgt   25  21.500 ± 0.581  ns/op
- * FromByteArray14HexDigitsWith3DigitExp    avgt   25  24.803 ± 0.103  ns/op
+ * FromByteArrayZero                        avgt   25   2.718 ± 0.010  ns/op
+ * FromByteArrayOnePointZero                avgt   25  12.087 ± 0.190  ns/op
+ * FromByteArray3Digits                     avgt   25  10.803 ± 0.117  ns/op
+ * FromByteArray3DigitsWithDecimalPoint     avgt   25  12.853 ± 0.156  ns/op
+ * FromByteArray17DigitsWith3DigitExp       avgt   25  35.246 ± 0.248  ns/op
+ * FromByteArray19DigitsWith3DigitExp       avgt   25  31.426 ± 0.296  ns/op
+ * FromByteArray19DigitsWithoutExp          avgt   25  27.941 ± 0.132  ns/op
+ * FromByteArrayNegative18DigitsWithoutExp  avgt   25  21.638 ± 0.225  ns/op
+ * FromByteArray14HexDigitsWith3DigitExp    avgt   25  27.389 ± 0.479  ns/op
  * </pre>
  * <pre>
  * # JMH version: 1.28
@@ -37,15 +37,15 @@ import java.util.concurrent.TimeUnit;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark                                Mode  Cnt   Score   Error  Units
- * FromByteArrayZero                        avgt   25   2,741 ± 0,021  ns/op
- * FromByteArrayOnePointZero                avgt   25  14,546 ± 0,319  ns/op
- * FromByteArray3Digits                     avgt   25  12,483 ± 0,136  ns/op
- * FromByteArray3DigitsWithDecimalPoint     avgt   25  14,613 ± 0,196  ns/op
- * FromByteArrayNegative18DigitsWithoutExp  avgt   25  22,601 ± 0,113  ns/op
- * FromByteArray17DigitsWith3DigitExp       avgt   25  41,861 ± 2,239  ns/op
- * FromByteArray19DigitsWith3DigitExp       avgt   25  37,396 ± 0,461  ns/op
- * FromByteArray19DigitsWithoutExp          avgt   25  29,831 ± 0,247  ns/op
- * FromByteArray14HexDigitsWith3DigitExp    avgt   25  33,675 ± 0,696  ns/op
+ * FromByteArrayZero                        avgt   25   2,721 ± 0,010  ns/op
+ * FromByteArrayOnePointZero                avgt   25  14,717 ± 0,060  ns/op
+ * FromByteArray3Digits                     avgt   25  12,088 ± 0,180  ns/op
+ * FromByteArray3DigitsWithDecimalPoint     avgt   25  14,393 ± 0,215  ns/op
+ * FromByteArray17DigitsWith3DigitExp       avgt   25  41,526 ± 2,092  ns/op
+ * FromByteArray19DigitsWith3DigitExp       avgt   25  38,262 ± 0,783  ns/op
+ * FromByteArray19DigitsWithoutExp          avgt   25  31,012 ± 1,736  ns/op
+ * FromByteArrayNegative18DigitsWithoutExp  avgt   25  23,366 ± 0,511  ns/op
+ * FromByteArray14HexDigitsWith3DigitExp    avgt   25  32,841 ± 0,152  ns/op
  * </pre>
  */
 public class FastDoubleParserFromByteArrayJmhBenchmark {
@@ -59,67 +59,67 @@ public class FastDoubleParserFromByteArrayJmhBenchmark {
     private final static byte[] ISO_17_DIGITS_WITH_3_DIGIT_EXP = "123.45678901234567e123".getBytes(StandardCharsets.ISO_8859_1);
     private final static byte[] ISO_14_HEX_DIGITS_WITH_3_DIGIT_EXP = "0x123.456789abcdep123".getBytes(StandardCharsets.ISO_8859_1);
 
-        @Benchmark
-        @OutputTimeUnit(TimeUnit.NANOSECONDS)
-        @BenchmarkMode(Mode.AverageTime)
-        public void measureFromByteArray14HexDigitsWith3DigitExp() {
-            FastDoubleParserFromByteArray.parseDouble(ISO_14_HEX_DIGITS_WITH_3_DIGIT_EXP);
-        }
-
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArray17DigitsWith3DigitExp() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_17_DIGITS_WITH_3_DIGIT_EXP);
+    public double measureFromByteArray14HexDigitsWith3DigitExp() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_14_HEX_DIGITS_WITH_3_DIGIT_EXP);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArray19DigitsWith3DigitExp() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITH_3_DIGIT_EX);
+    public double measureFromByteArray17DigitsWith3DigitExp() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_17_DIGITS_WITH_3_DIGIT_EXP);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArray19DigitsWithoutExp() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITHOUT_EXP);
+    public double measureFromByteArray19DigitsWith3DigitExp() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITH_3_DIGIT_EX);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArray3Digits() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS);
+    public double measureFromByteArray19DigitsWithoutExp() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITHOUT_EXP);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArray3DigitsWithDecimalPoint() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS_WITH_DECIMAL_POINT);
+    public double measureFromByteArray3Digits() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArrayNegative18DigitsWithoutExp() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_18_DIGITS_WITHOUT_EXP);
+    public double measureFromByteArray3DigitsWithDecimalPoint() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS_WITH_DECIMAL_POINT);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArrayOnePointZero() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_ONE_POINT_ZERO);
+    public double measureFromByteArrayNegative18DigitsWithoutExp() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_18_DIGITS_WITHOUT_EXP);
     }
 
     @Benchmark
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @BenchmarkMode(Mode.AverageTime)
-    public void measureFromByteArrayZero() {
-        FastDoubleParserFromByteArray.parseDouble(ISO_ZERO);
+    public double measureFromByteArrayOnePointZero() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_ONE_POINT_ZERO);
+    }
+
+    @Benchmark
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @BenchmarkMode(Mode.AverageTime)
+    public double measureFromByteArrayZero() {
+        return FastDoubleParserFromByteArray.parseDouble(ISO_ZERO);
     }
 }
 
