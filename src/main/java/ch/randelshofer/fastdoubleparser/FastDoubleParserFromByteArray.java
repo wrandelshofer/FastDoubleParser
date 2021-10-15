@@ -86,12 +86,6 @@ public class FastDoubleParserFromByteArray {
         return (byte) '0' <= c && c <= (byte) '9';
     }
 
-    private static boolean isMadeOfEightDigits(long val) {
-        long l = ((val + 0x4646464646464646L) | (val - 0x3030303030303030L)) &
-                0x8080808080808080L;
-        return l == 0L;
-    }
-
     private static NumberFormatException newNumberFormatException(byte[] str, int off, int len) {
         if (len > 1024) {
             // str can be up to Integer.MAX_VALUE characters long
