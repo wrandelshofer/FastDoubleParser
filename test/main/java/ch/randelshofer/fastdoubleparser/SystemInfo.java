@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +28,16 @@ public class SystemInfo {
             cmd = "sysctl -n machdep.cpu.brand_string";
         } else if (osName.startsWith("win")) {
             cmd = "wmic cpu get name";
+        } else if (osName.startsWith("linux")) {
+            try {
+                Optional<String> matchedLine = Files.lines(Path.of("/proc/cpuinfo"))
+                        .filter(l -> l.startsWith("model name") && l.contains(": "))
+                        .map(l -> l.substring(l.indexOf(':') + 2))
+                        .findAny();
+                return matchedLine.orElse("Unknown Processor");
+            } catch (IOException e) {
+                return "Unknown Processor";
+            }
         } else {
             return "Unknown Processor";
         }
