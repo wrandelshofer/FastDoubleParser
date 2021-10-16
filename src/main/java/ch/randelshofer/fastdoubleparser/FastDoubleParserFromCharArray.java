@@ -252,6 +252,8 @@ public class FastDoubleParserFromCharArray {
                 return parseRestOfHexFloatingPointLiteral(str, index + 1, off, endIndex, isNegative);
             }
         }
+        return parseRestOfDecimalFloatLiteral(str, index, off, endIndex, isNegative, hasLeadingZero);
+    }
 
     private static double parseInfinity(char[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex

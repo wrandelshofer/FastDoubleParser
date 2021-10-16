@@ -5,7 +5,6 @@
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark" />
     <module name="FastDoubleParser" />
     <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
-    <option name="VM_PARAMETERS" value="--patch-module ch.randelshofer.fastdoubleparser=out/test/FastDoubleParser" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="ch.randelshofer.math.*" />

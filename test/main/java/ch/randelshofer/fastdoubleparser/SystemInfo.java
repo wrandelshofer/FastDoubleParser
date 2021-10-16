@@ -7,7 +7,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class SystemInfo {
@@ -28,7 +28,7 @@ public class SystemInfo {
             cmd = "wmic cpu get name";
         } else if (osName.startsWith("linux")) {
             try {
-                Optional<String> matchedLine = Files.lines(Path.of("/proc/cpuinfo"))
+                Optional<String> matchedLine = Files.lines(Paths.get("/proc/cpuinfo"))
                         .filter(l -> l.startsWith("model name") && l.contains(": "))
                         .map(l -> l.substring(l.indexOf(':') + 2))
                         .findAny();
