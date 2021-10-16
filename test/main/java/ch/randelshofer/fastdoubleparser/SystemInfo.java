@@ -58,7 +58,7 @@ public class SystemInfo {
         final Runtime rt = Runtime.getRuntime();
         try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec("sysctl -n hw.pagesize").getInputStream()))) {
             return Integer.parseInt(in.readLine());
-        } catch (final IOException ex) {
+        } catch (final IOException | NumberFormatException ex) {
             return 4096;
         }
     }
