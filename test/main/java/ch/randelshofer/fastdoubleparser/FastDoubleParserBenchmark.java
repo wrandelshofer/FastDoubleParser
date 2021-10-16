@@ -63,6 +63,7 @@ public class FastDoubleParserBenchmark {
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
+        System.out.println();
         FastDoubleParserBenchmark benchmark = new FastDoubleParserBenchmark();
         if (args.length == 0) {
             benchmark.demo(100_000);

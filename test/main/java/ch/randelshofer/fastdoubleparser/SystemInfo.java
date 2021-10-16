@@ -9,8 +9,6 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SystemInfo {
     /**
@@ -52,29 +50,12 @@ public class SystemInfo {
         return buf.toString();
     }
 
-    static double getGhz() {
-        final Pattern pattern = Pattern.compile("([0-9]+\\.[0-9]+)GHz");
-        final Matcher matcher = pattern.matcher(getCpuInfo());
-        if (matcher.find()) {
-            return Double.parseDouble(matcher.group(1));
-        } else {
-            return 2.0;
-        }
-    }
-
     static String getOsInfo() {
         final OperatingSystemMXBean mxbean = ManagementFactory.getOperatingSystemMXBean();
         return mxbean.getArch() + ", " + mxbean.getName() + ", " + mxbean.getVersion() + ", " + mxbean.getAvailableProcessors();
     }
 
-    static int getPagesize() {
-        final Runtime rt = Runtime.getRuntime();
-        try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec("sysctl -n hw.pagesize").getInputStream()))) {
-            return Integer.parseInt(in.readLine());
-        } catch (final IOException | NumberFormatException ex) {
-            return 4096;
-        }
-    }
+
 
     static String getRtInfo() {
         final RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();
@@ -86,14 +67,6 @@ public class SystemInfo {
                 "\n" +
                 SystemInfo.getOsInfo() +
                 "\n" +
-                SystemInfo.getRtInfo() +
-                "\n" +
-                "=============================" +
-                "\n" +
-                String.format("%.2fns per CPU cycle", 1.0 / SystemInfo.getGhz()) +
-                "\n" +
-                String.format("%d bytes pagesize", SystemInfo.getPagesize()) +
-                "\n" +
-                "=============================";
+                SystemInfo.getRtInfo();
     }
 }
