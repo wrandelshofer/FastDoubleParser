@@ -20,9 +20,9 @@ jobs:
           java-version: ${{ matrix.java }}
 
       - name: Compile FastDoubleParser
-        run: javac -d out -encoding utf8 -sourcepath src/main/java:test/main/java test/main/java/ch/randelshofer/fastdoubleparser/FastDoubleParserBenchmark.java
+        run: javac --patch-module ch.randelshofer.fastdoubleparser=test/patch-module -d out/test/FastDoubleParser -encoding utf8 -sourcepath src/main/java:test/main/java test/main/java/ch/randelshofer/fastdoubleparser/FastDoubleParserBenchmark.java
       - name: Run Test 1
-        run: java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark
+        run: java --module-path out/test/FastDoubleParser --module ch.randelshofer.fastdoubleparser/ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark
       - name: Run Test 2
-        run: java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
+        run: java --module-path out/test/FastDoubleParser --module ch.randelshofer.fastdoubleparser/ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
 ...
