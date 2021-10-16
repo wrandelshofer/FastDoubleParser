@@ -14,4 +14,9 @@ public class FastDoubleParserFromCharArrayHandPickedTest extends AbstractHandPic
         }
         return FastDoubleParserFromCharArray.parseDouble(chars);
     }
+
+    @Override
+    protected double parse(String str, int offset, int length) {
+        return FastDoubleParserFromCharArray.parseDouble(str.toCharArray(), offset, length);
+    }
 }

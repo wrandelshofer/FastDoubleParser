@@ -8,11 +8,7 @@ package ch.randelshofer.fastdoubleparser;
 import ch.randelshofer.stats.Stats;
 import ch.randelshofer.stats.VarianceStatistics;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -66,8 +62,8 @@ public class FastDoubleParserBenchmark {
     private static final double DESIRED_CONFIDENCE_LEVEL = 0.98;
 
     public static void main(String... args) throws Exception {
-        System.out.printf("%s\n", getCpuInfo());
-        System.out.printf("%s\n\n", getRtInfo());
+        System.out.println(SystemInfo.getSystemSummary());
+        System.out.println();
         FastDoubleParserBenchmark benchmark = new FastDoubleParserBenchmark();
         if (args.length == 0) {
             benchmark.demo(100_000);
@@ -132,35 +128,36 @@ public class FastDoubleParserBenchmark {
         VarianceStatistics doubleStats = new VarianceStatistics();
         int numberOfTrials = NUMBER_OF_TRIALS;
         List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.ISO_8859_1)).collect(Collectors.toList());
-        List<char[]> charArrayLines = lines.stream().map(l -> l.toCharArray()).collect(Collectors.toList());
+        List<char[]> charArrayLines = lines.stream().map(String::toCharArray).collect(Collectors.toList());
         double confidenceWidth;
         System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * DESIRED_CONFIDENCE_LEVEL, 100 * DESIRED_CONFIDENCE_INTERVAL_WIDTH);
         int count = 0;
+        double blackHole = 0;
         do {
             count += numberOfTrials;
             System.out.printf("=== number of trials %,d =====\n", count);
             for (int i = 0; i < numberOfTrials; i++) {
                 t1 = System.nanoTime();
-                findmaxFastDoubleParserParseDouble(lines);
+                blackHole += findmaxFastDoubleParserParseDouble(lines);
                 t2 = System.nanoTime();
                 dif = t2 - t1;
                 fastDoubleParserStats.accept(volumeMB * 1000000000 / dif);
 
                 t1 = System.nanoTime();
-                findmaxFastDoubleParserFromCharArrayParseDouble(charArrayLines);
+                blackHole += findmaxFastDoubleParserFromCharArrayParseDouble(charArrayLines);
                 t2 = System.nanoTime();
                 dif = t2 - t1;
                 fastDoubleParserFromCharArrayStats.accept(volumeMB * 1000000000 / dif);
 
                 t1 = System.nanoTime();
-                findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
+                blackHole += findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
                 t2 = System.nanoTime();
                 dif = t2 - t1;
                 fastDoubleParserFromByteArrayStats.accept(volumeMB * 1000000000 / dif);
 
                 t1 = System.nanoTime();
-                findmaxDoubleParseDouble(lines);
+                blackHole += findmaxDoubleParseDouble(lines);
                 t2 = System.nanoTime();
                 dif = t2 - t1;
                 doubleStats.accept(volumeMB * 1000000000 / dif);
@@ -219,33 +216,4 @@ public class FastDoubleParserBenchmark {
         validate(lines);
         process(lines);
     }
-
-    private static String getCpuInfo() {
-        final Runtime rt = Runtime.getRuntime();
-
-        final String osName = System.getProperty("os.name").toLowerCase();
-        final String cmd;
-        if (osName.startsWith("mac")) {
-            cmd = "sysctl -n machdep.cpu.brand_string";
-        } else if (osName.startsWith("win")) {
-            cmd = "wmic cpu get name";
-        } else {
-            return "Unknown Processor";
-        }
-        final StringBuilder buf = new StringBuilder();
-        try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec(cmd).getInputStream()))) {
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                buf.append(line);
-            }
-        } catch (final IOException ex) {
-            return ex.getMessage();
-        }
-        return buf.toString();
-    }
-
-    private static String getRtInfo() {
-        final RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();
-        return mxbean.getVmName() + ", " + mxbean.getVmVendor() + ", " + mxbean.getVmVersion();
-    }
-
 }

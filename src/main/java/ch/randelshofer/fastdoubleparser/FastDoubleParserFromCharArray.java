@@ -249,12 +249,9 @@ public class FastDoubleParserFromCharArray {
         if (hasLeadingZero) {
             ch = ++index < endIndex ? str[index] : 0;
             if (ch == 'x' || ch == 'X') {
-                return parseRestOfHexFloatingPointLiteral(str, index + 1, endIndex, isNegative, off);
+                return parseRestOfHexFloatingPointLiteral(str, index + 1, off, endIndex, isNegative);
             }
         }
-
-        return parseRestOfDecimalFloatLiteral(str, endIndex, index, isNegative, hasLeadingZero, off);
-    }
 
     private static double parseInfinity(char[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
@@ -305,13 +302,13 @@ public class FastDoubleParserFromCharArray {
      * </dl>
      *
      * @param str            the input string
-     * @param endIndex       the end index of the string
      * @param index          index to the first character of RestOfHexFloatingPointLiteral
+     * @param endIndex       the end index of the string
      * @param isNegative     if the resulting number is negative
      * @param hasLeadingZero if the digit '0' has been consumed
      * @return a double representation
      */
-    private static double parseRestOfDecimalFloatLiteral(char[] str, int endIndex, int index, boolean isNegative, boolean hasLeadingZero, int off) {
+    private static double parseRestOfDecimalFloatLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
         // Parse digits
         // ------------
         // Note: a multiplication by a constant is cheaper than an
@@ -329,7 +326,7 @@ public class FastDoubleParserFromCharArray {
                 digits = 10 * digits + ch - '0';
             } else if (ch == '.') {
                 if (virtualIndexOfPoint != -1) {
-                    throw newNumberFormatException(str, off, endIndex - off);
+                    throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
             } else {
@@ -356,7 +353,7 @@ public class FastDoubleParserFromCharArray {
                 ch = ++index < endIndex ? str[index] : 0;
             }
             if (!isDigit(ch)) {
-                throw newNumberFormatException(str, off, endIndex - off);
+                throw newNumberFormatException(str, startIndex, endIndex - startIndex);
             }
             do {
                 // Guard against overflow of exp_number
@@ -376,7 +373,7 @@ public class FastDoubleParserFromCharArray {
         index = skipWhitespace(str, index, endIndex);
         if (index < endIndex
                 || !hasLeadingZero && digitCount == 0 && str[virtualIndexOfPoint] != '.') {
-            throw newNumberFormatException(str, off, endIndex - off);
+            throw newNumberFormatException(str, startIndex, endIndex - startIndex);
         }
 
         // Re-parse digits in case of a potential overflow
@@ -403,7 +400,7 @@ public class FastDoubleParserFromCharArray {
         }
 
         double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-        return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str, off, endIndex - off) : result;
+        return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str, startIndex, endIndex - startIndex) : result;
     }
 
     /**
@@ -438,15 +435,15 @@ public class FastDoubleParserFromCharArray {
      *
      * @param str        the input string
      * @param index      index to the first character of RestOfHexFloatingPointLiteral
+     * @param startIndex the start index of the string
      * @param endIndex   the end index of the string
      * @param isNegative if the resulting number is negative
-     * @param off        offset from the start where character of interest start
      * @return a double representation
      */
     private static double parseRestOfHexFloatingPointLiteral(
-            char[] str, int index, int endIndex, boolean isNegative, int off) {
+            char[] str, int index, int startIndex, int endIndex, boolean isNegative) {
         if (index >= endIndex) {
-            throw newNumberFormatException(str, off, endIndex - off);
+            throw newNumberFormatException(str, startIndex, endIndex - startIndex);
         }
 
         // Parse digits
@@ -465,7 +462,7 @@ public class FastDoubleParserFromCharArray {
                 digits = (digits << 4) | hexValue;// This might overflow, we deal with it later.
             } else if (hexValue == DECIMAL_POINT_CLASS) {
                 if (virtualIndexOfPoint != -1) {
-                    throw newNumberFormatException(str, off, endIndex - off);
+                    throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
             } else {
@@ -492,7 +489,7 @@ public class FastDoubleParserFromCharArray {
                 ch = ++index < endIndex ? str[index] : 0;
             }
             if (!isDigit(ch)) {
-                throw newNumberFormatException(str, off, endIndex - off);
+                throw newNumberFormatException(str, startIndex, endIndex - startIndex);
             }
             do {
                 // Guard against overflow of exp_number
@@ -513,7 +510,7 @@ public class FastDoubleParserFromCharArray {
         if (index < endIndex
                 || digitCount == 0 && str[virtualIndexOfPoint] != '.'
                 || !hasExponent) {
-            throw newNumberFormatException(str, off, endIndex - off);
+            throw newNumberFormatException(str, startIndex, endIndex - startIndex);
         }
 
         // Re-parse digits in case of a potential overflow
@@ -542,10 +539,11 @@ public class FastDoubleParserFromCharArray {
         }
 
         double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
-        return Double.isNaN(d) ? Double.parseDouble(new String(str, off, endIndex - off)) : d;
+        return Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex)) : d;
     }
 
-    private static int skipWhitespace(char[] str, int index, int endIndex) {
+    private static int skipWhitespace(char[] str, int startIndex, int endIndex) {
+        int index = startIndex;
         for (; index < endIndex; index++) {
             if (str[index] > ' ') {
                 break;

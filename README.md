@@ -19,8 +19,7 @@ How to run the performance test on a Mac:
 
 1. Install Java JDK 11 or higher, for example [OpenJDK.](https://jdk.java.net/16/)
 2. Install the XCode command line tools from Apple.
-3. Open the Terminal and execute the following commands: 
-
+3. Open the Terminal and execute the following commands:
 
 Command:
 
@@ -31,9 +30,10 @@ Command:
      java -classpath out ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark data/canada.txt
 
 On my Mac mini (2018) I get the results shown below. The results vary on the JVM and platform being used.
-FastDoubleParser.parseDouble() is roughly 4 times faster than Double.parseDouble(). If your input is a byte array with
-characters in ISO-8859-1, ASCII or UTF-8 encoding you can use FastDoubleParserFromByteArray.parseDouble() which is
-roughly 6 times faster than Double.parseDouble().
+FastDoubleParser.parseDouble() is roughly 4.5 times faster than Double.parseDouble().
+
+If your input is a char array or a byte array you can use FastDoubleParserFromCharArray.parseDouble() or
+FastDoubleParserFromByteArray.parseDouble() which are even slightly faster.
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
     OpenJDK 64-Bit Server VM, Oracle Corporation, 17+35-2724
