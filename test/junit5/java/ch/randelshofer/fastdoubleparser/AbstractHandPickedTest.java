@@ -17,6 +17,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
@@ -42,6 +44,51 @@ abstract class AbstractHandPickedTest {
                 dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde"))
         );
     }
+
+    @TestFactory
+    List<DynamicNode> dynamicTestsIllegalInputsWithPrefixAndSuffix() {
+        return Arrays.asList(
+                dynamicTest("before-after", () -> testIllegalInputWithPrefixAndSuffix("before-after", 6, 1)),
+                dynamicTest("before7.78$after", () -> testIllegalInputWithPrefixAndSuffix("before7.78$after", 6, 5)),
+                dynamicTest("before7.78e$after", () -> testIllegalInputWithPrefixAndSuffix("before7.78e$after", 6, 6)),
+                dynamicTest("before0x123$4after", () -> testIllegalInputWithPrefixAndSuffix("before0x123$4after", 6, 7)),
+                dynamicTest("before0x123.4$after", () -> testIllegalInputWithPrefixAndSuffix("before0x123.4$after", 6, 8)),
+                dynamicTest("before0$123.4after", () -> testIllegalInputWithPrefixAndSuffix("before0$123.4after", 6, 7))
+        );
+    }
+
+    private void testIllegalInputWithPrefixAndSuffix(String str, int offset, int length) {
+        try {
+            parse(str, offset, length);
+            fail();
+        } catch (IllegalArgumentException e) {
+            String message = e.getMessage();
+            assertFalse(message.contains(str.substring(0, offset)), "Message must not contain prefix. message=" + message);
+            assertFalse(message.contains(str.substring(offset + length)), "Message must not contain suffix. message=" + message);
+            assertTrue(message.contains(str.substring(offset, offset + length)), "Message must contain body. message=" + message);
+        }
+    }
+
+    @TestFactory
+    List<DynamicNode> dynamicTestsLegalInputsWithPrefixAndSuffix() {
+        return Arrays.asList(
+                dynamicTest("before-1after", () -> testLegalInputWithPrefixAndSuffix("before-1after", 6, 2, -1.0)),
+                dynamicTest("before7.789after", () -> testLegalInputWithPrefixAndSuffix("before7.789after", 6, 5, 7.789)),
+                dynamicTest("before7.78e2after", () -> testLegalInputWithPrefixAndSuffix("before7.78e2after", 6, 6, 7.78e2)),
+                dynamicTest("before0x123.4p0after", () -> testLegalInputWithPrefixAndSuffix("before0x1234p0after", 6, 8, 0x1234p0)),
+                dynamicTest("before0x123.45p0after", () -> testLegalInputWithPrefixAndSuffix("before0x123.45p0after", 6, 10, 0x123.45p0)),
+                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInputWithPrefixAndSuffix(
+                        "before1e-23after", 6, 5, 1e-23))
+
+        );
+    }
+
+    private void testLegalInputWithPrefixAndSuffix(String str, int offset, int length, double expected) {
+        double actual = parse(str, offset, length);
+        assertEquals(expected, actual);
+    }
+
+    protected abstract double parse(String str, int offset, int length);
 
     @TestFactory
     List<DynamicNode> dynamicTestsLegalDecFloatLiterals() {

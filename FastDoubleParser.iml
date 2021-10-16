@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/test/jmh/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/test/junit5/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/test/main/java" isTestSource="true" />
+      <excludePattern pattern="**/module-info.java" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

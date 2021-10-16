@@ -18,26 +18,36 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 public class FastDoubleParserMaxInputLengthTest {
     private static class MaxLengthCharSequence implements CharSequence {
         private final String str;
+        private int startIndex;
+        private int endIndex;
 
         private MaxLengthCharSequence(String str) {
             this.str = str;
+            this.startIndex = 0;
+            this.endIndex = Integer.MAX_VALUE;
+        }
+
+        private MaxLengthCharSequence(String str, int startIndex, int endIndex) {
+            this.str = str;
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
         }
 
         @Override
         public int length() {
-            return Integer.MAX_VALUE;
+            return endIndex - startIndex;
         }
 
         @Override
         public char charAt(int index) {
-            return index < Integer.MAX_VALUE - str.length()
+            return index - startIndex < endIndex - str.length()
                     ? ' '
-                    : str.charAt(index - (Integer.MAX_VALUE - str.length()));
+                    : str.charAt(index - startIndex - (endIndex - str.length()));
         }
 
         @Override
         public CharSequence subSequence(int start, int end) {
-            throw new UnsupportedOperationException();
+            return new MaxLengthCharSequence(str, start, end);
         }
 
         @Override

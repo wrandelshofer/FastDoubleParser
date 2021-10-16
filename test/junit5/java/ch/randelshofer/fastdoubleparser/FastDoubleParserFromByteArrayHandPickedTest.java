@@ -5,6 +5,8 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import java.nio.charset.StandardCharsets;
+
 public class FastDoubleParserFromByteArrayHandPickedTest extends AbstractHandPickedTest {
     @Override
     double parse(CharSequence str) {
@@ -13,5 +15,11 @@ public class FastDoubleParserFromByteArrayHandPickedTest extends AbstractHandPic
             bytes[i] = (byte) str.charAt(i);
         }
         return FastDoubleParserFromByteArray.parseDouble(bytes);
+    }
+
+    @Override
+    protected double parse(String str, int offset, int length) {
+        byte[] bytes = str.getBytes(StandardCharsets.ISO_8859_1);
+        return FastDoubleParserFromByteArray.parseDouble(bytes, offset, length);
     }
 }
