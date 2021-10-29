@@ -145,6 +145,7 @@ on the same computer:
 
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
 
+    $ ./build/benchmarks/benchmark
     # parsing random numbers
     available models (-m): uniform one_over_rand32 simple_uniform32 simple_int32 int_e_int simple_int64 bigint_int_dot_int big_ints
     model: generate random numbers uniformly in the interval [0.0,1.0]
@@ -162,7 +163,7 @@ on the same computer:
     Double                                  :    90.48 MB/s (+/-11.1 %)     5.10 Mfloat/s     195.91 ns/f
 
 
-    build/benchmarks/benchmark -f data/canada.txt
+    $ ./build/benchmarks/benchmark -f data/canada.txt
     # read 111126 lines
     volume = 1.93374 MB
     netlib                                  :   302.39 MB/s (+/- 4.5 %)    17.38 Mfloat/s      57.55 ns/f
