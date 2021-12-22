@@ -165,6 +165,23 @@ abstract class AbstractHandPickedTest {
         );
     }
 
+    /**
+     * <dl>
+     *     <dt>Rick Regan, 2011-01-31, Java Hangs When Converting 2.2250738585072012e-308.</dt>
+     *     <dd><a href="https://www.exploringbinary.com/java-hangs-when-converting-2-2250738585072012e-308/">exploringbinary.com</a></dd>
+     * </dl>
+     */
+    @TestFactory
+    List<DynamicNode> dynamicTestsNumbersThatCausedJavaToHang() {
+        return Arrays.asList(
+                dynamicTest("2.2250738585072012e-308", () -> testLegalInput("2.2250738585072012e-308", 2.2250738585072012e-308)),
+                dynamicTest("0.00022250738585072012e-304 (decimal point placement)", () -> testLegalInput("0.00022250738585072012e-304", 0.00022250738585072012e-304)),
+                dynamicTest("00000000002.2250738585072012e-308 (leading zeros)", () -> testLegalInput("00000000002.2250738585072012e-308", 00000000002.2250738585072012e-308)),
+                dynamicTest("2.225073858507201200000e-308 (trailing zeros)", () -> testLegalInput("2.225073858507201200000e-308", 2.225073858507201200000e-308)),
+                dynamicTest("2.2250738585072012e-00308 (leading zeros in the exponent)", () -> testLegalInput("2.2250738585072012e-00308", 2.2250738585072012e-00308)),
+                dynamicTest("2.2250738585072012997800001e-308 (superfluous digits beyond digit 17)", () -> testLegalInput("2.2250738585072012997800001e-308 ", 2.2250738585072012997800001e-308))
+        );
+    }
 
 
     @TestFactory
