@@ -71,8 +71,10 @@ public class FastDoubleParserFromByteArray {
     private static final VectorSpecies<Byte> BYTE_SPECIES = ByteVector.SPECIES_64;
     private static final VectorSpecies<Short> SHORT_SPECIES = ShortVector.SPECIES_128;
     private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_256;
-    private static final IntVector POWERS_OF_10 = IntVector.fromArray(INT_SPECIES, new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16 = IntVector.fromArray(INT_SPECIES, new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
+    private static final IntVector POWERS_OF_10 = IntVector.fromArray(INT_SPECIES,
+            new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
+    private static final IntVector POWERS_OF_16 = IntVector.fromArray(INT_SPECIES,
+            new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
 
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
