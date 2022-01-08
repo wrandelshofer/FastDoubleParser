@@ -9,7 +9,6 @@ import jdk.incubator.vector.IntVector;
 import jdk.incubator.vector.ShortVector;
 import jdk.incubator.vector.Vector;
 import jdk.incubator.vector.VectorMask;
-import jdk.incubator.vector.VectorSpecies;
 
 import static jdk.incubator.vector.VectorOperators.ADD;
 import static jdk.incubator.vector.VectorOperators.GT;
@@ -60,11 +59,9 @@ public class FastDoubleParserFromCharArray {
      */
     private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
 
-    private static final VectorSpecies<Short> SHORT_SPECIES = ShortVector.SPECIES_128;
-    private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_256;
-    private static final IntVector POWERS_OF_10 = IntVector.fromArray(INT_SPECIES,
+    private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16 = IntVector.fromArray(INT_SPECIES,
+    private static final IntVector POWERS_OF_16 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
 
     static {
@@ -594,18 +591,18 @@ public class FastDoubleParserFromCharArray {
     }
 
     static int tryToParseEightDigitsVectorized(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(SHORT_SPECIES, a, offset)
+        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
                 .sub((short) '0');
         if (vec.lt((short) 0).or(vec.compare(GT, (short) 9)).anyTrue()) {
             return -1;
         }
-        Vector<Integer> intVec = vec.castShape(INT_SPECIES, 0);
+        Vector<Integer> intVec = vec.castShape(IntVector.SPECIES_256, 0);
         Vector<Integer> mul = intVec.mul(POWERS_OF_10);
         return (int) mul.reduceLanesToLong(ADD);
     }
 
     static long tryToParseEightHexDigitsVectorized(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(SHORT_SPECIES, a, offset)
+        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
                 .sub((short) '0');
         VectorMask<Short> gt9Msk = vec.compare(GT, 9);
         if (vec.lt((short) 0)
@@ -615,7 +612,7 @@ public class FastDoubleParserFromCharArray {
             return -1L;
         }
         vec = vec.sub((short) ('a' - '0' - 10), gt9Msk);
-        IntVector intVec = (IntVector) vec.castShape(INT_SPECIES, 0);
+        IntVector intVec = (IntVector) vec.castShape(IntVector.SPECIES_256, 0);
         IntVector mul = intVec.mul(POWERS_OF_16);
 
         return mul.reduceLanesToLong(ADD) & 0xffffffffL;

@@ -41,7 +41,7 @@ FastDoubleParser.parseDouble() can be more than 4 times faster than Double.parse
 If your input is a char array or a byte array you can use FastDoubleParserFromCharArray.parseDouble() or
 FastDoubleParserFromByteArray.parseDouble() which are even slightly faster.
 
-    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz, 256-bit SIMD
     x86_64, Mac OS X, 12.1, 12
     OpenJDK 64-Bit Server VM, Oracle Corporation, 18-ea+30-2029
     -XX:+UnlockExperimentalVMOptions
@@ -75,7 +75,7 @@ FastDoubleParserFromByteArray.parseDouble() which are even slightly faster.
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
-    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz, 256-bit SIMD
     x86_64, Mac OS X, 12.1, 12
     OpenJDK 64-Bit Server VM, Oracle Corporation, 18-ea+30-2029
     -XX:+UnlockExperimentalVMOptions
@@ -111,7 +111,7 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
 Please note that the performance gains depend a lot on the shape of the input data. Below are two test sets that are
 less favorable for the current implementation of the code:
 
-    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz, 256-bit SIMD
     x86_64, Mac OS X, 12.1, 12
     OpenJDK 64-Bit Server VM, Oracle Corporation, 18-ea+30-2029
     -XX:+UnlockExperimentalVMOptions
@@ -150,7 +150,7 @@ on the same computer:
 
     version: Mon Sep 13 22:30:48 2021 -0400 a2eee6b5fc009e215d7f346ae86794aa99b013a4
 
-    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz, 256-bit SIMD
 
     $ ./build/benchmarks/benchmark
     # parsing random numbers
