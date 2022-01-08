@@ -30,9 +30,10 @@ Command:
 
      git clone https://github.com/wrandelshofer/FastDoubleParser.git
      cd FastDoubleParser 
-     javac -d out -encoding utf8 -sourcepath src/main/java:test/main/java test/main/java/ch/randelshofer/fastdoubleparser/FastDoubleParserBenchmark.java 
-     java -classpath out ch.randelshofer.fastdoubleparserdemo.FastDoubleParserBenchmark 
-     java -classpath out ch.randelshofer.fastdoubleparserdemo.FastDoubleParserBenchmark data/canada.txt
+     javac -d out -encoding utf8 --module-source-path src/main/java --module ch.randelshofer.fastdoubleparser    
+     javac -Xlint:deprecation -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+     java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
+     java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
 
 On my Mac mini (2018) I get the results shown below. The results vary on the JVM and platform being used.
 FastDoubleParser.parseDouble() can be more than 4 times faster than Double.parseDouble().
