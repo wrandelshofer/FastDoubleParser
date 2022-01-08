@@ -71,6 +71,7 @@ public class FastDoubleParserFromByteArray {
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
     private static final IntVector POWERS_OF_16 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
+    private final static boolean NO_SIMD_256 = IntVector.SPECIES_PREFERRED.vectorBitSize() < 256;
 
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
@@ -626,6 +627,9 @@ public class FastDoubleParserFromByteArray {
     }
 
     static int tryToParseEightDigitsVectorized(byte[] a, int offset) {
+        if (NO_SIMD_256) {
+            return -1;
+        }
         ByteVector bvec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
                 .sub((byte) '0');
         ShortVector vec = (ShortVector) bvec.castShape(ShortVector.SPECIES_128, 0);
@@ -638,6 +642,9 @@ public class FastDoubleParserFromByteArray {
     }
 
     static long tryToParseEightHexDigitsVectorized(byte[] a, int offset) {
+        if (NO_SIMD_256) {
+            return -1L;
+        }
         ByteVector bvec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
                 .sub((byte) '0');
         ShortVector vec = (ShortVector) bvec.castShape(ShortVector.SPECIES_128, 0);

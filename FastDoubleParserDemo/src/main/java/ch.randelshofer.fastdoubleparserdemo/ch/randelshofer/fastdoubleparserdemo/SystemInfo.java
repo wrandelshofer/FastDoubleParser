@@ -27,6 +27,7 @@ public class SystemInfo {
 
     static String getCpuInfo() {
         final Runtime rt = Runtime.getRuntime();
+        final StringBuilder buf = new StringBuilder();
 
         final String osName = System.getProperty("os.name").toLowerCase();
         final String[] cmd;
@@ -35,25 +36,28 @@ public class SystemInfo {
         } else if (osName.startsWith("win")) {
             cmd = new String[]{"wmic", "cpu", "get", "name"};
         } else if (osName.startsWith("linux")) {
+            cmd = null;
             try {
                 Optional<String> matchedLine = Files.lines(Path.of("/proc/cpuinfo"))
                         .filter(l -> l.startsWith("model name") && l.contains(": "))
                         .map(l -> l.substring(l.indexOf(':') + 2))
                         .findAny();
-                return matchedLine.orElse("Unknown Processor");
+                buf.append(matchedLine.orElse("Unknown Processor"));
             } catch (IOException e) {
-                return "Unknown Processor";
+                buf.append("Unknown Processor");
             }
         } else {
-            return "Unknown Processor";
+            cmd = null;
+            buf.append("Unknown Processor");
         }
-        final StringBuilder buf = new StringBuilder();
-        try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec(cmd).getInputStream()))) {
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                buf.append(line);
+        if (cmd != null) {
+            try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec(cmd).getInputStream()))) {
+                for (String line = in.readLine(); line != null; line = in.readLine()) {
+                    buf.append(line);
+                }
+            } catch (final IOException ex) {
+                return ex.getMessage();
             }
-        } catch (final IOException ex) {
-            return ex.getMessage();
         }
 
         buf.append(", ").append(IntVector.SPECIES_PREFERRED.vectorBitSize()).append("-bit SIMD");
