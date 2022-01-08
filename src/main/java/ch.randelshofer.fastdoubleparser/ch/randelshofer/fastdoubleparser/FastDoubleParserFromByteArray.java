@@ -68,6 +68,12 @@ public class FastDoubleParserFromByteArray {
     private final static VarHandle readLongFromByteArray =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
 
+    private static final VectorSpecies<Byte> BYTE_SPECIES = ByteVector.SPECIES_64;
+    private static final VectorSpecies<Short> SHORT_SPECIES = ShortVector.SPECIES_128;
+    private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_256;
+    private static final IntVector POWERS_OF_10 = IntVector.fromArray(INT_SPECIES, new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
+    private static final IntVector POWERS_OF_16 = IntVector.fromArray(INT_SPECIES, new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
+
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
             CHAR_TO_HEX_MAP[ch] = OTHER_CLASS;
@@ -274,34 +280,6 @@ public class FastDoubleParserFromByteArray {
 
         return parseRestOfDecimalFloatLiteral(str, index, off, endIndex, isNegative, hasLeadingZero);
     }
-
-    /**
-     * Tries to parse eight digits from a byte array provided in a byte array.
-     *
-     * @param str    a byte array
-     * @param offset offset in byte array
-     * @return the parsed digits or -1 on failure
-     */
-    private static int tryToParseEightDigits(byte[] str, int offset) {
-        long value = (long) readLongFromByteArray.get(str, offset);
-
-        long val = value - 0x3030303030303030L;
-        long l = ((value + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (l != 0L) {
-            return -1;
-        }
-
-
-        long mask = 0x000000FF000000FFL;
-        long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
-        long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
-        val = (val * 10) + (val >>> 8); // val = (val * 2561) >> 8;
-        val = (((val & mask) * mul1)
-                + (((val >>> 16) & mask) * mul2)) >>> 32;
-        return (int) (val);
-    }
-
 
     private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
@@ -622,6 +600,33 @@ public class FastDoubleParserFromByteArray {
         return index;
     }
 
+    /**
+     * Tries to parse eight digits from a byte array provided in a byte array.
+     *
+     * @param str    a byte array
+     * @param offset offset in byte array
+     * @return the parsed digits or -1 on failure
+     */
+    private static int tryToParseEightDigits(byte[] str, int offset) {
+        long value = (long) readLongFromByteArray.get(str, offset);
+
+        long val = value - 0x3030303030303030L;
+        long l = ((value + 0x4646464646464646L) | val) &
+                0x8080808080808080L;
+        if (l != 0L) {
+            return -1;
+        }
+
+
+        long mask = 0x000000FF000000FFL;
+        long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
+        long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
+        val = (val * 10) + (val >>> 8); // val = (val * 2561) >> 8;
+        val = (((val & mask) * mul1)
+                + (((val >>> 16) & mask) * mul2)) >>> 32;
+        return (int) (val);
+    }
+
     static int tryToParseEightDigitsVectorized(byte[] a, int offset) {
         ByteVector bvec = ByteVector.fromArray(BYTE_SPECIES, a, offset)
                 .sub((byte) '0');
@@ -650,11 +655,5 @@ public class FastDoubleParserFromByteArray {
         Vector<Integer> mul = intVec.mul(POWERS_OF_16);
         return mul.reduceLanesToLong(ADD) & 0xffffffffL;
     }
-
-    private static final VectorSpecies<Byte> BYTE_SPECIES = ByteVector.SPECIES_64;
-    private static final VectorSpecies<Short> SHORT_SPECIES = ShortVector.SPECIES_128;
-    private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_256;
-    private static final IntVector POWERS_OF_10 = IntVector.fromArray(INT_SPECIES, new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16 = IntVector.fromArray(INT_SPECIES, new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
 
 }
