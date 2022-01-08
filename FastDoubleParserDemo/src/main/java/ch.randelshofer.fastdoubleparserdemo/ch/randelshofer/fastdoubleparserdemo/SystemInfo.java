@@ -1,4 +1,9 @@
-package ch.randelshofer.fastdoubleparser;
+/*
+ * @(#)SystemInfo.java
+ * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
+ */
+
+package ch.randelshofer.fastdoubleparserdemo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +14,7 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SystemInfo {
     /**
@@ -21,11 +27,11 @@ public class SystemInfo {
         final Runtime rt = Runtime.getRuntime();
 
         final String osName = System.getProperty("os.name").toLowerCase();
-        final String cmd;
+        final String[] cmd;
         if (osName.startsWith("mac")) {
-            cmd = "sysctl -n machdep.cpu.brand_string";
+            cmd = new String[]{"sysctl", "-n", "machdep.cpu.brand_string"};
         } else if (osName.startsWith("win")) {
-            cmd = "wmic cpu get name";
+            cmd = new String[]{"wmic", "cpu", "get", "name"};
         } else if (osName.startsWith("linux")) {
             try {
                 Optional<String> matchedLine = Files.lines(Path.of("/proc/cpuinfo"))
@@ -56,10 +62,14 @@ public class SystemInfo {
     }
 
 
-
     static String getRtInfo() {
         final RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();
-        return mxbean.getVmName() + ", " + mxbean.getVmVendor() + ", " + mxbean.getVmVersion();
+        return mxbean.getVmName()
+                + ", " + mxbean.getVmVendor()
+                + ", " + mxbean.getVmVersion()
+                + "\n" + mxbean.getInputArguments().stream()
+                .filter(str -> str.startsWith("-XX:"))
+                .collect(Collectors.joining(", "));
     }
 
     static String getSystemSummary() {

@@ -5,10 +5,21 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import jdk.incubator.vector.ByteVector;
+import jdk.incubator.vector.IntVector;
+import jdk.incubator.vector.ShortVector;
+import jdk.incubator.vector.Vector;
+import jdk.incubator.vector.VectorMask;
+import jdk.incubator.vector.VectorSpecies;
+
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+
+import static jdk.incubator.vector.VectorOperators.ADD;
+import static jdk.incubator.vector.VectorOperators.GT;
+import static jdk.incubator.vector.VectorOperators.LT;
 
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
@@ -265,12 +276,15 @@ public class FastDoubleParserFromByteArray {
     }
 
     /**
-     * Tries to parse eight digits from a byte array provided in a long.
+     * Tries to parse eight digits from a byte array provided in a byte array.
      *
-     * @param value an array of 8 bytes in a long
+     * @param str    a byte array
+     * @param offset offset in byte array
      * @return the parsed digits or -1 on failure
      */
-    private static int tryToParseEightDigits(long value) {
+    private static int tryToParseEightDigits(byte[] str, int offset) {
+        long value = (long) readLongFromByteArray.get(str, offset);
+
         long val = value - 0x3030303030303030L;
         long l = ((value + 0x4646464646464646L) | val) &
                 0x8080808080808080L;
@@ -283,9 +297,11 @@ public class FastDoubleParserFromByteArray {
         long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
         long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
         val = (val * 10) + (val >>> 8); // val = (val * 2561) >> 8;
-        val = (((val & mask) * mul1) + (((val >>> 16) & mask) * mul2)) >>> 32;
+        val = (((val & mask) * mul1)
+                + (((val >>> 16) & mask) * mul2)) >>> 32;
         return (int) (val);
     }
+
 
     private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
@@ -364,8 +380,7 @@ public class FastDoubleParserFromByteArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 9) {
-                    long val = (long) readLongFromByteArray.get(str, index + 1);
-                    int parsed = tryToParseEightDigits(val);
+                    int parsed = tryToParseEightDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -510,6 +525,16 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
+                while (index < endIndex - 9) {
+                    long parsed = tryToParseEightHexDigitsVectorized(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = (digits << 32) + parsed;
+                        index += 8;
+                    } else {
+                        break;
+                    }
+                }
             } else {
                 break;
             }
@@ -596,5 +621,40 @@ public class FastDoubleParserFromByteArray {
         }
         return index;
     }
+
+    static int tryToParseEightDigitsVectorized(byte[] a, int offset) {
+        ByteVector bvec = ByteVector.fromArray(BYTE_SPECIES, a, offset)
+                .sub((byte) '0');
+        ShortVector vec = (ShortVector) bvec.castShape(SHORT_SPECIES, 0);
+        if (vec.lt((short) 0).or(vec.compare(GT, (short) 9)).anyTrue()) {
+            return -1;
+        }
+        Vector<Integer> intVec = vec.castShape(INT_SPECIES, 0);
+        Vector<Integer> mul = intVec.mul(POWERS_OF_10);
+        return (int) mul.reduceLanesToLong(ADD);
+    }
+
+    static long tryToParseEightHexDigitsVectorized(byte[] a, int offset) {
+        ByteVector bvec = ByteVector.fromArray(BYTE_SPECIES, a, offset)
+                .sub((byte) '0');
+        ShortVector vec = (ShortVector) bvec.castShape(SHORT_SPECIES, 0);
+        VectorMask<Short> gt9Msk = vec.compare(GT, 9);
+        if (vec.lt((short) 0)
+                .or(gt9Msk.and(vec.compare(LT, 'a' - '0')))
+                .or(vec.compare(GT, (short) 'f' - '0'))
+                .anyTrue()) {
+            return -1L;
+        }
+        vec = vec.sub((short) ('a' - '0' - 10), gt9Msk);
+        Vector<Integer> intVec = vec.castShape(INT_SPECIES, 0);
+        Vector<Integer> mul = intVec.mul(POWERS_OF_16);
+        return mul.reduceLanesToLong(ADD) & 0xffffffffL;
+    }
+
+    private static final VectorSpecies<Byte> BYTE_SPECIES = ByteVector.SPECIES_64;
+    private static final VectorSpecies<Short> SHORT_SPECIES = ShortVector.SPECIES_128;
+    private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_256;
+    private static final IntVector POWERS_OF_10 = IntVector.fromArray(INT_SPECIES, new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
+    private static final IntVector POWERS_OF_16 = IntVector.fromArray(INT_SPECIES, new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
 
 }

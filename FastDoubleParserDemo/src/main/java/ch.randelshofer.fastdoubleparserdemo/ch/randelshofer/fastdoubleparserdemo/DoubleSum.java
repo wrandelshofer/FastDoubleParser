@@ -1,9 +1,9 @@
 /*
  * @(#)DoubleSum.java
- * Copyright © 2021 Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package ch.randelshofer.stats;
+package ch.randelshofer.fastdoubleparserdemo;
 
 import java.util.function.DoubleConsumer;
 

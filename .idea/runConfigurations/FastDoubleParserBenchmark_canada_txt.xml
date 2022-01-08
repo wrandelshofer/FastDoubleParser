@@ -1,11 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="FastDoubleParserBenchmark canada.txt" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparser.FastDoubleParserBenchmark" />
-    <module name="FastDoubleParser" />
+    <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
+    <module name="FastDoubleParserDemo" />
     <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
-    <option name="VM_PARAMETERS" value="--patch-module ch.randelshofer.fastdoubleparser=out/test/FastDoubleParser" />
+    <option name="VM_PARAMETERS" value="-XX:+UnlockExperimentalVMOptions" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="ch.randelshofer.math.*" />

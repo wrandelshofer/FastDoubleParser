@@ -7,6 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 
@@ -31,6 +32,9 @@ import java.util.concurrent.TimeUnit;
  * FromCharArray14HexDigitsWith3DigitExp    avgt   25  26.870 ± 0.174  ns/op
  * </pre>
  */
+@Fork(jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@BenchmarkMode(Mode.AverageTime)
 public class FastDoubleParserFromCharArrayJmhBenchmark {
     private final static char[] CHARS_ZERO = "0".toCharArray();
     private final static char[] CHARS_ONE_POINT_ZERO = "1.0".toCharArray();
@@ -43,64 +47,46 @@ public class FastDoubleParserFromCharArrayJmhBenchmark {
     private final static char[] CHARS_14_HEX_DIGITS_WITH_3_DIGIT_EXP = "0x123.456789abcdep123".toCharArray();
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArray14HexDigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_14_HEX_DIGITS_WITH_3_DIGIT_EXP);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArray17DigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_17_DIGITS_WITH_3_DIGIT_EXP);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArray19DigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_19_DIGITS_WITH_3_DIGIT_EX);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArray19DigitsWithoutExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_19_DIGITS_WITHOUT_EXP);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArray3Digits() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_3_DIGITS);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArray3DigitsWithDecimalPoint() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_3_DIGITS_WITH_DECIMAL_POINT);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArrayNegative18DigitsWithoutExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_18_DIGITS_WITHOUT_EXP);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArrayOnePointZero() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_ONE_POINT_ZERO);
     }
 
     @Benchmark
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
     public double measureFromCharArrayZero() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_ZERO);
     }

@@ -1,12 +1,13 @@
 /*
  * @(#)FastDoubleParserBenchmark.java
- * Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package ch.randelshofer.fastdoubleparser;
+package ch.randelshofer.fastdoubleparserdemo;
 
-import ch.randelshofer.stats.Stats;
-import ch.randelshofer.stats.VarianceStatistics;
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray;
+import ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +46,7 @@ import java.util.stream.Collectors;
  *     <dd><a href="https://dri.es/files/oopsla07-georges.pdf">dri.es</a></dd>
  * </dl>
  */
-public class FastDoubleParserBenchmark {
+public class Main {
     /**
      * Number of trials must be ≥ 30 to approximate normal distribution of
      * the test samples.
@@ -64,7 +65,7 @@ public class FastDoubleParserBenchmark {
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
         System.out.println();
-        FastDoubleParserBenchmark benchmark = new FastDoubleParserBenchmark();
+        Main benchmark = new Main();
         if (args.length == 0) {
             benchmark.demo(100_000);
             System.out.println("You can also provide a filename: it should contain one "
@@ -122,13 +123,13 @@ public class FastDoubleParserBenchmark {
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
         long t1, t2;
         double dif, ts;
-        VarianceStatistics fastDoubleParserStatsMBs = new VarianceStatistics();
-        VarianceStatistics fastDoubleParserFromByteArrayStatsMBs = new VarianceStatistics();
-        VarianceStatistics fastDoubleParserFromCharArrayStatsMBs = new VarianceStatistics();
+        VarianceStatistics fdpStringStatsMBs = new VarianceStatistics();
+        VarianceStatistics fdpByteStatsMBs = new VarianceStatistics();
+        VarianceStatistics fdpCharStatsMBs = new VarianceStatistics();
         VarianceStatistics doubleStatsMBs = new VarianceStatistics();
-        VarianceStatistics fastDoubleParserStatsNSf = new VarianceStatistics();
-        VarianceStatistics fastDoubleParserFromByteArrayStatsNSf = new VarianceStatistics();
-        VarianceStatistics fastDoubleParserFromCharArrayStatsNSf = new VarianceStatistics();
+        VarianceStatistics fdpStringStatsNSf = new VarianceStatistics();
+        VarianceStatistics fdpByteStatsNSf = new VarianceStatistics();
+        VarianceStatistics fdpCharStatsNSf = new VarianceStatistics();
         VarianceStatistics doubleStatsNSf = new VarianceStatistics();
         int numberOfTrials = NUMBER_OF_TRIALS;
         List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.ISO_8859_1)).collect(Collectors.toList());
@@ -146,22 +147,22 @@ public class FastDoubleParserBenchmark {
                 blackHole += findmaxFastDoubleParserParseDouble(lines);
                 t2 = System.nanoTime();
                 dif = t2 - t1;
-                fastDoubleParserStatsMBs.accept(volumeMB * 1000000000 / dif);
-                fastDoubleParserStatsNSf.accept(dif / lines.size());
+                fdpStringStatsMBs.accept(volumeMB * 1000000000 / dif);
+                fdpStringStatsNSf.accept(dif / lines.size());
 
                 t1 = System.nanoTime();
                 blackHole += findmaxFastDoubleParserFromCharArrayParseDouble(charArrayLines);
                 t2 = System.nanoTime();
                 dif = t2 - t1;
-                fastDoubleParserFromCharArrayStatsMBs.accept(volumeMB * 1000000000 / dif);
-                fastDoubleParserFromCharArrayStatsNSf.accept(dif / lines.size());
+                fdpCharStatsMBs.accept(volumeMB * 1000000000 / dif);
+                fdpCharStatsNSf.accept(dif / lines.size());
 
                 t1 = System.nanoTime();
                 blackHole += findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
                 t2 = System.nanoTime();
                 dif = t2 - t1;
-                fastDoubleParserFromByteArrayStatsMBs.accept(volumeMB * 1000000000 / dif);
-                fastDoubleParserFromByteArrayStatsNSf.accept(dif / lines.size());
+                fdpByteStatsMBs.accept(volumeMB * 1000000000 / dif);
+                fdpByteStatsNSf.accept(dif / lines.size());
 
                 t1 = System.nanoTime();
                 blackHole += findmaxDoubleParseDouble(lines);
@@ -173,55 +174,43 @@ public class FastDoubleParserBenchmark {
             confidenceWidth = Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, doubleStatsMBs.getSampleStandardDeviation(), doubleStatsMBs.getCount()) / doubleStatsMBs.getAverage();
         } while (confidenceWidth > DESIRED_CONFIDENCE_INTERVAL_WIDTH);
 
-
-        System.out.printf("FastDoubleParser               MB/s avg: %7.2f, stdev: ±%,4.2f, conf%,4.1f%%: ±%,.2f\n",
-                fastDoubleParserStatsMBs.getAverage(),
-                fastDoubleParserStatsMBs.getSampleStandardDeviation(),
-                100 * DESIRED_CONFIDENCE_LEVEL,
-                Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, fastDoubleParserStatsMBs.getSampleStandardDeviation(), fastDoubleParserFromByteArrayStatsMBs.getCount()));
-        System.out.printf("FastDoubleParserFromCharArray  MB/s avg: %7.2f, stdev: ±%,4.2f, conf%,4.1f%%: ±%,.2f\n",
-                fastDoubleParserFromCharArrayStatsMBs.getAverage(),
-                fastDoubleParserFromCharArrayStatsMBs.getSampleStandardDeviation(),
-                100 * DESIRED_CONFIDENCE_LEVEL,
-                Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, fastDoubleParserFromCharArrayStatsMBs.getSampleStandardDeviation(), fastDoubleParserFromCharArrayStatsMBs.getCount()));
-        System.out.printf("FastDoubleParserFromByteArray  MB/s avg: %7.2f, stdev: ±%,4.2f, conf%,4.1f%%: ±%,.2f\n",
-                fastDoubleParserFromByteArrayStatsMBs.getAverage(),
-                fastDoubleParserFromByteArrayStatsMBs.getSampleStandardDeviation(),
-                100 * DESIRED_CONFIDENCE_LEVEL,
-                Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, fastDoubleParserFromByteArrayStatsMBs.getSampleStandardDeviation(), fastDoubleParserFromByteArrayStatsMBs.getCount()));
-        System.out.printf("Double                         MB/s avg: %7.2f, stdev: ±%,4.2f, conf%,4.1f%%: ±%,.2f\n",
-                doubleStatsMBs.getAverage(),
-                doubleStatsMBs.getSampleStandardDeviation(),
-                100 * DESIRED_CONFIDENCE_LEVEL,
-                Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, doubleStatsMBs.getSampleStandardDeviation(), doubleStatsMBs.getCount()));
+        /*
+        printMbStats("FastDoubleParser", fdpStringStatsMBs, fdpByteStatsMBs);
+        printMbStats("FastDoubleParserFromCharArray", fdpCharStatsMBs, fdpCharStatsMBs);
+        printMbStats("FastDoubleParserFromByteArray", fdpByteStatsMBs, fdpByteStatsMBs);
+        printMbStats("Double", doubleStatsMBs, doubleStatsMBs);
+        */
 
         System.out.println();
-        System.out.printf("FastDoubleParser                        :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
-                fastDoubleParserStatsMBs.getAverage(),
-                fastDoubleParserStatsMBs.getSampleStandardDeviation() / fastDoubleParserStatsMBs.getAverage() * 100,
-                1000 / fastDoubleParserStatsNSf.getAverage(),
-                fastDoubleParserStatsNSf.getAverage());
-        System.out.printf("FastDoubleParserFromCharArray           :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
-                fastDoubleParserFromCharArrayStatsMBs.getAverage(),
-                fastDoubleParserFromCharArrayStatsMBs.getSampleStandardDeviation() / fastDoubleParserFromCharArrayStatsMBs.getAverage() * 100,
-                1000 / fastDoubleParserFromCharArrayStatsNSf.getAverage(),
-                fastDoubleParserFromCharArrayStatsNSf.getAverage());
-        System.out.printf("FastDoubleParserFromByteArray           :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
-                fastDoubleParserFromByteArrayStatsMBs.getAverage(),
-                fastDoubleParserFromByteArrayStatsMBs.getSampleStandardDeviation() / fastDoubleParserFromByteArrayStatsMBs.getAverage() * 100,
-                1000 / fastDoubleParserFromByteArrayStatsNSf.getAverage(),
-                fastDoubleParserFromByteArrayStatsNSf.getAverage());
-        System.out.printf("Double                                  :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
-                doubleStatsMBs.getAverage(),
-                doubleStatsMBs.getSampleStandardDeviation() / doubleStatsMBs.getAverage() * 100,
-                1000 / doubleStatsNSf.getAverage(),
-                doubleStatsNSf.getAverage());
+        extractMbStats2("FastDoubleParser", fdpStringStatsMBs, fdpStringStatsNSf);
+        extractMbStats2("FastDoubleParserFromCharArray", fdpCharStatsMBs, fdpCharStatsNSf);
+        extractMbStats2("FastDoubleParserFromByteArray", fdpByteStatsMBs, fdpByteStatsNSf);
+        extractMbStats2("Double", doubleStatsMBs, doubleStatsNSf);
 
         System.out.println();
-        System.out.printf("Speedup FastDoubleParser              vs Double: %,.2f\n", fastDoubleParserStatsMBs.getAverage() / doubleStatsMBs.getAverage());
-        System.out.printf("Speedup FastDoubleParserFromCharArray vs Double: %,.2f\n", fastDoubleParserFromCharArrayStatsMBs.getAverage() / doubleStatsMBs.getAverage());
-        System.out.printf("Speedup FastDoubleParserFromByteArray vs Double: %,.2f\n", fastDoubleParserFromByteArrayStatsMBs.getAverage() / doubleStatsMBs.getAverage());
+        System.out.printf("Speedup FastDoubleParser              vs Double: %,.2f\n", fdpStringStatsMBs.getAverage() / doubleStatsMBs.getAverage());
+        System.out.printf("Speedup FastDoubleParserFromCharArray vs Double: %,.2f\n", fdpCharStatsMBs.getAverage() / doubleStatsMBs.getAverage());
+        System.out.printf("Speedup FastDoubleParserFromByteArray vs Double: %,.2f\n", fdpByteStatsMBs.getAverage() / doubleStatsMBs.getAverage());
         System.out.print("\n\n");
+    }
+
+    private void extractMbStats2(String fastDoubleParser, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpStringStatsNSf) {
+        System.out.printf("%-30s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
+                fastDoubleParser,
+                fdpStringStatsMBs.getAverage(),
+                fdpStringStatsMBs.getSampleStandardDeviation() * 100 / fdpStringStatsMBs.getAverage(),
+                1000 / fdpStringStatsNSf.getAverage(),
+                fdpStringStatsNSf.getAverage());
+    }
+
+    private void printMbStats(String fastDoubleParser, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpByteStatsMBs) {
+        System.out.printf("%-30s MB/s avg: %7.2f, stdev: +/-%,4.2f, conf%,4.1f%%: +/-%,.2f\n",
+                fastDoubleParser,
+                fdpStringStatsMBs.getAverage(),
+                fdpStringStatsMBs.getSampleStandardDeviation(),
+                100 * DESIRED_CONFIDENCE_LEVEL,
+                Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, fdpStringStatsMBs.getSampleStandardDeviation(),
+                        fdpByteStatsMBs.getCount()));
     }
 
     private void validate(List<String> lines) {

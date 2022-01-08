@@ -5,6 +5,16 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import jdk.incubator.vector.IntVector;
+import jdk.incubator.vector.ShortVector;
+import jdk.incubator.vector.Vector;
+import jdk.incubator.vector.VectorMask;
+import jdk.incubator.vector.VectorSpecies;
+
+import static jdk.incubator.vector.VectorOperators.ADD;
+import static jdk.incubator.vector.VectorOperators.GT;
+import static jdk.incubator.vector.VectorOperators.LT;
+
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
  * <p>
@@ -49,6 +59,11 @@ public class FastDoubleParserFromCharArray {
      * if this table has exactly 256 entries.
      */
     private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
+    private static final VectorSpecies<Short> SHORT_SPECIES = ShortVector.SPECIES_128;
+    private static final VectorSpecies<Integer> INT_SPECIES = IntVector.SPECIES_256;
+    private static final IntVector POWERS_OF_10 = IntVector.fromArray(INT_SPECIES, new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
+    private static final VectorMask EXCEPT_FIRST_MASK = VectorMask.fromLong(INT_SPECIES, 0b01111111L);
+    private static final IntVector POWERS_OF_16 = IntVector.fromArray(INT_SPECIES, new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
 
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
@@ -332,6 +347,16 @@ public class FastDoubleParserFromCharArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
+                while (index < endIndex - 9) {
+                    int parsed = tryToParseEightDigitsVectorized(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = digits * 100_000_000L + parsed;
+                        index += 8;
+                    } else {
+                        break;
+                    }
+                }
             } else {
                 break;
             }
@@ -468,6 +493,17 @@ public class FastDoubleParserFromCharArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
+
+                while (index < endIndex - 9) {
+                    long parsed = tryToParseEightHexDigitsVectorized(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = (digits << 32) + parsed;
+                        index += 8;
+                    } else {
+                        break;
+                    }
+                }
             } else {
                 break;
             }
@@ -553,6 +589,34 @@ public class FastDoubleParserFromCharArray {
             }
         }
         return index;
+    }
+
+    static int tryToParseEightDigitsVectorized(char[] a, int offset) {
+        ShortVector vec = ShortVector.fromCharArray(SHORT_SPECIES, a, offset)
+                .sub((short) '0');
+        if (vec.lt((short) 0).or(vec.compare(GT, (short) 9)).anyTrue()) {
+            return -1;
+        }
+        Vector<Integer> intVec = vec.castShape(INT_SPECIES, 0);
+        Vector<Integer> mul = intVec.mul(POWERS_OF_10);
+        return (int) mul.reduceLanesToLong(ADD);
+    }
+
+    static long tryToParseEightHexDigitsVectorized(char[] a, int offset) {
+        ShortVector vec = ShortVector.fromCharArray(SHORT_SPECIES, a, offset)
+                .sub((short) '0');
+        VectorMask<Short> gt9Msk = vec.compare(GT, 9);
+        if (vec.lt((short) 0)
+                .or(gt9Msk.and(vec.compare(LT, 'a' - '0')))
+                .or(vec.compare(GT, (short) 'f' - '0'))
+                .anyTrue()) {
+            return -1L;
+        }
+        vec = vec.sub((short) ('a' - '0' - 10), gt9Msk);
+        IntVector intVec = (IntVector) vec.castShape(INT_SPECIES, 0);
+        IntVector mul = intVec.mul(POWERS_OF_16);
+
+        return mul.reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
 }
