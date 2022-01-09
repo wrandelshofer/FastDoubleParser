@@ -7,8 +7,6 @@ package ch.randelshofer.fastdoubleparser;
 
 import jdk.incubator.vector.ByteVector;
 import jdk.incubator.vector.IntVector;
-import jdk.incubator.vector.ShortVector;
-import jdk.incubator.vector.Vector;
 import jdk.incubator.vector.VectorMask;
 
 import java.lang.invoke.MethodHandles;
@@ -18,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 
 import static jdk.incubator.vector.VectorOperators.ADD;
 import static jdk.incubator.vector.VectorOperators.GT;
+import static jdk.incubator.vector.VectorOperators.LSHL;
 import static jdk.incubator.vector.VectorOperators.LT;
 
 /**
@@ -69,9 +68,9 @@ public class FastDoubleParserFromByteArray {
 
     private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16 = IntVector.fromArray(IntVector.SPECIES_256,
-            new int[]{1 << 28, 1 << 24, 1 << 20, 1 << 16, 1 << 12, 1 << 8, 1 << 4, 1}, 0);
-    private final static boolean NO_SIMD_256 = IntVector.SPECIES_PREFERRED.vectorBitSize() < 256;
+    private static final IntVector POWERS_OF_16_SHIFTS = IntVector.fromArray(IntVector.SPECIES_256,
+            new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
+    private final static boolean SIMD_256 = IntVector.SPECIES_PREFERRED.vectorBitSize() >= 256;
 
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
@@ -502,14 +501,16 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
-                while (index < endIndex - 9) {
-                    long parsed = tryToParseEightHexDigitsVectorized(str, index + 1);
-                    if (parsed >= 0) {
-                        // This might overflow, we deal with it later.
-                        digits = (digits << 32) + parsed;
-                        index += 8;
-                    } else {
-                        break;
+                if (SIMD_256) {
+                    while (index < endIndex - 9) {
+                        long parsed = tryToParseEightHexDigitsVectorized(str, index + 1);
+                        if (parsed >= 0) {
+                            // This might overflow, we deal with it later.
+                            digits = (digits << 32) + parsed;
+                            index += 8;
+                        } else {
+                            break;
+                        }
                     }
                 }
             } else {
@@ -626,39 +627,31 @@ public class FastDoubleParserFromByteArray {
         return (int) (val);
     }
 
-    static int tryToParseEightDigitsVectorized(byte[] a, int offset) {
-        if (NO_SIMD_256) {
-            return -1;
+    static long tryToParseEightDigitsVectorized(byte[] a, int offset) {
+        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset);
+        // We check first for > '9' because we expect an 'e' or 'E' character
+        if (vec.compare(GT, '9').anyTrue() || vec.compare(LT, '0').anyTrue()) {
+            return -1L;
         }
-        ByteVector bvec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        ShortVector vec = (ShortVector) bvec.castShape(ShortVector.SPECIES_128, 0);
-        if (vec.lt((short) 0).or(vec.compare(GT, (short) 9)).anyTrue()) {
-            return -1;
-        }
-        Vector<Integer> intVec = vec.castShape(IntVector.SPECIES_256, 0);
-        Vector<Integer> mul = intVec.mul(POWERS_OF_10);
-        return (int) mul.reduceLanesToLong(ADD);
+        return vec.sub((byte) '0')
+                .castShape(IntVector.SPECIES_256, 0)
+                .mul(POWERS_OF_10)
+                .reduceLanesToLong(ADD);
     }
 
     static long tryToParseEightHexDigitsVectorized(byte[] a, int offset) {
-        if (NO_SIMD_256) {
+        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset);
+        VectorMask<Byte> gt9Msk;
+        // We check first for > 'f' because we expect a 'p' or 'P' character
+        if (vec.compare(GT, 'f').anyTrue() || vec.compare(LT, '0').anyTrue()
+                || (gt9Msk = vec.compare(GT, '9')).and(vec.compare(LT, 'a')).anyTrue()) {
             return -1L;
         }
-        ByteVector bvec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        ShortVector vec = (ShortVector) bvec.castShape(ShortVector.SPECIES_128, 0);
-        VectorMask<Short> gt9Msk = vec.compare(GT, 9);
-        if (vec.lt((short) 0)
-                .or(gt9Msk.and(vec.compare(LT, 'a' - '0')))
-                .or(vec.compare(GT, (short) 'f' - '0'))
-                .anyTrue()) {
-            return -1L;
-        }
-        vec = vec.sub((short) ('a' - '0' - 10), gt9Msk);
-        Vector<Integer> intVec = vec.castShape(IntVector.SPECIES_256, 0);
-        Vector<Integer> mul = intVec.mul(POWERS_OF_16);
-        return mul.reduceLanesToLong(ADD) & 0xffffffffL;
+        return vec.sub((byte) '0')
+                .sub((byte) ('a' - '0' - 10), gt9Msk)
+                .castShape(IntVector.SPECIES_256, 0)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
 }

@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FastDoubleParserFromByteArrayVectorizedTest extends AbstractFromByteArrayVectorizedTest {
 
 
-    protected void testTryToParseEightDigits(String str, int expected) {
-        int actual = tryToParseEightDigitsVectorized(str.getBytes(StandardCharsets.ISO_8859_1), 0);
+    protected void testTryToParseEightDigits(String str, long expected) {
+        long actual = tryToParseEightDigitsVectorized(str.getBytes(StandardCharsets.ISO_8859_1), 0);
         assertEquals(expected, actual);
     }
 

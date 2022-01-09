@@ -60,7 +60,7 @@ public class SystemInfo {
             }
         }
 
-        buf.append(", ").append(IntVector.SPECIES_PREFERRED.vectorBitSize()).append("-bit SIMD");
+        buf.append(" SIMD-").append(IntVector.SPECIES_PREFERRED.vectorBitSize());
 
         return buf.toString();
     }

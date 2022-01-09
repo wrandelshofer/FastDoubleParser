@@ -33,7 +33,7 @@ public abstract class AbstractFromByteArrayVectorizedTest {
         );
     }
 
-    protected abstract void testTryToParseEightDigits(String str, int expected);
+    protected abstract void testTryToParseEightDigits(String str, long expected);
 
     @TestFactory
     List<DynamicNode> dynamicTestsTryToParseEightHexDigits() {

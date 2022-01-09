@@ -27,7 +27,7 @@ abstract class AbstractNumericallyGeneratedTest {
     @TestFactory
     Stream<DynamicNode> dynamicTestsRandomDecimalFloatLiterals() {
         Random r = new Random(SEED);
-        return r.longs(100_000)
+        return r.longs(10_000)
                 .mapToDouble(Double::longBitsToDouble)
                 .mapToObj(d -> dynamicTest(d + "", () -> testLegalInput(d)));
     }
@@ -35,7 +35,7 @@ abstract class AbstractNumericallyGeneratedTest {
     @TestFactory
     Stream<DynamicNode> dynamicTestsRandomHexadecimalFloatLiterals() {
         Random r = new Random(SEED);
-        return r.longs(100_000)
+        return r.longs(10_000)
                 .mapToDouble(Double::longBitsToDouble)
                 .mapToObj(d -> dynamicTest(Double.toHexString(d) + "", () -> testLegalInput(d)));
     }

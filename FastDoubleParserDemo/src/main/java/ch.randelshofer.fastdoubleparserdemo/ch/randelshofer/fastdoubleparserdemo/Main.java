@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -51,16 +52,16 @@ public class Main {
      * Number of trials must be ≥ 30 to approximate normal distribution of
      * the test samples.
      */
-    public static final int NUMBER_OF_TRIALS = 32;
+    public static final int NUMBER_OF_TRIALS = 64;
 
     /**
      * Desired confidence interval width in percent of the average value.
      */
-    private static final double DESIRED_CONFIDENCE_INTERVAL_WIDTH = 0.02;
+    private static final double DESIRED_CONFIDENCE_INTERVAL_WIDTH = 0.01;
     /**
      * One minus desired confidence level in percent.
      */
-    private static final double DESIRED_CONFIDENCE_LEVEL = 0.98;
+    private static final double DESIRED_CONFIDENCE_LEVEL = 0.99;
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
@@ -122,7 +123,7 @@ public class Main {
     private void process(List<String> lines) {
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
         long t1, t2;
-        double dif, ts;
+        double elapsed, ts;
         VarianceStatistics fdpStringStatsMBs = new VarianceStatistics();
         VarianceStatistics fdpByteStatsMBs = new VarianceStatistics();
         VarianceStatistics fdpCharStatsMBs = new VarianceStatistics();
@@ -137,50 +138,25 @@ public class Main {
         double confidenceWidth;
         System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * DESIRED_CONFIDENCE_LEVEL, 100 * DESIRED_CONFIDENCE_INTERVAL_WIDTH);
-        int count = 0;
         double blackHole = 0;
-        do {
-            count += numberOfTrials;
-            System.out.printf("=== number of trials %,d =====\n", count);
-            for (int i = 0; i < numberOfTrials; i++) {
-                t1 = System.nanoTime();
-                blackHole += findmaxFastDoubleParserParseDouble(lines);
-                t2 = System.nanoTime();
-                dif = t2 - t1;
-                fdpStringStatsMBs.accept(volumeMB * 1000000000 / dif);
-                fdpStringStatsNSf.accept(dif / lines.size());
-
-                t1 = System.nanoTime();
-                blackHole += findmaxFastDoubleParserFromCharArrayParseDouble(charArrayLines);
-                t2 = System.nanoTime();
-                dif = t2 - t1;
-                fdpCharStatsMBs.accept(volumeMB * 1000000000 / dif);
-                fdpCharStatsNSf.accept(dif / lines.size());
-
-                t1 = System.nanoTime();
-                blackHole += findmaxFastDoubleParserFromByteArrayParseDouble(byteArrayLines);
-                t2 = System.nanoTime();
-                dif = t2 - t1;
-                fdpByteStatsMBs.accept(volumeMB * 1000000000 / dif);
-                fdpByteStatsNSf.accept(dif / lines.size());
-
-                t1 = System.nanoTime();
-                blackHole += findmaxDoubleParseDouble(lines);
-                t2 = System.nanoTime();
-                dif = t2 - t1;
-                doubleStatsMBs.accept(volumeMB * 1000000000 / dif);
-                doubleStatsNSf.accept(dif / lines.size());
-            }
-            confidenceWidth = Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, doubleStatsMBs.getSampleStandardDeviation(), doubleStatsMBs.getCount()) / doubleStatsMBs.getAverage();
-        } while (confidenceWidth > DESIRED_CONFIDENCE_INTERVAL_WIDTH);
-
-        /*
-        printMbStats("FastDoubleParser", fdpStringStatsMBs, fdpByteStatsMBs);
+        blackHole += measure(charArrayLines,
+                this::findmaxFastDoubleParserFromCharArrayParseDouble,
+                volumeMB, fdpCharStatsMBs, fdpCharStatsNSf, numberOfTrials);
+        blackHole += measure(byteArrayLines,
+                this::findmaxFastDoubleParserFromByteArrayParseDouble,
+                volumeMB, fdpByteStatsMBs, fdpByteStatsNSf, numberOfTrials);
+        blackHole = measure(lines,
+                this::findmaxFastDoubleParserParseDouble,
+                volumeMB, fdpStringStatsMBs, fdpStringStatsNSf, numberOfTrials);
+        blackHole += measure(lines,
+                this::findmaxDoubleParseDouble,
+                volumeMB, doubleStatsMBs, doubleStatsNSf, numberOfTrials);
+/*
+        printMbStats("FastDoubleParser", fdpStringStatsMBs, fdpStringStatsMBs);
         printMbStats("FastDoubleParserFromCharArray", fdpCharStatsMBs, fdpCharStatsMBs);
         printMbStats("FastDoubleParserFromByteArray", fdpByteStatsMBs, fdpByteStatsMBs);
         printMbStats("Double", doubleStatsMBs, doubleStatsMBs);
-        */
-
+*/
         System.out.println();
         extractMbStats2("FastDoubleParser", fdpStringStatsMBs, fdpStringStatsNSf);
         extractMbStats2("FastDoubleParserFromCharArray", fdpCharStatsMBs, fdpCharStatsNSf);
@@ -194,8 +170,38 @@ public class Main {
         System.out.print("\n\n");
     }
 
+    private <T> double measure(List<T> lines,
+                               Function<List<T>, Double> func,
+                               double volumeMB, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpStringStatsNSf, int numberOfTrials) {
+        long t1;
+        double confidenceWidth;
+        long t2;
+        double elapsed;
+        double blackHole = 0;
+        VarianceStatistics stats = new VarianceStatistics();
+        // warmup
+        for (int i = 0; i < numberOfTrials; i++) {
+            blackHole += func.apply(lines);
+        }
+
+        // measure
+        do {
+            for (int i = 0; i < numberOfTrials; i++) {
+                t1 = System.nanoTime();
+                blackHole += func.apply(lines);
+                t2 = System.nanoTime();
+                elapsed = t2 - t1;
+                stats.accept(elapsed);
+                fdpStringStatsMBs.accept(volumeMB * 1000000000 / elapsed);
+                fdpStringStatsNSf.accept(elapsed / lines.size());
+            }
+            confidenceWidth = Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
+        } while (confidenceWidth > DESIRED_CONFIDENCE_INTERVAL_WIDTH);
+        return blackHole;
+    }
+
     private void extractMbStats2(String fastDoubleParser, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpStringStatsNSf) {
-        System.out.printf("%-30s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
+        System.out.printf("%-30s :  %8.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
                 fastDoubleParser,
                 fdpStringStatsMBs.getAverage(),
                 fdpStringStatsMBs.getSampleStandardDeviation() * 100 / fdpStringStatsMBs.getAverage(),
@@ -204,7 +210,7 @@ public class Main {
     }
 
     private void printMbStats(String fastDoubleParser, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpByteStatsMBs) {
-        System.out.printf("%-30s MB/s avg: %7.2f, stdev: +/-%,4.2f, conf%,4.1f%%: +/-%,.2f\n",
+        System.out.printf("%-30s MB/s avg: %8.2f, stdev: +/-%5.2f, conf%,4.1f%%: +/-%,.2f\n",
                 fastDoubleParser,
                 fdpStringStatsMBs.getAverage(),
                 fdpStringStatsMBs.getSampleStandardDeviation(),
