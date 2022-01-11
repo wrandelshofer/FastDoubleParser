@@ -48,28 +48,28 @@ FastDoubleParserFromByteArray.parseDouble() which are even slightly faster.
     
     parsing random numbers in the range [0,1)
     [...]
-    FastDoubleParser               :    492.76 MB/s (+/- 6.6 %)    28.11 Mfloat/s      35.57 ns/f
-    FastDoubleParserFromCharArray  :    539.88 MB/s (+/- 2.6 %)    30.96 Mfloat/s      32.30 ns/f
-    FastDoubleParserFromByteArray  :    590.93 MB/s (+/- 2.3 %)    33.89 Mfloat/s      29.50 ns/f
-    Double                         :     93.68 MB/s (+/- 3.3 %)     5.37 Mfloat/s     186.22 ns/f
+    FastDoubleParser               :    518.15 MB/s (+/- 3.1 %)    29.71 Mfloat/s      33.66 ns/f
+    FastDoubleParserFromCharArray  :    585.10 MB/s (+/- 5.0 %)    33.49 Mfloat/s      29.86 ns/f
+    FastDoubleParserFromByteArray  :    591.39 MB/s (+/- 2.3 %)    33.93 Mfloat/s      29.48 ns/f
+    Double                         :     98.83 MB/s (+/- 2.9 %)     5.67 Mfloat/s     176.44 ns/f
     
-    Speedup FastDoubleParser              vs Double: 5.26
-    Speedup FastDoubleParserFromCharArray vs Double: 5.76
-    Speedup FastDoubleParserFromByteArray vs Double: 6.31
+    Speedup FastDoubleParser              vs Double: 5.24
+    Speedup FastDoubleParserFromCharArray vs Double: 5.92
+    Speedup FastDoubleParserFromByteArray vs Double: 5.98
 
 '
 
     parsing numbers in file data/canada.txt
     read 111126 lines
     [...]
-    FastDoubleParser               :    365.04 MB/s (+/- 3.6 %)    20.95 Mfloat/s      47.73 ns/f
-    FastDoubleParserFromCharArray  :    491.46 MB/s (+/- 1.0 %)    28.24 Mfloat/s      35.41 ns/f
-    FastDoubleParserFromByteArray  :    526.39 MB/s (+/- 4.1 %)    30.17 Mfloat/s      33.14 ns/f
-    Double                         :     83.38 MB/s (+/- 4.1 %)     4.78 Mfloat/s     209.07 ns/f
+    FastDoubleParser               :    387.91 MB/s (+/- 1.8 %)    22.29 Mfloat/s      44.87 ns/f
+    FastDoubleParserFromCharArray  :    500.82 MB/s (+/- 6.0 %)    28.62 Mfloat/s      34.93 ns/f
+    FastDoubleParserFromByteArray  :    521.74 MB/s (+/- 1.0 %)    29.98 Mfloat/s      33.36 ns/f
+    Double                         :     83.41 MB/s (+/- 4.3 %)     4.78 Mfloat/s     209.04 ns/f
     
-    Speedup FastDoubleParser              vs Double: 4.38
-    Speedup FastDoubleParserFromCharArray vs Double: 5.89
-    Speedup FastDoubleParserFromByteArray vs Double: 6.31
+    Speedup FastDoubleParser              vs Double: 4.65
+    Speedup FastDoubleParserFromCharArray vs Double: 6.00
+    Speedup FastDoubleParserFromByteArray vs Double: 6.26
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
@@ -81,27 +81,27 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
     parsing numbers in file data/minusOneToOne_hexfloats.txt
     read 100000 lines
     [...]
-    FastDoubleParser               :    481.78 MB/s (+/- 2.0 %)    26.41 Mfloat/s      37.87 ns/f
-    FastDoubleParserFromCharArray  :    662.23 MB/s (+/- 2.4 %)    36.29 Mfloat/s      27.56 ns/f
-    FastDoubleParserFromByteArray  :    676.81 MB/s (+/- 4.9 %)    36.99 Mfloat/s      27.03 ns/f
-    Double                         :     52.61 MB/s (+/- 3.7 %)     2.88 Mfloat/s     347.15 ns/f
+    FastDoubleParser               :    406.99 MB/s (+/- 3.2 %)    21.01 Mfloat/s      47.60 ns/f
+    FastDoubleParserFromCharArray  :    583.77 MB/s (+/- 2.9 %)    30.14 Mfloat/s      33.18 ns/f
+    FastDoubleParserFromByteArray  :    563.93 MB/s (+/- 2.3 %)    29.13 Mfloat/s      34.33 ns/f
+    Double                         :     52.45 MB/s (+/- 2.9 %)     2.71 Mfloat/s     369.23 ns/f
     
-    Speedup FastDoubleParser              vs Double: 9.16
-    Speedup FastDoubleParserFromCharArray vs Double: 12.59
-    Speedup FastDoubleParserFromByteArray vs Double: 12.86
+    Speedup FastDoubleParser              vs Double: 7.76
+    Speedup FastDoubleParserFromCharArray vs Double: 11.13
+    Speedup FastDoubleParserFromByteArray vs Double: 10.75
 '
 
     parsing numbers in file data/canada_hexfloats.txt
     read 111126 lines
     [...]
-    FastDoubleParser               :    439.25 MB/s (+/- 2.3 %)    24.07 Mfloat/s      41.54 ns/f
-    FastDoubleParserFromCharArray  :    664.98 MB/s (+/- 1.2 %)    36.46 Mfloat/s      27.43 ns/f
-    FastDoubleParserFromByteArray  :    690.24 MB/s (+/- 2.1 %)    37.83 Mfloat/s      26.43 ns/f
-    Double                         :     52.78 MB/s (+/- 3.5 %)     2.89 Mfloat/s     345.96 ns/f
+    FastDoubleParser               :    455.89 MB/s (+/- 5.3 %)    24.91 Mfloat/s      40.15 ns/f
+    FastDoubleParserFromCharArray  :    623.43 MB/s (+/- 6.6 %)    34.01 Mfloat/s      29.40 ns/f
+    FastDoubleParserFromByteArray  :    649.96 MB/s (+/- 3.8 %)    35.58 Mfloat/s      28.10 ns/f
+    Double                         :     51.57 MB/s (+/- 3.6 %)     2.82 Mfloat/s     354.11 ns/f
     
-    Speedup FastDoubleParser              vs Double: 8.32
-    Speedup FastDoubleParserFromCharArray vs Double: 12.60
-    Speedup FastDoubleParserFromByteArray vs Double: 13.08
+    Speedup FastDoubleParser              vs Double: 8.84
+    Speedup FastDoubleParserFromCharArray vs Double: 12.09
+    Speedup FastDoubleParserFromByteArray vs Double: 12.60
 
 Please note that the performance gains depend a lot on the shape of the input data. Below are two test sets that are
 less favorable for the current implementation of the code:
@@ -153,29 +153,29 @@ on the same computer:
     model: generate random numbers uniformly in the interval [0.0,1.0]
     volume: 100000 floats
     volume = 2.09808 MB
-    netlib                                  :   284.91 MB/s (+/- 4.0 %)    13.58 Mfloat/s      73.64 ns/f
-    doubleconversion                        :   266.46 MB/s (+/- 1.5 %)    12.70 Mfloat/s      78.74 ns/f
-    strtod                                  :    88.05 MB/s (+/- 2.2 %)     4.20 Mfloat/s     238.29 ns/f
-    abseil                                  :   516.76 MB/s (+/- 2.5 %)    24.63 Mfloat/s      40.60 ns/f
-    fastfloat                               :   948.14 MB/s (+/- 5.6 %)    45.19 Mfloat/s      22.13 ns/f
+    netlib                          :   284.91 MB/s (+/- 4.0 %)    13.58 Mfloat/s      73.64 ns/f
+    doubleconversion                :   266.46 MB/s (+/- 1.5 %)    12.70 Mfloat/s      78.74 ns/f
+    strtod                          :    88.05 MB/s (+/- 2.2 %)     4.20 Mfloat/s     238.29 ns/f
+    abseil                          :   516.76 MB/s (+/- 2.5 %)    24.63 Mfloat/s      40.60 ns/f
+    fastfloat                       :   948.14 MB/s (+/- 5.6 %)    45.19 Mfloat/s      22.13 ns/f
 
-    FastDoubleParser                        :   492.76 MB/s (+/- 6.6 %)    28.11 Mfloat/s      35.57 ns/f
-    FastDoubleParserFromCharArray           :   539.88 MB/s (+/- 2.6 %)    30.96 Mfloat/s      32.30 ns/f
-    FastDoubleParserFromByteArray           :   590.93 MB/s (+/- 2.3 %)    33.89 Mfloat/s      29.50 ns/f
-    Double                                  :    93.68 MB/s (+/- 3.3 %)     5.37 Mfloat/s     186.22 ns/f
+    FastDoubleParser                :    518.15 MB/s (+/- 3.1 %)    29.71 Mfloat/s      33.66 ns/f
+    FastDoubleParserFromCharArray   :    585.10 MB/s (+/- 5.0 %)    33.49 Mfloat/s      29.86 ns/f
+    FastDoubleParserFromByteArray   :    591.39 MB/s (+/- 2.3 %)    33.93 Mfloat/s      29.48 ns/f
+    Double                          :     98.83 MB/s (+/- 2.9 %)     5.67 Mfloat/s     176.44 ns/f
 
 '
 
     $ ./build/benchmarks/benchmark -f data/canada.txt
     # read 111126 lines
     volume = 1.93374 MB
-    netlib                                  :   302.39 MB/s (+/- 4.5 %)    17.38 Mfloat/s      57.55 ns/f
-    doubleconversion                        :   268.79 MB/s (+/- 3.5 %)    15.45 Mfloat/s      64.74 ns/f
-    strtod                                  :    76.92 MB/s (+/- 4.1 %)     4.42 Mfloat/s     226.22 ns/f
-    abseil                                  :   482.49 MB/s (+/- 4.3 %)    27.73 Mfloat/s      36.07 ns/f
-    fastfloat                               :   827.73 MB/s (+/- 4.4 %)    47.57 Mfloat/s      21.02 ns/f 
+    netlib                         :   302.39 MB/s (+/- 4.5 %)    17.38 Mfloat/s      57.55 ns/f
+    doubleconversion               :   268.79 MB/s (+/- 3.5 %)    15.45 Mfloat/s      64.74 ns/f
+    strtod                         :    76.92 MB/s (+/- 4.1 %)     4.42 Mfloat/s     226.22 ns/f
+    abseil                         :   482.49 MB/s (+/- 4.3 %)    27.73 Mfloat/s      36.07 ns/f
+    fastfloat                      :   827.73 MB/s (+/- 4.4 %)    47.57 Mfloat/s      21.02 ns/f 
 
-    FastDoubleParser                        :   365.04 MB/s (+/- 3.6 %)    20.95 Mfloat/s      47.73 ns/f
-    FastDoubleParserFromCharArray           :   491.46 MB/s (+/- 1.0 %)    28.24 Mfloat/s      35.41 ns/f
-    FastDoubleParserFromByteArray           :   526.39 MB/s (+/- 4.1 %)    30.17 Mfloat/s      33.14 ns/f
-    Double                                  :    83.38 MB/s (+/- 4.1 %)     4.78 Mfloat/s     209.07 ns/f
+    FastDoubleParser               :    387.91 MB/s (+/- 1.8 %)    22.29 Mfloat/s      44.87 ns/f
+    FastDoubleParserFromCharArray  :    500.82 MB/s (+/- 6.0 %)    28.62 Mfloat/s      34.93 ns/f
+    FastDoubleParserFromByteArray  :    521.74 MB/s (+/- 1.0 %)    29.98 Mfloat/s      33.36 ns/f
+    Double                         :     83.41 MB/s (+/- 4.3 %)     4.78 Mfloat/s     209.04 ns/f

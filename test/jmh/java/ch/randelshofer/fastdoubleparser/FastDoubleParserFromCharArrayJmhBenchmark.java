@@ -27,11 +27,11 @@ import java.util.concurrent.TimeUnit;
  * FromCharArrayOnePointZero                avgt   25  14.022 ± 0.107  ns/op  +
  * FromCharArray3Digits                     avgt   25  12.483 ± 0.163  ns/op  +
  * FromCharArray3DigitsWithDecimalPoint     avgt   25  14.811 ± 0.284  ns/op  +
- * FromCharArray17DigitsWith3DigitExp       avgt   25  40.581 ± 1.916  ns/op  +
- * FromCharArray19DigitsWithoutExp          avgt   25  32.341 ± 0.246  ns/op  +
- * FromCharArray19DigitsWith3DigitExp       avgt   25  33.872 ± 0.892  ns/op  +
- * FromCharArrayNegative18DigitsWithoutExp  avgt   25  25.057 ± 0.309  ns/op  -
- * FromCharArray14HexDigitsWith3DigitExp    avgt   25  30.508 ± 1.785  ns/op  +
+ * FromCharArray17DigitsWith3DigitExp       avgt   25  40.514 ± 1.694  ns/op
+ * FromCharArray19DigitsWithoutExp          avgt   25  32.732 ± 0.342  ns/op
+ * FromCharArray19DigitsWith3DigitExp       avgt   25  34.022 ± 0.449  ns/op
+ * FromCharArrayNegative18DigitsWithoutExp  avgt   25  24.816 ± 0.310  ns/op
+ * FromCharArray14HexDigitsWith3DigitExp    avgt   25  31.908 ± 1.673  ns/op
  * </pre>
  * <pre>
  * # JMH version: 1.28
@@ -110,6 +110,7 @@ public class FastDoubleParserFromCharArrayJmhBenchmark {
     public double m09FromCharArray14HexDigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_14_HEX_DIGITS_WITH_3_DIGIT_EXP);
     }
+
 }
 
 
