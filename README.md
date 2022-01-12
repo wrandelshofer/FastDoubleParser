@@ -36,7 +36,7 @@ Command:
      java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
 
 On my Mac mini (2018) I get the results shown below. The results vary on the JVM and platform being used.
-FastDoubleParser.parseDouble() can be more than 5 times faster than Double.parseDouble().
+FastDoubleParser.parseDouble() is at least 4 times faster than Double.parseDouble().
 
 If your input is a char array or a byte array you can use FastDoubleParserFromCharArray.parseDouble() or
 FastDoubleParserFromByteArray.parseDouble() which are even slightly faster.
