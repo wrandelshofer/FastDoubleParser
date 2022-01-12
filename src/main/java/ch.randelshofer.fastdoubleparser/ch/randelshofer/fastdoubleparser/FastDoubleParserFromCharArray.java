@@ -5,9 +5,13 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import jdk.incubator.vector.ByteVector;
 import jdk.incubator.vector.IntVector;
+import jdk.incubator.vector.LongVector;
 import jdk.incubator.vector.ShortVector;
 import jdk.incubator.vector.VectorMask;
+import jdk.incubator.vector.VectorShuffle;
+import jdk.incubator.vector.VectorSpecies;
 
 import static jdk.incubator.vector.VectorOperators.ADD;
 import static jdk.incubator.vector.VectorOperators.LSHL;
@@ -346,16 +350,16 @@ public class FastDoubleParserFromCharArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
-                    while (index < endIndex - 9) {
-                        long parsed = tryToParseEightDigitsVectorized(str, index + 1);
-                        if (parsed >= 0) {
-                            // This might overflow, we deal with it later.
-                            digits = digits * 100_000_000L + parsed;
-                            index += 8;
-                        } else {
-                            break;
-                        }
+                while (index < endIndex - 9) {
+                    long parsed = tryToParseEightDigitsVectorized(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = digits * 100_000_000L + parsed;
+                        index += 8;
+                    } else {
+                        break;
                     }
+                }
 
             } else {
                 break;
@@ -592,7 +596,42 @@ public class FastDoubleParserFromCharArray {
         return index;
     }
 
+    final static VectorShuffle<Byte> SHUFFLE = VectorShuffle.fromArray(ByteVector.SPECIES_128, new int[]{0, 2, 4, 6, 8, 10, 12, 14, 0, 2, 4, 6, 8, 10, 12, 14}, 0);
+
     static long tryToParseEightDigitsVectorized(char[] a, int offset) {
+        return tryToParseEightDigitsVectorizedSimdAndSwar(a, offset);
+    }
+
+    static long tryToParseEightDigitsVectorizedSimdAndSwar(char[] str, int offset) {
+        VectorSpecies<Short> spec = ShortVector.SPECIES_128;
+
+        ShortVector v = ShortVector.fromCharArray(spec, str, offset)
+                .sub((short) '0');
+        if (v.compare(UNSIGNED_GT, 9).anyTrue()) {
+            return -1L;
+        }
+
+        LongVector vl = v.reinterpretAsBytes()
+                .rearrange(SHUFFLE)
+                .reinterpretAsLongs();
+
+        long val = vl.lane(0) & 0x0f0f0f0f0f0f0f0fL;
+
+        // @Credit  AQRIT
+        // https://stackoverflow.com/questions/66371621/hardware-simd-parsing-in-c-sharp-performance-improvement/66430672
+        // convert
+        final long mask = 0x000000FF000000FFL;
+        final long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
+        final long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
+        val = (val * 10) + (val >> 8);
+        val = (((val & mask) * mul1) + (((val >> 16) & mask) * mul2)) >> 32;
+
+
+        return val;
+
+    }
+
+    static long tryToParseEightDigitsVectorizedSimd(char[] a, int offset) {
         ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
                 .sub((short) '0');
         // With an unsigned gt we only need to check for > 9

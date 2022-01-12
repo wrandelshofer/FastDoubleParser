@@ -65,7 +65,7 @@ public class FastDoubleParserFromCharArrayJmhBenchmark {
     private final static char[] CHARS_19_DIGITS_WITH_3_DIGIT_EX = "123.4567890123456789e123".toCharArray();
     private final static char[] CHARS_17_DIGITS_WITH_3_DIGIT_EXP = "123.45678901234567e123".toCharArray();
     private final static char[] CHARS_14_HEX_DIGITS_WITH_3_DIGIT_EXP = "0x123.456789abcdep123".toCharArray();
-
+/*
     @Benchmark
     public double m01FromCharArrayZero() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_ZERO);
@@ -85,7 +85,7 @@ public class FastDoubleParserFromCharArrayJmhBenchmark {
     public double m04FromCharArray3DigitsWithDecimalPoint() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_3_DIGITS_WITH_DECIMAL_POINT);
     }
-
+*/
     @Benchmark
     public double m05FromCharArray17DigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_17_DIGITS_WITH_3_DIGIT_EXP);
