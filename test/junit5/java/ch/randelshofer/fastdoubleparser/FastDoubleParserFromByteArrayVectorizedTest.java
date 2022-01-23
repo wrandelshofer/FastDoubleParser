@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.nio.charset.StandardCharsets;
 
-import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray.tryToParseEightDigitsVectorized;
+import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray.tryToParseEightDigitsSimd;
 import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray.tryToParseEightHexDigitsVectorized;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +15,7 @@ public class FastDoubleParserFromByteArrayVectorizedTest extends AbstractFromByt
 
 
     protected void testTryToParseEightDigits(String str, long expected) {
-        long actual = tryToParseEightDigitsVectorized(str.getBytes(StandardCharsets.ISO_8859_1), 0);
+        long actual = tryToParseEightDigitsSimd(str.getBytes(StandardCharsets.ISO_8859_1), 0);
         assertEquals(expected, actual);
     }
 

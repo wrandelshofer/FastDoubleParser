@@ -349,7 +349,7 @@ public class FastDoubleParserFromCharArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 9) {
-                    long parsed = tryToParseEightDigits(str, index + 1);
+                    long parsed = tryToParseEightDigitsSimd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -498,7 +498,7 @@ public class FastDoubleParserFromCharArray {
                 virtualIndexOfPoint = index;
 
                 while (index < endIndex - 9) {
-                    long parsed = tryToParseEightHexDigits(str, index + 1);
+                    long parsed = tryToParseEightHexDigitsSimd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
@@ -596,7 +596,7 @@ public class FastDoubleParserFromCharArray {
 
     final static VectorShuffle<Byte> SHUFFLE = VectorShuffle.fromArray(ByteVector.SPECIES_128, new int[]{0, 2, 4, 6, 8, 10, 12, 14, 0, 2, 4, 6, 8, 10, 12, 14}, 0);
 
-    static long tryToParseEightDigits(char[] a, int offset) {
+    static long tryToParseEightDigitsSimd(char[] a, int offset) {
         ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
                 .sub((short) '0');
         // With an unsigned gt we only need to check for > 9
@@ -609,7 +609,7 @@ public class FastDoubleParserFromCharArray {
                 .reduceLanesToLong(ADD);
     }
 
-    static long tryToParseEightHexDigits(char[] a, int offset) {
+    static long tryToParseEightHexDigitsSimd(char[] a, int offset) {
         ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
                 .sub((short) '0');
         VectorMask<Short> gt9Msk;

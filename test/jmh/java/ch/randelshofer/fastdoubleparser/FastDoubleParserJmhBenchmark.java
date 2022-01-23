@@ -19,13 +19,30 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
- * # VM version: JDK 18-ea, OpenJDK 64-Bit Server VM, 18-ea+30-2029
+ * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17.0.1+12-jvmci-21.3-b05
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
+ * Benchmark                       Mode  Cnt   Score   Error  Units
+ * FromZero                        avgt    4   2.067 ± 0.130  ns/op
+ * FromOnePointZero                avgt    4   2.304 ± 0.030  ns/op
+ * From3Digits                     avgt    4   2.291 ± 0.093  ns/op
+ * From3DigitsWithDecimalPoint     avgt    4   2.285 ± 0.031  ns/op
+ * From17DigitsWith3DigitExp       avgt    4  32.242 ± 0.728  ns/op
+ * From19DigitsWithoutExp          avgt    4  30.658 ± 0.366  ns/op
+ * From19DigitsWith3DigitExp       avgt    4  34.448 ± 0.801  ns/op
+ * FromNegative18DigitsWithoutExp  avgt    4  29.039 ± 1.615  ns/op
+ * From14HexDigitsWith3DigitExp    avgt    4  25.044 ± 0.687  ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.28
+ * # VM version: JDK 18-ea, OpenJDK 64-Bit Server VM, 18-ea+30-2029
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  * Benchmark                       Mode  Cnt   Score   Error  Units
  * FromZero                        avgt    4   4.248 ± 2.656  ns/op
  * FromOnePointZero                avgt    4  14.417 ± 1.936  ns/op
  * From3Digits                     avgt    4  12.971 ± 2.486  ns/op
+ *
+ * independent multiplications:
  * From3DigitsWithDecimalPoint     avgt    4  15.068 ± 3.471  ns/op
  * From17DigitsWith3DigitExp       avgt    4  35.870 ± 4.861  ns/op
  * From19DigitsWith3DigitExp       avgt    4  38.046 ± 3.203  ns/op
@@ -56,6 +73,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 public class FastDoubleParserJmhBenchmark {
+    /*
     @Benchmark
     public double m01FromZero() {
         String str = "0";
@@ -79,7 +97,7 @@ public class FastDoubleParserJmhBenchmark {
         String str = "10.1";
         return FastDoubleParser.parseDouble(str);
     }
-
+*/
     @Benchmark
     public double m05From17DigitsWith3DigitExp() {
         String str = "123.45678901234567e123";

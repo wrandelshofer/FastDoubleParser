@@ -61,7 +61,7 @@ public class Main {
     /**
      * One minus desired confidence level in percent.
      */
-    private static final double DESIRED_CONFIDENCE_LEVEL = 0.99;
+    private static final double DESIRED_CONFIDENCE_LEVEL = 0.998;
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());

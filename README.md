@@ -159,6 +159,13 @@ on the same computer:
     abseil                          :   516.76 MB/s (+/- 2.5 %)    24.63 Mfloat/s      40.60 ns/f
     fastfloat                       :   948.14 MB/s (+/- 5.6 %)    45.19 Mfloat/s      22.13 ns/f
 
+    GraalVM 17.0.1+12-jvmci-21.3-b05
+    FastDoubleParser               :    536.54 MB/s (+/- 2.2 %)    30.78 Mfloat/s      32.48 ns/f
+    FastDoubleParserFromCharArray* :    139.05 MB/s (+/- 3.9 %)     7.97 Mfloat/s     125.48 ns/f
+    FastDoubleParserFromByteArray  :    647.30 MB/s (+/- 5.4 %)    37.02 Mfloat/s      27.01 ns/f
+    Double                         :    113.90 MB/s (+/- 3.5 %)     6.53 Mfloat/s     153.14 ns/f
+    
+    OpenJDK 18-ea+30-2029
     FastDoubleParser                :    518.15 MB/s (+/- 3.1 %)    29.71 Mfloat/s      33.66 ns/f
     FastDoubleParserFromCharArray   :    585.10 MB/s (+/- 5.0 %)    33.49 Mfloat/s      29.86 ns/f
     FastDoubleParserFromByteArray   :    591.39 MB/s (+/- 2.3 %)    33.93 Mfloat/s      29.48 ns/f
@@ -175,7 +182,16 @@ on the same computer:
     abseil                         :   482.49 MB/s (+/- 4.3 %)    27.73 Mfloat/s      36.07 ns/f
     fastfloat                      :   827.73 MB/s (+/- 4.4 %)    47.57 Mfloat/s      21.02 ns/f 
 
+    GraalVM 17.0.1+12-jvmci-21.3-b05
+    FastDoubleParser               :    463.20 MB/s (+/- 3.0 %)    26.59 Mfloat/s      37.60 ns/f
+    FastDoubleParserFromCharArray* :    172.29 MB/s (+/- 7.6 %)     9.82 Mfloat/s     101.85 ns/f
+    FastDoubleParserFromByteArray  :    570.16 MB/s (+/- 0.8 %)    32.76 Mfloat/s      30.52 ns/f
+    Double                         :    101.24 MB/s (+/- 4.0 %)     5.81 Mfloat/s     172.17 ns/f
+
+    OpenJDK 18-ea+30-2029
     FastDoubleParser               :    387.91 MB/s (+/- 1.8 %)    22.29 Mfloat/s      44.87 ns/f
     FastDoubleParserFromCharArray  :    500.82 MB/s (+/- 6.0 %)    28.62 Mfloat/s      34.93 ns/f
     FastDoubleParserFromByteArray  :    521.74 MB/s (+/- 1.0 %)    29.98 Mfloat/s      33.36 ns/f
     Double                         :     83.41 MB/s (+/- 4.3 %)     4.78 Mfloat/s     209.04 ns/f
+
+*) The Vector API in GraalVM does not create vectorized code yet 

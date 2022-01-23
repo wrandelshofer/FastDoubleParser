@@ -605,6 +605,18 @@ public class FastDoubleParserFromByteArray {
      * @return the parsed digits or -1 on failure
      */
     private static int tryToParseEightDigits(byte[] str, int offset) {
+        return tryToParseEightDigitsSwarIndependentMultiplications(str, offset);
+    }
+
+    /**
+     * The last 2 multiplications in this algorithm are independent of each
+     * other.
+     *
+     * @param str    input string
+     * @param offset offset
+     * @return the parsed number
+     */
+    static int tryToParseEightDigitsSwarIndependentMultiplications(byte[] str, int offset) {
         long value = (long) readLongFromByteArray.get(str, offset);
 
         long val = value - 0x3030303030303030L;
@@ -614,17 +626,40 @@ public class FastDoubleParserFromByteArray {
             return -1;
         }
 
-
-        long mask = 0x000000FF000000FFL;
-        long mul1 = 0x000F424000000064L; // 100 + (1000000ULL << 32)
-        long mul2 = 0x0000271000000001L; // 1 + (10000ULL << 32)
-        val = (val * 10) + (val >>> 8); // val = (val * 2561) >> 8;
-        val = (((val & mask) * mul1)
-                + (((val >>> 16) & mask) * mul2)) >>> 32;
+        long mask = 0x000000FF_000000FFL;
+        val = (val * 0xa_01L) >> 8;// 1+(10<<8)
+        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
+                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
         return (int) (val);
     }
 
-    static long tryToParseEightDigitsVectorized(byte[] a, int offset) {
+    /**
+     * All 3 multiplications in this algorithm depend on each other.
+     *
+     * @param str    input string
+     * @param offset offset
+     * @return the parsed number
+     */
+    static int tryToParseEightDigitsSwarDependentMultiplications(byte[] str, int offset) {
+        long value = (long) readLongFromByteArray.get(str, offset);
+
+        long val = value - 0x3030303030303030L;
+        long l = ((value + 0x4646464646464646L) | val) &
+                0x8080808080808080L;
+        if (l != 0L) {
+            return -1;
+        }
+
+        val = ((val * 0xa_01L) >>> 8)// 1 + (10L << 8)
+                & 0x00FF_00FF_00FF_00FFL;
+        val = ((val * 0x640001L) >>> 16)// 1 + (100L << 16)
+                & 0x0000FFFF_0000FFFFL;
+        return (int) ((val * 0x271000000001L)// 1 + (10000L << 32);
+                >>> 32);
+    }
+
+    static long tryToParseEightDigitsSimd(byte[] a, int offset) {
+
         ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
                 .sub((byte) '0');
         // With an unsigned gt we only need to check for > 9

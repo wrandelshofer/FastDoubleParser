@@ -20,6 +20,25 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
+ * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17.0.1+12-jvmci-21.3-b05
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
+ *
+ * With dependent multiplications:
+ * Benchmark                                Mode  Cnt   Score   Error  Units
+ * FromByteArray17DigitsWith3DigitExp       avgt    4  27.035 ± 0.483  ns/op
+ * FromByteArray19DigitsWithoutExp          avgt    4  23.947 ± 0.525  ns/op
+ * FromByteArray19DigitsWith3DigitExp       avgt    4  22.108 ± 0.791  ns/op
+ * FromByteArrayNegative18DigitsWithoutExp  avgt    4  17.135 ± 0.779  ns/op
+ *
+ * With independent multiplications:
+ * Benchmark                                Mode  Cnt   Score   Error  Units
+ * FromByteArray17DigitsWith3DigitExp       avgt    4  33.600 ± 0.847  ns/op
+ * FromByteArray19DigitsWithoutExp          avgt    4  24.144 ± 0.141  ns/op
+ * FromByteArray19DigitsWith3DigitExp       avgt    4  23.579 ± 6.523  ns/op
+ * FromByteArrayNegative18DigitsWithoutExp  avgt    4  17.463 ± 0.140  ns/op
+ *
+ * <pre>
+ * # JMH version: 1.28
  * # VM version: JDK 18-ea, OpenJDK 64-Bit Server VM, 18-ea+30-2029
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
  *
@@ -66,9 +85,9 @@ import java.util.concurrent.TimeUnit;
  * FromByteArray14HexDigitsWith3DigitExp    avgt   25  32,841 ± 0,152  ns/op
  * </pre>
  */
-@Fork(value = 5, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
-@Measurement(iterations = 5)
-@Warmup(iterations = 4)
+@Fork(value = 2, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 public class FastDoubleParserFromByteArrayJmhBenchmark {
@@ -82,26 +101,27 @@ public class FastDoubleParserFromByteArrayJmhBenchmark {
     private final static byte[] ISO_17_DIGITS_WITH_3_DIGIT_EXP = "123.45678901234567e123".getBytes(StandardCharsets.ISO_8859_1);
     private final static byte[] ISO_14_HEX_DIGITS_WITH_3_DIGIT_EXP = "0x123.456789abcdep123".getBytes(StandardCharsets.ISO_8859_1);
 
-    @Benchmark
-    public double m01FromByteArrayZero() {
-        return FastDoubleParserFromByteArray.parseDouble(ISO_ZERO);
-    }
+    /*
+        @Benchmark
+        public double m01FromByteArrayZero() {
+            return FastDoubleParserFromByteArray.parseDouble(ISO_ZERO);
+        }
 
-    @Benchmark
-    public double m02FromByteArrayOnePointZero() {
-        return FastDoubleParserFromByteArray.parseDouble(ISO_ONE_POINT_ZERO);
-    }
+        @Benchmark
+        public double m02FromByteArrayOnePointZero() {
+            return FastDoubleParserFromByteArray.parseDouble(ISO_ONE_POINT_ZERO);
+        }
 
-    @Benchmark
-    public double m03FromByteArray3Digits() {
-        return FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS);
-    }
+        @Benchmark
+        public double m03FromByteArray3Digits() {
+            return FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS);
+        }
 
-    @Benchmark
-    public double m04FromByteArray3DigitsWithDecimalPoint() {
-        return FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS_WITH_DECIMAL_POINT);
-    }
-
+        @Benchmark
+        public double m04FromByteArray3DigitsWithDecimalPoint() {
+            return FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS_WITH_DECIMAL_POINT);
+        }
+    */
     @Benchmark
     public double m05FromByteArray17DigitsWith3DigitExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_17_DIGITS_WITH_3_DIGIT_EXP);
@@ -121,11 +141,13 @@ public class FastDoubleParserFromByteArrayJmhBenchmark {
     public double m08FromByteArrayNegative18DigitsWithoutExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_18_DIGITS_WITHOUT_EXP);
     }
-
+/*
     @Benchmark
     public double m09FromByteArray14HexDigitsWith3DigitExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_14_HEX_DIGITS_WITH_3_DIGIT_EXP);
     }
+
+ */
 }
 
 

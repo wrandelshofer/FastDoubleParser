@@ -5,21 +5,21 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray.tryToParseEightDigits;
-import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray.tryToParseEightHexDigits;
+import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray.tryToParseEightDigitsSimd;
+import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray.tryToParseEightHexDigitsSimd;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FastDoubleParserFromCharArrayVectorizedTest extends AbstractFromByteArrayVectorizedTest {
 
 
     protected void testTryToParseEightDigits(String str, long expected) {
-        long actual = tryToParseEightDigits(str.toCharArray(), 0);
+        long actual = tryToParseEightDigitsSimd(str.toCharArray(), 0);
         assertEquals(expected, actual);
     }
 
 
     protected void dynamicTestsTryToParseEightHexDigits(String str, long expected) {
-        long actual = tryToParseEightHexDigits(str.toCharArray(), 0);
+        long actual = tryToParseEightHexDigitsSimd(str.toCharArray(), 0);
         assertEquals(expected, actual);
     }
 
