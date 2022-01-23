@@ -3,7 +3,7 @@
     <option name="ALTERNATIVE_JRE_PATH" value="/Library/Java/JavaVirtualMachines/jdk-18.jdk/Contents/Home" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="FastDoubleParserDemo" />
-    <option name="VM_PARAMETERS" value="-XX:+UnlockExperimentalVMOptions" />
+    <option name="VM_PARAMETERS" value="-XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=print,*FastDoubleParser*.tryToParseEightDigits*" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="ch.randelshofer.math.*" />
