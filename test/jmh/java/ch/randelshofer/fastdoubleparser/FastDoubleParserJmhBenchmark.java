@@ -22,11 +22,11 @@ import java.util.concurrent.TimeUnit;
  * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17.0.1+12-jvmci-21.3-b05
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * Benchmark                       Mode  Cnt   Score   Error  Units
- * FromZero                        avgt    4   2.067 ± 0.130  ns/op
- * FromOnePointZero                avgt    4   2.304 ± 0.030  ns/op
- * From3Digits                     avgt    4   2.291 ± 0.093  ns/op
- * From3DigitsWithDecimalPoint     avgt    4   2.285 ± 0.031  ns/op
+ * Benchmark                       Mode  Cnt   Score   Error  Units Suspicious
+ * FromZero                        avgt    4   2.067 ± 0.130  ns/op ?
+ * FromOnePointZero                avgt    4   2.304 ± 0.030  ns/op ?
+ * From3Digits                     avgt    4   2.291 ± 0.093  ns/op ?
+ * From3DigitsWithDecimalPoint     avgt    4   2.285 ± 0.031  ns/op ?
  * From17DigitsWith3DigitExp       avgt    4  32.242 ± 0.728  ns/op
  * From19DigitsWithoutExp          avgt    4  30.658 ± 0.366  ns/op
  * From19DigitsWith3DigitExp       avgt    4  34.448 ± 0.801  ns/op

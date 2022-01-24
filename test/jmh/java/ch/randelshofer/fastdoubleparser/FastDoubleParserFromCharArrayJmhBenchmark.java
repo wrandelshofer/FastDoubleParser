@@ -23,12 +23,12 @@ import java.util.concurrent.TimeUnit;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz, SIMD-256
  *
  * Benchmark                                Mode  Cnt   Score   Error  Units  Regression
- * FromCharArrayZero                        avgt   25   4.801 ± 0.055  ns/op  +
- * FromCharArrayOnePointZero                avgt   25  14.022 ± 0.107  ns/op  +
- * FromCharArray3Digits                     avgt   25  12.483 ± 0.163  ns/op  +
- * FromCharArray3DigitsWithDecimalPoint     avgt   25  14.811 ± 0.284  ns/op  +
- * FromCharArray17DigitsWith3DigitExp       avgt   25  40.514 ± 1.694  ns/op
- * FromCharArray19DigitsWithoutExp          avgt   25  32.732 ± 0.342  ns/op
+ * FromCharArrayZero                        avgt   25   4.801 ± 0.055  ns/op  !
+ * FromCharArrayOnePointZero                avgt   25  14.022 ± 0.107  ns/op  !
+ * FromCharArray3Digits                     avgt   25  12.483 ± 0.163  ns/op  !
+ * FromCharArray3DigitsWithDecimalPoint     avgt   25  14.811 ± 0.284  ns/op  !
+ * FromCharArray17DigitsWith3DigitExp       avgt   25  40.514 ± 1.694  ns/op  !
+ * FromCharArray19DigitsWithoutExp          avgt    4  26.627 ± 3.408  ns/op
  * FromCharArray19DigitsWith3DigitExp       avgt   25  34.022 ± 0.449  ns/op
  * FromCharArrayNegative18DigitsWithoutExp  avgt   25  24.816 ± 0.310  ns/op
  * FromCharArray14HexDigitsWith3DigitExp    avgt   25  31.908 ± 1.673  ns/op
@@ -44,15 +44,15 @@ import java.util.concurrent.TimeUnit;
  * FromCharArray3Digits                     avgt   25  10.661 ± 0.246  ns/op
  * FromCharArray3DigitsWithDecimalPoint     avgt   25  12.176 ± 0.054  ns/op
  * FromCharArray17DigitsWith3DigitExp       avgt   25  33.858 ± 0.428  ns/op
- * FromCharArray19DigitsWithoutExp          avgt   25  30.264 ± 0.461  ns/op
+ * FromCharArray19DigitsWithoutExp
  * FromCharArray19DigitsWith3DigitExp       avgt   25  35.607 ± 0.543  ns/op
  * FromCharArrayNegative18DigitsWithoutExp  avgt   25  29.087 ± 0.132  ns/op
  * FromCharArray14HexDigitsWith3DigitExp    avgt   25  26.870 ± 0.174  ns/op
  * </pre>
  */
-@Fork(value = 5, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
-@Measurement(iterations = 5)
-@Warmup(iterations = 4)
+@Fork(value = 2, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 public class FastDoubleParserFromCharArrayJmhBenchmark {
@@ -85,17 +85,17 @@ public class FastDoubleParserFromCharArrayJmhBenchmark {
     public double m04FromCharArray3DigitsWithDecimalPoint() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_3_DIGITS_WITH_DECIMAL_POINT);
     }
-*/
     @Benchmark
     public double m05FromCharArray17DigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_17_DIGITS_WITH_3_DIGIT_EXP);
     }
 
+*/
     @Benchmark
     public double m06FromCharArray19DigitsWithoutExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_19_DIGITS_WITHOUT_EXP);
     }
-
+/*
     @Benchmark
     public double m07FromCharArray19DigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_19_DIGITS_WITH_3_DIGIT_EX);
@@ -110,7 +110,7 @@ public class FastDoubleParserFromCharArrayJmhBenchmark {
     public double m09FromCharArray14HexDigitsWith3DigitExp() {
         return FastDoubleParserFromCharArray.parseDouble(CHARS_14_HEX_DIGITS_WITH_3_DIGIT_EXP);
     }
-
+*/
 }
 
 

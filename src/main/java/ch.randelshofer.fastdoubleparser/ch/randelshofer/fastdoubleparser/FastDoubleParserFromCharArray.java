@@ -348,7 +348,7 @@ public class FastDoubleParserFromCharArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
-                while (index < endIndex - 9) {
+                while (index < endIndex - 8) {
                     long parsed = tryToParseEightDigitsSimd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
@@ -497,7 +497,7 @@ public class FastDoubleParserFromCharArray {
                 }
                 virtualIndexOfPoint = index;
 
-                while (index < endIndex - 9) {
+                while (index < endIndex - 8) {
                     long parsed = tryToParseEightHexDigitsSimd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.

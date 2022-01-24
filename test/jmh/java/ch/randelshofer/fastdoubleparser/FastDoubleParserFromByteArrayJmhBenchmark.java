@@ -27,14 +27,14 @@ import java.util.concurrent.TimeUnit;
  * Benchmark                                Mode  Cnt   Score   Error  Units
  * FromByteArray17DigitsWith3DigitExp       avgt    4  27.035 ± 0.483  ns/op
  * FromByteArray19DigitsWithoutExp          avgt    4  23.947 ± 0.525  ns/op
- * FromByteArray19DigitsWith3DigitExp       avgt    4  22.108 ± 0.791  ns/op
+ * FromByteArray19DigitsWith3DigitExp
  * FromByteArrayNegative18DigitsWithoutExp  avgt    4  17.135 ± 0.779  ns/op
  *
  * With independent multiplications:
  * Benchmark                                Mode  Cnt   Score   Error  Units
  * FromByteArray17DigitsWith3DigitExp       avgt    4  33.600 ± 0.847  ns/op
  * FromByteArray19DigitsWithoutExp          avgt    4  24.144 ± 0.141  ns/op
- * FromByteArray19DigitsWith3DigitExp       avgt    4  23.579 ± 6.523  ns/op
+ * FromByteArray19DigitsWith3DigitExp       avgt    4  20.343 ± 2.431  ns/op
  * FromByteArrayNegative18DigitsWithoutExp  avgt    4  17.463 ± 0.140  ns/op
  *
  * <pre>
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  * FromByteArray3Digits                     avgt   25  12.307 ± 0.253  ns/op
  * FromByteArray3DigitsWithDecimalPoint     avgt   25  14.550 ± 0.114  ns/op
  * FromByteArray17DigitsWith3DigitExp       avgt   25  37.845 ± 0.383  ns/op
- * FromByteArray19DigitsWithoutExp          avgt   25  30.804 ± 0.367  ns/op
+ * FromByteArray19DigitsWithoutExp          avgt    4  24.772 ± 7.308  ns/op
  * FromByteArray19DigitsWith3DigitExp       avgt   25  33.502 ± 0.183  ns/op
  * FromByteArrayNegative18DigitsWithoutExp  avgt   25  23.563 ± 0.308  ns/op
  * FromByteArray14HexDigitsWith3DigitExp    avgt   25  30.711 ± 0.475  ns/op
@@ -64,7 +64,7 @@ import java.util.concurrent.TimeUnit;
  * FromByteArray3DigitsWithDecimalPoint     avgt   25  12.853 ± 0.156  ns/op
  * FromByteArray17DigitsWith3DigitExp       avgt   25  35.246 ± 0.248  ns/op
  * FromByteArray19DigitsWith3DigitExp       avgt   25  31.426 ± 0.296  ns/op
- * FromByteArray19DigitsWithoutExp          avgt   25  27.941 ± 0.132  ns/op
+ * FromByteArray19DigitsWithoutExp
  * FromByteArrayNegative18DigitsWithoutExp  avgt   25  21.638 ± 0.225  ns/op
  * FromByteArray14HexDigitsWith3DigitExp    avgt   25  27.389 ± 0.479  ns/op
  * </pre>
@@ -80,7 +80,7 @@ import java.util.concurrent.TimeUnit;
  * FromByteArray3DigitsWithDecimalPoint     avgt   25  14,393 ± 0,215  ns/op
  * FromByteArray17DigitsWith3DigitExp       avgt   25  41,526 ± 2,092  ns/op
  * FromByteArray19DigitsWith3DigitExp       avgt   25  38,262 ± 0,783  ns/op
- * FromByteArray19DigitsWithoutExp          avgt   25  31,012 ± 1,736  ns/op
+ * FromByteArray19DigitsWithoutExp
  * FromByteArrayNegative18DigitsWithoutExp  avgt   25  23,366 ± 0,511  ns/op
  * FromByteArray14HexDigitsWith3DigitExp    avgt   25  32,841 ± 0,152  ns/op
  * </pre>
@@ -121,17 +121,18 @@ public class FastDoubleParserFromByteArrayJmhBenchmark {
         public double m04FromByteArray3DigitsWithDecimalPoint() {
             return FastDoubleParserFromByteArray.parseDouble(ISO_3_DIGITS_WITH_DECIMAL_POINT);
         }
-    */
+
     @Benchmark
     public double m05FromByteArray17DigitsWith3DigitExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_17_DIGITS_WITH_3_DIGIT_EXP);
     }
 
+*/
     @Benchmark
     public double m06FromByteArray19DigitsWithoutExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITHOUT_EXP);
     }
-
+/*
     @Benchmark
     public double m07FromByteArray19DigitsWith3DigitExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_19_DIGITS_WITH_3_DIGIT_EX);
@@ -141,7 +142,6 @@ public class FastDoubleParserFromByteArrayJmhBenchmark {
     public double m08FromByteArrayNegative18DigitsWithoutExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_18_DIGITS_WITHOUT_EXP);
     }
-/*
     @Benchmark
     public double m09FromByteArray14HexDigitsWith3DigitExp() {
         return FastDoubleParserFromByteArray.parseDouble(ISO_14_HEX_DIGITS_WITH_3_DIGIT_EXP);

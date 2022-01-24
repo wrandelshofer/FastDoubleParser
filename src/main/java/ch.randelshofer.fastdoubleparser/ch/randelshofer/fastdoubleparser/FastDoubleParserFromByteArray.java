@@ -354,7 +354,7 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
-                while (index < endIndex - 9) {
+                while (index < endIndex - 8) {
                     int parsed = tryToParseEightDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
@@ -500,7 +500,7 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
-                while (index < endIndex - 9) {
+                while (index < endIndex - 8) {
                     long parsed = tryToParseEightHexDigitsVectorized(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
