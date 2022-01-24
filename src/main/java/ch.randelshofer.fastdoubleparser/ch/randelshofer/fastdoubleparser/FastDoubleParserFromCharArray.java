@@ -5,11 +5,9 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import jdk.incubator.vector.ByteVector;
 import jdk.incubator.vector.IntVector;
 import jdk.incubator.vector.ShortVector;
 import jdk.incubator.vector.VectorMask;
-import jdk.incubator.vector.VectorShuffle;
 
 import static jdk.incubator.vector.VectorOperators.ADD;
 import static jdk.incubator.vector.VectorOperators.LSHL;
@@ -328,7 +326,7 @@ public class FastDoubleParserFromCharArray {
      * @return a double representation
      */
     private static double parseRestOfDecimalFloatLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
-        // Parse digits
+        // Parse mantissa
         // ------------
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
@@ -477,7 +475,7 @@ public class FastDoubleParserFromCharArray {
             throw newNumberFormatException(str, startIndex, endIndex - startIndex);
         }
 
-        // Parse digits
+        // Parse mantissa
         // ------------
         long digits = 0;// digits is treated as an unsigned long
         int exponent = 0;
@@ -593,8 +591,6 @@ public class FastDoubleParserFromCharArray {
         }
         return index;
     }
-
-    final static VectorShuffle<Byte> SHUFFLE = VectorShuffle.fromArray(ByteVector.SPECIES_128, new int[]{0, 2, 4, 6, 8, 10, 12, 14, 0, 2, 4, 6, 8, 10, 12, 14}, 0);
 
     static long tryToParseEightDigitsSimd(char[] a, int offset) {
         ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)

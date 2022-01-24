@@ -280,14 +280,8 @@ public class FastDoubleParserFromByteArray {
 
     private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
-                //  && str.charAt(index) == 'I'
-                && str[index + 1] == (byte) 'n'
-                && str[index + 2] == (byte) 'f'
-                && str[index + 3] == (byte) 'i'
-                && str[index + 4] == (byte) 'n'
-                && str[index + 5] == (byte) 'i'
-                && str[index + 6] == (byte) 't'
-                && str[index + 7] == (byte) 'y'
+                //    y  t  i  n  i  f  n  I
+                && 0x79_74_69_6e_69_66_6e_49L == (long) readLongFromByteArray.get(str, index)
         ) {
             index = skipWhitespace(str, index + 8, endIndex);
             if (index < endIndex) {
@@ -334,7 +328,7 @@ public class FastDoubleParserFromByteArray {
      * @return a double representation
      */
     private static double parseRestOfDecimalFloatLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
-        // Parse digits
+        // Parse mantissa
         // ------------
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
@@ -481,7 +475,7 @@ public class FastDoubleParserFromByteArray {
             throw newNumberFormatException(str, startIndex, endIndex - startIndex);
         }
 
-        // Parse digits
+        // Parse mantissa
         // ------------
         long digits = 0;// digits is treated as an unsigned long
         int exponent = 0;

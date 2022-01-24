@@ -312,7 +312,7 @@ public class FastDoubleParser {
      * @return a double representation
      */
     private static double parseRestOfDecimalFloatLiteral(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
-        // Parse digits
+        // Parse mantissa
         // ------------
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
@@ -448,7 +448,7 @@ public class FastDoubleParser {
     private static double parseRestOfHexFloatingPointLiteral(
             CharSequence str, int index, int startIndex, int endIndex, boolean isNegative) {
 
-        // Parse digits
+        // Parse mantissa
         // ------------
         long digits = 0;// digits is treated as an unsigned long
         int exponent = 0;
