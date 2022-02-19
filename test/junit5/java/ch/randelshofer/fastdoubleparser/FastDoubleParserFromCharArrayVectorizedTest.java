@@ -17,6 +17,12 @@ public class FastDoubleParserFromCharArrayVectorizedTest extends AbstractFromByt
         assertEquals(expected, actual);
     }
 
+    protected void testTryToParseSevenDigits(String str, long expected) {
+        long result = tryToParseEightDigitsSimd((str + "0").toCharArray(), 0);
+        long actual = result == -1L ? -1L : result / 10;
+        assertEquals(expected, actual);
+    }
+
 
     protected void dynamicTestsTryToParseEightHexDigits(String str, long expected) {
         long actual = tryToParseEightHexDigitsSimd(str.toCharArray(), 0);

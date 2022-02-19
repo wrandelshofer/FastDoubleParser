@@ -20,8 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray.tryToParseEightDigitsSwarDependentMultiplications;
-import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray.tryToParseEightDigitsSwarIndependentMultiplications;
+import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray.tryToParseEightDigitsSwar;
 import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray.tryToParseEightDigitsSimd;
 
 
@@ -84,20 +83,14 @@ public class EightDigitsJmh {
             byteArrays[i] = s.getBytes(StandardCharsets.UTF_8);
             longs[i] = (long) readLongFromByteArray.get(byteArrays[i], 0);
 
-            assert n == tryToParseEightDigitsSwarDependentMultiplications(byteArrays[i], 0);
-            assert n == tryToParseEightDigitsSwarIndependentMultiplications(byteArrays[i], 0);
+            assert n == tryToParseEightDigitsSwar(byteArrays[i], 0);
             assert n == tryToParseEightDigitsSimd(charArrays[i], 0);
         }
     }
 
     @Benchmark
-    public long m04SwarDependentMultiplications() {
-        return tryToParseEightDigitsSwarDependentMultiplications(eightDigitsByteArray, 0);
-    }
-
-    @Benchmark
-    public long m05SwarIndependentMultiplications() {
-        return tryToParseEightDigitsSwarIndependentMultiplications(eightDigitsByteArray, 0);
+    public long m05Swar() {
+        return tryToParseEightDigitsSwar(eightDigitsByteArray, 0);
     }
 
     @Benchmark
@@ -111,19 +104,10 @@ public class EightDigitsJmh {
     }
 
     @Benchmark
-    public long m14SwarDependentFromByteArrayInLoop() {
+    public long m14SwarLoop() {
         int sum = 0;
         for (byte[] l : byteArrays) {
-            sum += tryToParseEightDigitsSwarDependentMultiplications(l, 0);
-        }
-        return sum;
-    }
-
-    @Benchmark
-    public long m15SwarIndependentFromByteArrayInLoop() {
-        int sum = 0;
-        for (byte[] l : byteArrays) {
-            sum += tryToParseEightDigitsSwarIndependentMultiplications(l, 0);
+            sum += tryToParseEightDigitsSwar(l, 0);
         }
         return sum;
     }

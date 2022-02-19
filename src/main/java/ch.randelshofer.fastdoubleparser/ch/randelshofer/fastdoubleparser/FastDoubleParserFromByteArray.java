@@ -357,7 +357,15 @@ public class FastDoubleParserFromByteArray {
                     } else {
                         break;
                     }
-                }
+                }/*
+                if(index < endIndex - 7) {
+                    int parsed = tryToParseSevenDigits(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = digits * 100_000_00L + parsed;
+                        index += 7;
+                    }
+                }*/
             } else {
                 break;
             }
@@ -495,7 +503,7 @@ public class FastDoubleParserFromByteArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    long parsed = tryToParseEightHexDigitsVectorized(str, index + 1);
+                    long parsed = tryToParseEightHexDigitsSimd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
@@ -599,7 +607,7 @@ public class FastDoubleParserFromByteArray {
      * @return the parsed digits or -1 on failure
      */
     private static int tryToParseEightDigits(byte[] str, int offset) {
-        return tryToParseEightDigitsSwarIndependentMultiplications(str, offset);
+        return tryToParseEightDigitsSwar(str, offset);
     }
 
     /**
@@ -610,7 +618,7 @@ public class FastDoubleParserFromByteArray {
      * @param offset offset
      * @return the parsed number
      */
-    static int tryToParseEightDigitsSwarIndependentMultiplications(byte[] str, int offset) {
+    static int tryToParseEightDigitsSwar(byte[] str, int offset) {
         long value = (long) readLongFromByteArray.get(str, offset);
 
         long val = value - 0x3030303030303030L;
@@ -627,31 +635,6 @@ public class FastDoubleParserFromByteArray {
         return (int) (val);
     }
 
-    /**
-     * All 3 multiplications in this algorithm depend on each other.
-     *
-     * @param str    input string
-     * @param offset offset
-     * @return the parsed number
-     */
-    static int tryToParseEightDigitsSwarDependentMultiplications(byte[] str, int offset) {
-        long value = (long) readLongFromByteArray.get(str, offset);
-
-        long val = value - 0x3030303030303030L;
-        long l = ((value + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (l != 0L) {
-            return -1;
-        }
-
-        val = ((val * 0xa_01L) >>> 8)// 1 + (10L << 8)
-                & 0x00FF_00FF_00FF_00FFL;
-        val = ((val * 0x640001L) >>> 16)// 1 + (100L << 16)
-                & 0x0000FFFF_0000FFFFL;
-        return (int) ((val * 0x271000000001L)// 1 + (10000L << 32);
-                >>> 32);
-    }
-
     static long tryToParseEightDigitsSimd(byte[] a, int offset) {
 
         ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
@@ -666,7 +649,7 @@ public class FastDoubleParserFromByteArray {
                 .reduceLanesToLong(ADD);
     }
 
-    static long tryToParseEightHexDigitsVectorized(byte[] a, int offset) {
+    static long tryToParseEightHexDigitsSimd(byte[] a, int offset) {
         ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
                 .sub((byte) '0');
         VectorMask<Byte> gt9Msk;

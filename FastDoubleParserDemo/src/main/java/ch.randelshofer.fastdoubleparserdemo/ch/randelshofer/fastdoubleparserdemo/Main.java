@@ -122,8 +122,7 @@ public class Main {
 
     private void process(List<String> lines) {
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
-        long t1, t2;
-        double elapsed, ts;
+
         VarianceStatistics fdpStringStatsMBs = new VarianceStatistics();
         VarianceStatistics fdpByteStatsMBs = new VarianceStatistics();
         VarianceStatistics fdpCharStatsMBs = new VarianceStatistics();
@@ -135,7 +134,7 @@ public class Main {
         int numberOfTrials = NUMBER_OF_TRIALS;
         List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.ISO_8859_1)).collect(Collectors.toList());
         List<char[]> charArrayLines = lines.stream().map(String::toCharArray).collect(Collectors.toList());
-        double confidenceWidth;
+
         System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * DESIRED_CONFIDENCE_LEVEL, 100 * DESIRED_CONFIDENCE_INTERVAL_WIDTH);
         double blackHole = 0;
@@ -226,10 +225,16 @@ public class Main {
             if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
                 System.err.println("FastDoubleParser disagrees. input=" + line + " expected=" + expected + " actual=" + actual);
             }
-            double actualFromByteArray = FastDoubleParserFromByteArray.parseDouble(line.getBytes(StandardCharsets.ISO_8859_1));
-            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actualFromByteArray)) {
+            actual = FastDoubleParserFromByteArray.parseDouble(line.getBytes(StandardCharsets.ISO_8859_1));
+            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
                 System.err.println("FastDoubleParserFromByteArray disagrees. input="
-                        + line + " expected=" + expected + " actual=" + actualFromByteArray
+                        + line + " expected=" + expected + " actual=" + actual
+                );
+            }
+            actual = FastDoubleParserFromCharArray.parseDouble(line.toCharArray());
+            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
+                System.err.println("FastDoubleParserFromCharArray disagrees. input="
+                        + line + " expected=" + expected + " actual=" + actual
                 );
             }
         }

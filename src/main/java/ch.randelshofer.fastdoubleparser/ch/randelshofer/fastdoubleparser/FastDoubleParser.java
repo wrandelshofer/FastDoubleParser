@@ -5,6 +5,8 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
  * <p>
@@ -97,6 +99,18 @@ public class FastDoubleParser {
      */
     public static double parseDouble(CharSequence str) throws NumberFormatException {
         return parseDouble(str, 0, str.length());
+    }
+
+    /**
+     * Parses a String.
+     *
+     * @param str the string to be parsed
+     * @return the parsed double value
+     * @throws NumberFormatException if the string can not be parsed
+     * @see #parseDouble(CharSequence, int, int)
+     */
+    public static double parseDouble(String str) throws NumberFormatException {
+        return FastDoubleParserFromByteArray.parseDouble(str.getBytes(StandardCharsets.ISO_8859_1), 0, str.length());
     }
 
     /**

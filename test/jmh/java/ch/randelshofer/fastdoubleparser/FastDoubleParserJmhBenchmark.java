@@ -77,55 +77,55 @@ public class FastDoubleParserJmhBenchmark {
     @Benchmark
     public double m01FromZero() {
         String str = "0";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence)str);
     }
 
     @Benchmark
     public double m02FromOnePointZero() {
         String str = "1.0";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence)str);
     }
 
     @Benchmark
     public double m03From3Digits() {
         String str = "365";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence)str);
     }
 
     @Benchmark
     public double m04From3DigitsWithDecimalPoint() {
         String str = "10.1";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence)str);
     }
 */
     @Benchmark
     public double m05From17DigitsWith3DigitExp() {
         String str = "123.45678901234567e123";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence) str);
     }
 
     @Benchmark
     public double m06From19DigitsWithoutExp() {
         String str = "123.4567890123456789";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence) str);
     }
 
     @Benchmark
     public double m07From19DigitsWith3DigitExp() {
         String str = "123.4567890123456789e123";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence) str);
     }
 
     @Benchmark
     public double m08FromNegative18DigitsWithoutExp() {
         String str = "-0.29235596393453456";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence) str);
     }
 
     @Benchmark
     public double m09From14HexDigitsWith3DigitExp() {
         String str = "0x123.456789abcdep123";
-        return FastDoubleParser.parseDouble(str);
+        return FastDoubleParser.parseDouble((CharSequence) str);
     }
 }
 
