@@ -109,6 +109,20 @@ public class FastDoubleParserFromByteArray {
         }
     }
 
+
+    /**
+     * Convenience method for writing
+     * {@code #parseDouble(str.getBytes(StandardCharsets.ISO_8859_1)}.
+     *
+     * @param str the string to be parsed
+     * @return the parsed double value
+     * @throws NumberFormatException if the string can not be parsed
+     * @see #parseDouble(byte[], int, int)
+     */
+    public static double parseDouble(String str) throws NumberFormatException {
+        return parseDouble(str.getBytes(StandardCharsets.ISO_8859_1));
+    }
+
     /**
      * Convenience method for calling {@link #parseDouble(byte[], int, int)}.
      *

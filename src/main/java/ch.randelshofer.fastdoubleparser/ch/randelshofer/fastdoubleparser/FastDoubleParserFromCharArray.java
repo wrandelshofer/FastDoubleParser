@@ -103,6 +103,19 @@ public class FastDoubleParserFromCharArray {
     }
 
     /**
+     * Convenience method for writing
+     * {@code #parseDouble(str.toCharArray()}.
+     *
+     * @param str the string to be parsed
+     * @return the parsed double value
+     * @throws NumberFormatException if the string can not be parsed
+     * @see #parseDouble(char[], int, int)
+     */
+    public static double parseDouble(String str) throws NumberFormatException {
+        return parseDouble(str.toCharArray());
+    }
+
+    /**
      * Convenience method for calling {@link #parseDouble(char[], int, int)}.
      *
      * @param str the string to be parsed
