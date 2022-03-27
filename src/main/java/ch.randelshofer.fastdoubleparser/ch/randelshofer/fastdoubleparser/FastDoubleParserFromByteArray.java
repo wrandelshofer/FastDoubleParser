@@ -371,15 +371,7 @@ public class FastDoubleParserFromByteArray {
                     } else {
                         break;
                     }
-                }/*
-                if(index < endIndex - 7) {
-                    int parsed = tryToParseSevenDigits(str, index + 1);
-                    if (parsed >= 0) {
-                        // This might overflow, we deal with it later.
-                        digits = digits * 100_000_00L + parsed;
-                        index += 7;
-                    }
-                }*/
+                }
             } else {
                 break;
             }
@@ -634,19 +626,7 @@ public class FastDoubleParserFromByteArray {
      */
     static int tryToParseEightDigitsSwar(byte[] str, int offset) {
         long value = (long) readLongFromByteArray.get(str, offset);
-
-        long val = value - 0x3030303030303030L;
-        long l = ((value + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (l != 0L) {
-            return -1;
-        }
-
-        long mask = 0x000000FF_000000FFL;
-        val = (val * 0xa_01L) >> 8;// 1+(10<<8)
-        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
-                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
-        return (int) (val);
+        return FastDoubleMath.tryToParseEightDigitsSwar(value);
     }
 
     static long tryToParseEightDigitsSimd(byte[] a, int offset) {
