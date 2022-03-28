@@ -23,15 +23,15 @@ import java.util.concurrent.TimeUnit;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark                       Mode  Cnt   Score   Error  Units
- * FromZero                        avgt   25   2.058 ± 0.011  ns/op
- * FromOnePointZero                avgt   25   2.289 ± 0.011  ns/op
- * From3Digits                     avgt   25   2.288 ± 0.012  ns/op
- * From3DigitsWithDecimalPoint     avgt   25   2.265 ± 0.008  ns/op
- * From17DigitsWith3DigitExp       avgt   25  39.237 ± 0.299  ns/op
- * From19DigitsWithoutExp          avgt   25  30.624 ± 0.788  ns/op
- * From19DigitsWith3DigitExp       avgt   25  35.654 ± 1.337  ns/op
- * FromNegative18DigitsWithoutExp  avgt   25  22.624 ± 0.270  ns/op
- * From14HexDigitsWith3DigitExp    avgt   25  25.380 ± 0.670  ns/op
+ * FromZero                        avgt    4   2.067 ± 0.130  ns/op
+ * FromOnePointZero                avgt    4   2.304 ± 0.030  ns/op
+ * From3Digits                     avgt    4   2.291 ± 0.093  ns/op
+ * From3DigitsWithDecimalPoint     avgt    4   2.285 ± 0.031  ns/op
+ * From17DigitsWith3DigitExp       avgt    4  32.242 ± 0.728  ns/op
+ * From19DigitsWithoutExp          avgt    4  30.658 ± 0.366  ns/op
+ * From19DigitsWith3DigitExp       avgt    4  34.448 ± 0.801  ns/op
+ * FromNegative18DigitsWithoutExp  avgt    4  29.039 ± 1.615  ns/op
+ * From14HexDigitsWith3DigitExp    avgt    4  25.044 ± 0.687  ns/op
  * </pre>
  */
 @Fork(value = 5, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"

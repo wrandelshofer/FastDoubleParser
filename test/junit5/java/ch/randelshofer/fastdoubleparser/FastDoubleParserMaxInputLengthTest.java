@@ -5,6 +5,7 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
@@ -73,6 +74,7 @@ public class FastDoubleParserMaxInputLengthTest {
     }
 
     @TestFactory
+    @Disabled
     List<DynamicNode> dynamicTestsIllegalMaxLengthInputs() {
         return Arrays.asList(
                 dynamicTest("empty", () -> testIllegalMaxLengthInput("")),
@@ -92,6 +94,7 @@ public class FastDoubleParserMaxInputLengthTest {
     }
 
     @TestFactory
+    @Disabled
     List<DynamicNode> dynamicTestsLegalDecFloatMaxLengthLiterals() {
         return Arrays.asList(
                 dynamicTest("1e23", () -> testLegalMaxLengthInput("1e23", 1e23)),

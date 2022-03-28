@@ -29,6 +29,9 @@ abstract class AbstractHandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsIllegalInputs() {
         return Arrays.asList(
+                dynamicTest("0.+(char)0x3231+(char)0x0000+345678",
+                        () -> testIllegalInput("0." + (char) 0x3231 + (char) 0x0000 + "345678")),
+
                 dynamicTest("empty", () -> testIllegalInput("")),
                 dynamicTest("-", () -> testIllegalInput("-")),
                 dynamicTest("+", () -> testIllegalInput("+")),
