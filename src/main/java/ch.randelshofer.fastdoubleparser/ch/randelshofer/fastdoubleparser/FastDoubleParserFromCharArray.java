@@ -5,15 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import jdk.incubator.vector.IntVector;
-import jdk.incubator.vector.ShortVector;
-import jdk.incubator.vector.VectorMask;
-
-import static jdk.incubator.vector.VectorOperators.ADD;
-import static jdk.incubator.vector.VectorOperators.LSHL;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_GT;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_LT;
-
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
  * <p>
@@ -58,11 +49,6 @@ public class FastDoubleParserFromCharArray {
      * if this table has exactly 256 entries.
      */
     private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
-
-    private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
-            new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16_SHIFTS = IntVector.fromArray(IntVector.SPECIES_256,
-            new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
 
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
@@ -360,7 +346,7 @@ public class FastDoubleParserFromCharArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    long parsed = tryToParseEightDigitsSimd(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightDigitsUtf16Simd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -509,7 +495,7 @@ public class FastDoubleParserFromCharArray {
                 virtualIndexOfPoint = index;
 
                 while (index < endIndex - 8) {
-                    long parsed = tryToParseEightHexDigitsSimd(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf16Simd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
@@ -605,32 +591,5 @@ public class FastDoubleParserFromCharArray {
         return index;
     }
 
-    static long tryToParseEightDigitsSimd(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
-                .sub((short) '0');
-        // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
-            return -1L;
-        }
-        return vec
-                .castShape(IntVector.SPECIES_256, 0)
-                .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD);
-    }
 
-    static long tryToParseEightHexDigitsSimd(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
-                .sub((short) '0');
-        VectorMask<Short> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
-        }
-        return vec
-                .sub((short) ('a' - '0' - 10), gt9Msk)
-                .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
-                .reduceLanesToLong(ADD) & 0xffffffffL;
-    }
 }

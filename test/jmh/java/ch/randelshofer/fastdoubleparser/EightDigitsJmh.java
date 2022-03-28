@@ -20,8 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray.tryToParseEightDigitsSwar;
-import static ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray.tryToParseEightDigitsSimd;
+import static ch.randelshofer.fastdoubleparser.FastDoubleSimd.tryToParseEightDigitsUtf8Swar;
 
 
 /**
@@ -83,31 +82,31 @@ public class EightDigitsJmh {
             byteArrays[i] = s.getBytes(StandardCharsets.UTF_8);
             longs[i] = (long) readLongFromByteArray.get(byteArrays[i], 0);
 
-            assert n == tryToParseEightDigitsSwar(byteArrays[i], 0);
-            assert n == tryToParseEightDigitsSimd(charArrays[i], 0);
+            assert n == tryToParseEightDigitsUtf8Swar(byteArrays[i], 0);
+            assert n == FastDoubleSimd.tryToParseEightDigitsUtf16Simd(charArrays[i], 0);
         }
     }
 
     @Benchmark
     public long m05Swar() {
-        return tryToParseEightDigitsSwar(eightDigitsByteArray, 0);
+        return tryToParseEightDigitsUtf8Swar(eightDigitsByteArray, 0);
     }
 
     @Benchmark
     public long m07SimdFromCharArray() {
-        return tryToParseEightDigitsSimd(eightDigitsCharArray, 0);
+        return FastDoubleSimd.tryToParseEightDigitsUtf16Simd(eightDigitsCharArray, 0);
     }
 
     @Benchmark
     public long m08SimdFromByteArray() {
-        return FastDoubleParserFromByteArray.tryToParseEightDigitsSimd(eightDigitsByteArray, 0);
+        return FastDoubleSimd.tryToParseEightDigitsUtf8Simd(eightDigitsByteArray, 0);
     }
 
     @Benchmark
     public long m14SwarLoop() {
         int sum = 0;
         for (byte[] l : byteArrays) {
-            sum += tryToParseEightDigitsSwar(l, 0);
+            sum += tryToParseEightDigitsUtf8Swar(l, 0);
         }
         return sum;
     }
@@ -116,7 +115,7 @@ public class EightDigitsJmh {
     public long m17SimdFromCharArrayInLoop() {
         int sum = 0;
         for (char[] l : charArrays) {
-            sum += tryToParseEightDigitsSimd(l, 0);
+            sum += FastDoubleSimd.tryToParseEightDigitsUtf16Simd(l, 0);
         }
         return sum;
     }
@@ -125,7 +124,7 @@ public class EightDigitsJmh {
     public long m18SimdFromByteArrayInLoop() {
         int sum = 0;
         for (byte[] l : byteArrays) {
-            sum += FastDoubleParserFromByteArray.tryToParseEightDigitsSimd(l, 0);
+            sum += FastDoubleSimd.tryToParseEightDigitsUtf8Simd(l, 0);
         }
         return sum;
     }

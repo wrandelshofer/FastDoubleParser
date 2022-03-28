@@ -5,19 +5,9 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import jdk.incubator.vector.ByteVector;
-import jdk.incubator.vector.IntVector;
-import jdk.incubator.vector.VectorMask;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
-import static jdk.incubator.vector.VectorOperators.ADD;
-import static jdk.incubator.vector.VectorOperators.LSHL;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_GT;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_LT;
+import static ch.randelshofer.fastdoubleparser.FastDoubleSimd.tryToParseEightDigitsUtf8Swar;
 
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
@@ -63,13 +53,6 @@ public class FastDoubleParserFromByteArray {
      * if this table has exactly 256 entries.
      */
     private static final byte[] CHAR_TO_HEX_MAP = new byte[256];
-    private final static VarHandle readLongFromByteArray =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
-
-    private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
-            new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16_SHIFTS = IntVector.fromArray(IntVector.SPECIES_256,
-            new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
 
     static {
         for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
@@ -295,7 +278,7 @@ public class FastDoubleParserFromByteArray {
     private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
                 //    y  t  i  n  i  f  n  I
-                && 0x79_74_69_6e_69_66_6e_49L == (long) readLongFromByteArray.get(str, index)
+                && 0x79_74_69_6e_69_66_6e_49L == (long) FastDoubleSimd.readLongFromByteArray.get(str, index)
         ) {
             index = skipWhitespace(str, index + 8, endIndex);
             if (index < endIndex) {
@@ -509,7 +492,7 @@ public class FastDoubleParserFromByteArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    long parsed = tryToParseEightHexDigitsSimd(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf8Simd(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
@@ -613,50 +596,10 @@ public class FastDoubleParserFromByteArray {
      * @return the parsed digits or -1 on failure
      */
     private static int tryToParseEightDigits(byte[] str, int offset) {
-        return tryToParseEightDigitsSwar(str, offset);
+        return tryToParseEightDigitsUtf8Swar(str, offset);
     }
 
-    /**
-     * The last 2 multiplications in this algorithm are independent of each
-     * other.
-     *
-     * @param str    input string
-     * @param offset offset
-     * @return the parsed number
-     */
-    static int tryToParseEightDigitsSwar(byte[] str, int offset) {
-        long value = (long) readLongFromByteArray.get(str, offset);
-        return FastDoubleMath.tryToParseEightDigitsSwar(value);
-    }
 
-    static long tryToParseEightDigitsSimd(byte[] a, int offset) {
 
-        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
-            return -1L;
-        }
-        return vec
-                .castShape(IntVector.SPECIES_256, 0)
-                .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD);
-    }
-
-    static long tryToParseEightHexDigitsSimd(byte[] a, int offset) {
-        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        VectorMask<Byte> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
-        }
-        return vec
-                .sub((byte) ('a' - '0' - 10), gt9Msk)
-                .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
-                .reduceLanesToLong(ADD) & 0xffffffffL;
-    }
 
 }

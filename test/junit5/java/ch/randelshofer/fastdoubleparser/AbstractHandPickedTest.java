@@ -96,6 +96,7 @@ abstract class AbstractHandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsLegalDecFloatLiterals() {
         return Arrays.asList(
+                dynamicTest("0.12345678", () -> testLegalInput("0.12345678", 0.12345678)),
                 dynamicTest("1e23", () -> testLegalInput("1e23", 1e23)),
                 dynamicTest("whitespace before 1", () -> testLegalInput(" 1")),
                 dynamicTest("whitespace after 1", () -> testLegalInput("1 ")),

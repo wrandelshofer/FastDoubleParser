@@ -332,9 +332,8 @@ public class FastDoubleParser {
                     throw newNumberFormatException(str, startIndex, endIndex);
                 }
                 virtualIndexOfPoint = index;
-                /*
                 while (index < endIndex - 8) {
-                    int parsed = tryToParseEightDigits(str, index + 1);
+                    long parsed = tryToParseEightDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -342,7 +341,7 @@ public class FastDoubleParser {
                     } else {
                         break;
                     }
-                }*/
+                }
             } else {
                 break;
             }
@@ -415,41 +414,22 @@ public class FastDoubleParser {
         double result = FastDoubleMath.decFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
         return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str, startIndex, endIndex) : result;
     }
-/*
-    private static int tryToParseEightDigitsBroken(CharSequence str, int offset) {
+
+    private static long tryToParseEightDigits(CharSequence str, int offset) {
         // Performance: We extract the chars in two steps so that we
         //              can benefit from out of order execution in the CPU.
-        long low = str.charAt(offset)
-                | str.charAt(offset + 1) << 8
-                | (long) str.charAt(offset + 2) << 16
-                | (long) str.charAt(offset + 3) << 24;
+        long first = str.charAt(offset)
+                | (long) str.charAt(offset + 1) << 16
+                | (long) str.charAt(offset + 2) << 32
+                | (long) str.charAt(offset + 3) << 48;
 
-        long high = str.charAt(offset + 4)
-                | str.charAt(offset + 5) << 8
-                | (long) str.charAt(offset + 6) << 16
-                | (long) str.charAt(offset + 7) << 24;
-
-        long value = low | high << 32;
-        return FastDoubleMath.tryToParseEightDigitsSwar(value);
-    }
-
-    private static int tryToParseEightDigitsFixedButSlow(CharSequence str, int offset) {
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
-        long low = str.charAt(offset)
-                | (long) str.charAt(offset + 2) << 16
-                | (long) str.charAt(offset + 4) << 32
-                | (long) str.charAt(offset + 6) << 48;
-
-        long high = str.charAt(offset + 1)
-                | (long) str.charAt(offset + 3) << 16
-                | (long) str.charAt(offset + 5) << 32
+        long second = str.charAt(offset + 4)
+                | (long) str.charAt(offset + 5) << 16
+                | (long) str.charAt(offset + 6) << 32
                 | (long) str.charAt(offset + 7) << 48;
 
-        return ((low|high) & 0xff00ff00ff00ff00L) != 0
-                ? -1
-                : FastDoubleMath.tryToParseEightDigitsSwar(low | high << 16);
-    }*/
+        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
+    }
 
     /**
      * Parses the following rules

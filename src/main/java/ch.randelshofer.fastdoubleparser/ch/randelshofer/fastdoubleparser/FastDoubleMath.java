@@ -1075,30 +1075,4 @@ class FastDoubleMath {
             this.low = low;
         }
     }
-
-    /**
-     * Tries to parse eight digits from a long using the
-     * 'SIMD within a register technique' (SWAR).
-     *
-     * @param value contains 8 ascii characters in little endian order
-     * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 ascii digits
-     */
-    public static int tryToParseEightDigitsSwar(long value) {
-
-        long val = value - 0x3030303030303030L;
-        long l = ((value + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (l != 0L) {
-            return -1;
-        }
-
-        // The last 2 multiplications in this algorithm are independent of each
-        // other.
-        long mask = 0x000000FF_000000FFL;
-        val = (val * 0xa_01L) >> 8;// 1+(10<<8)
-        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
-                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
-        return (int) (val);
-    }
 }

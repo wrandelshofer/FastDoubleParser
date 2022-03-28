@@ -22,6 +22,17 @@ import java.util.concurrent.TimeUnit;
  * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17.0.1+12-jvmci-21.3-b05
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
+ * Current version with SWAR:
+ *
+ * Benchmark                       Mode  Cnt   Score   Error  Units
+ * From17DigitsWith3DigitExp       avgt   25  46.076 ± 1.663  ns/op (regression)
+ * From19DigitsWithoutExp          avgt   25  30.204 ± 0.668  ns/op
+ * From19DigitsWith3DigitExp       avgt   25  38.357 ± 0.410  ns/op (regression)
+ * FromNegative18DigitsWithoutExp  avgt   25  26.533 ± 0.470  ns/op
+ * From14HexDigitsWith3DigitExp    avgt   25  26.959 ± 1.069  ns/op
+ *
+ * Previous version without SWAR:
+ *
  * Benchmark                       Mode  Cnt   Score   Error  Units
  * FromZero                        avgt    4   2.067 ± 0.130  ns/op
  * FromOnePointZero                avgt    4   2.304 ± 0.030  ns/op
@@ -44,36 +55,36 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 public class FastDoubleParserJmhBenchmark {
     /*
-        @Benchmark
-        public double m01FromZero() {
-            String str = "0";
-            return FastDoubleParser.parseDouble((CharSequence)str);
-        }
+            @Benchmark
+            public double m01FromZero() {
+                String str = "0";
+                return FastDoubleParser.parseDouble((CharSequence)str);
+            }
 
-        @Benchmark
-        public double m02FromOnePointZero() {
-            String str = "1.0";
-            return FastDoubleParser.parseDouble((CharSequence)str);
-        }
+            @Benchmark
+            public double m02FromOnePointZero() {
+                String str = "1.0";
+                return FastDoubleParser.parseDouble((CharSequence)str);
+            }
 
-        @Benchmark
-        public double m03From3Digits() {
-            String str = "365";
-            return FastDoubleParser.parseDouble((CharSequence)str);
-        }
+            @Benchmark
+            public double m03From3Digits() {
+                String str = "365";
+                return FastDoubleParser.parseDouble((CharSequence)str);
+            }
 
-        @Benchmark
-        public double m04From3DigitsWithDecimalPoint() {
-            String str = "10.1";
-            return FastDoubleParser.parseDouble((CharSequence)str);
-        }
+            @Benchmark
+            public double m04From3DigitsWithDecimalPoint() {
+                String str = "10.1";
+                return FastDoubleParser.parseDouble((CharSequence)str);
+            }
     */
     @Benchmark
     public double m05From17DigitsWith3DigitExp() {
         String str = "123.45678901234567e123";
         return FastDoubleParser.parseDouble((CharSequence) str);
     }
-/*
+
     @Benchmark
     public double m06From19DigitsWithoutExp() {
         String str = "123.4567890123456789";
@@ -98,7 +109,6 @@ public class FastDoubleParserJmhBenchmark {
         return FastDoubleParser.parseDouble((CharSequence) str);
    }
 
- */
 }
 
 
