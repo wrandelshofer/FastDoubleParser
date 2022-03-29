@@ -346,7 +346,7 @@ public class FastDoubleParserFromCharArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    long parsed = FastDoubleSimd.tryToParseEightDigitsUtf16Simd(str, index + 1);
+                    long parsed = tryToParseEightDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -431,6 +431,23 @@ public class FastDoubleParserFromCharArray {
         return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str, startIndex, endIndex - startIndex) : result;
     }
 
+    private static long tryToParseEightDigits(char[] a, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = a[offset]
+                | (long) a[offset + 1] << 16
+                | (long) a[offset + 2] << 32
+                | (long) a[offset + 3] << 48;
+
+        long second = a[offset + 4]
+                | (long) a[offset + 5] << 16
+                | (long) a[offset + 6] << 32
+                | (long) a[offset + 7] << 48;
+
+        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
+        //return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(a, offset);
+    }
+
     /**
      * Parses the following rules
      * (more rules are defined in {@link #parseDouble}):
@@ -495,7 +512,7 @@ public class FastDoubleParserFromCharArray {
                 virtualIndexOfPoint = index;
 
                 while (index < endIndex - 8) {
-                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf16Simd(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf16Vector(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;

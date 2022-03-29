@@ -83,7 +83,7 @@ public class EightDigitsJmh {
             longs[i] = (long) readLongFromByteArray.get(byteArrays[i], 0);
 
             assert n == tryToParseEightDigitsUtf8Swar(byteArrays[i], 0);
-            assert n == FastDoubleSimd.tryToParseEightDigitsUtf16Simd(charArrays[i], 0);
+            assert n == FastDoubleSimd.tryToParseEightDigitsUtf16Vector(charArrays[i], 0);
         }
     }
 
@@ -94,12 +94,12 @@ public class EightDigitsJmh {
 
     @Benchmark
     public long m07SimdFromCharArray() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Simd(eightDigitsCharArray, 0);
+        return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(eightDigitsCharArray, 0);
     }
 
     @Benchmark
     public long m08SimdFromByteArray() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf8Simd(eightDigitsByteArray, 0);
+        return FastDoubleSimd.tryToParseEightDigitsUtf8Vector(eightDigitsByteArray, 0);
     }
 
     @Benchmark
@@ -115,7 +115,7 @@ public class EightDigitsJmh {
     public long m17SimdFromCharArrayInLoop() {
         int sum = 0;
         for (char[] l : charArrays) {
-            sum += FastDoubleSimd.tryToParseEightDigitsUtf16Simd(l, 0);
+            sum += FastDoubleSimd.tryToParseEightDigitsUtf16Vector(l, 0);
         }
         return sum;
     }
@@ -124,7 +124,7 @@ public class EightDigitsJmh {
     public long m18SimdFromByteArrayInLoop() {
         int sum = 0;
         for (byte[] l : byteArrays) {
-            sum += FastDoubleSimd.tryToParseEightDigitsUtf8Simd(l, 0);
+            sum += FastDoubleSimd.tryToParseEightDigitsUtf8Vector(l, 0);
         }
         return sum;
     }

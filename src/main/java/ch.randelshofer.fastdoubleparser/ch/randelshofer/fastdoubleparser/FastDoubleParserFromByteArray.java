@@ -8,6 +8,7 @@ package ch.randelshofer.fastdoubleparser;
 import java.nio.charset.StandardCharsets;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleSimd.tryToParseEightDigitsUtf8Swar;
+import static ch.randelshofer.fastdoubleparser.FastDoubleSimd.tryToParseEightHexDigitsUtf8Swar;
 
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
@@ -278,7 +279,7 @@ public class FastDoubleParserFromByteArray {
     private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
                 //    y  t  i  n  i  f  n  I
-                && 0x79_74_69_6e_69_66_6e_49L == (long) FastDoubleSimd.readLongFromByteArray.get(str, index)
+                && 0x79_74_69_6e_69_66_6e_49L == (long) FastDoubleSimd.readLongFromByteArrayLittleEndian.get(str, index)
         ) {
             index = skipWhitespace(str, index + 8, endIndex);
             if (index < endIndex) {
@@ -346,7 +347,7 @@ public class FastDoubleParserFromByteArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    int parsed = tryToParseEightDigits(str, index + 1);
+                    long parsed = tryToParseEightDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -492,7 +493,7 @@ public class FastDoubleParserFromByteArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf8Simd(str, index + 1);
+                    long parsed = tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
@@ -588,18 +589,11 @@ public class FastDoubleParserFromByteArray {
         return index;
     }
 
-    /**
-     * Tries to parse eight digits from a byte array provided in a byte array.
-     *
-     * @param str    a byte array
-     * @param offset offset in byte array
-     * @return the parsed digits or -1 on failure
-     */
-    private static int tryToParseEightDigits(byte[] str, int offset) {
+    private static long tryToParseEightDigits(byte[] str, int offset) {
         return tryToParseEightDigitsUtf8Swar(str, offset);
     }
 
-
-
-
+    private static long tryToParseEightHexDigits(byte[] str, int offset) {
+        return tryToParseEightHexDigitsUtf8Swar(str, offset);
+    }
 }

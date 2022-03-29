@@ -36,7 +36,7 @@ Command:
      java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
 
 On my Mac mini (2018) I get the results shown below. The results vary on the JVM and platform being used.
-FastDoubleParser.parseDouble() is at least 4 times faster than Double.parseDouble().
+FastDoubleParser.parseDouble() is about 4 times faster than Double.parseDouble().
 
 If your input is a char array or a byte array you can use FastDoubleParserFromCharArray.parseDouble() or
 FastDoubleParserFromByteArray.parseDouble() which are even slightly faster.
@@ -48,28 +48,28 @@ FastDoubleParserFromByteArray.parseDouble() which are even slightly faster.
     
     parsing random numbers in the range [0,1)
     [...]
-    FastDoubleParser               :    554.71 MB/s (+/- 6.2 %)    31.70 Mfloat/s      31.55 ns/f
-    FastDoubleParserFromCharArray  :    665.44 MB/s (+/- 7.4 %)    37.93 Mfloat/s      26.37 ns/f
-    FastDoubleParserFromByteArray  :    686.05 MB/s (+/- 5.6 %)    39.23 Mfloat/s      25.49 ns/f
-    Double                         :     94.91 MB/s (+/- 4.7 %)     5.43 Mfloat/s     184.03 ns/f
+    FastDoubleParser               :    550.25 MB/s (+/- 1.2 %)    31.58 Mfloat/s      31.66 ns/f
+    FastDoubleParserFromCharArray  :    584.25 MB/s (+/-12.1 %)    32.91 Mfloat/s      30.39 ns/f
+    FastDoubleParserFromByteArray  :    711.66 MB/s (+/- 1.9 %)    40.84 Mfloat/s      24.49 ns/f
+    Double                         :     94.55 MB/s (+/- 4.0 %)     5.42 Mfloat/s     184.56 ns/f
     
-    Speedup FastDoubleParser              vs Double: 5.84
-    Speedup FastDoubleParserFromCharArray vs Double: 7.01
-    Speedup FastDoubleParserFromByteArray vs Double: 7.23
+    Speedup FastDoubleParser              vs Double: 5.82
+    Speedup FastDoubleParserFromCharArray vs Double: 6.18
+    Speedup FastDoubleParserFromByteArray vs Double: 7.53
 
 '
 
     parsing numbers in file data/canada.txt
     read 111126 lines
     [...]
-    FastDoubleParser               :    401.12 MB/s (+/- 4.7 %)    22.99 Mfloat/s      43.50 ns/f
-    FastDoubleParserFromCharArray  :    480.52 MB/s (+/- 9.0 %)    27.32 Mfloat/s      36.61 ns/f
-    FastDoubleParserFromByteArray  :    513.56 MB/s (+/- 1.9 %)    29.50 Mfloat/s      33.90 ns/f
-    Double                         :     84.33 MB/s (+/- 3.9 %)     4.84 Mfloat/s     206.68 ns/f
+    FastDoubleParser               :    399.54 MB/s (+/- 6.8 %)    22.82 Mfloat/s      43.81 ns/f
+    FastDoubleParserFromCharArray  :    495.90 MB/s (+/- 7.5 %)    28.29 Mfloat/s      35.35 ns/f
+    FastDoubleParserFromByteArray  :    508.44 MB/s (+/- 5.4 %)    29.11 Mfloat/s      34.36 ns/f
+    Double                         :     84.68 MB/s (+/- 4.2 %)     4.86 Mfloat/s     205.87 ns/f
     
-    Speedup FastDoubleParser              vs Double: 4.76
-    Speedup FastDoubleParserFromCharArray vs Double: 5.70
-    Speedup FastDoubleParserFromByteArray vs Double: 6.09
+    Speedup FastDoubleParser              vs Double: 4.72
+    Speedup FastDoubleParserFromCharArray vs Double: 5.86
+    Speedup FastDoubleParserFromByteArray vs Double: 6.00
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
@@ -161,16 +161,16 @@ on the same computer:
     fastfloat                       :   948.14 MB/s (+/- 5.6 %)    45.19 Mfloat/s      22.13 ns/f
 
     OpenJDK 18+36-2087
-    FastDoubleParser               :    509.46 MB/s (+/- 1.9 %)    29.24 Mfloat/s      34.21 ns/f
-    FastDoubleParserFromCharArray  :    673.89 MB/s (+/- 5.9 %)    38.52 Mfloat/s      25.96 ns/f
-    FastDoubleParserFromByteArray  :    714.80 MB/s (+/- 1.3 %)    41.02 Mfloat/s      24.38 ns/f
-    Double                         :     96.36 MB/s (+/- 4.2 %)     5.52 Mfloat/s     181.15 ns/f
+    FastDoubleParser               :    550.25 MB/s (+/- 1.2 %)    31.58 Mfloat/s      31.66 ns/f
+    FastDoubleParserFromCharArray  :    584.25 MB/s (+/-12.1 %)    32.91 Mfloat/s      30.39 ns/f
+    FastDoubleParserFromByteArray  :    711.66 MB/s (+/- 1.9 %)    40.84 Mfloat/s      24.49 ns/f
+    Double                         :     94.55 MB/s (+/- 4.0 %)     5.42 Mfloat/s     184.56 ns/f
 
     GraalVM 17.0.1+12-jvmci-21.3-b05
-    FastDoubleParser               :    555.24 MB/s (+/- 9.0 %)    31.52 Mfloat/s      31.73 ns/f
-    FastDoubleParserFromCharArray*):    114.10 MB/s (+/- 5.5 %)     6.52 Mfloat/s     153.41 ns/f
-    FastDoubleParserFromByteArray  :    786.76 MB/s (+/- 7.3 %)    44.78 Mfloat/s      22.33 ns/f
-    Double                         :    114.34 MB/s (+/- 4.2 %)     6.55 Mfloat/s     152.67 ns/f
+    FastDoubleParser               :    585.17 MB/s (+/- 8.9 %)    33.13 Mfloat/s      30.18 ns/f
+    FastDoubleParserFromCharArray  :    608.87 MB/s (+/- 5.7 %)    34.80 Mfloat/s      28.73 ns/f
+    FastDoubleParserFromByteArray  :    813.07 MB/s (+/- 4.5 %)    46.55 Mfloat/s      21.48 ns/f
+    Double                         :    111.32 MB/s (+/- 4.8 %)     6.37 Mfloat/s     156.92 ns/f
 
 '
 
@@ -184,15 +184,13 @@ on the same computer:
     fastfloat                      :   827.73 MB/s (+/- 4.4 %)    47.57 Mfloat/s      21.02 ns/f 
 
     OpenJDK 18+36-2087
-    FastDoubleParser               :    554.71 MB/s (+/- 6.2 %)    31.70 Mfloat/s      31.55 ns/f
-    FastDoubleParserFromCharArray  :    665.44 MB/s (+/- 7.4 %)    37.93 Mfloat/s      26.37 ns/f
-    FastDoubleParserFromByteArray  :    686.05 MB/s (+/- 5.6 %)    39.23 Mfloat/s      25.49 ns/f
-    Double                         :     94.91 MB/s (+/- 4.7 %)     5.43 Mfloat/s     184.03 ns/f
+    FastDoubleParser               :    399.54 MB/s (+/- 6.8 %)    22.82 Mfloat/s      43.81 ns/f
+    FastDoubleParserFromCharArray  :    495.90 MB/s (+/- 7.5 %)    28.29 Mfloat/s      35.35 ns/f
+    FastDoubleParserFromByteArray  :    508.44 MB/s (+/- 5.4 %)    29.11 Mfloat/s      34.36 ns/f
+    Double                         :     84.68 MB/s (+/- 4.2 %)     4.86 Mfloat/s     205.87 ns/f
 
     GraalVM 17.0.1+12-jvmci-21.3-b05
-    FastDoubleParser               :    618.70 MB/s (+/- 2.4 %)    35.49 Mfloat/s      28.17 ns/f
-    FastDoubleParserFromCharArray*):     93.16 MB/s (+/- 3.8 %)     5.34 Mfloat/s     187.28 ns/f
-    FastDoubleParserFromByteArray  :    825.84 MB/s (+/- 1.2 %)    47.40 Mfloat/s      21.10 ns/f
-    Double                         :    117.29 MB/s (+/- 3.2 %)     6.73 Mfloat/s     148.67 ns/f
-
-*) The Vector API in GraalVM does not create vectorized code yet 
+    FastDoubleParser               :    457.78 MB/s (+/- 2.5 %)    26.29 Mfloat/s      38.04 ns/f
+    FastDoubleParserFromCharArray  :    529.97 MB/s (+/- 1.7 %)    30.45 Mfloat/s      32.84 ns/f
+    FastDoubleParserFromByteArray  :    593.63 MB/s (+/- 3.1 %)    34.08 Mfloat/s      29.35 ns/f
+    Double                         :     98.32 MB/s (+/- 4.0 %)     5.64 Mfloat/s     177.30 ns/f

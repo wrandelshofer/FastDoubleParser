@@ -192,6 +192,7 @@ abstract class AbstractHandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsLegalHexFloatLiterals() {
         return Arrays.asList(
+                dynamicTest("0x0.1234ab78p0", () -> testLegalInput("0x0.1234ab78p0", 0x0.1234ab78p0)),
                 dynamicTest("0x1.0p8", () -> testLegalInput("0x1.0p8", 256))
         );
     }
