@@ -431,6 +431,24 @@ public class FastDoubleParser {
         return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
     }
 
+    /*
+    private static long tryToParseEightHexDigits(CharSequence str, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = (long) str.charAt(offset) <<48
+                | (long) str.charAt(offset + 1) << 32
+                | (long) str.charAt(offset + 2) << 16
+                | (long) str.charAt(offset + 3) ;
+
+        long second = (long) str.charAt(offset + 4) <<48
+                | (long) str.charAt(offset + 5) << 32
+                | (long) str.charAt(offset + 6) << 16
+                | (long) str.charAt(offset + 7) ;
+
+        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(first, second);
+    }
+     */
+
     /**
      * Parses the following rules
      * (more rules are defined in {@link #parseDouble(CharSequence)}):
@@ -493,6 +511,18 @@ public class FastDoubleParser {
                     throw newNumberFormatException(str, startIndex, endIndex);
                 }
                 virtualIndexOfPoint = index;
+                /*
+                while (index < endIndex - 8) {
+                    long parsed = tryToParseEightHexDigits(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = (digits << 32) + parsed;
+                        index += 8;
+                    } else {
+                        break;
+                    }
+                }
+                */
             } else {
                 break;
             }

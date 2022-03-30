@@ -445,7 +445,6 @@ public class FastDoubleParserFromCharArray {
                 | (long) a[offset + 7] << 48;
 
         return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
-        //return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(a, offset);
     }
 
     /**
@@ -510,9 +509,9 @@ public class FastDoubleParserFromCharArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
-
+                /*
                 while (index < endIndex - 8) {
-                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf16Vector(str, index + 1);
+                    long parsed = tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
@@ -521,6 +520,7 @@ public class FastDoubleParserFromCharArray {
                         break;
                     }
                 }
+                */
             } else {
                 break;
             }
@@ -596,6 +596,22 @@ public class FastDoubleParserFromCharArray {
 
         double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
         return Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex)) : d;
+    }
+
+    private static long tryToParseEightHexDigits(char[] a, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = (long) a[offset] << 48
+                | (long) a[offset + 1] << 32
+                | (long) a[offset + 2] << 16
+                | (long) a[offset + 3];
+
+        long second = (long) a[offset + 4] << 48
+                | (long) a[offset + 5] << 32
+                | (long) a[offset + 6] << 16
+                | (long) a[offset + 7];
+
+        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(first, second);
     }
 
     private static int skipWhitespace(char[] str, int startIndex, int endIndex) {
