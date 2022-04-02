@@ -332,6 +332,7 @@ public class FastDoubleParser {
                     throw newNumberFormatException(str, startIndex, endIndex);
                 }
                 virtualIndexOfPoint = index;
+                /*
                 while (index < endIndex - 8) {
                     long parsed = tryToParseEightDigits(str, index + 1);
                     if (parsed >= 0) {
@@ -341,7 +342,7 @@ public class FastDoubleParser {
                     } else {
                         break;
                     }
-                }
+                }*/
             } else {
                 break;
             }
