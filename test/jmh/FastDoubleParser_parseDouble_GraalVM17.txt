@@ -1,0 +1,2121 @@
+/Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Contents/Home/bin/java -Dvisualvm.id=25811216326879 -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=50398:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8 -classpath /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/out/test/FastDoubleParser:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/out/production/FastDoubleParser:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/jmh-core-1.28.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/jopt-simple-4.6.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/commons-math3-3.2.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/jmh-generator-annprocess-1.28.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/junit-jupiter-5.7.1.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/junit-jupiter-api-5.7.1.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/apiguardian-api-1.1.0.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/opentest4j-1.2.0.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/junit-platform-commons-1.7.1.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/junit-jupiter-params-5.7.1.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/junit-jupiter-engine-5.7.1.jar:/Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/lib/junit-platform-engine-1.7.1.jar org.openjdk.jmh.Main ch.randelshofer.fastdoubleparser.FastDoubleParserJmhBenchmark.*
+# JMH version: 1.28
+# VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17.0.1+12-jvmci-21.3-b05
+# VM invoker: /Library/Java/JavaVirtualMachines/graalvm-ce-java17-21.3.0/Contents/Home/bin/java
+# VM options: -XX:ThreadPriorityPolicy=1 -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCIProduct -XX:-UnlockExperimentalVMOptions -Dvisualvm.id=25811216326879 -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=50398:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8 -XX:+UnlockExperimentalVMOptions --add-modules jdk.incubator.vector -XX:+UnlockDiagnosticVMOptions -XX:PrintAssemblyOptions=intel -XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/FastDoubleParser.*
+# Blackhole mode: full + dont-inline hint
+# Warmup: 2 iterations, 10 s each
+# Measurement: 2 iterations, 10 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: ch.randelshofer.fastdoubleparser.FastDoubleParserJmhBenchmark.m05From17DigitsWith3DigitExp
+
+# Run progress: 0.00% complete, ETA 00:01:20
+# Fork: 1 of 2
+OpenJDK 64-Bit Server VM warning: -XX:ThreadPriorityPolicy=1 may require system level permission, e.g., being the root user. If the necessary permission is not possessed, changes to priority will be silently ignored.
+CompileCommand: print ch/randelshofer/fastdoubleparser/FastDoubleParser.* bool print = true
+WARNING: Using incubator modules: jdk.incubator.vector
+# Warmup Iteration   1:
+============================= C1-compiled nmethod ==============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (c1)  621       3       ch.randelshofer.fastdoubleparser.FastDoubleParser::isDigit (18 bytes)
+ total in heap  [0x0000000111eadc90,0x0000000111eadfe8] = 856
+ relocation     [0x0000000111eaddf0,0x0000000111eade20] = 48
+ main code      [0x0000000111eade20,0x0000000111eadf60] = 320
+ stub code      [0x0000000111eadf60,0x0000000111eadf90] = 48
+ oops           [0x0000000111eadf90,0x0000000111eadf98] = 8
+ metadata       [0x0000000111eadf98,0x0000000111eadfa0] = 8
+ scopes data    [0x0000000111eadfa0,0x0000000111eadfb0] = 16
+ scopes pcs     [0x0000000111eadfb0,0x0000000111eadfe0] = 48
+ dependencies   [0x0000000111eadfe0,0x0000000111eadfe8] = 8
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a8a88} 'isDigit' '(C)Z' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi       = char
+  #           [sp+0x40]  (sp of caller)
+  0x0000000111eade20:   mov    DWORD PTR [rsp-0x14000],eax
+  0x0000000111eade27:   push   rbp
+  0x0000000111eade28:   sub    rsp,0x30
+  0x0000000111eade2c:   movabs rax,0x1030ab7c0              ;   {metadata(method data for {method} {0x00000001030a8a88} 'isDigit' '(C)Z' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eade36:   mov    edi,DWORD PTR [rax+0xac]
+  0x0000000111eade3c:   add    edi,0x2
+  0x0000000111eade3f:   mov    DWORD PTR [rax+0xac],edi
+  0x0000000111eade45:   and    edi,0x7fe
+  0x0000000111eade4b:   cmp    edi,0x0
+  0x0000000111eade4e:   je     0x0000000111eadefb
+  0x0000000111eade54:   cmp    esi,0x30
+  0x0000000111eade57:   movabs rax,0x1030ab7c0              ;   {metadata(method data for {method} {0x00000001030a8a88} 'isDigit' '(C)Z' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eade61:   movabs rdi,0xf0
+  0x0000000111eade6b:   jl     0x0000000111eade7b
+  0x0000000111eade71:   movabs rdi,0x100
+  0x0000000111eade7b:   mov    rbx,QWORD PTR [rax+rdi*1]
+  0x0000000111eade7f:   lea    rbx,[rbx+0x1]
+  0x0000000111eade83:   mov    QWORD PTR [rax+rdi*1],rbx
+  0x0000000111eade87:   jl     0x0000000111eadec6
+  0x0000000111eade8d:   cmp    esi,0x39
+  0x0000000111eade90:   movabs rax,0x1030ab7c0              ;   {metadata(method data for {method} {0x00000001030a8a88} 'isDigit' '(C)Z' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eade9a:   movabs rsi,0x120
+  0x0000000111eadea4:   jle    0x0000000111eadeb4
+  0x0000000111eadeaa:   movabs rsi,0x110
+  0x0000000111eadeb4:   mov    rdi,QWORD PTR [rax+rsi*1]
+  0x0000000111eadeb8:   lea    rdi,[rdi+0x1]
+  0x0000000111eadebc:   mov    QWORD PTR [rax+rsi*1],rdi
+  0x0000000111eadec0:   jle    0x0000000111eaded0
+  0x0000000111eadec6:   mov    eax,0x0
+  0x0000000111eadecb:   jmp    0x0000000111eadee5
+  0x0000000111eaded0:   movabs rax,0x1030ab7c0              ;   {metadata(method data for {method} {0x00000001030a8a88} 'isDigit' '(C)Z' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eadeda:   inc    DWORD PTR [rax+0x130]
+  0x0000000111eadee0:   mov    eax,0x1
+  0x0000000111eadee5:   and    eax,0x1
+  0x0000000111eadee8:   add    rsp,0x30
+  0x0000000111eadeec:   pop    rbp
+  0x0000000111eadeed:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eadef4:   ja     0x0000000111eadf1c
+  0x0000000111eadefa:   ret
+  0x0000000111eadefb:   movabs r10,0x1030a8a88              ;   {metadata({method} {0x00000001030a8a88} 'isDigit' '(C)Z' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eadf05:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eadf0a:   mov    QWORD PTR [rsp],0xffffffffffffffff
+  0x0000000111eadf12:   call   0x0000000111914c00           ; ImmutableOopMap {}
+                                                            ;*synchronization entry
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::isDigit@-1 (line 79)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eadf17:   jmp    0x0000000111eade54
+  0x0000000111eadf1c:   movabs r10,0x111eadeed              ;   {internal_word}
+  0x0000000111eadf26:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eadf2d:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eadf32:   nop
+  0x0000000111eadf33:   nop
+  0x0000000111eadf34:   mov    rax,QWORD PTR [r15+0x3d0]
+  0x0000000111eadf3b:   mov    QWORD PTR [r15+0x3d0],0x0
+  0x0000000111eadf46:   mov    QWORD PTR [r15+0x3d8],0x0
+  0x0000000111eadf51:   add    rsp,0x30
+  0x0000000111eadf55:   pop    rbp
+  0x0000000111eadf56:   jmp    0x000000011190e000           ;   {runtime_call unwind_exception Runtime1 stub}
+  0x0000000111eadf5b:   hlt
+  0x0000000111eadf5c:   hlt
+  0x0000000111eadf5d:   hlt
+  0x0000000111eadf5e:   hlt
+  0x0000000111eadf5f:   hlt
+[Exception Handler]
+  0x0000000111eadf60:   call   0x0000000111911900           ;   {no_reloc}
+  0x0000000111eadf65:   movabs rdi,0x104070512              ;   {external_word}
+  0x0000000111eadf6f:   and    rsp,0xfffffffffffffff0
+  0x0000000111eadf73:   call   0x0000000103d12790           ;   {runtime_call _ZN14MacroAssembler7debug64EPcxPx}
+  0x0000000111eadf78:   hlt
+[Deopt Handler Code]
+  0x0000000111eadf79:   movabs r10,0x111eadf79              ;   {section_word}
+  0x0000000111eadf83:   push   r10
+  0x0000000111eadf85:   jmp    0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x0000000111eadf8a:   hlt
+  0x0000000111eadf8b:   hlt
+  0x0000000111eadf8c:   hlt
+  0x0000000111eadf8d:   hlt
+  0x0000000111eadf8e:   hlt
+  0x0000000111eadf8f:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+
+=========================== JVMCI-compiled nmethod =============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (JVMCI)  636       4       ch.randelshofer.fastdoubleparser.FastDoubleParser::isDigit (18 bytes)
+ total in heap  [0x0000000119318010,0x0000000119318200] = 496
+ relocation     [0x0000000119318170,0x0000000119318178] = 8
+ main code      [0x0000000119318180,0x00000001193181b1] = 49
+ stub code      [0x00000001193181b1,0x00000001193181b8] = 7
+ oops           [0x00000001193181b8,0x00000001193181c0] = 8
+ scopes data    [0x00000001193181c0,0x00000001193181c8] = 8
+ scopes pcs     [0x00000001193181c8,0x00000001193181e8] = 32
+ dependencies   [0x00000001193181e8,0x00000001193181f0] = 8
+ JVMCI data     [0x00000001193181f0,0x0000000119318200] = 16
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a8a88} 'isDigit' '(C)Z' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi       = char
+  #           [sp+0x10]  (sp of caller)
+  0x0000000119318180:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318185:   cmp    esi,0x3a
+  0x0000000119318188:   setb   al
+  0x000000011931818b:   movzx  eax,al
+  0x000000011931818e:   cmp    esi,0x30
+  0x0000000119318191:   mov    r10d,0x0
+  0x0000000119318197:   cmovl  eax,r10d
+  0x000000011931819b:   mov    rcx,QWORD PTR [r15+0x348]
+  0x00000001193181a2:   test   DWORD PTR [rcx],eax          ;   {poll_return}
+  0x00000001193181a4:   ret
+[Exception Handler]
+  0x00000001193181a5:   call   0x000000011192db80           ;   {runtime_call Stub<ExceptionHandlerStub.exceptionHandler>}
+  0x00000001193181aa:   nop
+[Deopt Handler Code]
+  0x00000001193181ab:   call   0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x00000001193181b0:   nop
+[Stub Code]
+  0x00000001193181b1:   hlt
+  0x00000001193181b2:   hlt
+  0x00000001193181b3:   hlt
+  0x00000001193181b4:   hlt
+  0x00000001193181b5:   hlt
+  0x00000001193181b6:   hlt
+  0x00000001193181b7:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+
+============================= C1-compiled nmethod ==============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (c1)  623       2       ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral (488 bytes)
+ total in heap  [0x0000000111eae010,0x0000000111eaf448] = 5176
+ relocation     [0x0000000111eae170,0x0000000111eae288] = 280
+ main code      [0x0000000111eae2a0,0x0000000111eaed00] = 2656
+ stub code      [0x0000000111eaed00,0x0000000111eaee30] = 304
+ oops           [0x0000000111eaee30,0x0000000111eaee38] = 8
+ metadata       [0x0000000111eaee38,0x0000000111eaee60] = 40
+ scopes data    [0x0000000111eaee60,0x0000000111eaf240] = 992
+ scopes pcs     [0x0000000111eaf240,0x0000000111eaf420] = 480
+ dependencies   [0x0000000111eaf420,0x0000000111eaf428] = 8
+ nul chk table  [0x0000000111eaf428,0x0000000111eaf448] = 32
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a9488} 'parseRestOfDecimalFloatLiteral' '(Ljava/lang/CharSequence;IIIZZ)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi:rsi   = 'java/lang/CharSequence'
+  # parm1:    rdx       = int
+  # parm2:    rcx       = int
+  # parm3:    r8        = int
+  # parm4:    r9        = boolean
+  # parm5:    rdi       = boolean
+  #           [sp+0x140]  (sp of caller)
+  0x0000000111eae2a0:   mov    DWORD PTR [rsp-0x14000],eax
+  0x0000000111eae2a7:   push   rbp
+  0x0000000111eae2a8:   sub    rsp,0x130
+  0x0000000111eae2af:   mov    QWORD PTR [rsp+0xb8],rsi
+  0x0000000111eae2b7:   mov    DWORD PTR [rsp+0xc4],edx
+  0x0000000111eae2be:   mov    DWORD PTR [rsp+0xd0],ecx
+  0x0000000111eae2c5:   mov    DWORD PTR [rsp+0xc0],r8d
+  0x0000000111eae2cd:   mov    DWORD PTR [rsp+0xcc],r9d
+  0x0000000111eae2d5:   mov    DWORD PTR [rsp+0xc8],edi
+  0x0000000111eae2dc:   movabs rbx,0x1030aa1c8
+  0x0000000111eae2e6:   mov    eax,DWORD PTR [rbx+0x8]
+  0x0000000111eae2e9:   add    eax,0x2
+  0x0000000111eae2ec:   mov    DWORD PTR [rbx+0x8],eax
+  0x0000000111eae2ef:   and    eax,0xffe
+  0x0000000111eae2f5:   cmp    eax,0x0
+  0x0000000111eae2f8:   je     0x0000000111eaebf4
+  0x0000000111eae2fe:   mov    rbx,rdx
+  0x0000000111eae301:   mov    eax,0x0
+  0x0000000111eae306:   mov    r11d,0xffffffff
+  0x0000000111eae30c:   movabs r13,0x0
+  0x0000000111eae316:   mov    DWORD PTR [rsp+0xb0],r11d
+  0x0000000111eae31e:   mov    QWORD PTR [rsp+0xa8],r13
+  0x0000000111eae326:   xchg   ax,ax
+  0x0000000111eae328:   cmp    ebx,r8d
+  0x0000000111eae32b:   jge    0x0000000111eae464
+  0x0000000111eae331:   mov    rdx,rbx
+  0x0000000111eae334:   mov    r14,rsi
+  0x0000000111eae337:   mov    rsi,r14
+  0x0000000111eae33a:   mov    DWORD PTR [rsp+0xb4],ebx
+  0x0000000111eae341:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eae345:   movabs rax,0x80000e7a0
+  0x0000000111eae34f:   call   0x00000001192f1200           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@22 (line 326)
+                                                            ;   {virtual_call}
+  0x0000000111eae354:   mov    rdx,rax
+  0x0000000111eae357:   cmp    edx,0x30
+  0x0000000111eae35a:   jl     0x0000000111eae378
+  0x0000000111eae360:   cmp    edx,0x39
+  0x0000000111eae363:   mov    eax,0x0
+  0x0000000111eae368:   jg     0x0000000111eae373
+  0x0000000111eae36e:   mov    eax,0x1
+  0x0000000111eae373:   jmp    0x0000000111eae37d
+  0x0000000111eae378:   mov    eax,0x0
+  0x0000000111eae37d:   and    eax,0x1
+  0x0000000111eae380:   cmp    eax,0x0
+  0x0000000111eae383:   je     0x0000000111eae3c5
+  0x0000000111eae389:   movabs rax,0xa
+  0x0000000111eae393:   mov    rsi,rax
+  0x0000000111eae396:   mov    rax,QWORD PTR [rsp+0xa8]
+  0x0000000111eae39e:   imul   rax,rsi
+  0x0000000111eae3a2:   movsxd rsi,edx
+  0x0000000111eae3a5:   add    rax,rsi
+  0x0000000111eae3a8:   movabs r10,0x30
+  0x0000000111eae3b2:   sub    rax,r10
+  0x0000000111eae3b5:   mov    r11d,DWORD PTR [rsp+0xb0]
+  0x0000000111eae3bd:   mov    rsi,rax
+  0x0000000111eae3c0:   jmp    0x0000000111eae3f0
+  0x0000000111eae3c5:   cmp    edx,0x2e
+  0x0000000111eae3c8:   mov    r11d,DWORD PTR [rsp+0xb0]
+  0x0000000111eae3d0:   jne    0x0000000111eae450
+  0x0000000111eae3d6:   cmp    r11d,0xffffffff
+  0x0000000111eae3da:   jne    0x0000000111eaebc4
+  0x0000000111eae3e0:   mov    r11d,DWORD PTR [rsp+0xb4]
+  0x0000000111eae3e8:   mov    rsi,QWORD PTR [rsp+0xa8]
+  0x0000000111eae3f0:   mov    ebx,DWORD PTR [rsp+0xb4]
+  0x0000000111eae3f7:   inc    ebx
+  0x0000000111eae3f9:   movabs rdi,0x1030aa1c8
+  0x0000000111eae403:   mov    eax,DWORD PTR [rdi+0xc]
+  0x0000000111eae406:   add    eax,0x2
+  0x0000000111eae409:   mov    DWORD PTR [rdi+0xc],eax
+  0x0000000111eae40c:   and    eax,0x7ffe
+  0x0000000111eae412:   cmp    eax,0x0
+  0x0000000111eae415:   je     0x0000000111eaec15
+  0x0000000111eae41b:   mov    r10,QWORD PTR [r15+0x348]    ; ImmutableOopMap {[184]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@82 (line 325)
+  0x0000000111eae422:   test   DWORD PTR [r10],eax          ;   {poll}
+  0x0000000111eae425:   mov    rax,rdx
+  0x0000000111eae428:   mov    r13,rsi
+  0x0000000111eae42b:   mov    DWORD PTR [rsp+0xb0],r11d
+  0x0000000111eae433:   mov    QWORD PTR [rsp+0xa8],r13
+  0x0000000111eae43b:   mov    r8d,DWORD PTR [rsp+0xc0]
+  0x0000000111eae443:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eae44b:   jmp    0x0000000111eae328
+  0x0000000111eae450:   mov    r13,QWORD PTR [rsp+0xa8]
+  0x0000000111eae458:   mov    ebx,DWORD PTR [rsp+0xb4]
+  0x0000000111eae45f:   jmp    0x0000000111eae477
+  0x0000000111eae464:   mov    r11d,DWORD PTR [rsp+0xb0]
+  0x0000000111eae46c:   mov    r13,QWORD PTR [rsp+0xa8]
+  0x0000000111eae474:   mov    rdx,rax
+  0x0000000111eae477:   cmp    r11d,0xffffffff
+  0x0000000111eae47b:   mov    rsi,rbx
+  0x0000000111eae47e:   jne    0x0000000111eae498
+  0x0000000111eae484:   sub    esi,DWORD PTR [rsp+0xc4]
+  0x0000000111eae48b:   mov    rdi,rbx
+  0x0000000111eae48e:   mov    eax,0x0
+  0x0000000111eae493:   jmp    0x0000000111eae4ae
+  0x0000000111eae498:   sub    esi,DWORD PTR [rsp+0xc4]
+  0x0000000111eae49f:   dec    esi
+  0x0000000111eae4a1:   mov    rdi,r11
+  0x0000000111eae4a4:   sub    edi,ebx
+  0x0000000111eae4a6:   mov    rax,rdi
+  0x0000000111eae4a9:   inc    eax
+  0x0000000111eae4ab:   mov    rdi,r11
+  0x0000000111eae4ae:   cmp    edx,0x65
+  0x0000000111eae4b1:   je     0x0000000111eae4cf
+  0x0000000111eae4b7:   cmp    edx,0x45
+  0x0000000111eae4ba:   mov    edx,0x0
+  0x0000000111eae4bf:   jne    0x0000000111eae4ca
+  0x0000000111eae4c5:   mov    edx,0x1
+  0x0000000111eae4ca:   jmp    0x0000000111eae4d4
+  0x0000000111eae4cf:   mov    edx,0x1
+  0x0000000111eae4d4:   cmp    edx,0x0
+  0x0000000111eae4d7:   jne    0x0000000111eae50c
+  0x0000000111eae4dd:   mov    rdx,rbx
+  0x0000000111eae4e0:   movabs rcx,0x0
+  0x0000000111eae4ea:   mov    DWORD PTR [rsp+0xdc],esi
+  0x0000000111eae4f1:   mov    DWORD PTR [rsp+0xe0],edi
+  0x0000000111eae4f8:   mov    QWORD PTR [rsp+0xa8],r13
+  0x0000000111eae500:   mov    DWORD PTR [rsp+0xb4],ebx
+  0x0000000111eae507:   jmp    0x0000000111eae7dc
+  0x0000000111eae50c:   mov    rcx,rbx
+  0x0000000111eae50f:   inc    ecx
+  0x0000000111eae511:   cmp    ecx,DWORD PTR [rsp+0xc0]
+  0x0000000111eae518:   jge    0x0000000111eae569
+  0x0000000111eae51e:   mov    DWORD PTR [rsp+0xdc],esi
+  0x0000000111eae525:   mov    DWORD PTR [rsp+0xe0],edi
+  0x0000000111eae52c:   mov    DWORD PTR [rsp+0xd8],eax
+  0x0000000111eae533:   mov    QWORD PTR [rsp+0xa8],r13
+  0x0000000111eae53b:   mov    DWORD PTR [rsp+0xb4],ebx
+  0x0000000111eae542:   mov    rdx,rcx
+  0x0000000111eae545:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eae54d:   mov    DWORD PTR [rsp+0xd4],ecx
+  0x0000000111eae554:   nop
+  0x0000000111eae555:   movabs rax,0x80000e7a0
+  0x0000000111eae55f:   call   0x00000001192f1200           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@164 (line 353)
+                                                            ;   {virtual_call}
+  0x0000000111eae564:   jmp    0x0000000111eae599
+  0x0000000111eae569:   mov    DWORD PTR [rsp+0xd4],ecx
+  0x0000000111eae570:   mov    DWORD PTR [rsp+0xdc],esi
+  0x0000000111eae577:   mov    DWORD PTR [rsp+0xe0],edi
+  0x0000000111eae57e:   mov    DWORD PTR [rsp+0xd8],eax
+  0x0000000111eae585:   mov    QWORD PTR [rsp+0xa8],r13
+  0x0000000111eae58d:   mov    DWORD PTR [rsp+0xb4],ebx
+  0x0000000111eae594:   mov    eax,0x0
+  0x0000000111eae599:   cmp    eax,0x2d
+  0x0000000111eae59c:   mov    edi,0x0
+  0x0000000111eae5a1:   jne    0x0000000111eae5ac
+  0x0000000111eae5a7:   mov    edi,0x1
+  0x0000000111eae5ac:   cmp    eax,0x2d
+  0x0000000111eae5af:   je     0x0000000111eae5d1
+  0x0000000111eae5b5:   cmp    eax,0x2b
+  0x0000000111eae5b8:   je     0x0000000111eae5d1
+  0x0000000111eae5be:   mov    ecx,DWORD PTR [rsp+0xd4]
+  0x0000000111eae5c5:   mov    DWORD PTR [rsp+0xe8],edi
+  0x0000000111eae5cc:   jmp    0x0000000111eae633
+  0x0000000111eae5d1:   mov    ecx,DWORD PTR [rsp+0xd4]
+  0x0000000111eae5d8:   inc    ecx
+  0x0000000111eae5da:   cmp    ecx,DWORD PTR [rsp+0xc0]
+  0x0000000111eae5e1:   jge    0x0000000111eae619
+  0x0000000111eae5e7:   mov    DWORD PTR [rsp+0xe8],edi
+  0x0000000111eae5ee:   mov    rdx,rcx
+  0x0000000111eae5f1:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eae5f9:   mov    DWORD PTR [rsp+0xe4],ecx
+  0x0000000111eae600:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000111eae605:   movabs rax,0xffffffffffffffff
+  0x0000000111eae60f:   call   0x0000000111868d80           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@211 (line 356)
+                                                            ;   {virtual_call}
+  0x0000000111eae614:   jmp    0x0000000111eae62c
+  0x0000000111eae619:   mov    DWORD PTR [rsp+0xe4],ecx
+  0x0000000111eae620:   mov    DWORD PTR [rsp+0xe8],edi
+  0x0000000111eae627:   mov    eax,0x0
+  0x0000000111eae62c:   mov    ecx,DWORD PTR [rsp+0xe4]
+  0x0000000111eae633:   cmp    eax,0x30
+  0x0000000111eae636:   jl     0x0000000111eae654
+  0x0000000111eae63c:   cmp    eax,0x39
+  0x0000000111eae63f:   mov    edx,0x0
+  0x0000000111eae644:   jg     0x0000000111eae64f
+  0x0000000111eae64a:   mov    edx,0x1
+  0x0000000111eae64f:   jmp    0x0000000111eae659
+  0x0000000111eae654:   mov    edx,0x0
+  0x0000000111eae659:   and    edx,0x1
+  0x0000000111eae65c:   cmp    edx,0x0
+  0x0000000111eae65f:   je     0x0000000111eaeb9c
+  0x0000000111eae665:   mov    rsi,rax
+  0x0000000111eae668:   movabs rdi,0x0
+  0x0000000111eae672:   nop    WORD PTR [rax+rax*1+0x0]
+  0x0000000111eae678:   movabs rax,0x989680
+  0x0000000111eae682:   mov    rdx,rdi
+  0x0000000111eae685:   cmp    rdx,rax
+  0x0000000111eae688:   jge    0x0000000111eae6b8
+  0x0000000111eae68e:   movabs rax,0xa
+  0x0000000111eae698:   mov    rdx,rax
+  0x0000000111eae69b:   mov    rax,rdi
+  0x0000000111eae69e:   imul   rax,rdx
+  0x0000000111eae6a2:   movsxd rsi,esi
+  0x0000000111eae6a5:   add    rax,rsi
+  0x0000000111eae6a8:   movabs r10,0x30
+  0x0000000111eae6b2:   sub    rax,r10
+  0x0000000111eae6b5:   mov    rdi,rax
+  0x0000000111eae6b8:   inc    ecx
+  0x0000000111eae6ba:   cmp    ecx,DWORD PTR [rsp+0xc0]
+  0x0000000111eae6c1:   jge    0x0000000111eae6f9
+  0x0000000111eae6c7:   mov    QWORD PTR [rsp+0xf0],rdi
+  0x0000000111eae6cf:   mov    rdx,rcx
+  0x0000000111eae6d2:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eae6da:   mov    DWORD PTR [rsp+0xec],ecx
+  0x0000000111eae6e1:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eae6e5:   movabs rax,0x80000e7a0
+  0x0000000111eae6ef:   call   0x00000001192f1200           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@272 (line 366)
+                                                            ;   {virtual_call}
+  0x0000000111eae6f4:   jmp    0x0000000111eae70d
+  0x0000000111eae6f9:   mov    DWORD PTR [rsp+0xec],ecx
+  0x0000000111eae700:   mov    QWORD PTR [rsp+0xf0],rdi
+  0x0000000111eae708:   mov    eax,0x0
+  0x0000000111eae70d:   cmp    eax,0x30
+  0x0000000111eae710:   jl     0x0000000111eae72e
+  0x0000000111eae716:   cmp    eax,0x39
+  0x0000000111eae719:   mov    edx,0x0
+  0x0000000111eae71e:   jg     0x0000000111eae729
+  0x0000000111eae724:   mov    edx,0x1
+  0x0000000111eae729:   jmp    0x0000000111eae733
+  0x0000000111eae72e:   mov    edx,0x0
+  0x0000000111eae733:   and    edx,0x1
+  0x0000000111eae736:   cmp    edx,0x0
+  0x0000000111eae739:   mov    esi,0x2
+  0x0000000111eae73e:   jne    0x0000000111eae749
+  0x0000000111eae744:   mov    esi,0x0
+  0x0000000111eae749:   movabs rdi,0x1030aa1c8
+  0x0000000111eae753:   mov    ebx,DWORD PTR [rdi+0xc]
+  0x0000000111eae756:   add    ebx,esi
+  0x0000000111eae758:   mov    DWORD PTR [rdi+0xc],ebx
+  0x0000000111eae75b:   cmp    esi,0x0
+  0x0000000111eae75e:   jne    0x0000000111eae769
+  0x0000000111eae764:   mov    ebx,0x2
+  0x0000000111eae769:   and    ebx,0x7ffe
+  0x0000000111eae76f:   cmp    ebx,0x0
+  0x0000000111eae772:   je     0x0000000111eaec36
+  0x0000000111eae778:   mov    r10,QWORD PTR [r15+0x348]    ; ImmutableOopMap {[184]=Oop }
+                                                            ;*ifne {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@288 (line 367)
+  0x0000000111eae77f:   test   DWORD PTR [r10],eax          ;   {poll}
+  0x0000000111eae782:   cmp    edx,0x0
+  0x0000000111eae785:   je     0x0000000111eae7a2
+  0x0000000111eae78b:   mov    rdi,QWORD PTR [rsp+0xf0]
+  0x0000000111eae793:   mov    rsi,rax
+  0x0000000111eae796:   mov    ecx,DWORD PTR [rsp+0xec]
+  0x0000000111eae79d:   jmp    0x0000000111eae678
+  0x0000000111eae7a2:   mov    edi,DWORD PTR [rsp+0xe8]
+  0x0000000111eae7a9:   cmp    edi,0x0
+  0x0000000111eae7ac:   mov    rdi,QWORD PTR [rsp+0xf0]
+  0x0000000111eae7b4:   je     0x0000000111eae7c3
+  0x0000000111eae7ba:   mov    rdx,rdi
+  0x0000000111eae7bd:   neg    rdx
+  0x0000000111eae7c0:   mov    rdi,rdx
+  0x0000000111eae7c3:   mov    edx,DWORD PTR [rsp+0xec]
+  0x0000000111eae7ca:   mov    eax,DWORD PTR [rsp+0xd8]
+  0x0000000111eae7d1:   movsxd rax,eax
+  0x0000000111eae7d4:   add    rax,rdi
+  0x0000000111eae7d7:   mov    eax,eax
+  0x0000000111eae7d9:   mov    rcx,rdi
+  0x0000000111eae7dc:   mov    QWORD PTR [rsp+0x100],rcx
+  0x0000000111eae7e4:   mov    DWORD PTR [rsp+0xfc],eax
+  0x0000000111eae7eb:   jmp    0x0000000111eae852
+  0x0000000111eae7f0:   mov    rdi,rdx
+  0x0000000111eae7f3:   mov    rdx,rdi
+  0x0000000111eae7f6:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eae7fe:   mov    DWORD PTR [rsp+0xf8],edi
+  0x0000000111eae805:   movabs rax,0xffffffffffffffff
+  0x0000000111eae80f:   call   0x0000000111868d80           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@9 (line 550)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@313 (line 376)
+                                                            ;   {virtual_call}
+  0x0000000111eae814:   cmp    eax,0x20
+  0x0000000111eae817:   mov    edx,DWORD PTR [rsp+0xf8]
+  0x0000000111eae81e:   jg     0x0000000111eae85b
+  0x0000000111eae824:   inc    edx
+  0x0000000111eae826:   movabs rsi,0x1030aa190
+  0x0000000111eae830:   mov    edi,DWORD PTR [rsi+0xc]
+  0x0000000111eae833:   add    edi,0x2
+  0x0000000111eae836:   mov    DWORD PTR [rsi+0xc],edi
+  0x0000000111eae839:   and    edi,0x7ffe
+  0x0000000111eae83f:   cmp    edi,0x0
+  0x0000000111eae842:   je     0x0000000111eaec57
+  0x0000000111eae848:   mov    r10,QWORD PTR [r15+0x348]    ; ImmutableOopMap {[184]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@25 (line 549)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@313 (line 376)
+  0x0000000111eae84f:   test   DWORD PTR [r10],eax          ;   {poll}
+  0x0000000111eae852:   cmp    edx,DWORD PTR [rsp+0xc0]
+  0x0000000111eae859:   jl     0x0000000111eae7f0
+  0x0000000111eae85b:   cmp    edx,DWORD PTR [rsp+0xc0]
+  0x0000000111eae862:   jl     0x0000000111eaeb72
+  0x0000000111eae868:   mov    edi,DWORD PTR [rsp+0xc8]
+  0x0000000111eae86f:   cmp    edi,0x0
+  0x0000000111eae872:   je     0x0000000111eae88b
+  0x0000000111eae878:   mov    DWORD PTR [rsp+0xf8],edx
+  0x0000000111eae87f:   mov    esi,DWORD PTR [rsp+0xdc]
+  0x0000000111eae886:   jmp    0x0000000111eae8dc
+  0x0000000111eae88b:   mov    esi,DWORD PTR [rsp+0xdc]
+  0x0000000111eae892:   cmp    esi,0x0
+  0x0000000111eae895:   mov    DWORD PTR [rsp+0xf8],edx
+  0x0000000111eae89c:   jne    0x0000000111eae8dc
+  0x0000000111eae8a2:   mov    DWORD PTR [rsp+0xdc],esi
+  0x0000000111eae8a9:   mov    edx,DWORD PTR [rsp+0xe0]
+  0x0000000111eae8b0:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eae8b8:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000111eae8bd:   movabs rax,0xffffffffffffffff
+  0x0000000111eae8c7:   call   0x0000000111868d80           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@335 (line 378)
+                                                            ;   {virtual_call}
+  0x0000000111eae8cc:   cmp    eax,0x2e
+  0x0000000111eae8cf:   jne    0x0000000111eaeb72
+  0x0000000111eae8d5:   mov    esi,DWORD PTR [rsp+0xdc]
+  0x0000000111eae8dc:   cmp    esi,0x13
+  0x0000000111eae8df:   jle    0x0000000111eaea5d
+  0x0000000111eae8e5:   mov    edx,DWORD PTR [rsp+0xc4]
+  0x0000000111eae8ec:   mov    edi,0x0
+  0x0000000111eae8f1:   movabs rbx,0x0
+  0x0000000111eae8fb:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000111eae900:   mov    DWORD PTR [rsp+0x108],edi
+  0x0000000111eae907:   mov    QWORD PTR [rsp+0x110],rbx
+  0x0000000111eae90f:   mov    ebx,DWORD PTR [rsp+0xb4]
+  0x0000000111eae916:   cmp    edx,ebx
+  0x0000000111eae918:   jge    0x0000000111eaea2e
+  0x0000000111eae91e:   mov    DWORD PTR [rsp+0xb4],ebx
+  0x0000000111eae925:   mov    rcx,rdx
+  0x0000000111eae928:   mov    rdx,rcx
+  0x0000000111eae92b:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eae933:   mov    DWORD PTR [rsp+0x10c],ecx
+  0x0000000111eae93a:   data16 xchg ax,ax
+  0x0000000111eae93d:   movabs rax,0xffffffffffffffff
+  0x0000000111eae947:   call   0x0000000111868d80           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@376 (line 389)
+                                                            ;   {virtual_call}
+  0x0000000111eae94c:   cmp    eax,0x2e
+  0x0000000111eae94f:   jne    0x0000000111eae96b
+  0x0000000111eae955:   mov    edi,DWORD PTR [rsp+0x108]
+  0x0000000111eae95c:   inc    edi
+  0x0000000111eae95e:   mov    rbx,QWORD PTR [rsp+0x110]
+  0x0000000111eae966:   jmp    0x0000000111eae9d2
+  0x0000000111eae96b:   mov    DWORD PTR [rsp+0x118],eax
+  0x0000000111eae972:   mov    rsi,QWORD PTR [rsp+0x110]
+  0x0000000111eae97a:   movabs rdx,0xde0b6b3a7640000
+  0x0000000111eae984:   data16 xchg ax,ax
+  0x0000000111eae987:   call   0x0000000111869080           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokestatic compareUnsigned {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@401 (line 393)
+                                                            ;   {static_call}
+  0x0000000111eae98c:   cmp    eax,0x0
+  0x0000000111eae98f:   jge    0x0000000111eaea0c
+  0x0000000111eae995:   mov    esi,DWORD PTR [rsp+0x118]
+  0x0000000111eae99c:   movabs rax,0xa
+  0x0000000111eae9a6:   mov    rdx,rax
+  0x0000000111eae9a9:   mov    rax,QWORD PTR [rsp+0x110]
+  0x0000000111eae9b1:   imul   rax,rdx
+  0x0000000111eae9b5:   movsxd rsi,esi
+  0x0000000111eae9b8:   add    rax,rsi
+  0x0000000111eae9bb:   movabs r10,0x30
+  0x0000000111eae9c5:   sub    rax,r10
+  0x0000000111eae9c8:   mov    edi,DWORD PTR [rsp+0x108]
+  0x0000000111eae9cf:   mov    rbx,rax
+  0x0000000111eae9d2:   mov    edx,DWORD PTR [rsp+0x10c]
+  0x0000000111eae9d9:   inc    edx
+  0x0000000111eae9db:   movabs rsi,0x1030aa1c8
+  0x0000000111eae9e5:   mov    ecx,DWORD PTR [rsi+0xc]
+  0x0000000111eae9e8:   add    ecx,0x2
+  0x0000000111eae9eb:   mov    DWORD PTR [rsi+0xc],ecx
+  0x0000000111eae9ee:   and    ecx,0x7ffe
+  0x0000000111eae9f4:   cmp    ecx,0x0
+  0x0000000111eae9f7:   je     0x0000000111eaec78
+  0x0000000111eae9fd:   mov    r10,QWORD PTR [r15+0x348]    ; ImmutableOopMap {[184]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@426 (line 388)
+  0x0000000111eaea04:   test   DWORD PTR [r10],eax          ;   {poll}
+  0x0000000111eaea07:   jmp    0x0000000111eae900
+  0x0000000111eaea0c:   mov    edi,DWORD PTR [rsp+0x108]
+  0x0000000111eaea13:   mov    rbx,QWORD PTR [rsp+0x110]
+  0x0000000111eaea1b:   mov    edx,DWORD PTR [rsp+0x10c]
+  0x0000000111eaea22:   mov    esi,DWORD PTR [rsp+0xb4]
+  0x0000000111eaea29:   jmp    0x0000000111eaea40
+  0x0000000111eaea2e:   mov    edi,DWORD PTR [rsp+0x108]
+  0x0000000111eaea35:   mov    rsi,rbx
+  0x0000000111eaea38:   mov    rbx,QWORD PTR [rsp+0x110]
+  0x0000000111eaea40:   cmp    edx,esi
+  0x0000000111eaea42:   mov    esi,0x0
+  0x0000000111eaea47:   jge    0x0000000111eaea52
+  0x0000000111eaea4d:   mov    esi,0x1
+  0x0000000111eaea52:   mov    rax,rdi
+  0x0000000111eaea55:   mov    r11,rsi
+  0x0000000111eaea58:   jmp    0x0000000111eaea7a
+  0x0000000111eaea5d:   mov    edx,DWORD PTR [rsp+0xf8]
+  0x0000000111eaea64:   mov    r13,QWORD PTR [rsp+0xa8]
+  0x0000000111eaea6c:   mov    rbx,r13
+  0x0000000111eaea6f:   mov    eax,0x0
+  0x0000000111eaea74:   mov    r11d,0x0
+  0x0000000111eaea7a:   mov    r13,QWORD PTR [rsp+0x100]
+  0x0000000111eaea82:   mov    r8d,DWORD PTR [rsp+0xfc]
+  0x0000000111eaea8a:   mov    edi,DWORD PTR [rsp+0xe0]
+  0x0000000111eaea91:   mov    r9d,DWORD PTR [rsp+0xcc]
+  0x0000000111eaea99:   mov    rsi,rdx
+  0x0000000111eaea9c:   mov    rdx,r9
+  0x0000000111eaea9f:   mov    rcx,rbx
+  0x0000000111eaeaa2:   mov    r9,rdi
+  0x0000000111eaeaa5:   mov    rdi,r13
+  0x0000000111eaeaa8:   mov    DWORD PTR [rsp],r11d
+  0x0000000111eaeaac:   mov    DWORD PTR [rsp+0x8],eax
+  0x0000000111eaeab0:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eaeab7:   call   0x0000000111eaed85           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*invokestatic decFloatLiteralToDouble {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@463 (line 404)
+                                                            ;   {static_call}
+  0x0000000111eaeabc:   vucomisd xmm0,xmm0
+  0x0000000111eaeac0:   mov    edx,0xffffffff
+  0x0000000111eaeac5:   jp     0x0000000111eaeadf
+  0x0000000111eaeacb:   jb     0x0000000111eaeadf
+  0x0000000111eaead1:   mov    edx,0x0
+  0x0000000111eaead6:   je     0x0000000111eaeadf
+  0x0000000111eaeadc:   inc    rdx
+  0x0000000111eaeadf:   cmp    edx,0x0
+  0x0000000111eaeae2:   mov    edx,0x0
+  0x0000000111eaeae7:   je     0x0000000111eaeaf2
+  0x0000000111eaeaed:   mov    edx,0x1
+  0x0000000111eaeaf2:   and    edx,0x1
+  0x0000000111eaeaf5:   cmp    edx,0x0
+  0x0000000111eaeaf8:   je     0x0000000111eaeb5c
+  0x0000000111eaeafe:   mov    edx,DWORD PTR [rsp+0xd0]
+  0x0000000111eaeb05:   mov    ecx,DWORD PTR [rsp+0xc0]
+  0x0000000111eaeb0c:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eaeb14:   nop
+  0x0000000111eaeb15:   movabs rax,0xffffffffffffffff
+  0x0000000111eaeb1f:   call   0x0000000111868d80           ; ImmutableOopMap {}
+                                                            ;*invokeinterface subSequence {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteralTheHardWay@3 (line 423)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@479 (line 405)
+                                                            ;   {virtual_call}
+  0x0000000111eaeb24:   mov    rsi,rax
+  0x0000000111eaeb27:   nop    WORD PTR [rax+rax*1+0x0]
+  0x0000000111eaeb2d:   movabs rax,0xffffffffffffffff
+  0x0000000111eaeb37:   call   0x0000000111868d80           ; ImmutableOopMap {}
+                                                            ;*invokeinterface toString {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteralTheHardWay@8 (line 423)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@479 (line 405)
+                                                            ;   {virtual_call}
+  0x0000000111eaeb3c:   mov    rsi,rax
+  0x0000000111eaeb3f:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic readJavaFormatString {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - jdk.internal.math.FloatingDecimal::parseDouble@1 (line 110)
+                                                            ; - java.lang.Double::parseDouble@1 (line 651)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteralTheHardWay@13 (line 423)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@479 (line 405)
+                                                            ;   {static_call}
+  0x0000000111eaeb44:   mov    rsi,rax
+  0x0000000111eaeb47:   nop    WORD PTR [rax+rax*1+0x0]
+  0x0000000111eaeb4d:   movabs rax,0xffffffffffffffff
+  0x0000000111eaeb57:   call   0x0000000111868d80           ; ImmutableOopMap {}
+                                                            ;*invokeinterface doubleValue {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - jdk.internal.math.FloatingDecimal::parseDouble@4 (line 110)
+                                                            ; - java.lang.Double::parseDouble@1 (line 651)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteralTheHardWay@13 (line 423)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@479 (line 405)
+                                                            ;   {virtual_call}
+  0x0000000111eaeb5c:   add    rsp,0x130
+  0x0000000111eaeb63:   pop    rbp
+  0x0000000111eaeb64:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eaeb6b:   ja     0x0000000111eaec99
+  0x0000000111eaeb71:   ret
+  0x0000000111eaeb72:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eaeb7a:   mov    edx,DWORD PTR [rsp+0xd0]
+  0x0000000111eaeb81:   mov    ecx,DWORD PTR [rsp+0xc0]
+  0x0000000111eaeb88:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eaeb8f:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic newNumberFormatException {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@348 (line 379)
+                                                            ;   {static_call}
+  0x0000000111eaeb94:   cmp    rax,QWORD PTR [rax]          ; implicit exception: dispatches to 0x0000000111eaecaf
+  0x0000000111eaeb97:   jmp    0x0000000111eaecdd
+  0x0000000111eaeb9c:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eaeba4:   mov    edx,DWORD PTR [rsp+0xd0]
+  0x0000000111eaebab:   mov    ecx,DWORD PTR [rsp+0xc0]
+  0x0000000111eaebb2:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000111eaebb7:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic newNumberFormatException {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@233 (line 359)
+                                                            ;   {static_call}
+  0x0000000111eaebbc:   cmp    rax,QWORD PTR [rax]          ; implicit exception: dispatches to 0x0000000111eaecb4
+  0x0000000111eaebbf:   jmp    0x0000000111eaecdd
+  0x0000000111eaebc4:   mov    r8d,DWORD PTR [rsp+0xc0]
+  0x0000000111eaebcc:   mov    ecx,DWORD PTR [rsp+0xd0]
+  0x0000000111eaebd3:   mov    rsi,QWORD PTR [rsp+0xb8]
+  0x0000000111eaebdb:   mov    rdx,rcx
+  0x0000000111eaebde:   mov    rcx,r8
+  0x0000000111eaebe1:   nop    WORD PTR [rax+rax*1+0x0]
+  0x0000000111eaebe7:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic newNumberFormatException {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@72 (line 332)
+                                                            ;   {static_call}
+  0x0000000111eaebec:   cmp    rax,QWORD PTR [rax]          ; implicit exception: dispatches to 0x0000000111eaecb9
+  0x0000000111eaebef:   jmp    0x0000000111eaecdd
+  0x0000000111eaebf4:   movabs r10,0x1030a9488              ;   {metadata({method} {0x00000001030a9488} 'parseRestOfDecimalFloatLiteral' '(Ljava/lang/CharSequence;IIIZZ)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eaebfe:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eaec03:   mov    QWORD PTR [rsp],0xffffffffffffffff
+  0x0000000111eaec0b:   call   0x0000000111914c00           ; ImmutableOopMap {rsi=Oop [184]=Oop }
+                                                            ;*synchronization entry
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@-1 (line 319)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eaec10:   jmp    0x0000000111eae2fe
+  0x0000000111eaec15:   movabs r10,0x1030a9488              ;   {metadata({method} {0x00000001030a9488} 'parseRestOfDecimalFloatLiteral' '(Ljava/lang/CharSequence;IIIZZ)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eaec1f:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eaec24:   mov    QWORD PTR [rsp],0x52
+  0x0000000111eaec2c:   call   0x0000000111914c00           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@82 (line 325)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eaec31:   jmp    0x0000000111eae41b
+  0x0000000111eaec36:   movabs r10,0x1030a9488              ;   {metadata({method} {0x00000001030a9488} 'parseRestOfDecimalFloatLiteral' '(Ljava/lang/CharSequence;IIIZZ)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eaec40:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eaec45:   mov    QWORD PTR [rsp],0x120
+  0x0000000111eaec4d:   call   0x0000000111914c00           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*ifne {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@288 (line 367)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eaec52:   jmp    0x0000000111eae778
+  0x0000000111eaec57:   movabs r10,0x1030a9b48              ;   {metadata({method} {0x00000001030a9b48} 'skipWhitespace' '(Ljava/lang/CharSequence;II)I' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eaec61:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eaec66:   mov    QWORD PTR [rsp],0x19
+  0x0000000111eaec6e:   call   0x0000000111914c00           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@25 (line 549)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@313 (line 376)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eaec73:   jmp    0x0000000111eae848
+  0x0000000111eaec78:   movabs r10,0x1030a9488              ;   {metadata({method} {0x00000001030a9488} 'parseRestOfDecimalFloatLiteral' '(Ljava/lang/CharSequence;IIIZZ)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eaec82:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eaec87:   mov    QWORD PTR [rsp],0x1aa
+  0x0000000111eaec8f:   call   0x0000000111914c00           ; ImmutableOopMap {[184]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@426 (line 388)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eaec94:   jmp    0x0000000111eae9fd
+  0x0000000111eaec99:   movabs r10,0x111eaeb64              ;   {internal_word}
+  0x0000000111eaeca3:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eaecaa:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eaecaf:   call   0x000000011190ef20           ; ImmutableOopMap {rax=Oop }
+                                                            ;*athrow {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@351 (line 379)
+                                                            ;   {runtime_call throw_null_pointer_exception Runtime1 stub}
+  0x0000000111eaecb4:   call   0x000000011190ef20           ; ImmutableOopMap {rax=Oop }
+                                                            ;*athrow {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@236 (line 359)
+                                                            ;   {runtime_call throw_null_pointer_exception Runtime1 stub}
+  0x0000000111eaecb9:   call   0x000000011190ef20           ; ImmutableOopMap {rax=Oop }
+                                                            ;*athrow {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@75 (line 332)
+                                                            ;   {runtime_call throw_null_pointer_exception Runtime1 stub}
+  0x0000000111eaecbe:   nop
+  0x0000000111eaecbf:   nop
+  0x0000000111eaecc0:   mov    rax,QWORD PTR [r15+0x3d0]
+  0x0000000111eaecc7:   mov    QWORD PTR [r15+0x3d0],0x0
+  0x0000000111eaecd2:   mov    QWORD PTR [r15+0x3d8],0x0
+  0x0000000111eaecdd:   add    rsp,0x130
+  0x0000000111eaece4:   pop    rbp
+  0x0000000111eaece5:   jmp    0x000000011190e000           ;   {runtime_call unwind_exception Runtime1 stub}
+  0x0000000111eaecea:   hlt
+  0x0000000111eaeceb:   hlt
+  0x0000000111eaecec:   hlt
+  0x0000000111eaeced:   hlt
+  0x0000000111eaecee:   hlt
+  0x0000000111eaecef:   hlt
+  0x0000000111eaecf0:   hlt
+  0x0000000111eaecf1:   hlt
+  0x0000000111eaecf2:   hlt
+  0x0000000111eaecf3:   hlt
+  0x0000000111eaecf4:   hlt
+  0x0000000111eaecf5:   hlt
+  0x0000000111eaecf6:   hlt
+  0x0000000111eaecf7:   hlt
+  0x0000000111eaecf8:   hlt
+  0x0000000111eaecf9:   hlt
+  0x0000000111eaecfa:   hlt
+  0x0000000111eaecfb:   hlt
+  0x0000000111eaecfc:   hlt
+  0x0000000111eaecfd:   hlt
+  0x0000000111eaecfe:   hlt
+  0x0000000111eaecff:   hlt
+[Stub Code]
+  0x0000000111eaed00:   nop    DWORD PTR [rax+rax*1+0x0]    ;   {no_reloc}
+  0x0000000111eaed05:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed0f:   jmp    0x0000000111eaed0f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed14:   nop
+  0x0000000111eaed15:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed1f:   jmp    0x0000000111eaed1f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed24:   nop
+  0x0000000111eaed25:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed2f:   jmp    0x0000000111eaed2f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed34:   nop
+  0x0000000111eaed35:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed3f:   jmp    0x0000000111eaed3f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed44:   nop
+  0x0000000111eaed45:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed4f:   jmp    0x0000000111eaed4f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed54:   nop
+  0x0000000111eaed55:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed5f:   jmp    0x0000000111eaed5f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed64:   nop
+  0x0000000111eaed65:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed6f:   jmp    0x0000000111eaed6f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed74:   nop
+  0x0000000111eaed75:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed7f:   jmp    0x0000000111eaed7f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaed84:   nop
+  0x0000000111eaed85:   movabs rbx,0x1030b5670              ;   {static_stub}
+  0x0000000111eaed8f:   jmp    0x0000000111938fa4           ;   {runtime_call I2C/C2I adapters}
+  0x0000000111eaed94:   nop
+  0x0000000111eaed95:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaed9f:   jmp    0x0000000111eaed9f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaeda4:   nop
+  0x0000000111eaeda5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaedaf:   jmp    0x0000000111eaedaf           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaedb4:   nop
+  0x0000000111eaedb5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaedbf:   jmp    0x0000000111eaedbf           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaedc4:   nop
+  0x0000000111eaedc5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaedcf:   jmp    0x0000000111eaedcf           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaedd4:   nop
+  0x0000000111eaedd5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaeddf:   jmp    0x0000000111eaeddf           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaede4:   nop
+  0x0000000111eaede5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaedef:   jmp    0x0000000111eaedef           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eaedf4:   nop
+  0x0000000111eaedf5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaedff:   jmp    0x0000000111eaedff           ;   {runtime_call const_jargs+-37847137}
+[Exception Handler]
+  0x0000000111eaee04:   call   0x0000000111911900           ;   {runtime_call handle_exception_from_callee Runtime1 stub}
+  0x0000000111eaee09:   movabs rdi,0x104070512              ;   {external_word}
+  0x0000000111eaee13:   and    rsp,0xfffffffffffffff0
+  0x0000000111eaee17:   call   0x0000000103d12790           ;   {runtime_call _ZN14MacroAssembler7debug64EPcxPx}
+  0x0000000111eaee1c:   hlt
+[Deopt Handler Code]
+  0x0000000111eaee1d:   movabs r10,0x111eaee1d              ;   {section_word}
+  0x0000000111eaee27:   push   r10
+  0x0000000111eaee29:   jmp    0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x0000000111eaee2e:   hlt
+  0x0000000111eaee2f:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+
+============================= C1-compiled nmethod ==============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (c1)  624       2       ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace (30 bytes)
+ total in heap  [0x0000000111eaf490,0x0000000111eaf870] = 992
+ relocation     [0x0000000111eaf5f0,0x0000000111eaf630] = 64
+ main code      [0x0000000111eaf640,0x0000000111eaf780] = 320
+ stub code      [0x0000000111eaf780,0x0000000111eaf7c0] = 64
+ oops           [0x0000000111eaf7c0,0x0000000111eaf7c8] = 8
+ metadata       [0x0000000111eaf7c8,0x0000000111eaf7d0] = 8
+ scopes data    [0x0000000111eaf7d0,0x0000000111eaf808] = 56
+ scopes pcs     [0x0000000111eaf808,0x0000000111eaf868] = 96
+ dependencies   [0x0000000111eaf868,0x0000000111eaf870] = 8
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a9b48} 'skipWhitespace' '(Ljava/lang/CharSequence;II)I' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi:rsi   = 'java/lang/CharSequence'
+  # parm1:    rdx       = int
+  # parm2:    rcx       = int
+  #           [sp+0x50]  (sp of caller)
+  0x0000000111eaf640:   mov    DWORD PTR [rsp-0x14000],eax
+  0x0000000111eaf647:   push   rbp
+  0x0000000111eaf648:   sub    rsp,0x40
+  0x0000000111eaf64c:   mov    QWORD PTR [rsp+0x28],rsi
+  0x0000000111eaf651:   mov    DWORD PTR [rsp+0x24],ecx
+  0x0000000111eaf655:   movabs rdi,0x1030aa190
+  0x0000000111eaf65f:   mov    ebx,DWORD PTR [rdi+0x8]
+  0x0000000111eaf662:   add    ebx,0x2
+  0x0000000111eaf665:   mov    DWORD PTR [rdi+0x8],ebx
+  0x0000000111eaf668:   and    ebx,0xffe
+  0x0000000111eaf66e:   cmp    ebx,0x0
+  0x0000000111eaf671:   je     0x0000000111eaf702
+  0x0000000111eaf677:   jmp    0x0000000111eaf6e8
+  0x0000000111eaf67c:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eaf680:   mov    rdi,rdx
+  0x0000000111eaf683:   mov    rdx,rdi
+  0x0000000111eaf686:   mov    rbx,rsi
+  0x0000000111eaf689:   mov    rsi,rbx
+  0x0000000111eaf68c:   mov    DWORD PTR [rsp+0x20],edi
+  0x0000000111eaf690:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000111eaf695:   movabs rax,0x80000e7a0
+  0x0000000111eaf69f:   call   0x00000001192f1200           ; ImmutableOopMap {[40]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@9 (line 550)
+                                                            ;   {virtual_call}
+  0x0000000111eaf6a4:   cmp    eax,0x20
+  0x0000000111eaf6a7:   mov    edx,DWORD PTR [rsp+0x20]
+  0x0000000111eaf6ab:   jg     0x0000000111eaf6ec
+  0x0000000111eaf6b1:   inc    edx
+  0x0000000111eaf6b3:   movabs rax,0x1030aa190
+  0x0000000111eaf6bd:   mov    esi,DWORD PTR [rax+0xc]
+  0x0000000111eaf6c0:   add    esi,0x2
+  0x0000000111eaf6c3:   mov    DWORD PTR [rax+0xc],esi
+  0x0000000111eaf6c6:   and    esi,0x7ffe
+  0x0000000111eaf6cc:   cmp    esi,0x0
+  0x0000000111eaf6cf:   je     0x0000000111eaf723
+  0x0000000111eaf6d5:   mov    r10,QWORD PTR [r15+0x348]    ; ImmutableOopMap {[40]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@25 (line 549)
+  0x0000000111eaf6dc:   test   DWORD PTR [r10],eax          ;   {poll}
+  0x0000000111eaf6df:   mov    ecx,DWORD PTR [rsp+0x24]
+  0x0000000111eaf6e3:   mov    rsi,QWORD PTR [rsp+0x28]
+  0x0000000111eaf6e8:   cmp    edx,ecx
+  0x0000000111eaf6ea:   jl     0x0000000111eaf680
+  0x0000000111eaf6ec:   mov    rax,rdx
+  0x0000000111eaf6ef:   add    rsp,0x40
+  0x0000000111eaf6f3:   pop    rbp
+  0x0000000111eaf6f4:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eaf6fb:   ja     0x0000000111eaf741
+  0x0000000111eaf701:   ret
+  0x0000000111eaf702:   movabs r10,0x1030a9b48              ;   {metadata({method} {0x00000001030a9b48} 'skipWhitespace' '(Ljava/lang/CharSequence;II)I' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eaf70c:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eaf711:   mov    QWORD PTR [rsp],0xffffffffffffffff
+  0x0000000111eaf719:   call   0x0000000111914c00           ; ImmutableOopMap {rsi=Oop [40]=Oop }
+                                                            ;*synchronization entry
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@-1 (line 548)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eaf71e:   jmp    0x0000000111eaf677
+  0x0000000111eaf723:   movabs r10,0x1030a9b48              ;   {metadata({method} {0x00000001030a9b48} 'skipWhitespace' '(Ljava/lang/CharSequence;II)I' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eaf72d:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eaf732:   mov    QWORD PTR [rsp],0x19
+  0x0000000111eaf73a:   call   0x0000000111914c00           ; ImmutableOopMap {[40]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@25 (line 549)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eaf73f:   jmp    0x0000000111eaf6d5
+  0x0000000111eaf741:   movabs r10,0x111eaf6f4              ;   {internal_word}
+  0x0000000111eaf74b:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eaf752:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eaf757:   nop
+  0x0000000111eaf758:   nop
+  0x0000000111eaf759:   mov    rax,QWORD PTR [r15+0x3d0]
+  0x0000000111eaf760:   mov    QWORD PTR [r15+0x3d0],0x0
+  0x0000000111eaf76b:   mov    QWORD PTR [r15+0x3d8],0x0
+  0x0000000111eaf776:   add    rsp,0x40
+  0x0000000111eaf77a:   pop    rbp
+  0x0000000111eaf77b:   jmp    0x000000011190e000           ;   {runtime_call unwind_exception Runtime1 stub}
+[Stub Code]
+  0x0000000111eaf780:   nop    DWORD PTR [rax+rax*1+0x0]    ;   {no_reloc}
+  0x0000000111eaf785:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eaf78f:   jmp    0x0000000111eaf78f           ;   {runtime_call const_jargs+-37847137}
+[Exception Handler]
+  0x0000000111eaf794:   call   0x0000000111911900           ;   {runtime_call handle_exception_from_callee Runtime1 stub}
+  0x0000000111eaf799:   movabs rdi,0x104070512              ;   {external_word}
+  0x0000000111eaf7a3:   and    rsp,0xfffffffffffffff0
+  0x0000000111eaf7a7:   call   0x0000000103d12790           ;   {runtime_call _ZN14MacroAssembler7debug64EPcxPx}
+  0x0000000111eaf7ac:   hlt
+[Deopt Handler Code]
+  0x0000000111eaf7ad:   movabs r10,0x111eaf7ad              ;   {section_word}
+  0x0000000111eaf7b7:   push   r10
+  0x0000000111eaf7b9:   jmp    0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x0000000111eaf7be:   hlt
+  0x0000000111eaf7bf:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+
+============================= C1-compiled nmethod ==============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (c1)  627       2       ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble (213 bytes)
+ total in heap  [0x0000000111eaff90,0x0000000111eb0950] = 2496
+ relocation     [0x0000000111eb00f0,0x0000000111eb01c8] = 216
+ main code      [0x0000000111eb01e0,0x0000000111eb0620] = 1088
+ stub code      [0x0000000111eb0620,0x0000000111eb06f0] = 208
+ oops           [0x0000000111eb06f0,0x0000000111eb06f8] = 8
+ metadata       [0x0000000111eb06f8,0x0000000111eb0708] = 16
+ scopes data    [0x0000000111eb0708,0x0000000111eb0800] = 248
+ scopes pcs     [0x0000000111eb0800,0x0000000111eb0930] = 304
+ dependencies   [0x0000000111eb0930,0x0000000111eb0938] = 8
+ nul chk table  [0x0000000111eb0938,0x0000000111eb0950] = 24
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a8e20} 'parseDouble' '(Ljava/lang/CharSequence;II)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi:rsi   = 'java/lang/CharSequence'
+  # parm1:    rdx       = int
+  # parm2:    rcx       = int
+  #           [sp+0xa0]  (sp of caller)
+  0x0000000111eb01e0:   mov    DWORD PTR [rsp-0x14000],eax
+  0x0000000111eb01e7:   push   rbp
+  0x0000000111eb01e8:   sub    rsp,0x90
+  0x0000000111eb01ef:   mov    QWORD PTR [rsp+0x58],rsi
+  0x0000000111eb01f4:   mov    DWORD PTR [rsp+0x60],edx
+  0x0000000111eb01f8:   movabs rdi,0x1030aa158
+  0x0000000111eb0202:   mov    ebx,DWORD PTR [rdi+0x8]
+  0x0000000111eb0205:   add    ebx,0x2
+  0x0000000111eb0208:   mov    DWORD PTR [rdi+0x8],ebx
+  0x0000000111eb020b:   and    ebx,0xffe
+  0x0000000111eb0211:   cmp    ebx,0x0
+  0x0000000111eb0214:   je     0x0000000111eb0526
+  0x0000000111eb021a:   add    ecx,edx
+  0x0000000111eb021c:   mov    DWORD PTR [rsp+0x54],ecx
+  0x0000000111eb0220:   mov    rdi,rdx
+  0x0000000111eb0223:   jmp    0x0000000111eb0288
+  0x0000000111eb0228:   mov    rdx,rdi
+  0x0000000111eb022b:   mov    rax,rsi
+  0x0000000111eb022e:   mov    rsi,rax
+  0x0000000111eb0231:   mov    DWORD PTR [rsp+0x50],edi
+  0x0000000111eb0235:   movabs rax,0x80000e7a0
+  0x0000000111eb023f:   call   0x00000001192f1200           ; ImmutableOopMap {[88]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@9 (line 550)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@7 (line 221)
+                                                            ;   {virtual_call}
+  0x0000000111eb0244:   cmp    eax,0x20
+  0x0000000111eb0247:   mov    edi,DWORD PTR [rsp+0x50]
+  0x0000000111eb024b:   jg     0x0000000111eb028c
+  0x0000000111eb0251:   inc    edi
+  0x0000000111eb0253:   movabs rdx,0x1030aa190
+  0x0000000111eb025d:   mov    esi,DWORD PTR [rdx+0xc]
+  0x0000000111eb0260:   add    esi,0x2
+  0x0000000111eb0263:   mov    DWORD PTR [rdx+0xc],esi
+  0x0000000111eb0266:   and    esi,0x7ffe
+  0x0000000111eb026c:   cmp    esi,0x0
+  0x0000000111eb026f:   je     0x0000000111eb0547
+  0x0000000111eb0275:   mov    r10,QWORD PTR [r15+0x348]    ; ImmutableOopMap {[88]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@25 (line 549)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@7 (line 221)
+  0x0000000111eb027c:   test   DWORD PTR [r10],eax          ;   {poll}
+  0x0000000111eb027f:   mov    ecx,DWORD PTR [rsp+0x54]
+  0x0000000111eb0283:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb0288:   cmp    edi,ecx
+  0x0000000111eb028a:   jl     0x0000000111eb0228
+  0x0000000111eb028c:   cmp    edi,DWORD PTR [rsp+0x54]
+  0x0000000111eb0290:   je     0x0000000111eb049c
+  0x0000000111eb0296:   mov    rdx,rdi
+  0x0000000111eb0299:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb029e:   mov    DWORD PTR [rsp+0x50],edi
+  0x0000000111eb02a2:   data16 xchg ax,ax
+  0x0000000111eb02a5:   movabs rax,0x80000e7a0
+  0x0000000111eb02af:   call   0x00000001192f1200           ; ImmutableOopMap {[88]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@31 (line 225)
+                                                            ;   {virtual_call}
+  0x0000000111eb02b4:   cmp    eax,0x2d
+  0x0000000111eb02b7:   mov    edi,0x0
+  0x0000000111eb02bc:   jne    0x0000000111eb02c7
+  0x0000000111eb02c2:   mov    edi,0x1
+  0x0000000111eb02c7:   cmp    eax,0x2d
+  0x0000000111eb02ca:   je     0x0000000111eb02e6
+  0x0000000111eb02d0:   cmp    eax,0x2b
+  0x0000000111eb02d3:   je     0x0000000111eb02e6
+  0x0000000111eb02d9:   mov    ebx,DWORD PTR [rsp+0x50]
+  0x0000000111eb02dd:   mov    DWORD PTR [rsp+0x68],edi
+  0x0000000111eb02e1:   jmp    0x0000000111eb033b
+  0x0000000111eb02e6:   mov    edx,DWORD PTR [rsp+0x50]
+  0x0000000111eb02ea:   mov    rbx,rdx
+  0x0000000111eb02ed:   inc    ebx
+  0x0000000111eb02ef:   cmp    ebx,DWORD PTR [rsp+0x54]
+  0x0000000111eb02f3:   jge    0x0000000111eb0321
+  0x0000000111eb02f9:   mov    DWORD PTR [rsp+0x68],edi
+  0x0000000111eb02fd:   mov    rdx,rbx
+  0x0000000111eb0300:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb0305:   mov    DWORD PTR [rsp+0x64],ebx
+  0x0000000111eb0309:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eb030d:   movabs rax,0xffffffffffffffff
+  0x0000000111eb0317:   call   0x0000000111868d80           ; ImmutableOopMap {[88]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@76 (line 231)
+                                                            ;   {virtual_call}
+  0x0000000111eb031c:   jmp    0x0000000111eb032e
+  0x0000000111eb0321:   mov    DWORD PTR [rsp+0x64],ebx
+  0x0000000111eb0325:   mov    DWORD PTR [rsp+0x68],edi
+  0x0000000111eb0329:   mov    eax,0x0
+  0x0000000111eb032e:   cmp    eax,0x0
+  0x0000000111eb0331:   je     0x0000000111eb0482
+  0x0000000111eb0337:   mov    ebx,DWORD PTR [rsp+0x64]
+  0x0000000111eb033b:   cmp    eax,0x4e
+  0x0000000111eb033e:   je     0x0000000111eb045a
+  0x0000000111eb0344:   cmp    eax,0x49
+  0x0000000111eb0347:   je     0x0000000111eb042a
+  0x0000000111eb034d:   cmp    eax,0x30
+  0x0000000111eb0350:   mov    edi,0x0
+  0x0000000111eb0355:   jne    0x0000000111eb0360
+  0x0000000111eb035b:   mov    edi,0x1
+  0x0000000111eb0360:   cmp    eax,0x30
+  0x0000000111eb0363:   jne    0x0000000111eb03c0
+  0x0000000111eb0369:   inc    ebx
+  0x0000000111eb036b:   cmp    ebx,DWORD PTR [rsp+0x54]
+  0x0000000111eb036f:   jge    0x0000000111eb0399
+  0x0000000111eb0375:   mov    DWORD PTR [rsp+0x70],edi
+  0x0000000111eb0379:   mov    rdx,rbx
+  0x0000000111eb037c:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb0381:   mov    DWORD PTR [rsp+0x6c],ebx
+  0x0000000111eb0385:   movabs rax,0xffffffffffffffff
+  0x0000000111eb038f:   call   0x0000000111868d80           ; ImmutableOopMap {[88]=Oop }
+                                                            ;*invokeinterface charAt {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@162 (line 249)
+                                                            ;   {virtual_call}
+  0x0000000111eb0394:   jmp    0x0000000111eb03a6
+  0x0000000111eb0399:   mov    DWORD PTR [rsp+0x6c],ebx
+  0x0000000111eb039d:   mov    DWORD PTR [rsp+0x70],edi
+  0x0000000111eb03a1:   mov    eax,0x0
+  0x0000000111eb03a6:   cmp    eax,0x78
+  0x0000000111eb03a9:   je     0x0000000111eb03f2
+  0x0000000111eb03af:   cmp    eax,0x58
+  0x0000000111eb03b2:   je     0x0000000111eb03f2
+  0x0000000111eb03b8:   mov    ebx,DWORD PTR [rsp+0x6c]
+  0x0000000111eb03bc:   mov    edi,DWORD PTR [rsp+0x70]
+  0x0000000111eb03c0:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb03c5:   mov    rdx,rbx
+  0x0000000111eb03c8:   mov    ecx,DWORD PTR [rsp+0x60]
+  0x0000000111eb03cc:   mov    r8d,DWORD PTR [rsp+0x54]
+  0x0000000111eb03d1:   mov    r9d,DWORD PTR [rsp+0x68]
+  0x0000000111eb03d6:   nop
+  0x0000000111eb03d7:   call   0x0000000111eae2a0           ; ImmutableOopMap {}
+                                                            ;*invokestatic parseRestOfDecimalFloatLiteral {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@209 (line 255)
+                                                            ;   {static_call}
+  0x0000000111eb03dc:   add    rsp,0x90
+  0x0000000111eb03e3:   pop    rbp
+  0x0000000111eb03e4:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eb03eb:   ja     0x0000000111eb0568
+  0x0000000111eb03f1:   ret
+  0x0000000111eb03f2:   mov    ebx,DWORD PTR [rsp+0x6c]
+  0x0000000111eb03f6:   inc    ebx
+  0x0000000111eb03f8:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb03fd:   mov    rdx,rbx
+  0x0000000111eb0400:   mov    ecx,DWORD PTR [rsp+0x60]
+  0x0000000111eb0404:   mov    r8d,DWORD PTR [rsp+0x54]
+  0x0000000111eb0409:   mov    r9d,DWORD PTR [rsp+0x68]
+  0x0000000111eb040e:   nop
+  0x0000000111eb040f:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic parseRestOfHexFloatingPointLiteral {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@196 (line 251)
+                                                            ;   {static_call}
+  0x0000000111eb0414:   add    rsp,0x90
+  0x0000000111eb041b:   pop    rbp
+  0x0000000111eb041c:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eb0423:   ja     0x0000000111eb057e
+  0x0000000111eb0429:   ret
+  0x0000000111eb042a:   mov    edi,DWORD PTR [rsp+0x68]
+  0x0000000111eb042e:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb0433:   mov    rdx,rbx
+  0x0000000111eb0436:   mov    ecx,DWORD PTR [rsp+0x54]
+  0x0000000111eb043a:   mov    r8,rdi
+  0x0000000111eb043d:   xchg   ax,ax
+  0x0000000111eb043f:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic parseInfinity {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@127 (line 242)
+                                                            ;   {static_call}
+  0x0000000111eb0444:   add    rsp,0x90
+  0x0000000111eb044b:   pop    rbp
+  0x0000000111eb044c:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eb0453:   ja     0x0000000111eb0594
+  0x0000000111eb0459:   ret
+  0x0000000111eb045a:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb045f:   mov    rdx,rbx
+  0x0000000111eb0462:   mov    ecx,DWORD PTR [rsp+0x54]
+  0x0000000111eb0466:   nop
+  0x0000000111eb0467:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic parseNaN {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@110 (line 240)
+                                                            ;   {static_call}
+  0x0000000111eb046c:   add    rsp,0x90
+  0x0000000111eb0473:   pop    rbp
+  0x0000000111eb0474:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eb047b:   ja     0x0000000111eb05aa
+  0x0000000111eb0481:   ret
+  0x0000000111eb0482:   mov    ecx,DWORD PTR [rsp+0x54]
+  0x0000000111eb0486:   mov    edx,DWORD PTR [rsp+0x60]
+  0x0000000111eb048a:   mov    rsi,QWORD PTR [rsp+0x58]
+  0x0000000111eb048f:   call   0x0000000111869080           ; ImmutableOopMap {}
+                                                            ;*invokestatic newNumberFormatException {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@95 (line 233)
+                                                            ;   {static_call}
+  0x0000000111eb0494:   cmp    rax,QWORD PTR [rax]          ; implicit exception: dispatches to 0x0000000111eb05c0
+  0x0000000111eb0497:   jmp    0x0000000111eb060f
+  0x0000000111eb049c:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eb04a0:   jmp    0x0000000111eb05d4           ;   {no_reloc}
+  0x0000000111eb04a5:   add    BYTE PTR [rax],al
+  0x0000000111eb04a7:   add    BYTE PTR [rax],al
+  0x0000000111eb04a9:   add    BYTE PTR [rax+0x13bba],al
+  0x0000000111eb04af:   add    BYTE PTR [rdi+rcx*1],al
+  0x0000000111eb04b2:   test   DWORD PTR [rcx+rax*1],ebp
+  0x0000000111eb04b5:   add    BYTE PTR [rax],al
+  0x0000000111eb04b7:   mov    rax,QWORD PTR [r15+0x108]
+  0x0000000111eb04be:   lea    rdi,[rax+0x28]
+  0x0000000111eb04c2:   cmp    rdi,QWORD PTR [r15+0x118]
+  0x0000000111eb04c9:   ja     0x0000000111eb05e3
+  0x0000000111eb04cf:   mov    QWORD PTR [r15+0x108],rdi
+  0x0000000111eb04d6:   mov    QWORD PTR [rax],0x1
+  0x0000000111eb04dd:   mov    rcx,rdx
+  0x0000000111eb04e0:   movabs r10,0x800000000
+  0x0000000111eb04ea:   sub    rcx,r10
+  0x0000000111eb04ed:   mov    DWORD PTR [rax+0x8],ecx
+  0x0000000111eb04f0:   xor    rcx,rcx
+  0x0000000111eb04f3:   mov    DWORD PTR [rax+0xc],ecx
+  0x0000000111eb04f6:   xor    rcx,rcx
+  0x0000000111eb04f9:   mov    QWORD PTR [rax+0x10],rcx
+  0x0000000111eb04fd:   mov    QWORD PTR [rax+0x18],rcx
+  0x0000000111eb0501:   mov    QWORD PTR [rax+0x20],rcx
+  0x0000000111eb0505:   movabs rdx,0x7ffc61f30              ;   {oop("empty String"{0x00000007ffc61f30})}
+  0x0000000111eb050f:   mov    rsi,rax
+  0x0000000111eb0512:   mov    QWORD PTR [rsp+0x78],rax
+  0x0000000111eb0517:   call   0x0000000111868a80           ; ImmutableOopMap {[120]=Oop }
+                                                            ;*invokespecial <init> {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@24 (line 223)
+                                                            ;   {optimized virtual_call}
+  0x0000000111eb051c:   mov    rax,QWORD PTR [rsp+0x78]
+  0x0000000111eb0521:   jmp    0x0000000111eb060f
+  0x0000000111eb0526:   movabs r10,0x1030a8e20              ;   {metadata({method} {0x00000001030a8e20} 'parseDouble' '(Ljava/lang/CharSequence;II)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eb0530:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eb0535:   mov    QWORD PTR [rsp],0xffffffffffffffff
+  0x0000000111eb053d:   call   0x0000000111914c00           ; ImmutableOopMap {rsi=Oop [88]=Oop }
+                                                            ;*synchronization entry
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@-1 (line 217)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eb0542:   jmp    0x0000000111eb021a
+  0x0000000111eb0547:   movabs r10,0x1030a9b48              ;   {metadata({method} {0x00000001030a9b48} 'skipWhitespace' '(Ljava/lang/CharSequence;II)I' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eb0551:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eb0556:   mov    QWORD PTR [rsp],0x19
+  0x0000000111eb055e:   call   0x0000000111914c00           ; ImmutableOopMap {[88]=Oop }
+                                                            ;*goto {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::skipWhitespace@25 (line 549)
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@7 (line 221)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eb0563:   jmp    0x0000000111eb0275
+  0x0000000111eb0568:   movabs r10,0x111eb03e4              ;   {internal_word}
+  0x0000000111eb0572:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eb0579:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eb057e:   movabs r10,0x111eb041c              ;   {internal_word}
+  0x0000000111eb0588:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eb058f:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eb0594:   movabs r10,0x111eb044c              ;   {internal_word}
+  0x0000000111eb059e:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eb05a5:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eb05aa:   movabs r10,0x111eb0474              ;   {internal_word}
+  0x0000000111eb05b4:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eb05bb:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eb05c0:   call   0x000000011190ef20           ; ImmutableOopMap {rax=Oop }
+                                                            ;*athrow {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@98 (line 233)
+                                                            ;   {runtime_call throw_null_pointer_exception Runtime1 stub}
+  0x0000000111eb05c5:   movabs rdx,0x0                      ;   {metadata(NULL)}
+  0x0000000111eb05cf:   mov    eax,0xa050f00
+  0x0000000111eb05d4:   call   0x0000000111913b80           ; ImmutableOopMap {}
+                                                            ;*new {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@18 (line 223)
+                                                            ;   {runtime_call load_klass_patching Runtime1 stub}
+  0x0000000111eb05d9:   jmp    0x0000000111eb04a0
+  0x0000000111eb05de:   call   0x000000011190ef20           ; ImmutableOopMap {}
+                                                            ;*new {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@18 (line 223)
+                                                            ;   {runtime_call throw_null_pointer_exception Runtime1 stub}
+  0x0000000111eb05e3:   mov    rdx,rdx
+  0x0000000111eb05e6:   call   0x000000011190fb00           ; ImmutableOopMap {}
+                                                            ;*new {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@18 (line 223)
+                                                            ;   {runtime_call fast_new_instance_init_check Runtime1 stub}
+  0x0000000111eb05eb:   jmp    0x0000000111eb0505
+  0x0000000111eb05f0:   nop
+  0x0000000111eb05f1:   nop
+  0x0000000111eb05f2:   mov    rax,QWORD PTR [r15+0x3d0]
+  0x0000000111eb05f9:   mov    QWORD PTR [r15+0x3d0],0x0
+  0x0000000111eb0604:   mov    QWORD PTR [r15+0x3d8],0x0
+  0x0000000111eb060f:   add    rsp,0x90
+  0x0000000111eb0616:   pop    rbp
+  0x0000000111eb0617:   jmp    0x000000011190e000           ;   {runtime_call unwind_exception Runtime1 stub}
+  0x0000000111eb061c:   hlt
+  0x0000000111eb061d:   hlt
+  0x0000000111eb061e:   hlt
+  0x0000000111eb061f:   hlt
+[Stub Code]
+  0x0000000111eb0620:   nop    DWORD PTR [rax+rax*1+0x0]    ;   {no_reloc}
+  0x0000000111eb0625:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb062f:   jmp    0x0000000111eb062f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb0634:   nop
+  0x0000000111eb0635:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb063f:   jmp    0x0000000111eb063f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb0644:   nop
+  0x0000000111eb0645:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb064f:   jmp    0x0000000111eb064f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb0654:   nop
+  0x0000000111eb0655:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb065f:   jmp    0x0000000111eb065f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb0664:   nop
+  0x0000000111eb0665:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb066f:   jmp    0x0000000111eb066f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb0674:   nop
+  0x0000000111eb0675:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb067f:   jmp    0x0000000111eb067f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb0684:   nop
+  0x0000000111eb0685:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb068f:   jmp    0x0000000111eb068f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb0694:   nop
+  0x0000000111eb0695:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb069f:   jmp    0x0000000111eb069f           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb06a4:   nop
+  0x0000000111eb06a5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb06af:   jmp    0x0000000111eb06af           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb06b4:   nop
+  0x0000000111eb06b5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb06bf:   jmp    0x0000000111eb06bf           ;   {runtime_call const_jargs+-37847137}
+[Exception Handler]
+  0x0000000111eb06c4:   call   0x0000000111911900           ;   {runtime_call handle_exception_from_callee Runtime1 stub}
+  0x0000000111eb06c9:   movabs rdi,0x104070512              ;   {external_word}
+  0x0000000111eb06d3:   and    rsp,0xfffffffffffffff0
+  0x0000000111eb06d7:   call   0x0000000103d12790           ;   {runtime_call _ZN14MacroAssembler7debug64EPcxPx}
+  0x0000000111eb06dc:   hlt
+[Deopt Handler Code]
+  0x0000000111eb06dd:   movabs r10,0x111eb06dd              ;   {section_word}
+  0x0000000111eb06e7:   push   r10
+  0x0000000111eb06e9:   jmp    0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x0000000111eb06ee:   hlt
+  0x0000000111eb06ef:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+
+=========================== JVMCI-compiled nmethod =============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (JVMCI)  637       4       ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral (488 bytes)
+ total in heap  [0x0000000119318610,0x00000001193192a0] = 3216
+ relocation     [0x0000000119318770,0x0000000119318790] = 32
+ main code      [0x00000001193187a0,0x0000000119318f33] = 1939
+ stub code      [0x0000000119318f33,0x0000000119318f38] = 5
+ oops           [0x0000000119318f38,0x0000000119318f40] = 8
+ metadata       [0x0000000119318f40,0x0000000119318f58] = 24
+ scopes data    [0x0000000119318f58,0x0000000119319128] = 464
+ scopes pcs     [0x0000000119319128,0x00000001193191f8] = 208
+ dependencies   [0x00000001193191f8,0x0000000119319200] = 8
+ nul chk table  [0x0000000119319200,0x0000000119319218] = 24
+ speculations   [0x0000000119319218,0x0000000119319290] = 120
+ JVMCI data     [0x0000000119319290,0x00000001193192a0] = 16
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a9488} 'parseRestOfDecimalFloatLiteral' '(Ljava/lang/CharSequence;IIIZZ)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi:rsi   = 'java/lang/CharSequence'
+  # parm1:    rdx       = int
+  # parm2:    rcx       = int
+  # parm3:    r8        = int
+  # parm4:    r9        = boolean
+  # parm5:    rdi       = boolean
+  #           [sp+0x40]  (sp of caller)
+  0x00000001193187a0:   mov    DWORD PTR [rsp-0x14000],eax
+  0x00000001193187a7:   sub    rsp,0x38
+  0x00000001193187ab:   mov    QWORD PTR [rsp+0x30],rbp
+  0x00000001193187b0:   mov    QWORD PTR [rsp],rsi
+  0x00000001193187b4:   mov    DWORD PTR [rsp+0x24],edx
+  0x00000001193187b8:   mov    r10d,ecx
+  0x00000001193187bb:   mov    DWORD PTR [rsp+0x20],r9d
+  0x00000001193187c0:   cmp    r8d,edx
+  0x00000001193187c3:   jle    0x0000000119318e78           ; ImmutableOopMap {rsi=Oop [0]=Oop }
+                                                            ;*lconst_0 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@0 (line 319)
+  0x00000001193187c9:   cmp    DWORD PTR [rsi+0x8],0xe7a0   ; implicit exception: dispatches to 0x0000000119318eef
+                                                            ;   {metadata('java/lang/String')}
+  0x00000001193187d0:   jne    0x0000000119318edd
+  0x00000001193187d6:   data16 nop WORD PTR [rax+rax*1+0x0]
+  0x00000001193187e0:   cmp    BYTE PTR [rsi+0x10],0x0
+  0x00000001193187e4:   jne    0x0000000119318ea7
+  0x00000001193187ea:   test   edx,edx
+  0x00000001193187ec:   jl     0x0000000119318eb9
+  0x00000001193187f2:   mov    r11d,DWORD PTR [rsi+0x14]    ; ImmutableOopMap {rsi=Oop r11=NarrowOop [0]=Oop }
+                                                            ;*lconst_0 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@0 (line 319)
+  0x00000001193187f6:   mov    ecx,DWORD PTR [r11*8+0xc]    ; implicit exception: dispatches to 0x0000000119318f0b
+  0x00000001193187fe:   xchg   ax,ax
+  0x0000000119318800:   cmp    ecx,edx
+  0x0000000119318802:   jle    0x0000000119318e29
+  0x0000000119318808:   cmp    ecx,edx
+  0x000000011931880a:   jbe    0x0000000119318e05
+  0x0000000119318810:   movsx  ebx,BYTE PTR [rdx+r11*8+0x10]
+  0x0000000119318816:   movzx  eax,bl
+  0x0000000119318819:   nop    DWORD PTR [rax+0x0]
+  0x0000000119318820:   cmp    bl,0x30
+  0x0000000119318823:   jb     0x0000000119318c31
+  0x0000000119318829:   cmp    bl,0x3a
+  0x000000011931882c:   jae    0x0000000119318c31
+  0x0000000119318832:   movzx  ebx,bl
+  0x0000000119318835:   lea    rbx,[rbx-0x30]
+  0x0000000119318839:   mov    rbp,rbx
+  0x000000011931883c:   mov    ebx,0xffffffff
+  0x0000000119318841:   mov    DWORD PTR [rsp+0x14],r10d
+  0x0000000119318846:   mov    r13d,edx
+  0x0000000119318849:   inc    r13d
+  0x000000011931884c:   mov    r14d,r8d
+  0x000000011931884f:   sub    r14d,r13d
+  0x0000000119318852:   movsxd r14,r14d
+  0x0000000119318855:   mov    r10d,r13d
+  0x0000000119318858:   add    r14,r10
+  0x000000011931885b:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318860:   cmp    r8d,r13d
+  0x0000000119318863:   jg     0x0000000119318a3f
+  0x0000000119318869:   mov    r10d,ecx
+  0x000000011931886c:   dec    r14
+  0x000000011931886f:   cmp    r8d,r13d
+  0x0000000119318872:   jg     0x0000000119318a4f
+  0x0000000119318878:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318880:   cmp    r8d,r13d
+  0x0000000119318883:   jg     0x0000000119318a6e
+  0x0000000119318889:   mov    r10d,eax
+  0x000000011931888c:   mov    rax,rbp
+  0x000000011931888f:   mov    ebp,r13d
+  0x0000000119318892:   data16 nop WORD PTR [rax+rax*1+0x0]
+  0x000000011931889c:   data16 data16 xchg ax,ax
+  0x00000001193188a0:   cmp    r8d,ebp
+  0x00000001193188a3:   jle    0x0000000119318dbc
+  0x00000001193188a9:   movsx  r13d,BYTE PTR [rbp+r11*8+0x10]
+  0x00000001193188af:   movzx  r14d,r13b
+  0x00000001193188b3:   mov    esi,ebp
+  0x00000001193188b5:   inc    esi
+  0x00000001193188b7:   nop    WORD PTR [rax+rax*1+0x0]
+  0x00000001193188c0:   cmp    r13b,0x30
+  0x00000001193188c4:   jb     0x00000001193188f3
+  0x00000001193188ca:   cmp    r13b,0x3a
+  0x00000001193188ce:   jae    0x00000001193188f3
+  0x00000001193188d4:   mov    r10,rax
+  0x00000001193188d7:   shl    r10,0x3
+  0x00000001193188db:   shl    rax,1
+  0x00000001193188de:   add    r10,rax
+  0x00000001193188e1:   movzx  eax,r13b
+  0x00000001193188e5:   add    r10,rax
+  0x00000001193188e8:   lea    rax,[r10-0x30]
+  0x00000001193188ec:   mov    ebp,esi
+  0x00000001193188ee:   mov    r10d,r14d
+  0x00000001193188f1:   jmp    0x00000001193188a0
+  0x00000001193188f3:   cmp    r13b,0x2e
+  0x00000001193188f7:   jne    0x0000000119318912
+  0x00000001193188fd:   data16 xchg ax,ax
+  0x0000000119318900:   cmp    ebx,0xffffffff
+  0x0000000119318903:   jne    0x0000000119318dbc
+  0x0000000119318909:   mov    ebx,ebp
+  0x000000011931890b:   mov    r10d,r14d
+  0x000000011931890e:   mov    ebp,esi
+  0x0000000119318910:   jmp    0x00000001193188a0
+  0x0000000119318912:   cmp    ebx,0xffffffff
+  0x0000000119318915:   je     0x0000000119318cb4
+  0x000000011931891b:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318920:   cmp    r14d,0x65
+  0x0000000119318924:   jne    0x0000000119318c85
+  0x000000011931892a:   mov    r10d,ebp
+  0x000000011931892d:   inc    r10d
+  0x0000000119318930:   cmp    r8d,r10d
+  0x0000000119318933:   jle    0x0000000119318e5b
+  0x0000000119318939:   nop    DWORD PTR [rax+0x0]
+  0x0000000119318940:   cmp    ecx,r10d
+  0x0000000119318943:   jbe    0x0000000119318e50
+  0x0000000119318949:   movsx  r10d,BYTE PTR [r10+r11*8+0x10]
+  0x000000011931894f:   cmp    r10b,0x30
+  0x0000000119318953:   jb     0x0000000119318e45
+  0x0000000119318959:   nop    DWORD PTR [rax+0x0]
+  0x0000000119318960:   cmp    r10b,0x3a
+  0x0000000119318964:   jae    0x0000000119318e9c
+  0x000000011931896a:   lea    esi,[rbp+0x2]
+  0x000000011931896d:   cmp    r8d,esi
+  0x0000000119318970:   jle    0x0000000119318c1f
+  0x0000000119318976:   cmp    ecx,esi
+  0x0000000119318978:   jbe    0x0000000119318e91
+  0x000000011931897e:   movzx  r13d,BYTE PTR [rsi+r11*8+0x10]
+  0x0000000119318984:   movzx  r10d,r10b
+  0x0000000119318988:   lea    r10,[r10-0x30]
+  0x000000011931898c:   mov    r14d,ebx
+  0x000000011931898f:   sub    r14d,ebp
+  0x0000000119318992:   inc    r14d
+  0x0000000119318995:   mov    DWORD PTR [rsp+0x10],ebx
+  0x0000000119318999:   mov    ebx,ebp
+  0x000000011931899b:   sub    ebx,edx
+  0x000000011931899d:   mov    DWORD PTR [rsp+0xc],ebp
+  0x00000001193189a1:   mov    ebp,ebx
+  0x00000001193189a3:   dec    ebp
+  0x00000001193189a5:   cmp    r13d,0x30
+  0x00000001193189a9:   jb     0x0000000119318c65
+  0x00000001193189af:   cmp    r13d,0x3a
+  0x00000001193189b3:   jae    0x0000000119318c2a
+  0x00000001193189b9:   mov    DWORD PTR [rsp+0x8],r13d
+  0x00000001193189be:   mov    r13d,esi
+  0x00000001193189c1:   mov    esi,DWORD PTR [rsp+0x8]
+  0x00000001193189c5:   jmp    0x0000000119318a29
+  0x00000001193189ca:   nop    WORD PTR [rax+rax*1+0x0]
+  0x00000001193189d0:   mov    edx,r13d
+  0x00000001193189d3:   inc    edx
+  0x00000001193189d5:   cmp    r8d,edx
+  0x00000001193189d8:   jle    0x0000000119318a37
+  0x00000001193189de:   xchg   ax,ax
+  0x00000001193189e0:   cmp    ecx,edx
+  0x00000001193189e2:   jbe    0x0000000119318d89
+  0x00000001193189e8:   movzx  r13d,BYTE PTR [rdx+r11*8+0x10]
+  0x00000001193189ee:   mov    r9,r10
+  0x00000001193189f1:   shl    r9,0x3
+  0x00000001193189f5:   shl    r10,1
+  0x00000001193189f8:   add    r9,r10
+  0x00000001193189fb:   mov    r10d,esi
+  0x00000001193189fe:   add    r9,r10
+  0x0000000119318a01:   lea    r10,[r9-0x30]
+  0x0000000119318a05:   cmp    r13d,0x30
+  0x0000000119318a09:   jb     0x0000000119318a8e
+  0x0000000119318a0f:   cmp    r13d,0x3a
+  0x0000000119318a13:   jae    0x0000000119318a8e
+  0x0000000119318a19:   mov    r9,QWORD PTR [r15+0x348]     ; ImmutableOopMap {r11=NarrowOop [0]=Oop }
+                                                            ;*istore {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@281 (line 366)
+  0x0000000119318a20:   test   DWORD PTR [r9],eax           ;   {poll}
+  0x0000000119318a23:   mov    esi,r13d
+  0x0000000119318a26:   mov    r13d,edx
+  0x0000000119318a29:   cmp    r10,0x989680
+  0x0000000119318a30:   jl     0x00000001193189d0
+  0x0000000119318a32:   jmp    0x0000000119318d89
+  0x0000000119318a37:   mov    r13d,0x0
+  0x0000000119318a3d:   jmp    0x00000001193189ee
+  0x0000000119318a3f:   nop
+  0x0000000119318a40:   cmp    r14,0x1
+  0x0000000119318a44:   jge    0x0000000119318869
+  0x0000000119318a4a:   jmp    0x0000000119318ecb
+  0x0000000119318a4f:   cmp    r10,r14
+  0x0000000119318a52:   jle    0x0000000119318e66
+  0x0000000119318a58:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318a60:   cmp    ecx,r13d
+  0x0000000119318a63:   jg     0x0000000119318878
+  0x0000000119318a69:   jmp    0x0000000119318d7a
+  0x0000000119318a6e:   cmp    r10,r14
+  0x0000000119318a71:   jbe    0x0000000119318d50
+  0x0000000119318a77:   nop    WORD PTR [rax+rax*1+0x0]
+  0x0000000119318a80:   cmp    ecx,r13d
+  0x0000000119318a83:   ja     0x0000000119318889
+  0x0000000119318a89:   jmp    0x0000000119318df0
+  0x0000000119318a8e:   cmp    r8d,edx
+  0x0000000119318a91:   jg     0x0000000119318d3d
+  0x0000000119318a97:   test   edi,edi
+  0x0000000119318a99:   jne    0x0000000119318d1d
+  0x0000000119318a9f:   nop
+  0x0000000119318aa0:   cmp    ebx,0x1
+  0x0000000119318aa3:   je     0x0000000119318cbc
+  0x0000000119318aa9:   cmp    ebp,0x14
+  0x0000000119318aac:   jge    0x0000000119318d2d
+  0x0000000119318ab2:   test   rax,rax
+  0x0000000119318ab5:   je     0x0000000119318d0d
+  0x0000000119318abb:   movsxd rcx,r14d
+  0x0000000119318abe:   add    rcx,r10
+  0x0000000119318ac1:   mov    r11d,ecx
+  0x0000000119318ac4:   cmp    r11d,0x17
+  0x0000000119318ac8:   jl     0x0000000119318cfd
+  0x0000000119318ace:   cmp    r11d,0x135
+  0x0000000119318ad5:   jge    0x0000000119318ced
+  0x0000000119318adb:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318adf:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318ae4:   movabs rcx,0x61f52ec40              ;   {oop([J{0x000000061f52ec40})}
+  0x0000000119318aee:   lea    r9d,[r11+0x145]
+  0x0000000119318af5:   mov    r9,QWORD PTR [rcx+r9*8+0x10]
+  0x0000000119318afa:   lzcnt  rbx,rax
+  0x0000000119318aff:   mov    ecx,ebx
+  0x0000000119318b01:   mov    rsi,rax
+  0x0000000119318b04:   shl    rsi,cl
+  0x0000000119318b07:   mov    rcx,rsi
+  0x0000000119318b0a:   shr    rcx,0x20
+  0x0000000119318b0e:   mov    r13,r9
+  0x0000000119318b11:   shr    r13,0x20
+  0x0000000119318b15:   mov    r8,rcx
+  0x0000000119318b18:   imul   r8,r13
+  0x0000000119318b1c:   mov    edi,0xffffffff
+  0x0000000119318b21:   and    r9,rdi
+  0x0000000119318b24:   imul   rcx,r9
+  0x0000000119318b28:   and    rsi,rdi
+  0x0000000119318b2b:   imul   r9,rsi
+  0x0000000119318b2f:   shr    r9,0x20
+  0x0000000119318b33:   add    rcx,r9
+  0x0000000119318b36:   imul   rsi,r13
+  0x0000000119318b3a:   mov    r9,rsi
+  0x0000000119318b3d:   and    r9,rdi
+  0x0000000119318b40:   add    rcx,r9
+  0x0000000119318b43:   shr    rcx,0x20
+  0x0000000119318b47:   add    r8,rcx
+  0x0000000119318b4a:   shr    rsi,0x20
+  0x0000000119318b4e:   add    r8,rsi
+  0x0000000119318b51:   mov    rcx,r8
+  0x0000000119318b54:   and    rcx,0x1ff
+  0x0000000119318b5b:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318b60:   cmp    rcx,0x1ff
+  0x0000000119318b67:   je     0x0000000119318ce6
+  0x0000000119318b6d:   test   r8,0x1ff
+  0x0000000119318b74:   je     0x0000000119318de6
+  0x0000000119318b7a:   mov    r9,r8
+  0x0000000119318b7d:   shr    r9,0x3f
+  0x0000000119318b81:   lea    rcx,[r9+0x9]
+  0x0000000119318b85:   mov    ecx,ecx
+  0x0000000119318b87:   shr    r8,cl
+  0x0000000119318b8a:   inc    r8
+  0x0000000119318b8d:   shr    r8,1
+  0x0000000119318b90:   movabs rcx,0x20000000000000
+  0x0000000119318b9a:   nop    WORD PTR [rax+rax*1+0x0]
+  0x0000000119318ba0:   cmp    rcx,r8
+  0x0000000119318ba3:   jbe    0x0000000119318e3b
+  0x0000000119318ba9:   imul   r11d,r11d,0x3526a
+  0x0000000119318bb0:   shr    r11d,0x10
+  0x0000000119318bb4:   lea    r11d,[r11+0x43f]
+  0x0000000119318bbb:   mov    r11d,r11d
+  0x0000000119318bbe:   xor    r9,0x1
+  0x0000000119318bc2:   mov    r9d,r9d
+  0x0000000119318bc5:   add    r9d,ebx
+  0x0000000119318bc8:   mov    r9d,r9d
+  0x0000000119318bcb:   sub    r11,r9
+  0x0000000119318bce:   cmp    r11,0x7ff
+  0x0000000119318bd5:   jae    0x0000000119318e87
+  0x0000000119318bdb:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318be0:   test   r9d,r9d
+  0x0000000119318be3:   jne    0x0000000119318cca
+  0x0000000119318be9:   movabs rcx,0xffefffffffffffff
+  0x0000000119318bf3:   and    r8,rcx
+  0x0000000119318bf6:   shl    r11,0x34
+  0x0000000119318bfa:   or     r8,r11
+  0x0000000119318bfd:   vmovq  xmm0,r8
+  0x0000000119318c02:   vucomisd xmm0,xmm0
+  0x0000000119318c06:   jp     0x0000000119318cca
+  0x0000000119318c0c:   mov    rbp,QWORD PTR [rsp+0x30]
+  0x0000000119318c11:   add    rsp,0x38
+  0x0000000119318c15:   mov    rcx,QWORD PTR [r15+0x348]
+  0x0000000119318c1c:   test   DWORD PTR [rcx],eax          ;   {poll_return}
+  0x0000000119318c1e:   ret
+  0x0000000119318c1f:   mov    r13d,0x0
+  0x0000000119318c25:   jmp    0x0000000119318984
+  0x0000000119318c2a:   mov    edx,esi
+  0x0000000119318c2c:   jmp    0x0000000119318a8e
+  0x0000000119318c31:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318c35:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318c3a:   mov    DWORD PTR [rsp+0x14],r10d
+  0x0000000119318c3f:   nop
+  0x0000000119318c40:   cmp    bl,0x2e
+  0x0000000119318c43:   je     0x0000000119318c6c
+  0x0000000119318c49:   mov    r14d,eax
+  0x0000000119318c4c:   mov    ebx,0xffffffff
+  0x0000000119318c51:   mov    rax,0x0
+  0x0000000119318c58:   mov    ebp,DWORD PTR [rsp+0x24]
+  0x0000000119318c5c:   nop    DWORD PTR [rax+0x0]
+  0x0000000119318c60:   jmp    0x0000000119318912
+  0x0000000119318c65:   mov    edx,esi
+  0x0000000119318c67:   jmp    0x0000000119318a8e
+  0x0000000119318c6c:   mov    rbp,0x0
+  0x0000000119318c73:   mov    ebx,DWORD PTR [rsp+0x24]
+  0x0000000119318c77:   mov    rsi,QWORD PTR [rsp]
+  0x0000000119318c7b:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318c80:   jmp    0x0000000119318846
+  0x0000000119318c85:   mov    r10d,0xffffffed
+  0x0000000119318c8b:   mov    DWORD PTR [rsp+0x10],ebx
+  0x0000000119318c8f:   mov    DWORD PTR [rsp+0xc],ebp
+  0x0000000119318c93:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318c97:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318c9c:   mov    DWORD PTR [r15+0x370],r10d
+  0x0000000119318ca3:   mov    QWORD PTR [r15+0x378],0x0
+  0x0000000119318cae:   call   0x000000011186e27a           ; ImmutableOopMap {[0]=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@85 (line 339)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318cb3:   nop
+  0x0000000119318cb4:   mov    r10d,0xffffffed
+  0x0000000119318cba:   jmp    0x0000000119318c8b
+  0x0000000119318cbc:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318cc0:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318cc5:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318cca:   mov    DWORD PTR [r15+0x370],0xffffffed
+  0x0000000119318cd5:   mov    QWORD PTR [r15+0x378],0x0
+  0x0000000119318ce0:   call   0x000000011186e27a           ; ImmutableOopMap {[0]=Oop }
+                                                            ;*iload {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@291 (line 368)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318ce5:   nop
+  0x0000000119318ce6:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318ceb:   jmp    0x0000000119318cca
+  0x0000000119318ced:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318cf1:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318cf6:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318cfb:   jmp    0x0000000119318cca
+  0x0000000119318cfd:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318d01:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318d06:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318d0b:   jmp    0x0000000119318cca
+  0x0000000119318d0d:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318d11:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318d16:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318d1b:   jmp    0x0000000119318cca
+  0x0000000119318d1d:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318d21:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318d26:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318d2b:   jmp    0x0000000119318cca
+  0x0000000119318d2d:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318d31:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318d36:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318d3b:   jmp    0x0000000119318cca
+  0x0000000119318d3d:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318d41:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318d46:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318d4b:   jmp    0x0000000119318cca
+  0x0000000119318d50:   mov    r11,0xc94
+  0x0000000119318d57:   mov    r10d,0xffffffe5
+  0x0000000119318d5d:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318d61:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318d66:   mov    DWORD PTR [r15+0x370],r10d
+  0x0000000119318d6d:   mov    QWORD PTR [r15+0x378],r11
+  0x0000000119318d74:   call   0x000000011186e27a           ; ImmutableOopMap {[0]=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@15 (line 325)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318d79:   nop
+  0x0000000119318d7a:   mov    r11,0xa14
+  0x0000000119318d81:   mov    r10d,0xffffffed
+  0x0000000119318d87:   jmp    0x0000000119318d5d
+  0x0000000119318d89:   mov    ebx,DWORD PTR [rsp+0x10]
+  0x0000000119318d8d:   mov    r11d,DWORD PTR [rsp+0xc]
+  0x0000000119318d92:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318d96:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318d9b:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318da0:   mov    DWORD PTR [r15+0x370],0xffffffed
+  0x0000000119318dab:   mov    QWORD PTR [r15+0x378],0x0
+  0x0000000119318db6:   call   0x000000011186e27a           ; ImmutableOopMap {[0]=Oop }
+                                                            ;*lload {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@237 (line 363)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318dbb:   nop
+  0x0000000119318dbc:   mov    DWORD PTR [rsp+0x1c],edi
+  0x0000000119318dc0:   mov    DWORD PTR [rsp+0x18],r8d
+  0x0000000119318dc5:   mov    DWORD PTR [r15+0x370],0xffffffed
+  0x0000000119318dd0:   mov    QWORD PTR [r15+0x378],0x0
+  0x0000000119318ddb:   nop    DWORD PTR [rax+rax*1+0x0]
+  0x0000000119318de0:   call   0x000000011186e27a           ; ImmutableOopMap {[0]=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@15 (line 325)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318de5:   nop
+  0x0000000119318de6:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318deb:   jmp    0x0000000119318cca
+  0x0000000119318df0:   mov    r11,0xc94
+  0x0000000119318df7:   mov    r10d,0xffffffe5
+  0x0000000119318dfd:   data16 xchg ax,ax
+  0x0000000119318e00:   jmp    0x0000000119318d5d
+  0x0000000119318e05:   mov    r11,0x0
+  0x0000000119318e0c:   mov    ecx,r10d
+  0x0000000119318e0f:   mov    r10d,0xffffffe5
+  0x0000000119318e15:   mov    DWORD PTR [r15+0x370],r10d
+  0x0000000119318e1c:   mov    QWORD PTR [r15+0x378],r11
+  0x0000000119318e23:   call   0x000000011186e27a           ; ImmutableOopMap {rsi=Oop }
+                                                            ;*lconst_0 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@0 (line 319)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318e28:   nop
+  0x0000000119318e29:   mov    r11,0x0
+  0x0000000119318e30:   mov    ecx,r10d
+  0x0000000119318e33:   mov    r10d,0xffffffed
+  0x0000000119318e39:   jmp    0x0000000119318e15
+  0x0000000119318e3b:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318e40:   jmp    0x0000000119318cca
+  0x0000000119318e45:   mov    r10d,0xffffffed
+  0x0000000119318e4b:   jmp    0x0000000119318c8b
+  0x0000000119318e50:   mov    r10d,0xffffffed
+  0x0000000119318e56:   jmp    0x0000000119318c8b
+  0x0000000119318e5b:   mov    r10d,0xffffffed
+  0x0000000119318e61:   jmp    0x0000000119318c8b
+  0x0000000119318e66:   mov    r11,0xa14
+  0x0000000119318e6d:   mov    r10d,0xffffffed
+  0x0000000119318e73:   jmp    0x0000000119318d5d
+  0x0000000119318e78:   mov    r11,0x0
+  0x0000000119318e7f:   mov    r10d,0xffffffed
+  0x0000000119318e85:   jmp    0x0000000119318e15
+  0x0000000119318e87:   mov    r9d,DWORD PTR [rsp+0x20]
+  0x0000000119318e8c:   jmp    0x0000000119318cca
+  0x0000000119318e91:   mov    r10d,0xffffffe5
+  0x0000000119318e97:   jmp    0x0000000119318c8b
+  0x0000000119318e9c:   mov    r10d,0xffffffed
+  0x0000000119318ea2:   jmp    0x0000000119318c8b
+  0x0000000119318ea7:   mov    r11,0x0
+  0x0000000119318eae:   mov    r10d,0xffffffed
+  0x0000000119318eb4:   jmp    0x0000000119318e15
+  0x0000000119318eb9:   mov    r11,0x0
+  0x0000000119318ec0:   mov    r10d,0xffffffed
+  0x0000000119318ec6:   jmp    0x0000000119318e15
+  0x0000000119318ecb:   mov    r11,0xa14
+  0x0000000119318ed2:   mov    r10d,0xffffffed
+  0x0000000119318ed8:   jmp    0x0000000119318d5d
+  0x0000000119318edd:   mov    r11,0x14
+  0x0000000119318ee4:   mov    r10d,0xffffffcd
+  0x0000000119318eea:   jmp    0x0000000119318e15
+  0x0000000119318eef:   mov    DWORD PTR [r15+0x370],0xfffffff5
+  0x0000000119318efa:   mov    QWORD PTR [r15+0x378],0x0
+  0x0000000119318f05:   call   0x000000011186e27a           ; ImmutableOopMap {rsi=Oop [0]=Oop }
+                                                            ;*lconst_0 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@0 (line 319)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318f0a:   nop
+  0x0000000119318f0b:   mov    DWORD PTR [r15+0x370],0xfffffff5
+  0x0000000119318f16:   mov    QWORD PTR [r15+0x378],0x0
+  0x0000000119318f21:   call   0x000000011186e27a           ; ImmutableOopMap {rsi=Oop r11=NarrowOop [0]=Oop }
+                                                            ;*lconst_0 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseRestOfDecimalFloatLiteral@0 (line 319)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318f26:   nop
+[Exception Handler]
+  0x0000000119318f27:   call   0x000000011192db80           ;   {runtime_call Stub<ExceptionHandlerStub.exceptionHandler>}
+  0x0000000119318f2c:   nop
+[Deopt Handler Code]
+  0x0000000119318f2d:   call   0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x0000000119318f32:   nop
+[Stub Code]
+  0x0000000119318f33:   hlt
+  0x0000000119318f34:   hlt
+  0x0000000119318f35:   hlt
+  0x0000000119318f36:   hlt
+  0x0000000119318f37:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+
+============================= C1-compiled nmethod ==============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (c1)  626       2       ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble (12 bytes)
+ total in heap  [0x0000000111eb3510,0x0000000111eb3878] = 872
+ relocation     [0x0000000111eb3670,0x0000000111eb36b0] = 64
+ main code      [0x0000000111eb36c0,0x0000000111eb37a0] = 224
+ stub code      [0x0000000111eb37a0,0x0000000111eb37f0] = 80
+ oops           [0x0000000111eb37f0,0x0000000111eb37f8] = 8
+ metadata       [0x0000000111eb37f8,0x0000000111eb3800] = 8
+ scopes data    [0x0000000111eb3800,0x0000000111eb3820] = 32
+ scopes pcs     [0x0000000111eb3820,0x0000000111eb3870] = 80
+ dependencies   [0x0000000111eb3870,0x0000000111eb3878] = 8
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a8c40} 'parseDouble' '(Ljava/lang/CharSequence;)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi:rsi   = 'java/lang/CharSequence'
+  #           [sp+0x40]  (sp of caller)
+  0x0000000111eb36c0:   mov    DWORD PTR [rsp-0x14000],eax
+  0x0000000111eb36c7:   push   rbp
+  0x0000000111eb36c8:   sub    rsp,0x30
+  0x0000000111eb36cc:   movabs rdi,0x1030aa120
+  0x0000000111eb36d6:   mov    ebx,DWORD PTR [rdi+0x8]
+  0x0000000111eb36d9:   add    ebx,0x2
+  0x0000000111eb36dc:   mov    DWORD PTR [rdi+0x8],ebx
+  0x0000000111eb36df:   and    ebx,0xffe
+  0x0000000111eb36e5:   cmp    ebx,0x0
+  0x0000000111eb36e8:   je     0x0000000111eb3737
+  0x0000000111eb36ee:   mov    rdi,rsi
+  0x0000000111eb36f1:   mov    rsi,rdi
+  0x0000000111eb36f4:   mov    QWORD PTR [rsp+0x20],rdi
+  0x0000000111eb36f9:   nop    DWORD PTR [rax+0x0]
+  0x0000000111eb36fd:   movabs rax,0x80000e7a0
+  0x0000000111eb3707:   call   0x00000001192f9f00           ; ImmutableOopMap {[32]=Oop }
+                                                            ;*invokeinterface length {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@3 (line 99)
+                                                            ;   {virtual_call}
+  0x0000000111eb370c:   mov    rsi,QWORD PTR [rsp+0x20]
+  0x0000000111eb3711:   mov    edx,0x0
+  0x0000000111eb3716:   mov    rcx,rax
+  0x0000000111eb3719:   nop    WORD PTR [rax+rax*1+0x0]
+  0x0000000111eb371f:   call   0x0000000111eb01e0           ; ImmutableOopMap {}
+                                                            ;*invokestatic parseDouble {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@8 (line 99)
+                                                            ;   {static_call}
+  0x0000000111eb3724:   add    rsp,0x30
+  0x0000000111eb3728:   pop    rbp
+  0x0000000111eb3729:   cmp    rsp,QWORD PTR [r15+0x340]    ;   {poll_return}
+  0x0000000111eb3730:   ja     0x0000000111eb3755
+  0x0000000111eb3736:   ret
+  0x0000000111eb3737:   movabs r10,0x1030a8c40              ;   {metadata({method} {0x00000001030a8c40} 'parseDouble' '(Ljava/lang/CharSequence;)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser')}
+  0x0000000111eb3741:   mov    QWORD PTR [rsp+0x8],r10
+  0x0000000111eb3746:   mov    QWORD PTR [rsp],0xffffffffffffffff
+  0x0000000111eb374e:   call   0x0000000111914c00           ; ImmutableOopMap {rsi=Oop }
+                                                            ;*synchronization entry
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@-1 (line 99)
+                                                            ;   {runtime_call counter_overflow Runtime1 stub}
+  0x0000000111eb3753:   jmp    0x0000000111eb36ee
+  0x0000000111eb3755:   movabs r10,0x111eb3729              ;   {internal_word}
+  0x0000000111eb375f:   mov    QWORD PTR [r15+0x358],r10
+  0x0000000111eb3766:   jmp    0x000000011186f100           ;   {runtime_call SafepointBlob}
+  0x0000000111eb376b:   nop
+  0x0000000111eb376c:   nop
+  0x0000000111eb376d:   mov    rax,QWORD PTR [r15+0x3d0]
+  0x0000000111eb3774:   mov    QWORD PTR [r15+0x3d0],0x0
+  0x0000000111eb377f:   mov    QWORD PTR [r15+0x3d8],0x0
+  0x0000000111eb378a:   add    rsp,0x30
+  0x0000000111eb378e:   pop    rbp
+  0x0000000111eb378f:   jmp    0x000000011190e000           ;   {runtime_call unwind_exception Runtime1 stub}
+  0x0000000111eb3794:   hlt
+  0x0000000111eb3795:   hlt
+  0x0000000111eb3796:   hlt
+  0x0000000111eb3797:   hlt
+  0x0000000111eb3798:   hlt
+  0x0000000111eb3799:   hlt
+  0x0000000111eb379a:   hlt
+  0x0000000111eb379b:   hlt
+  0x0000000111eb379c:   hlt
+  0x0000000111eb379d:   hlt
+  0x0000000111eb379e:   hlt
+  0x0000000111eb379f:   hlt
+[Stub Code]
+  0x0000000111eb37a0:   nop    DWORD PTR [rax+rax*1+0x0]    ;   {no_reloc}
+  0x0000000111eb37a5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb37af:   jmp    0x0000000111eb37af           ;   {runtime_call const_jargs+-37847137}
+  0x0000000111eb37b4:   nop
+  0x0000000111eb37b5:   movabs rbx,0x0                      ;   {static_stub}
+  0x0000000111eb37bf:   jmp    0x0000000111eb37bf           ;   {runtime_call const_jargs+-37847137}
+[Exception Handler]
+  0x0000000111eb37c4:   call   0x0000000111911900           ;   {runtime_call handle_exception_from_callee Runtime1 stub}
+  0x0000000111eb37c9:   movabs rdi,0x104070512              ;   {external_word}
+  0x0000000111eb37d3:   and    rsp,0xfffffffffffffff0
+  0x0000000111eb37d7:   call   0x0000000103d12790           ;   {runtime_call _ZN14MacroAssembler7debug64EPcxPx}
+  0x0000000111eb37dc:   hlt
+[Deopt Handler Code]
+  0x0000000111eb37dd:   movabs r10,0x111eb37dd              ;   {section_word}
+  0x0000000111eb37e7:   push   r10
+  0x0000000111eb37e9:   jmp    0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x0000000111eb37ee:   hlt
+  0x0000000111eb37ef:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+
+=========================== JVMCI-compiled nmethod =============================
+----------------------------------- Assembly -----------------------------------
+
+Compiled method (JVMCI)  640       4       ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble (213 bytes)
+ total in heap  [0x0000000119319e90,0x000000011931a378] = 1256
+ relocation     [0x0000000119319ff0,0x000000011931a010] = 32
+ main code      [0x000000011931a020,0x000000011931a240] = 544
+ stub code      [0x000000011931a240,0x000000011931a250] = 16
+ oops           [0x000000011931a250,0x000000011931a258] = 8
+ metadata       [0x000000011931a258,0x000000011931a268] = 16
+ scopes data    [0x000000011931a268,0x000000011931a2a0] = 56
+ scopes pcs     [0x000000011931a2a0,0x000000011931a320] = 128
+ dependencies   [0x000000011931a320,0x000000011931a328] = 8
+ nul chk table  [0x000000011931a328,0x000000011931a340] = 24
+ speculations   [0x000000011931a340,0x000000011931a368] = 40
+ JVMCI data     [0x000000011931a368,0x000000011931a378] = 16
+
+[Disassembly]
+--------------------------------------------------------------------------------
+[Constant Pool (empty)]
+
+--------------------------------------------------------------------------------
+
+[Verified Entry Point]
+  # {method} {0x00000001030a8e20} 'parseDouble' '(Ljava/lang/CharSequence;II)D' in 'ch/randelshofer/fastdoubleparser/FastDoubleParser'
+  # parm0:    rsi:rsi   = 'java/lang/CharSequence'
+  # parm1:    rdx       = int
+  # parm2:    rcx       = int
+  #           [sp+0x20]  (sp of caller)
+  0x000000011931a020:   mov    DWORD PTR [rsp-0x14000],eax
+  0x000000011931a027:   sub    rsp,0x18
+  0x000000011931a02b:   mov    QWORD PTR [rsp+0x10],rbp
+  0x000000011931a030:   mov    r10d,edx
+  0x000000011931a033:   nop    WORD PTR [rax+rax*1+0x0]
+  0x000000011931a03c:   data16 data16 xchg ax,ax            ; ImmutableOopMap {rsi=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@0 (line 217)
+  0x000000011931a040:   cmp    DWORD PTR [rsi+0x8],0xe7a0   ; implicit exception: dispatches to 0x000000011931a1fb
+                                                            ;   {metadata('java/lang/String')}
+  0x000000011931a047:   jne    0x000000011931a128
+  0x000000011931a04d:   test   ecx,ecx
+  0x000000011931a04f:   je     0x000000011931a1d7
+  0x000000011931a055:   cmp    BYTE PTR [rsi+0x10],0x0
+  0x000000011931a059:   jne    0x000000011931a1a3
+  0x000000011931a05f:   nop
+  0x000000011931a060:   test   r10d,r10d
+  0x000000011931a063:   jl     0x000000011931a1e9
+  0x000000011931a069:   mov    edx,DWORD PTR [rsi+0x14]     ; ImmutableOopMap {rdx=NarrowOop rsi=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@0 (line 217)
+  0x000000011931a06c:   mov    r8d,DWORD PTR [rdx*8+0xc]    ; implicit exception: dispatches to 0x000000011931a217
+  0x000000011931a074:   cmp    r8d,r10d
+  0x000000011931a077:   jle    0x000000011931a1c5
+  0x000000011931a07d:   data16 xchg ax,ax
+  0x000000011931a080:   cmp    r8d,r10d
+  0x000000011931a083:   jbe    0x000000011931a167
+  0x000000011931a089:   movsx  edx,BYTE PTR [r10+rdx*8+0x10]
+  0x000000011931a08f:   movsx  r8d,dl
+  0x000000011931a093:   cmp    r8d,0x49
+  0x000000011931a097:   jge    0x000000011931a0cb
+  0x000000011931a09d:   cmp    r8d,0x30
+  0x000000011931a0a1:   jg     0x000000011931a0df
+  0x000000011931a0a7:   cmp    r8d,0x30
+  0x000000011931a0ab:   jge    0x000000011931a176
+  0x000000011931a0b1:   cmp    r8d,0x2b
+  0x000000011931a0b5:   je     0x000000011931a1b2
+  0x000000011931a0bb:   cmp    r8d,0x2d
+  0x000000011931a0bf:   nop
+  0x000000011931a0c0:   je     0x000000011931a149
+  0x000000011931a0c6:   jmp    0x000000011931a0df
+  0x000000011931a0cb:   cmp    r8d,0x49
+  0x000000011931a0cf:   je     0x000000011931a185
+  0x000000011931a0d5:   cmp    r8d,0x4e
+  0x000000011931a0d9:   je     0x000000011931a194
+  0x000000011931a0df:   mov    r11d,ecx
+  0x000000011931a0e2:   add    r11d,r10d
+  0x000000011931a0e5:   cmp    r11d,r10d
+  0x000000011931a0e8:   jle    0x000000011931a0f7
+  0x000000011931a0ee:   cmp    dl,0x21
+  0x000000011931a0f1:   jb     0x000000011931a158
+  0x000000011931a0f7:   mov    edx,r10d
+  0x000000011931a0fa:   mov    ecx,r10d
+  0x000000011931a0fd:   mov    r8d,r11d
+  0x000000011931a100:   mov    r9d,0x0
+  0x000000011931a106:   mov    edi,0x0
+  0x000000011931a10b:   nop    DWORD PTR [rax+0x0]
+  0x000000011931a10f:   call   0x00000001193187a0           ; ImmutableOopMap {}
+                                                            ;*invokestatic parseRestOfDecimalFloatLiteral {reexecute=0 rethrow=0 return_oop=0}
+                                                            ; - ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@209 (line 255)
+                                                            ;   {static_call}
+  0x000000011931a114:   nop
+  0x000000011931a115:   mov    rbp,QWORD PTR [rsp+0x10]
+  0x000000011931a11a:   add    rsp,0x18
+  0x000000011931a11e:   mov    rcx,QWORD PTR [r15+0x348]
+  0x000000011931a125:   test   DWORD PTR [rcx],eax          ;   {poll_return}
+  0x000000011931a127:   ret
+  0x000000011931a128:   mov    r8,0x294
+  0x000000011931a12f:   mov    r11d,0xffffffcd
+  0x000000011931a135:   mov    DWORD PTR [r15+0x370],r11d
+  0x000000011931a13c:   mov    QWORD PTR [r15+0x378],r8
+  0x000000011931a143:   call   0x000000011186e27a           ; ImmutableOopMap {rsi=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@0 (line 217)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x000000011931a148:   nop
+  0x000000011931a149:   mov    r8,0x0
+  0x000000011931a150:   mov    r11d,0xffffffed
+  0x000000011931a156:   jmp    0x000000011931a135
+  0x000000011931a158:   mov    r8,0x0
+  0x000000011931a15f:   mov    r11d,0xffffffed
+  0x000000011931a165:   jmp    0x000000011931a135
+  0x000000011931a167:   mov    r8,0x0
+  0x000000011931a16e:   mov    r11d,0xffffffe5
+  0x000000011931a174:   jmp    0x000000011931a135
+  0x000000011931a176:   mov    r8,0x0
+  0x000000011931a17d:   mov    r11d,0xffffffed
+  0x000000011931a183:   jmp    0x000000011931a135
+  0x000000011931a185:   mov    r8,0x0
+  0x000000011931a18c:   mov    r11d,0xffffffed
+  0x000000011931a192:   jmp    0x000000011931a135
+  0x000000011931a194:   mov    r8,0x0
+  0x000000011931a19b:   mov    r11d,0xffffffed
+  0x000000011931a1a1:   jmp    0x000000011931a135
+  0x000000011931a1a3:   mov    r8,0x0
+  0x000000011931a1aa:   mov    r11d,0xffffffed
+  0x000000011931a1b0:   jmp    0x000000011931a135
+  0x000000011931a1b2:   mov    r8,0x0
+  0x000000011931a1b9:   mov    r11d,0xffffffed
+  0x000000011931a1bf:   nop
+  0x000000011931a1c0:   jmp    0x000000011931a135
+  0x000000011931a1c5:   mov    r8,0x0
+  0x000000011931a1cc:   mov    r11d,0xffffffed
+  0x000000011931a1d2:   jmp    0x000000011931a135
+  0x000000011931a1d7:   mov    r8,0x0
+  0x000000011931a1de:   mov    r11d,0xffffffed
+  0x000000011931a1e4:   jmp    0x000000011931a135
+  0x000000011931a1e9:   mov    r8,0x0
+  0x000000011931a1f0:   mov    r11d,0xffffffed
+  0x000000011931a1f6:   jmp    0x000000011931a135
+  0x000000011931a1fb:   mov    DWORD PTR [r15+0x370],0xfffffff5
+  0x000000011931a206:   mov    QWORD PTR [r15+0x378],0x0
+  0x000000011931a211:   call   0x000000011186e27a           ; ImmutableOopMap {rsi=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@0 (line 217)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x000000011931a216:   nop
+  0x000000011931a217:   mov    DWORD PTR [r15+0x370],0xfffffff5
+  0x000000011931a222:   mov    QWORD PTR [r15+0x378],0x0
+  0x000000011931a22d:   call   0x000000011186e27a           ; ImmutableOopMap {rdx=NarrowOop rsi=Oop }
+                                                            ;*iload_1 {reexecute=1 rethrow=0 return_oop=0}
+                                                            ; - (reexecute) ch.randelshofer.fastdoubleparser.FastDoubleParser::parseDouble@0 (line 217)
+                                                            ;   {runtime_call DeoptimizationBlob}
+  0x000000011931a232:   nop
+[Exception Handler]
+  0x000000011931a233:   call   0x000000011192db80           ;   {runtime_call Stub<ExceptionHandlerStub.exceptionHandler>}
+  0x000000011931a238:   nop
+[Deopt Handler Code]
+  0x000000011931a239:   call   0x000000011186e020           ;   {runtime_call DeoptimizationBlob}
+  0x000000011931a23e:   nop
+  0x000000011931a23f:   hlt
+[Stub Code]
+  0x000000011931a240:   movabs rbx,0x0                      ;   {no_reloc}
+  0x000000011931a24a:   jmp    0x000000011931a24a           ;   {runtime_call const_jargs+-37847137}
+  0x000000011931a24f:   hlt
+--------------------------------------------------------------------------------
+[/Disassembly]
+33.925 ns/op
+# Warmup Iteration   2: 33.304 ns/op
+Iteration   1: 33.159 ns/op
+Iteration   2:

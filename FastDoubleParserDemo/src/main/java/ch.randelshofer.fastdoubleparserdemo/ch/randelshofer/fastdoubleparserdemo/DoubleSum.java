@@ -1,10 +1,12 @@
 /*
  * @(#)DoubleSum.java
- * Copyright © 2021 Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
  */
 
-package ch.randelshofer.stats;
+package ch.randelshofer.fastdoubleparserdemo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.DoubleConsumer;
 
 import static java.lang.Math.abs;
@@ -30,7 +32,7 @@ import static java.lang.Math.abs;
 public class DoubleSum implements DoubleConsumer {
     private double sum = 0.0;
     private double c = 0.0;
-
+    private List<Double> values = new ArrayList<>();
     /**
      * Adds a value to the sample.
      *
@@ -68,6 +70,7 @@ public class DoubleSum implements DoubleConsumer {
      * @param input the new input value
      */
     private void sumWithCompensation(double input) {
+        values.add(input);
         double t = sum + input;
         if (abs(sum) >= abs(input)) {
             c += (sum - t) + input;// If sum is bigger, low-order digits of input are lost.

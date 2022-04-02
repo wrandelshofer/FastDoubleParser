@@ -1,10 +1,11 @@
 /*
  * @(#)VarianceStatistics.java
- * Copyright © 2021 Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.stats;
+package ch.randelshofer.fastdoubleparserdemo;
 
 import java.util.DoubleSummaryStatistics;
+import java.util.function.DoubleConsumer;
 
 import static java.lang.Math.sqrt;
 
@@ -29,12 +30,16 @@ import static java.lang.Math.sqrt;
  * </ul>
  * </p>
  */
-public class VarianceStatistics extends DoubleSummaryStatistics {
+public class VarianceStatistics implements DoubleConsumer {
     /**
      * We use e DoubleSummaryStatistics here, because it can sum
      * doubles with compensation.
      */
     private final DoubleSum sumOfSquare = new DoubleSum();
+    private long count;
+    private final DoubleSum sum = new DoubleSum();
+    private double min = Double.POSITIVE_INFINITY;
+    private double max = Double.NEGATIVE_INFINITY;
 
     /**
      * Adds a value to the sample.
@@ -43,8 +48,11 @@ public class VarianceStatistics extends DoubleSummaryStatistics {
      */
     @Override
     public void accept(double value) {
-        super.accept(value);
+        count++;
+        sum.accept(value);
         sumOfSquare.accept(value * value);
+        min = Math.min(min, value);
+        max = Math.max(max, value);
     }
 
     /**
@@ -54,8 +62,11 @@ public class VarianceStatistics extends DoubleSummaryStatistics {
      * @return this
      */
     public VarianceStatistics combine(VarianceStatistics other) {
-        super.combine(other);
+        sum.combine(other.sum);
         sumOfSquare.combine(other.sumOfSquare);
+        min = Math.min(min, other.min);
+        max = Math.max(max, other.max);
+        count += other.count;
         return this;
     }
 
@@ -66,6 +77,26 @@ public class VarianceStatistics extends DoubleSummaryStatistics {
      */
     public double getSumOfSquare() {
         return sumOfSquare.getSum();
+    }
+
+    public double getSum() {
+        return sum.getSum();
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public double getAverage() {
+        return getCount() > 0 ? getSum() / getCount() : 0.0d;
     }
 
     /**

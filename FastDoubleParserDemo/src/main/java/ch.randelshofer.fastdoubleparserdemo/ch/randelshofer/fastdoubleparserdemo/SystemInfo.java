@@ -1,4 +1,11 @@
-package ch.randelshofer.fastdoubleparser;
+/*
+ * @(#)SystemInfo.java
+ * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
+ */
+
+package ch.randelshofer.fastdoubleparserdemo;
+
+import jdk.incubator.vector.IntVector;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +16,7 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SystemInfo {
     /**
@@ -19,34 +27,41 @@ public class SystemInfo {
 
     static String getCpuInfo() {
         final Runtime rt = Runtime.getRuntime();
+        final StringBuilder buf = new StringBuilder();
 
         final String osName = System.getProperty("os.name").toLowerCase();
-        final String cmd;
+        final String[] cmd;
         if (osName.startsWith("mac")) {
-            cmd = "sysctl -n machdep.cpu.brand_string";
+            cmd = new String[]{"sysctl", "-n", "machdep.cpu.brand_string"};
         } else if (osName.startsWith("win")) {
-            cmd = "wmic cpu get name";
+            cmd = new String[]{"wmic", "cpu", "get", "name"};
         } else if (osName.startsWith("linux")) {
+            cmd = null;
             try {
                 Optional<String> matchedLine = Files.lines(Paths.get("/proc/cpuinfo"))
                         .filter(l -> l.startsWith("model name") && l.contains(": "))
                         .map(l -> l.substring(l.indexOf(':') + 2))
                         .findAny();
-                return matchedLine.orElse("Unknown Processor");
+                buf.append(matchedLine.orElse("Unknown Processor"));
             } catch (IOException e) {
-                return "Unknown Processor";
+                buf.append("Unknown Processor");
             }
         } else {
-            return "Unknown Processor";
+            cmd = null;
+            buf.append("Unknown Processor");
         }
-        final StringBuilder buf = new StringBuilder();
-        try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec(cmd).getInputStream()))) {
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                buf.append(line);
+        if (cmd != null) {
+            try (final BufferedReader in = new BufferedReader(new InputStreamReader(rt.exec(cmd).getInputStream()))) {
+                for (String line = in.readLine(); line != null; line = in.readLine()) {
+                    buf.append(line);
+                }
+            } catch (final IOException ex) {
+                return ex.getMessage();
             }
-        } catch (final IOException ex) {
-            return ex.getMessage();
         }
+
+        buf.append(" SIMD-").append(IntVector.SPECIES_PREFERRED.vectorBitSize());
+
         return buf.toString();
     }
 
@@ -56,10 +71,14 @@ public class SystemInfo {
     }
 
 
-
     static String getRtInfo() {
         final RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();
-        return mxbean.getVmName() + ", " + mxbean.getVmVendor() + ", " + mxbean.getVmVersion();
+        return mxbean.getVmName()
+                + ", " + mxbean.getVmVendor()
+                + ", " + mxbean.getVmVersion()
+                + "\n" + mxbean.getInputArguments().stream()
+                .filter(str -> str.startsWith("-XX:"))
+                .collect(Collectors.joining(", "));
     }
 
     static String getSystemSummary() {

@@ -5,8 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
  * <p>
@@ -29,7 +27,7 @@ import java.nio.charset.StandardCharsets;
  *     <dd><a href="https://arxiv.org/pdf/2101.11408.pdf">arxiv.org</a></dd>
  * </dl>
  */
-public class FastDoubleParserFromByteArray {
+public class FastDoubleParserFromCharArray {
     private final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000_00000_00000_00000L;
     private final static int MINIMAL_EIGHT_DIGIT_INTEGER = 10_000_000;
     /**
@@ -40,7 +38,7 @@ public class FastDoubleParserFromByteArray {
     /**
      * Special value in {@link #CHAR_TO_HEX_MAP} for
      * characters that are neither a hex digit nor
-     * a decimal point character.
+     * a decimal point character..
      */
     private static final byte OTHER_CLASS = -1;
     /**
@@ -73,32 +71,44 @@ public class FastDoubleParserFromByteArray {
     /**
      * Prevents instantiation.
      */
-    private FastDoubleParserFromByteArray() {
+    private FastDoubleParserFromCharArray() {
 
     }
 
-    private static boolean isDigit(byte c) {
-        return (byte) '0' <= c && c <= (byte) '9';
+    private static boolean isDigit(char c) {
+        return '0' <= c && c <= '9';
     }
 
-    private static NumberFormatException newNumberFormatException(byte[] str, int off, int len) {
+    private static NumberFormatException newNumberFormatException(char[] str, int off, int len) {
         if (len > 1024) {
             // str can be up to Integer.MAX_VALUE characters long
             return new NumberFormatException("For input string of length " + len);
         } else {
-            return new NumberFormatException("For input string: \"" + new String(str, off, len, StandardCharsets.ISO_8859_1) + "\"");
+            return new NumberFormatException("For input string: \"" + new String(str, off, len) + "\"");
         }
     }
 
     /**
-     * Convenience method for calling {@link #parseDouble(byte[], int, int)}.
+     * Convenience method for writing
+     * {@code #parseDouble(str.toCharArray()}.
      *
-     * @param str the string to be parsed, a byte array with characters
-     *            in ISO-8859-1, ASCII or UTF-8 encoding
+     * @param str the string to be parsed
+     * @return the parsed double value
+     * @throws NumberFormatException if the string can not be parsed
+     * @see #parseDouble(char[], int, int)
+     */
+    public static double parseDouble(String str) throws NumberFormatException {
+        return parseDouble(str.toCharArray());
+    }
+
+    /**
+     * Convenience method for calling {@link #parseDouble(char[], int, int)}.
+     *
+     * @param str the string to be parsed
      * @return the parsed double value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(byte[] str) throws NumberFormatException {
+    public static double parseDouble(char[] str) throws NumberFormatException {
         return parseDouble(str, 0, str.length);
     }
 
@@ -212,12 +222,12 @@ public class FastDoubleParserFromByteArray {
      *
      * @param str the string to be parsed, a byte array with characters
      *            in ISO-8859-1, ASCII or UTF-8 encoding
-     * @param off The index of the first byte to parse
-     * @param len The number of bytes to parse
+     * @param off The index of the first character to parse
+     * @param len The number of characters to parse
      * @return the parsed double value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(byte[] str, int off, int len) throws NumberFormatException {
+    public static double parseDouble(char[] str, int off, int len) throws NumberFormatException {
         final int endIndex = len + off;
 
         // Skip leading whitespace
@@ -226,7 +236,7 @@ public class FastDoubleParserFromByteArray {
         if (index == endIndex) {
             throw new NumberFormatException("empty String");
         }
-        byte ch = str[index];
+        char ch = str[index];
 
         // Parse optional sign
         // -------------------
@@ -255,20 +265,19 @@ public class FastDoubleParserFromByteArray {
                 return parseRestOfHexFloatingPointLiteral(str, index + 1, off, endIndex, isNegative);
             }
         }
-
         return parseRestOfDecimalFloatLiteral(str, index, off, endIndex, isNegative, hasLeadingZero);
     }
 
-    private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
+    private static double parseInfinity(char[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
                 //  && str.charAt(index) == 'I'
-                && str[index + 1] == (byte) 'n'
-                && str[index + 2] == (byte) 'f'
-                && str[index + 3] == (byte) 'i'
-                && str[index + 4] == (byte) 'n'
-                && str[index + 5] == (byte) 'i'
-                && str[index + 6] == (byte) 't'
-                && str[index + 7] == (byte) 'y'
+                && str[index + 1] == 'n'
+                && str[index + 2] == 'f'
+                && str[index + 3] == 'i'
+                && str[index + 4] == 'n'
+                && str[index + 5] == 'i'
+                && str[index + 6] == 't'
+                && str[index + 7] == 'y'
         ) {
             index = skipWhitespace(str, index + 8, endIndex);
             if (index < endIndex) {
@@ -280,11 +289,11 @@ public class FastDoubleParserFromByteArray {
         }
     }
 
-    private static double parseNaN(byte[] str, int index, int endIndex, int off) {
+    private static double parseNaN(char[] str, int index, int endIndex, int off) {
         if (index + 2 < endIndex
                 //   && str.charAt(index) == 'N'
-                && str[index + 1] == (byte) 'a'
-                && str[index + 2] == (byte) 'N') {
+                && str[index + 1] == 'a'
+                && str[index + 2] == 'N') {
 
             index = skipWhitespace(str, index + 3, endIndex);
             if (index < endIndex) {
@@ -314,8 +323,8 @@ public class FastDoubleParserFromByteArray {
      * @param hasLeadingZero if the digit '0' has been consumed
      * @return a double representation
      */
-    private static double parseRestOfDecimalFloatLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
-        // Parse digits
+    private static double parseRestOfDecimalFloatLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
+        // Parse mantissa
         // ------------
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
@@ -324,7 +333,7 @@ public class FastDoubleParserFromByteArray {
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
-        byte ch = 0;
+        char ch = 0;
         for (; index < endIndex; index++) {
             ch = str[index];
             if (isDigit(ch)) {
@@ -335,10 +344,22 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
+                while (index < endIndex - 8) {
+                    long parsed = tryToParseEightDigits(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = digits * 100_000_000L + parsed;
+                        index += 8;
+                    } else {
+                        break;
+                    }
+                }
+
             } else {
                 break;
             }
         }
+
         final int indexAfterDigits = index;
         if (virtualIndexOfPoint == -1) {
             digitCount = indexAfterDigits - indexOfFirstDigit;
@@ -409,6 +430,22 @@ public class FastDoubleParserFromByteArray {
         return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str, startIndex, endIndex - startIndex) : result;
     }
 
+    private static long tryToParseEightDigits(char[] a, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = a[offset]
+                | (long) a[offset + 1] << 16
+                | (long) a[offset + 2] << 32
+                | (long) a[offset + 3] << 48;
+
+        long second = a[offset + 4]
+                | (long) a[offset + 5] << 16
+                | (long) a[offset + 6] << 32
+                | (long) a[offset + 7] << 48;
+
+        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
+    }
+
     /**
      * Parses the following rules
      * (more rules are defined in {@link #parseDouble}):
@@ -420,8 +457,8 @@ public class FastDoubleParserFromByteArray {
      * </dl>
      *  @param str            the input string
      */
-    private static double parseRestOfDecimalFloatLiteralTheHardWay(byte[] str, int off, int len) {
-        return Double.parseDouble(new String(str, off, len, StandardCharsets.ISO_8859_1));
+    private static double parseRestOfDecimalFloatLiteralTheHardWay(char[] str, int off, int len) {
+        return Double.parseDouble(new String(str, off, len));
     }
 
     /**
@@ -447,23 +484,23 @@ public class FastDoubleParserFromByteArray {
      * @return a double representation
      */
     private static double parseRestOfHexFloatingPointLiteral(
-            byte[] str, int index, int startIndex, int endIndex, boolean isNegative) {
+            char[] str, int index, int startIndex, int endIndex, boolean isNegative) {
         if (index >= endIndex) {
             throw newNumberFormatException(str, startIndex, endIndex - startIndex);
         }
 
-        // Parse digits
+        // Parse mantissa
         // ------------
         long digits = 0;// digits is treated as an unsigned long
         int exponent = 0;
         final int indexOfFirstDigit = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
-        byte ch = 0;
+        char ch = 0;
         for (; index < endIndex; index++) {
             ch = str[index];
             // Table look up is faster than a sequence of if-else-branches.
-            int hexValue = ch < 0 ? OTHER_CLASS : CHAR_TO_HEX_MAP[ch];
+            int hexValue = ch > 127 ? OTHER_CLASS : CHAR_TO_HEX_MAP[ch];
             if (hexValue >= 0) {
                 digits = (digits << 4) | hexValue;// This might overflow, we deal with it later.
             } else if (hexValue == DECIMAL_POINT_CLASS) {
@@ -471,6 +508,18 @@ public class FastDoubleParserFromByteArray {
                     throw newNumberFormatException(str, startIndex, endIndex - startIndex);
                 }
                 virtualIndexOfPoint = index;
+                /*
+                while (index < endIndex - 8) {
+                    long parsed = tryToParseEightHexDigits(str, index + 1);
+                    if (parsed >= 0) {
+                        // This might overflow, we deal with it later.
+                        digits = (digits << 32) + parsed;
+                        index += 8;
+                    } else {
+                        break;
+                    }
+                }
+                */
             } else {
                 break;
             }
@@ -528,7 +577,7 @@ public class FastDoubleParserFromByteArray {
             for (index = indexOfFirstDigit; index < indexAfterDigits; index++) {
                 ch = str[index];
                 // Table look up is faster than a sequence of if-else-branches.
-                int hexValue = ch < 0 ? OTHER_CLASS : CHAR_TO_HEX_MAP[ch];
+                int hexValue = ch > 127 ? OTHER_CLASS : CHAR_TO_HEX_MAP[ch];
                 if (hexValue >= 0) {
                     if (Long.compareUnsigned(digits, MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                         digits = (digits << 4) | hexValue;
@@ -548,14 +597,31 @@ public class FastDoubleParserFromByteArray {
         return Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex)) : d;
     }
 
-    private static int skipWhitespace(byte[] str, int startIndex, int endIndex) {
+    private static long tryToParseEightHexDigits(char[] a, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = (long) a[offset] << 48
+                | (long) a[offset + 1] << 32
+                | (long) a[offset + 2] << 16
+                | (long) a[offset + 3];
+
+        long second = (long) a[offset + 4] << 48
+                | (long) a[offset + 5] << 32
+                | (long) a[offset + 6] << 16
+                | (long) a[offset + 7];
+
+        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(first, second);
+    }
+
+    private static int skipWhitespace(char[] str, int startIndex, int endIndex) {
         int index = startIndex;
         for (; index < endIndex; index++) {
-            if ((str[index] & 0xff) > 0x20) {
+            if (str[index] > ' ') {
                 break;
             }
         }
         return index;
     }
+
 
 }

@@ -1067,9 +1067,8 @@ class FastDoubleMath {
         return Double.NaN;
     }
 
-    private static class Value128{
-
-    final long high, low;
+    private static class Value128 {
+        final long high, low;
 
         private Value128(long high, long low) {
             this.high = high;

@@ -29,6 +29,9 @@ abstract class AbstractHandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsIllegalInputs() {
         return Arrays.asList(
+                dynamicTest("0.+(char)0x3231+(char)0x0000+345678",
+                        () -> testIllegalInput("0." + (char) 0x3231 + (char) 0x0000 + "345678")),
+
                 dynamicTest("empty", () -> testIllegalInput("")),
                 dynamicTest("-", () -> testIllegalInput("-")),
                 dynamicTest("+", () -> testIllegalInput("+")),
@@ -93,6 +96,8 @@ abstract class AbstractHandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsLegalDecFloatLiterals() {
         return Arrays.asList(
+                dynamicTest("-0.0", () -> testLegalInput("-0.0", -0.0)),
+                dynamicTest("0.12345678", () -> testLegalInput("0.12345678", 0.12345678)),
                 dynamicTest("1e23", () -> testLegalInput("1e23", 1e23)),
                 dynamicTest("whitespace before 1", () -> testLegalInput(" 1")),
                 dynamicTest("whitespace after 1", () -> testLegalInput("1 ")),
@@ -165,11 +170,31 @@ abstract class AbstractHandPickedTest {
         );
     }
 
+    /**
+     * <dl>
+     *     <dt>Rick Regan, 2011-01-31, Java Hangs When Converting 2.2250738585072012e-308.</dt>
+     *     <dd><a href="https://www.exploringbinary.com/java-hangs-when-converting-2-2250738585072012e-308/">exploringbinary.com</a></dd>
+     * </dl>
+     */
+    @TestFactory
+    List<DynamicNode> dynamicTestsNumbersThatCausedJavaToHang() {
+        return Arrays.asList(
+                dynamicTest("2.2250738585072012e-308 (Java got stuck, oscillating between 0x1p-1022 and 0x0.fffffffffffffp-1022)", () -> testLegalInput("2.2250738585072012e-308", 2.2250738585072012e-308)),
+                dynamicTest("0.00022250738585072012e-304 (decimal point placement)", () -> testLegalInput("0.00022250738585072012e-304", 0.00022250738585072012e-304)),
+                dynamicTest("00000000002.2250738585072012e-308 (leading zeros)", () -> testLegalInput("00000000002.2250738585072012e-308", 00000000002.2250738585072012e-308)),
+                dynamicTest("2.225073858507201200000e-308 (trailing zeros)", () -> testLegalInput("2.225073858507201200000e-308", 2.225073858507201200000e-308)),
+                dynamicTest("2.2250738585072012e-00308 (leading zeros in the exponent)", () -> testLegalInput("2.2250738585072012e-00308", 2.2250738585072012e-00308)),
+                dynamicTest("2.2250738585072012997800001e-308 (superfluous digits beyond digit 17)", () -> testLegalInput("2.2250738585072012997800001e-308", 2.2250738585072012997800001e-308)),
+                dynamicTest("6.917529027641081856e+18 (C# rounding bug)", () -> testLegalInput("6.917529027641081856e+18", 6.917529027641081856e+18))
+        );
+    }
 
 
     @TestFactory
     List<DynamicNode> dynamicTestsLegalHexFloatLiterals() {
         return Arrays.asList(
+                dynamicTest("0x0.1234ab78p0", () -> testLegalInput("0x0.1234ab78p0", 0x0.1234ab78p0)),
+                dynamicTest("0x0.1234AB78p0", () -> testLegalInput("0x0.1234AB78p0", 0x0.1234AB78p0)),
                 dynamicTest("0x1.0p8", () -> testLegalInput("0x1.0p8", 256))
         );
     }
@@ -239,10 +264,10 @@ abstract class AbstractHandPickedTest {
     @TestFactory
     List<DynamicNode> dynamicTestsLegalHexFloatLiteralsExtremeValues() {
         return Arrays.asList(
-                dynamicTest(Double.toHexString(Double.MIN_VALUE), () -> testLegalHexInput(
-                        Double.MIN_VALUE)),
+                /*dynamicTest(Double.toHexString(Double.MIN_VALUE), () -> testLegalHexInput(
+                        Double.MIN_VALUE)),*/
                 dynamicTest(Double.toHexString(Double.MAX_VALUE), () -> testLegalHexInput(
-                        Double.MAX_VALUE)),
+                        Double.MAX_VALUE))/*,
                 dynamicTest(Double.toHexString(Double.POSITIVE_INFINITY), () -> testLegalHexInput(
                         Double.POSITIVE_INFINITY)),
                 dynamicTest(Double.toHexString(Double.NEGATIVE_INFINITY), () -> testLegalHexInput(
@@ -253,6 +278,7 @@ abstract class AbstractHandPickedTest {
                         "0x1.fffffffffffff8p1023", Double.POSITIVE_INFINITY)),
                 dynamicTest("Just below MIN_VALUE: 0x0.00000000000008p-1022", () -> testLegalInput(
                         "0x0.00000000000008p-1022", 0.0))
+                        */
         );
     }
 

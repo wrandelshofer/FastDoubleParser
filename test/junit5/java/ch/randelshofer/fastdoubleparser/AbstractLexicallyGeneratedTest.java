@@ -66,7 +66,7 @@ abstract class AbstractLexicallyGeneratedTest {
     Stream<DynamicTest> dynamicTestsRandomStringFrom40SyntaxRuleWithoutWhitespace() {
         Random rng = new Random(SEED);
         LexicalGenerator gen = new LexicalGenerator(false, false);
-        return IntStream.range(1, 100_000).mapToObj(i -> {
+        return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(40, rng);
                     return dynamicTest(i + ": " + str,
                             () -> testAgainstDoubleParseDouble(str));

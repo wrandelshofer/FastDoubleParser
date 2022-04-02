@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FastDoubleParser.iml" filepath="$PROJECT_DIR$/FastDoubleParser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FastDoubleParserDemo/FastDoubleParserDemo.iml" filepath="$PROJECT_DIR$/FastDoubleParserDemo/FastDoubleParserDemo.iml" />
     </modules>
   </component>
 </project>
