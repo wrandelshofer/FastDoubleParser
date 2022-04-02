@@ -7,8 +7,6 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.nio.charset.StandardCharsets;
 
-import static ch.randelshofer.fastdoubleparser.FastDoubleSimd.tryToParseEightDigitsUtf8Swar;
-
 /**
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
  * <p>
@@ -591,7 +589,7 @@ public class FastDoubleParserFromByteArray {
     }
 
     private static long tryToParseEightDigits(byte[] str, int offset) {
-        return tryToParseEightDigitsUtf8Swar(str, offset);
+        return FastDoubleSimd.tryToParseEightDigitsUtf8Vector(str, offset);
     }
 /*
     private static long tryToParseEightHexDigits(byte[] str, int offset) {

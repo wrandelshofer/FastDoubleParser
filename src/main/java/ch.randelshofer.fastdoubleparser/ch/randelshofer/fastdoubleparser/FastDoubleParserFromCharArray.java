@@ -346,7 +346,7 @@ public class FastDoubleParserFromCharArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    long parsed = FastDoubleSimd.tryToParseEightDigitsUtf16Swar(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightDigitsUtf16Vector(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -495,7 +495,7 @@ public class FastDoubleParserFromCharArray {
                 virtualIndexOfPoint = index;
                 /*
                 while (index < endIndex - 8) {
-                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf16Vector(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;

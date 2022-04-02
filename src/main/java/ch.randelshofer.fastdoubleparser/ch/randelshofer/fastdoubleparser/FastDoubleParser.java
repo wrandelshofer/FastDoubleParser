@@ -428,7 +428,7 @@ public class FastDoubleParser {
                 | (long) str.charAt(offset + 6) << 32
                 | (long) str.charAt(offset + 7) << 48;
 
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
+        return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(first, second);
     }
 
     /*
