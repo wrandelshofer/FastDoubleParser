@@ -5,10 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
-
 /**
  * This class provides the mathematical functions needed by {@link FastDoubleParser}.
  * <p>
@@ -38,11 +34,6 @@ import java.nio.ByteOrder;
  * </p>
  */
 class FastDoubleSimd {
-
-    public final static VarHandle readLongFromByteArrayLittleEndian =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
-    public final static VarHandle readLongFromByteArrayBigEndian =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
 
     /**
      * Tries to parse eight digits at once.
