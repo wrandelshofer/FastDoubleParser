@@ -345,7 +345,7 @@ public class FastDoubleParserFromCharArray {
                 }
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
-                    long parsed = tryToParseEightDigits(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightDigitsUtf16Swar(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = digits * 100_000_000L + parsed;
@@ -430,22 +430,6 @@ public class FastDoubleParserFromCharArray {
         return Double.isNaN(result) ? parseRestOfDecimalFloatLiteralTheHardWay(str, startIndex, endIndex - startIndex) : result;
     }
 
-    private static long tryToParseEightDigits(char[] a, int offset) {
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
-        long first = a[offset]
-                | (long) a[offset + 1] << 16
-                | (long) a[offset + 2] << 32
-                | (long) a[offset + 3] << 48;
-
-        long second = a[offset + 4]
-                | (long) a[offset + 5] << 16
-                | (long) a[offset + 6] << 32
-                | (long) a[offset + 7] << 48;
-
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
-    }
-
     /**
      * Parses the following rules
      * (more rules are defined in {@link #parseDouble}):
@@ -510,7 +494,7 @@ public class FastDoubleParserFromCharArray {
                 virtualIndexOfPoint = index;
                 /*
                 while (index < endIndex - 8) {
-                    long parsed = tryToParseEightHexDigits(str, index + 1);
+                    long parsed = FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
@@ -595,22 +579,6 @@ public class FastDoubleParserFromCharArray {
 
         double d = FastDoubleMath.hexFloatLiteralToDouble(index, isNegative, digits, exponent, virtualIndexOfPoint, exp_number, isDigitsTruncated, skipCountInTruncatedDigits);
         return Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex)) : d;
-    }
-
-    private static long tryToParseEightHexDigits(char[] a, int offset) {
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
-        long first = (long) a[offset] << 48
-                | (long) a[offset + 1] << 32
-                | (long) a[offset + 2] << 16
-                | (long) a[offset + 3];
-
-        long second = (long) a[offset + 4] << 48
-                | (long) a[offset + 5] << 32
-                | (long) a[offset + 6] << 16
-                | (long) a[offset + 7];
-
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(first, second);
     }
 
     private static int skipWhitespace(char[] str, int startIndex, int endIndex) {
