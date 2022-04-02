@@ -103,7 +103,14 @@ class FastDoubleSimd {
      * returns -1 if {@code value} does not contain 8 digits
      */
     public static int tryToParseEightDigitsUtf8Swar(byte[] a, int offset) {
-        long value = (long) readLongFromByteArrayLittleEndian.get(a, offset);
+        long value = ((a[offset + 7] & 0xffL) << 56)
+                | ((a[offset + 6] & 0xffL) << 48)
+                | ((a[offset + 5] & 0xffL) << 40)
+                | ((a[offset + 4] & 0xffL) << 32)
+                | ((a[offset + 3] & 0xffL) << 24)
+                | ((a[offset + 2] & 0xffL) << 16)
+                | ((a[offset + 1] & 0xffL) << 8)
+                | (a[offset + 0] & 0xffL);
         return tryToParseEightDigitsUtf8Swar(value);
     }
 
@@ -200,6 +207,28 @@ class FastDoubleSimd {
         return (lfirst << 16) | lsecond;
     }
 
+    public static long readLongFromByteArrayLittleEndian(byte[] a, int offset) {
+        return ((a[offset + 7] & 0xffL) << 56)
+                | ((a[offset + 6] & 0xffL) << 48)
+                | ((a[offset + 5] & 0xffL) << 40)
+                | ((a[offset + 4] & 0xffL) << 32)
+                | ((a[offset + 3] & 0xffL) << 24)
+                | ((a[offset + 2] & 0xffL) << 16)
+                | ((a[offset + 1] & 0xffL) << 8)
+                | (a[offset + 0] & 0xffL);
+    }
+
+    public static long readLongFromByteArrayBigEndian(byte[] a, int offset) {
+        return ((a[offset + 0] & 0xffL) << 56)
+                | ((a[offset + 1] & 0xffL) << 48)
+                | ((a[offset + 2] & 0xffL) << 40)
+                | ((a[offset + 3] & 0xffL) << 32)
+                | ((a[offset + 4] & 0xffL) << 24)
+                | ((a[offset + 5] & 0xffL) << 16)
+                | ((a[offset + 6] & 0xffL) << 8)
+                | (a[offset + 7] & 0xffL);
+    }
+
     /**
      * Tries to parse eight hex digits from a byte array using the
      * 'SIMD within a register technique' (SWAR).
@@ -209,7 +238,8 @@ class FastDoubleSimd {
      *               returns -1 if {@code value} does not contain 8 digits
      */
     public static long tryToParseEightHexDigitsUtf8Swar(byte[] a, int offset) {
-        return tryToParseEightHexDigitsUtf8Swar((long) readLongFromByteArrayBigEndian.get(a, offset));
+        long value = readLongFromByteArrayBigEndian(a, offset);
+        return tryToParseEightHexDigitsUtf8Swar(value);
     }
 
     /**

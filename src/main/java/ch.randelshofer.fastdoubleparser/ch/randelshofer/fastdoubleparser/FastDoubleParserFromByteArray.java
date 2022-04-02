@@ -278,7 +278,7 @@ public class FastDoubleParserFromByteArray {
     private static double parseInfinity(byte[] str, int index, int endIndex, boolean negative, int off) {
         if (index + 7 < endIndex
                 //    y  t  i  n  i  f  n  I
-                && 0x79_74_69_6e_69_66_6e_49L == (long) FastDoubleSimd.readLongFromByteArrayLittleEndian.get(str, index)
+                && 0x79_74_69_6e_69_66_6e_49L == (long) FastDoubleSimd.readLongFromByteArrayLittleEndian(str, index)
         ) {
             index = skipWhitespace(str, index + 8, endIndex);
             if (index < endIndex) {
