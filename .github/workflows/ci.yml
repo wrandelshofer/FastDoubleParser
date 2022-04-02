@@ -20,9 +20,9 @@ jobs:
           java-version: ${{ matrix.java }}
 
       - name: Compile FastDoubleParser
-        run: javac -d out -encoding utf8 src/main/java/ch.randelshofer.fastdoubleparser/**/*.java
+        run: javac -d out -encoding utf8 -sourcepath src/main/java/ch.randelshofer.fastdoubleparser src/main/java/ch.randelshofer.fastdoubleparser/ch/randelshofer/fastdoubleparser/FastDoubleParser.java src/main/java/ch.randelshofer.fastdoubleparser/ch/randelshofer/fastdoubleparser/FastDoubleParserFromCharArray.java src/main/java/ch.randelshofer.fastdoubleparser/ch/randelshofer/fastdoubleparser/FastDoubleParserFromByteArray.java
       - name: Compile FastDoubleParserDemo
-        run: javac -d out -encoding utf8 -cp out FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo/**/*.java
+        run: javac -d out -encoding utf8 -cp out -sourcepath FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo/ch/randelshofer/fastdoubleparserdemo/Main.java
       - name: Run Test 1
         run: java -cp out ch.randelshofer.fastdoubleparserdemo.Main
       - name: Run Test 2
