@@ -81,7 +81,10 @@ abstract class AbstractDoubleHandPickedTest {
                 dynamicTest("before0x123.4p0after", () -> testLegalInputWithPrefixAndSuffix("before0x1234p0after", 6, 8, 0x1234p0)),
                 dynamicTest("before0x123.45p0after", () -> testLegalInputWithPrefixAndSuffix("before0x123.45p0after", 6, 10, 0x123.45p0)),
                 dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInputWithPrefixAndSuffix(
-                        "before1e-23after", 6, 5, 1e-23))
+                        "before1e-23after", 6, 5, 1e-23)),
+                dynamicTest("before9007199254740992.e-256after", () -> testLegalInputWithPrefixAndSuffix(
+                        "before9007199254740992.e-256after", 6, 22, 9007199254740992.e-256))
+
 
         );
     }
@@ -195,7 +198,10 @@ abstract class AbstractDoubleHandPickedTest {
         return Arrays.asList(
                 dynamicTest("0x0.1234ab78p0", () -> testLegalInput("0x0.1234ab78p0", 0x0.1234ab78p0)),
                 dynamicTest("0x0.1234AB78p0", () -> testLegalInput("0x0.1234AB78p0", 0x0.1234AB78p0)),
-                dynamicTest("0x1.0p8", () -> testLegalInput("0x1.0p8", 256))
+                dynamicTest("0x1.0p8", () -> testLegalInput("0x1.0p8", 256)),
+                dynamicTest("0x1.234567890abcdefp123", () -> testLegalInput("0x1.234567890abcdefp123", 0x1.234567890abcdefp123)),
+                dynamicTest("0x1234567890.abcdefp-45", () -> testLegalInput("0x1234567890.abcdefp-45", 0x1234567890.abcdefp-45)),
+                dynamicTest("0x1234567890.abcdef12p-45", () -> testLegalInput("0x1234567890.abcdef12p-45", 0x1234567890.abcdef12p-45))
         );
     }
 
@@ -222,7 +228,7 @@ abstract class AbstractDoubleHandPickedTest {
 
     /**
      * Tests input classes that execute different code branches in
-     * method {@link FastDoubleMath#tryDecToDoubleWithFastAlgorithm(boolean, long, int)}.
+     * method {@link FastDoubleMath#tryDecFloatToDouble(boolean, long, int)}.
      */
     @TestFactory
     List<DynamicNode> dynamicTestsDecFloatLiteralClingerInputClasses() {
@@ -251,7 +257,7 @@ abstract class AbstractDoubleHandPickedTest {
 
     /**
      * Tests input classes that execute different code branches in
-     * method {@link FastDoubleMath#tryHexToDoubleWithFastAlgorithm(boolean, long, int)}.
+     * method {@link FastDoubleMath#tryHexFloatToDouble(boolean, long, int)}.
      */
     @TestFactory
     List<DynamicNode> dynamicTestsHexFloatLiteralClingerInputClasses() {

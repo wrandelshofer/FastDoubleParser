@@ -1,5 +1,5 @@
 /*
- * @(#)TestFastDoubleParserFromByteArrayVectorized.java
+ * @(#)TestFastDoubleParserVectorized.java
  * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
  */
 

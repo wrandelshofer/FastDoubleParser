@@ -5,12 +5,14 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FastFloatParserFromByteSequenceLexicallyGeneratedTest extends AbstractLexicallyGeneratedTest {
+public class FastFloatParserFromByteArrayLexicallyGeneratedTest extends AbstractLexicallyGeneratedTest {
     protected void testAgainstJdk(String str) {
         float expected = Float.parseFloat(str);
-        float actual = new FloatFromCharSequenceParser().parse(str);
+        float actual = FastFloatParser.parseFloat(str.getBytes(StandardCharsets.ISO_8859_1));
         assertEquals(expected, actual, "str=" + str);
         assertEquals(Float.floatToIntBits(expected), Float.floatToIntBits(actual),
                 "intBits of " + expected);

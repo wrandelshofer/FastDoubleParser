@@ -46,8 +46,7 @@ abstract class AbstractFloatValueParser {
      */
     static final byte OTHER_CLASS = -1;
     /**
-     * A table of 128 entries or of entries up to including
-     * character 'p' would suffice.
+     * A table up to including character 'p' would suffice.
      */
     static final byte[] CHAR_TO_HEX_MAP = new byte[128];
 
@@ -69,7 +68,5 @@ abstract class AbstractFloatValueParser {
         }
     }
 
-    protected static boolean isDigit(char c) {
-        return '0' <= c && c <= '9';
-    }
+
 }

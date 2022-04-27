@@ -14,12 +14,12 @@ public class FastDoubleParserFromByteArrayHandPickedTest extends AbstractDoubleH
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) str.charAt(i);
         }
-        return FastDoubleParserFromByteArray.parseDouble(bytes);
+        return FastDoubleParser.parseDouble(bytes);
     }
 
     @Override
     protected double parse(String str, int offset, int length) {
         byte[] bytes = str.getBytes(StandardCharsets.ISO_8859_1);
-        return FastDoubleParserFromByteArray.parseDouble(bytes, offset, length);
+        return FastDoubleParser.parseDouble(bytes, offset, length);
     }
 }

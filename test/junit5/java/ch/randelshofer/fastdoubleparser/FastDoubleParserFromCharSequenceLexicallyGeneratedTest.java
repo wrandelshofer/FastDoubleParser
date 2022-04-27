@@ -17,6 +17,6 @@ public class FastDoubleParserFromCharSequenceLexicallyGeneratedTest extends Abst
     }
 
     protected double parse(String str) {
-        return FastDoubleParserFromByteArray.parseDouble(str);
+        return FastDoubleParser.parseDouble(str);
     }
 }

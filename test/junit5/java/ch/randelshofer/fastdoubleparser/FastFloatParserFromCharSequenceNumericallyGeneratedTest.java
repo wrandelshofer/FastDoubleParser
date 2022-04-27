@@ -8,6 +8,6 @@ package ch.randelshofer.fastdoubleparser;
 public class FastFloatParserFromCharSequenceNumericallyGeneratedTest extends AbstractFloatNumericallyGeneratedTest {
     @Override
     protected float parse(String str) {
-        return FastDoubleParser.parseFloat(str);
+        return FastFloatParser.parseFloat(str);
     }
 }

@@ -6,8 +6,6 @@
 package ch.randelshofer.fastdoubleparserdemo;
 
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
-import ch.randelshofer.fastdoubleparser.FastDoubleParserFromByteArray;
-import ch.randelshofer.fastdoubleparser.FastDoubleParserFromCharArray;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -96,7 +94,7 @@ public class Main {
     private double findmaxFastDoubleParserFromByteArrayParseDouble(List<byte[]> s) {
         double answer = 0;
         for (byte[] st : s) {
-            double x = FastDoubleParserFromByteArray.parseDouble(st);
+            double x = FastDoubleParser.parseDouble(st);
             answer = Math.max(answer, x);
         }
         return answer;
@@ -105,7 +103,7 @@ public class Main {
     private double findmaxFastDoubleParserFromCharArrayParseDouble(List<char[]> s) {
         double answer = 0;
         for (char[] st : s) {
-            double x = FastDoubleParserFromCharArray.parseDouble(st);
+            double x = FastDoubleParser.parseDouble(st);
             answer = Math.max(answer, x);
         }
         return answer;
@@ -222,13 +220,13 @@ public class Main {
             if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
                 System.err.println("FastDoubleParser disagrees. input=" + line + " expected=" + expected + " actual=" + actual);
             }
-            actual = FastDoubleParserFromByteArray.parseDouble(line.getBytes(StandardCharsets.ISO_8859_1));
+            actual = FastDoubleParser.parseDouble(line.getBytes(StandardCharsets.ISO_8859_1));
             if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
                 System.err.println("FastDoubleParserFromByteArray disagrees. input="
                         + line + " expected=" + expected + " actual=" + actual
                 );
             }
-            actual = FastDoubleParserFromCharArray.parseDouble(line.toCharArray());
+            actual = FastDoubleParser.parseDouble(line.toCharArray());
             if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
                 System.err.println("FastDoubleParserFromCharArray disagrees. input="
                         + line + " expected=" + expected + " actual=" + actual

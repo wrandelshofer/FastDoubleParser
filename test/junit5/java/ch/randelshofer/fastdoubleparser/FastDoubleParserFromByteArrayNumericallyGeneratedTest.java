@@ -10,6 +10,6 @@ import java.nio.charset.StandardCharsets;
 public class FastDoubleParserFromByteArrayNumericallyGeneratedTest extends AbstractDoubleNumericallyGeneratedTest {
     @Override
     protected double parse(String str) {
-        return FastDoubleParserFromByteArray.parseDouble(str.getBytes(StandardCharsets.ISO_8859_1));
+        return FastDoubleParser.parseDouble(str.getBytes(StandardCharsets.ISO_8859_1));
     }
 }

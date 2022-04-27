@@ -182,7 +182,7 @@ abstract class AbstractFloatHandPickedTest {
 
     /**
      * Tests input classes that execute different code branches in
-     * method {@link FastDoubleMath#tryDecToDoubleWithFastAlgorithm(boolean, long, int)}.
+     * method {@link FastDoubleMath#tryDecFloatToDoubleAlgorithm(boolean, long, int)}.
      */
     @TestFactory
     List<DynamicNode> dynamicTestsDecFloatLiteralClingerInputClasses() {
@@ -203,7 +203,7 @@ abstract class AbstractFloatHandPickedTest {
 
     /**
      * Tests input classes that execute different code branches in
-     * method {@link FastDoubleMath#tryHexToDoubleWithFastAlgorithm(boolean, long, int)}.
+     * method {@link FastDoubleMath#tryHexFloatToDouble(boolean, long, int)}.
      */
     @TestFactory
     List<DynamicNode> dynamicTestsHexFloatLiteralClingerInputClasses() {

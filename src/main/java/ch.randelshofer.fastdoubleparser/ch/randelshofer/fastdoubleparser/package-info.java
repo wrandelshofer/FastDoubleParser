@@ -5,7 +5,8 @@
 
 /**
  * Provides parsers that parse a {@code FloatValue} from a
- * character sequence ({@code str}).
+ * {@link java.lang.CharSequence}, {@code char} array, or {@code byte} array
+ * ({@code str});.
  * <p>
  * Leading and trailing whitespace characters in {@code str} are ignored.
  * Whitespace is removed as if by the {@link java.lang.String#trim()} method;
@@ -15,12 +16,12 @@
  * by the lexical syntax rules shown below:
  * <blockquote>
  * <dl>
- * <dt><i>FloatValue:</i>
- * <dd><i>[Sign]</i> {@code NaN}
- * <dd><i>[Sign]</i> {@code Infinity}
- * <dd><i>[Sign] DecimalFloatingPointLiteral</i>
- * <dd><i>[Sign] HexFloatingPointLiteral</i>
- * <dd><i>SignedInteger</i>
+ * <dt><i>FloatValue:</i></dt>
+ * <dd><i>[Sign]</i> {@code NaN}</dd>
+ * <dd><i>[Sign]</i> {@code Infinity}</dd>
+ * <dd><i>[Sign] DecimalFloatingPointLiteral</i></dd>
+ * <dd><i>[Sign] HexFloatingPointLiteral</i></dd>
+ * <dd><i>SignedInteger</i></dd>
  * </dl>
  *
  * <dl>

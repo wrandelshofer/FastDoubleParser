@@ -11,122 +11,206 @@ import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-import static ch.randelshofer.fastdoubleparser.FastDoubleSimd.tryToParseEightDigitsUtf8Swar;
 
 
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
- * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17.0.1+12-jvmci-21.3-b05
+ * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17+35-2724
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
  *
- * Benchmark                              Mode  Cnt      Score   Error  Units
- * m04SwarDependentMultiplications        avgt           3.087          ns/op
- * m05SwarIndependentMultiplications      avgt           3.106          ns/op
- * m07SimdFromCharArray                   avgt          76.830          ns/op
- * m08SimdFromByteArray                   avgt          62.394          ns/op
- * m14SwarDependentFromByteArrayInLoop    avgt        2449.812          ns/op
- * m15SwarIndependentFromByteArrayInLoop  avgt        2510.852          ns/op
- * m17SimdFromCharArrayInLoop             avgt       70393.986          ns/op
- * m18SimdFromByteArrayInLoop             avgt       42270.765          ns/op
- * </pre>
- * <pre>
- * # JMH version: 1.28
- * # VM version: JDK 18-ea, OpenJDK 64-Bit Server VM, 18-ea+30-2029
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
+ * Benchmark     (eightDigitsCharSequence)  Mode  Cnt   Score   Error  Units
+ * m01ByteArrayDecScalar          12345678  avgt    2   9.477          ns/op
+ * m02CharArrayDecScalar          12345678  avgt    2  10.896          ns/op
+ * m03StringDecScalar             12345678  avgt    2   9.324          ns/op
  *
+ * m11ByteArrayDecSwar            12345678  avgt    2   3.885          ns/op
+ * m12CharArrayDecSwar            12345678  avgt    2   5.581          ns/op
+ * m13StringDecSwar               12345678  avgt    2   7.074          ns/op
+ * m14ByteArrayHexSwar            12345678  avgt    2   6.584          ns/op
+ * m15CharArrayHexSwar            12345678  avgt    2   9.392          ns/op
  *
- * Benchmark                              Mode  Cnt     Score   Error  Units
- * m04SwarDependentMultiplications        avgt          4.338          ns/op
- * m05SwarIndependentMultiplications      avgt          3.645          ns/op
- * m07SimdFromCharArray                   avgt          5.222          ns/op
- * m08SimdFromByteArray                   avgt          4.864          ns/op
- * m14SwarDependentFromByteArrayInLoop    avgt       3018.542          ns/op
- * m15SwarIndependentFromByteArrayInLoop  avgt       3345.844          ns/op
- * m17SimdFromCharArrayInLoop             avgt       3267.633          ns/op
- * m18SimdFromByteArrayInLoop             avgt       3143.888          ns/op
+ * m21ByteArrayDecVector          12345678  avgt    2   5.057          ns/op
+ * m22CharArrayDecVector          12345678  avgt    2   5.155          ns/op
+ * m23StringDecVector             12345678  avgt    2   9.128          ns/op
+ * m24ByteArrayHexVector          12345678  avgt    2   6.941          ns/op
+ * m25CharArrayHexVector          12345678  avgt    2   6.912          ns/op
+ *
+ * Benchmark     (eightDigitsCharSequence)  Mode  Cnt  Score   Error  Units
+ * m01ByteArrayDecScalar          12345x78  avgt    2  7.523          ns/op
+ * m02CharArrayDecScalar          12345x78  avgt    2  9.974          ns/op
+ * m03StringDecScalar             12345x78  avgt    2  7.271          ns/op
+ *
+ * m11ByteArrayDecSwar            12345x78  avgt    2  3.081          ns/op
+ * m12CharArrayDecSwar            12345x78  avgt    2  4.565          ns/op
+ * m13StringDecSwar               12345x78  avgt    2  5.373          ns/op
+ * m14ByteArrayHexSwar            12345x78  avgt    2  4.235          ns/op
+ * m15CharArrayHexSwar            12345x78  avgt    2  8.052          ns/op
+ *
+ * m21ByteArrayDecVector          12345x78  avgt    2  3.226          ns/op
+ * m22CharArrayDecVector          12345x78  avgt    2  3.293          ns/op
+ * m23StringDecVector             12345x78  avgt    2  6.671          ns/op
+ * m24ByteArrayHexVector          12345x78  avgt    2  3.222          ns/op
+ * m25CharArrayHexVector          12345x78  avgt    2  3.302          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
-@Measurement(iterations = 1)
-@Warmup(iterations = 1)
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
+@State(Scope.Benchmark)
 public class EightDigitsJmh {
-    final static char[] eightDigitsCharArray = "12345678".toCharArray();
-    final static byte[] eightDigitsByteArray = "12345678".getBytes(StandardCharsets.UTF_8);
-    private final static int[] numbers = new int[1000];
-    final static long[] longs = new long[numbers.length];
-    final static char[][] charArrays = new char[numbers.length][0];
-    final static byte[][] byteArrays = new byte[numbers.length][0];
-    private final static VarHandle readLongFromByteArray =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
+    @Param({"12345678", "12345x78"})
+    public String eightDigitsCharSequence;
+    public char[] eightDigitsCharArray;
+    public byte[] eightDigitsByteArray;
 
-    static {
-        Random rng = new Random(0);
-        for (int i = 0; i < numbers.length; i++) {
-            int n = rng.nextInt(9999_9999);
-            numbers[i] = n;
-            String s = String.format("%08d", n);
-            charArrays[i] = s.toCharArray();
-            byteArrays[i] = s.getBytes(StandardCharsets.UTF_8);
-            longs[i] = (long) readLongFromByteArray.get(byteArrays[i], 0);
+    @Setup
+    public void prepare() {
+        eightDigitsCharArray = eightDigitsCharSequence.toCharArray();
+        eightDigitsByteArray = eightDigitsCharSequence.getBytes(StandardCharsets.UTF_8);
+    }
 
-            assert n == tryToParseEightDigitsUtf8Swar(byteArrays[i], 0);
-            assert n == FastDoubleSimd.tryToParseEightDigitsUtf16Vector(charArrays[i], 0);
+    /*
+        @Benchmark
+        public int m01ByteArrayDecScalar() {
+            int value = 0;
+            for (int i = 0; i < eightDigitsByteArray.length; i++) {
+                byte ch = eightDigitsByteArray[i];
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                }else{
+                    return -1;
+                }
+            }
+            return value;
         }
-    }
 
-    @Benchmark
-    public long m05Swar() {
-        return tryToParseEightDigitsUtf8Swar(eightDigitsByteArray, 0);
-    }
-
-    @Benchmark
-    public long m07SimdFromCharArray() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(eightDigitsCharArray, 0);
-    }
-
-    @Benchmark
-    public long m08SimdFromByteArray() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf8Vector(eightDigitsByteArray, 0);
-    }
-
-    @Benchmark
-    public long m14SwarLoop() {
-        int sum = 0;
-        for (byte[] l : byteArrays) {
-            sum += tryToParseEightDigitsUtf8Swar(l, 0);
+        @Benchmark
+        public int m02CharArrayDecScalar() {
+            int value = 0;
+            for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
+                char ch = eightDigitsCharSequence.charAt(i);
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                }else{
+                    return -1;
+                }
+            }
+            return value;
         }
-        return sum;
+
+        @Benchmark
+        public int m03StringDecScalar() {
+            int value = 0;
+            for (int i = 0; i < eightDigitsCharArray.length; i++) {
+                char ch = eightDigitsCharArray[i];
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                }else{
+                    return -1;
+                }
+            }
+            return value;
+        }
+
+        @Benchmark
+        public int m11ByteArrayDecSwar() {
+            return FastDoubleSimd.tryToParseEightDigitsUtf8Swar(eightDigitsByteArray, 0);
+        }
+
+        @Benchmark
+        public int m12CharArrayDecSwar() {
+            return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(eightDigitsCharArray, 0);
+        }
+
+        @Benchmark
+        public int m13StringDecSwar() {
+            String str=eightDigitsCharSequence;
+            int offset=0;
+
+            // Performance: We extract the chars in two steps so that we
+            //              can benefit from out of order execution in the CPU.
+            long first = str.charAt(offset)
+                    | (long) str.charAt(offset + 1) << 16
+                    | (long) str.charAt(offset + 2) << 32
+                    | (long) str.charAt(offset + 3) << 48;
+
+            long second = str.charAt(offset + 4)
+                    | (long) str.charAt(offset + 5) << 16
+                    | (long) str.charAt(offset + 6) << 32
+                    | (long) str.charAt(offset + 7) << 48;
+
+            return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
+        }
+    */
+    @Benchmark
+    public long m14ByteArrayHexSwar() {
+        return FastDoubleSimd.tryToParseEightHexDigitsUtf8Swar(eightDigitsByteArray, 0);
     }
 
     @Benchmark
-    public long m17SimdFromCharArrayInLoop() {
-        int sum = 0;
-        for (char[] l : charArrays) {
-            sum += FastDoubleSimd.tryToParseEightDigitsUtf16Vector(l, 0);
+    public long m15CharArrayHexSwar() {
+        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(eightDigitsCharArray, 0);
+    }
+
+    /*
+        @Benchmark
+        public int m21ByteArrayDecVector() {
+            return FastDoubleSimd.tryToParseEightDigitsUtf8Vector(eightDigitsByteArray, 0);
         }
-        return sum;
+        @Benchmark
+        public int m22CharArrayDecVector() {
+            return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(eightDigitsCharArray, 0);
+        }
+        @Benchmark
+        public int m23StringDecVector() {
+            String str=eightDigitsCharSequence;
+            int offset=0;
+
+            // Performance: We extract the chars in two steps so that we
+            //              can benefit from out of order execution in the CPU.
+            long first = str.charAt(offset)
+                    | (long) str.charAt(offset + 1) << 16
+                    | (long) str.charAt(offset + 2) << 32
+                    | (long) str.charAt(offset + 3) << 48;
+
+            long second = str.charAt(offset + 4)
+                    | (long) str.charAt(offset + 5) << 16
+                    | (long) str.charAt(offset + 6) << 32
+                    | (long) str.charAt(offset + 7) << 48;
+
+            return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(first, second);
+        }
+
+    */
+    @Benchmark
+    public long m24ByteArrayHexVector() {
+        return FastDoubleSimd.tryToParseEightHexDigitsUtf8Vector(eightDigitsByteArray, 0);
     }
 
     @Benchmark
-    public long m18SimdFromByteArrayInLoop() {
-        int sum = 0;
-        for (byte[] l : byteArrays) {
-            sum += FastDoubleSimd.tryToParseEightDigitsUtf8Vector(l, 0);
-        }
-        return sum;
+    public long m25CharArrayHexVector() {
+        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Vector(eightDigitsCharArray, 0);
+    }
+
+
+    private static boolean isDigit(byte c) {
+        return '0' <= c && c <= '9';
+    }
+
+    private static boolean isDigit(char c) {
+        return '0' <= c && c <= '9';
     }
 }
 

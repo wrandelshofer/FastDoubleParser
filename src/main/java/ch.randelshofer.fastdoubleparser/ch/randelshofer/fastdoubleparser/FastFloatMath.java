@@ -81,22 +81,22 @@ class FastFloatMath {
         return result;
     }
 
-    static float hexFloatLiteralToFloat(int index, boolean isNegative, long digits, long exponent, int virtualIndexOfPoint, long exp_number, boolean isDigitsTruncated, int skipCountInTruncatedDigits) {
-        if (digits == 0) {
+    static float hexFloatLiteralToFloat(boolean isNegative, long significand, int exponent,
+                                        boolean isSignificandTruncated,
+                                        int exponentOfTruncatedSignificand) {
+        if (significand == 0) {
             return isNegative ? -0.0f : 0.0f;
         }
         final float result;
-        if (isDigitsTruncated) {
-            final long truncatedExponent = (virtualIndexOfPoint - index + skipCountInTruncatedDigits) * 4L
-                    + exp_number;
+        if (isSignificandTruncated) {
 
             // We have too many digits. We may have to round up.
             // To know whether rounding up is needed, we may have to examine up to 768 digits.
 
             // There are cases, in which rounding has no effect.
-            if (FLOAT_MIN_EXPONENT_POWER_OF_TWO <= truncatedExponent && truncatedExponent <= FLOAT_MAX_EXPONENT_POWER_OF_TWO) {
-                float withoutRounding = tryHexToFloatWithFastAlgorithm(isNegative, digits, (int) truncatedExponent);
-                float roundedUp = tryHexToFloatWithFastAlgorithm(isNegative, digits + 1, (int) truncatedExponent);
+            if (FLOAT_MIN_EXPONENT_POWER_OF_TWO <= exponentOfTruncatedSignificand && exponentOfTruncatedSignificand <= FLOAT_MAX_EXPONENT_POWER_OF_TWO) {
+                float withoutRounding = tryHexToFloatWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
+                float roundedUp = tryHexToFloatWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
                 if (!Double.isNaN(withoutRounding) && roundedUp == withoutRounding) {
                     return withoutRounding;
                 }
@@ -106,7 +106,7 @@ class FastFloatMath {
             result = Float.NaN;
 
         } else if (FLOAT_MIN_EXPONENT_POWER_OF_TWO <= exponent && exponent <= FLOAT_MAX_EXPONENT_POWER_OF_TWO) {
-            result = tryHexToFloatWithFastAlgorithm(isNegative, digits, (int) exponent);
+            result = tryHexToFloatWithFastAlgorithm(isNegative, significand, exponent);
         } else {
             result = Float.NaN;
         }
