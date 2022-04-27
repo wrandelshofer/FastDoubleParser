@@ -138,24 +138,21 @@ public class Main {
         System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * DESIRED_CONFIDENCE_LEVEL, 100 * DESIRED_CONFIDENCE_INTERVAL_WIDTH);
         double blackHole = 0;
+
+        // Actual measurements
         blackHole += measure(charArrayLines,
                 this::findmaxFastDoubleParserFromCharArrayParseDouble,
                 volumeMB, fdpCharStatsMBs, fdpCharStatsNSf, numberOfTrials);
         blackHole += measure(byteArrayLines,
                 this::findmaxFastDoubleParserFromByteArrayParseDouble,
                 volumeMB, fdpByteStatsMBs, fdpByteStatsNSf, numberOfTrials);
-        blackHole = measure(lines,
+        blackHole += measure(lines,
                 this::findmaxFastDoubleParserParseDouble,
                 volumeMB, fdpStringStatsMBs, fdpStringStatsNSf, numberOfTrials);
         blackHole += measure(lines,
                 this::findmaxDoubleParseDouble,
                 volumeMB, doubleStatsMBs, doubleStatsNSf, numberOfTrials);
-/*
-        printMbStats("FastDoubleParser", fdpStringStatsMBs, fdpStringStatsMBs);
-        printMbStats("FastDoubleParserFromCharArray", fdpCharStatsMBs, fdpCharStatsMBs);
-        printMbStats("FastDoubleParserFromByteArray", fdpByteStatsMBs, fdpByteStatsMBs);
-        printMbStats("Double", doubleStatsMBs, doubleStatsMBs);
-*/
+
         System.out.println();
         extractMbStats2("FastDoubleParser", fdpStringStatsMBs, fdpStringStatsNSf);
         extractMbStats2("FastDoubleParserFromCharArray", fdpCharStatsMBs, fdpCharStatsNSf);
@@ -163,9 +160,9 @@ public class Main {
         extractMbStats2("Double", doubleStatsMBs, doubleStatsNSf);
 
         System.out.println();
-        System.out.printf("Speedup FastDoubleParser              vs Double: %,.2f\n", fdpStringStatsMBs.getAverage() / doubleStatsMBs.getAverage());
-        System.out.printf("Speedup FastDoubleParserFromCharArray vs Double: %,.2f\n", fdpCharStatsMBs.getAverage() / doubleStatsMBs.getAverage());
-        System.out.printf("Speedup FastDoubleParserFromByteArray vs Double: %,.2f\n", fdpByteStatsMBs.getAverage() / doubleStatsMBs.getAverage());
+        System.out.printf("Speedup FastDoubleParser               vs Double: %,.2f\n", fdpStringStatsMBs.getAverage() / doubleStatsMBs.getAverage());
+        System.out.printf("Speedup FastDoubleParserFromCharArray  vs Double: %,.2f\n", fdpCharStatsMBs.getAverage() / doubleStatsMBs.getAverage());
+        System.out.printf("Speedup FastDoubleParserFromByteArray  vs Double: %,.2f\n", fdpByteStatsMBs.getAverage() / doubleStatsMBs.getAverage());
         System.out.print("\n\n");
     }
 

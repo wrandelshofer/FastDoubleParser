@@ -5,7 +5,7 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-public class FastDoubleParserFromCharArrayHandPickedTest extends AbstractHandPickedTest {
+public class FastDoubleParserFromCharArrayHandPickedTest extends AbstractDoubleHandPickedTest {
     @Override
     double parse(CharSequence str) {
         char[] chars = new char[str.length()];

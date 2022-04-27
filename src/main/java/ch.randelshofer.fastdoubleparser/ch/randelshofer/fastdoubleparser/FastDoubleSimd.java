@@ -21,7 +21,7 @@ import static jdk.incubator.vector.VectorOperators.UNSIGNED_GT;
 import static jdk.incubator.vector.VectorOperators.UNSIGNED_LT;
 
 /**
- * This class provides the mathematical functions needed by {@link FastDoubleParser}.
+ * This class provides the mathematical functions needed by {@link FastDoubleParserOld}.
  * <p>
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
  * <p>

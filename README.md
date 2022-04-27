@@ -1,12 +1,12 @@
 # FastDoubleParser
 
-This is a straight-forward C++ to Java port of Daniel Lemire's fast_double_parser.
+This is a Java port of Daniel Lemire's fast_double_parser.
 
 https://github.com/lemire/fast_double_parser
 
 Usage:
 
-    import FastDoubleParser;
+    import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 
     double d = FastDoubleParser.parseDouble("1.2345");
 

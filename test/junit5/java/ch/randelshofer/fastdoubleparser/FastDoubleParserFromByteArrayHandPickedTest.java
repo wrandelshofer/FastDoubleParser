@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.nio.charset.StandardCharsets;
 
-public class FastDoubleParserFromByteArrayHandPickedTest extends AbstractHandPickedTest {
+public class FastDoubleParserFromByteArrayHandPickedTest extends AbstractDoubleHandPickedTest {
     @Override
     double parse(CharSequence str) {
         byte[] bytes = new byte[str.length()];
