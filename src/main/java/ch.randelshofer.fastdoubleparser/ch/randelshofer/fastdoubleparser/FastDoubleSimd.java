@@ -5,9 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
 
 /**
  * This class provides the mathematical functions needed by {@link FastDoubleParser}.
@@ -39,10 +36,6 @@ import java.nio.ByteOrder;
  */
 class FastDoubleSimd {
 
-    public final static VarHandle readLongFromByteArrayLittleEndian =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
-    public final static VarHandle readLongFromByteArrayBigEndian =
-            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
 
     /**
      * Tries to parse eight decimal digits from a char array using the
@@ -112,7 +105,7 @@ class FastDoubleSimd {
      * returns -1 if {@code value} does not contain 8 digits
      */
     public static int tryToParseEightDigitsUtf8Swar(byte[] a, int offset) {
-        long value = (long) readLongFromByteArrayLittleEndian.get(a, offset);
+        long value = readLongFromByteArrayLittleEndian(a, offset);
         long val = value - 0x3030303030303030L;
         long det = ((value + 0x4646464646464646L) | val) &
                 0x8080808080808080L;
@@ -140,7 +133,7 @@ class FastDoubleSimd {
      * returns -1 if {@code value} does not contain 8 digits
      */
     public static int tryToParseSevenDigitsUtf8Swar(byte[] a, int offset) {
-        long value = ((long) readLongFromByteArrayLittleEndian.get(a, offset - 1)
+        long value = (readLongFromByteArrayLittleEndian(a, offset - 1)
                 & 0xffffffff_ffffff00L) | 0x30L;
         long val = value - 0x3030303030303030L;
         long det = ((value + 0x4646464646464646L) | val) &
@@ -258,7 +251,7 @@ class FastDoubleSimd {
      *               returns -1 if {@code value} does not contain 8 digits
      */
     public static long tryToParseEightHexDigitsUtf8Swar(byte[] a, int offset) {
-        return tryToParseEightHexDigitsUtf8Swar((long) readLongFromByteArrayBigEndian.get(a, offset));
+        return tryToParseEightHexDigitsUtf8Swar(readLongFromByteArrayBigEndian(a, offset));
     }
 
     /**
@@ -361,5 +354,27 @@ class FastDoubleSimd {
         long v5 = (v2 | v2 >>> 24) & 0xffffL;
 
         return v5;
+    }
+
+    public static long readLongFromByteArrayLittleEndian(byte[] a, int offset) {
+        return ((a[offset + 7] & 0xffL) << 56)
+                | ((a[offset + 6] & 0xffL) << 48)
+                | ((a[offset + 5] & 0xffL) << 40)
+                | ((a[offset + 4] & 0xffL) << 32)
+                | ((a[offset + 3] & 0xffL) << 24)
+                | ((a[offset + 2] & 0xffL) << 16)
+                | ((a[offset + 1] & 0xffL) << 8)
+                | (a[offset] & 0xffL);
+    }
+
+    public static long readLongFromByteArrayBigEndian(byte[] a, int offset) {
+        return ((a[offset] & 0xffL) << 56)
+                | ((a[offset + 1] & 0xffL) << 48)
+                | ((a[offset + 2] & 0xffL) << 40)
+                | ((a[offset + 3] & 0xffL) << 32)
+                | ((a[offset + 4] & 0xffL) << 24)
+                | ((a[offset + 5] & 0xffL) << 16)
+                | ((a[offset + 6] & 0xffL) << 8)
+                | (a[offset + 7] & 0xffL);
     }
 }
