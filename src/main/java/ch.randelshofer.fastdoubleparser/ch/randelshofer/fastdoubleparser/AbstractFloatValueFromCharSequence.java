@@ -124,8 +124,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         // Parse exponent number
         // ---------------------
         int expNumber = 0;
-        final boolean hasExponent = (ch == 'e') || (ch == 'E');
-        if (hasExponent) {
+        if (ch == 'e' || ch == 'E') {
             ch = ++index < endIndex ? str.charAt(index) : 0;
             boolean neg_exp = ch == '-';
             if (neg_exp || ch == '+') {

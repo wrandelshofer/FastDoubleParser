@@ -125,8 +125,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         // Parse exponent number
         // ---------------------
         int expNumber = 0;
-        final boolean hasExponent = (ch == 'e') || (ch == 'E');
-        if (hasExponent) {
+        if (ch == 'e' || ch == 'E') {
             ch = ++index < endIndex ? str[index] : 0;
             boolean neg_exp = ch == '-';
             if (neg_exp || ch == '+') {
@@ -448,7 +447,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
     abstract long positiveInfinity();
 
     private int tryToParseEightDigits(char[] str, int offset) {
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(str, offset);
+        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(str, offset);
     }
 
     abstract long valueOfFloatLiteral(

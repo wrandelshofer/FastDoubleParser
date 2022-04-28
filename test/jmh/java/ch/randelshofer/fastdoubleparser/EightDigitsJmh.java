@@ -25,6 +25,43 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
+ * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 19-ea+20-1369
+ *  # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
+ *
+ * Benchmark     (eightDigitsCharSequence)  Mode  Cnt   Score   Error  Units
+ * m00ByteArray7DecDigitsSwar     12345678  avgt    2   4.187          ns/op
+ * m00ByteArray7DecDigitsSwar     12345x78  avgt    2   3.185          ns/op
+ * m01ByteArrayDecScalar          12345678  avgt    2   9.212          ns/op
+ * m01ByteArrayDecScalar          12345x78  avgt    2   7.509          ns/op
+ * m02CharArrayDecScalar          12345678  avgt    2  11.014          ns/op
+ * m02CharArrayDecScalar          12345x78  avgt    2   9.268          ns/op
+ * m03StringDecScalar             12345678  avgt    2   9.212          ns/op
+ * m03StringDecScalar             12345x78  avgt    2   7.048          ns/op
+ *
+ * m11ByteArrayDecSwar            12345678  avgt    2   3.936          ns/op
+ * m11ByteArrayDecSwar            12345x78  avgt    2   3.162          ns/op
+ * m12CharArrayDecSwar            12345678  avgt    2   6.063          ns/op
+ * m12CharArrayDecSwar            12345x78  avgt    2   4.573          ns/op
+ * m13StringDecSwar               12345678  avgt    2   6.671          ns/op
+ * m13StringDecSwar               12345x78  avgt    2   5.228          ns/op
+ * m14ByteArrayHexSwar            12345678  avgt    2   6.233          ns/op
+ * m14ByteArrayHexSwar            12345x78  avgt    2   3.734          ns/op
+ * m15CharArrayHexSwar            12345678  avgt    2   9.601          ns/op
+ * m15CharArrayHexSwar            12345x78  avgt    2   7.977          ns/op
+ *
+ * m21ByteArrayDecVector          12345678  avgt    2   5.216          ns/op
+ * m21ByteArrayDecVector          12345x78  avgt    2   3.468          ns/op
+ * m22CharArrayDecVector          12345678  avgt    2   5.071          ns/op
+ * m22CharArrayDecVector          12345x78  avgt    2   3.419          ns/op
+ * m23StringDecVector             12345678  avgt    2   7.816          ns/op
+ * m23StringDecVector             12345x78  avgt    2   5.365          ns/op
+ * m24ByteArrayHexVector          12345678  avgt    2   7.344          ns/op
+ * m24ByteArrayHexVector          12345x78  avgt    2   3.413          ns/op
+ * m25CharArrayHexVector          12345678  avgt    2   7.347          ns/op
+ * m25CharArrayHexVector          12345x78  avgt    2   3.300          ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.28
  * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17+35-2724
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
  *

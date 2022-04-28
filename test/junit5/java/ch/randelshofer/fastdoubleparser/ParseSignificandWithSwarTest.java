@@ -117,7 +117,7 @@ public class ParseSignificandWithSwarTest {
 
         if (exp != 0) {
             // We have a decimal point somewhere before the last digit:
-            // -> keep fraction in place; move int part; fill '0' character in.
+            // -> keep fraction in place; move int part to the right; fill in '0' character.
             long fraction = asciiFloat & (-1L << (tzCount + 8));
             integer = exp == 7 ? 0 : (asciiFloat << (exp + 1) * 8) >>> exp * 8;
             integer = 0x30L | fraction | integer;
