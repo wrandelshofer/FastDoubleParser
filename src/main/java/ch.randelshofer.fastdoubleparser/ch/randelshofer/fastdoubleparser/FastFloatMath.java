@@ -61,8 +61,8 @@ class FastFloatMath {
             // There are cases, in which rounding has no effect.
             if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponentOfTruncatedSignificand
                     && exponentOfTruncatedSignificand <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
-                float withoutRounding = tryDecToFloatWithFastAlgorithm(isNegative, significand, (int) exponentOfTruncatedSignificand);
-                float roundedUp = tryDecToFloatWithFastAlgorithm(isNegative, significand + 1, (int) exponentOfTruncatedSignificand);
+                float withoutRounding = tryDecToFloatWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
+                float roundedUp = tryDecToFloatWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
                 if (!Float.isNaN(withoutRounding) && roundedUp == withoutRounding) {
                     return withoutRounding;
                 }
