@@ -7,12 +7,16 @@ package ch.randelshofer.fastdoubleparser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FastDoubleParserFromCharArrayLexicallyGeneratedTest extends AbstractLexicallyGeneratedTest {
+public class FastDoubleParserFromCharSequenceLexicallyGeneratedTest extends AbstractLexicallyGeneratedTest {
     protected void testAgainstJdk(String str) {
         double expected = Double.parseDouble(str);
-        double actual = FastDoubleParser.parseDouble(str.toCharArray());
+        double actual = parse(str);
         assertEquals(expected, actual, "str=" + str);
         assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actual),
                 "longBits of " + expected);
+    }
+
+    protected double parse(String str) {
+        return FastDoubleParser.parseDouble(str);
     }
 }

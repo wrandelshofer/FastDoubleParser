@@ -113,7 +113,49 @@ class FastDoubleSimd {
      */
     public static int tryToParseEightDigitsUtf8Swar(byte[] a, int offset) {
         long value = (long) readLongFromByteArrayLittleEndian.get(a, offset);
-        return tryToParseEightDigitsUtf8Swar(value);
+        long val = value - 0x3030303030303030L;
+        long det = ((value + 0x4646464646464646L) | val) &
+                0x8080808080808080L;
+        if (det != 0L) {
+            return -1;
+        }
+
+        // The last 2 multiplications in this algorithm are independent of each
+        // other.
+        long mask = 0x000000FF_000000FFL;
+        val = (val * 0xa_01L) >>> 8;// 1+(10<<8)
+        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
+                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
+        return (int) val;
+    }
+
+    /**
+     * Tries to parse seven decimal digits from a byte array using the
+     * 'SIMD within a register technique' (SWAR).
+     *
+     * @param a      contains 8 ascii characters
+     * @param offset the offset of the first character in {@code a}, must be
+     *               {@literal > 0}.
+     * @return the parsed number,
+     * returns -1 if {@code value} does not contain 8 digits
+     */
+    public static int tryToParseSevenDigitsUtf8Swar(byte[] a, int offset) {
+        long value = ((long) readLongFromByteArrayLittleEndian.get(a, offset - 1)
+                & 0xffffffff_ffffff00L) | 0x30L;
+        long val = value - 0x3030303030303030L;
+        long det = ((value + 0x4646464646464646L) | val) &
+                0x8080808080808080L;
+        if (det != 0L) {
+            return -1;
+        }
+
+        // The last 2 multiplications in this algorithm are independent of each
+        // other.
+        long mask = 0x000000FF_000000FFL;
+        val = (val * 0xa_01L) >>> 8;// 1+(10<<8)
+        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
+                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
+        return (int) val;
     }
 
     /**
@@ -130,7 +172,7 @@ class FastDoubleSimd {
      *             | ((bytes[2]&0xffL)<<16)
      *             | ((bytes[1]&0xffL)<< 8)
      *             |  (bytes[0]&0xffL);
-     * }</pre>s
+     * }</pre>
      *
      * @param value contains 8 ascii characters in little endian order
      * @return the parsed number,
@@ -144,12 +186,10 @@ class FastDoubleSimd {
             return -1;
         }
 
-        // The last 2 multiplications in this algorithm are independent of each
-        // other.
-        long mask = 0x000000FF_000000FFL;
-        val = (val * 0xa_01L) >>> 8;// 1+(10<<8)
-        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
-                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
+        // The last 2 multiplications are independent of each other.
+        val = (val * (1 + (10 << 8))) >>> 8;
+        val = (((val & 0xff_000000ffL) * (100 + (100_0000L << 32)))
+                + (((val >>> 16) & 0xff_000000ffL) * (1 + (1_0000L << 32)))) >>> 32;
         return (int) val;
     }
 

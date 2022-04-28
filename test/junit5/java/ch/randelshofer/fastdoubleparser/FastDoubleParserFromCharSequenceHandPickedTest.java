@@ -5,7 +5,7 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-public class FastDoubleParserHandPickedTest extends AbstractHandPickedTest {
+public class FastDoubleParserFromCharSequenceHandPickedTest extends AbstractDoubleHandPickedTest {
 
 
     @Override

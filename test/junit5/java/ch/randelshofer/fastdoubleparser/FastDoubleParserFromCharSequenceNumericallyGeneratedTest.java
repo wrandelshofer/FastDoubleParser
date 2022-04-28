@@ -5,7 +5,7 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-public class FastDoubleParserNumericallyGeneratedTest extends AbstractNumericallyGeneratedTest {
+public class FastDoubleParserFromCharSequenceNumericallyGeneratedTest extends AbstractDoubleNumericallyGeneratedTest {
     @Override
     protected double parse(String str) {
         return FastDoubleParser.parseDouble(str);

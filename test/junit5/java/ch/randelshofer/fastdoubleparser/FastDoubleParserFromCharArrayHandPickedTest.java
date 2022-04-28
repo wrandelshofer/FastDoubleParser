@@ -5,18 +5,18 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-public class FastDoubleParserFromCharArrayHandPickedTest extends AbstractHandPickedTest {
+public class FastDoubleParserFromCharArrayHandPickedTest extends AbstractDoubleHandPickedTest {
     @Override
     double parse(CharSequence str) {
         char[] chars = new char[str.length()];
         for (int i = 0; i < chars.length; i++) {
             chars[i] = str.charAt(i);
         }
-        return FastDoubleParserFromCharArray.parseDouble(chars);
+        return FastDoubleParser.parseDouble(chars);
     }
 
     @Override
     protected double parse(String str, int offset, int length) {
-        return FastDoubleParserFromCharArray.parseDouble(str.toCharArray(), offset, length);
+        return FastDoubleParser.parseDouble(str.toCharArray(), offset, length);
     }
 }

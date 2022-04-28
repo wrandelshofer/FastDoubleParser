@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-abstract class AbstractNumericallyGeneratedTest {
+abstract class AbstractFloatNumericallyGeneratedTest {
     /**
      * Seed for random number generator.
      * Specify a literal number to obtain repeatable tests.
@@ -27,29 +27,29 @@ abstract class AbstractNumericallyGeneratedTest {
     @TestFactory
     Stream<DynamicNode> dynamicTestsRandomDecimalFloatLiterals() {
         Random r = new Random(SEED);
-        return r.longs(10_000)
-                .mapToDouble(Double::longBitsToDouble)
-                .mapToObj(d -> dynamicTest(d + "", () -> testLegalInput(d)));
+        return r.ints(10_000)
+                .mapToObj(Float::intBitsToFloat)
+                .map(d -> dynamicTest(d + "", () -> testLegalInput(d)));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsRandomHexadecimalFloatLiterals() {
         Random r = new Random(SEED);
-        return r.longs(10_000)
-                .mapToDouble(Double::longBitsToDouble)
-                .mapToObj(d -> dynamicTest(Double.toHexString(d) + "", () -> testLegalInput(d)));
+        return r.ints(10_000)
+                .mapToObj(Float::intBitsToFloat)
+                .map(d -> dynamicTest(Float.toHexString(d) + "", () -> testLegalInput(d)));
     }
 
-    private void testLegalInput(double expected) {
+    private void testLegalInput(float expected) {
         testLegalInput(expected + "", expected);
     }
 
-    private void testLegalInput(String str, double expected) {
-        double actual = parse(str);
+    private void testLegalInput(String str, float expected) {
+        float actual = parse(str);
         assertEquals(expected, actual, "str=" + str);
-        assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actual),
-                "longBits of " + expected);
+        assertEquals(Float.floatToIntBits(expected), Float.floatToIntBits(actual),
+                "intBits of " + expected);
     }
 
-    protected abstract double parse(String str);
+    protected abstract float parse(String str);
 }
