@@ -43,7 +43,7 @@ public class FastDoubleParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
-        return new DoubleFromCharSequence().parseDouble(str, offset, length);
+        return DoubleFromCharSequence.INSTANCE.parseDouble(str, offset, length);
     }
 
     /**
@@ -72,7 +72,7 @@ public class FastDoubleParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static double parseDouble(byte[] str, int off, int len) throws NumberFormatException {
-        return new DoubleFromByteArray().parseDouble(str, off, len);
+        return DoubleFromByteArray.INSTANCE.parseDouble(str, off, len);
     }
 
 
@@ -101,7 +101,7 @@ public class FastDoubleParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static double parseDouble(char[] str, int off, int len) throws NumberFormatException {
-        return new DoubleFromCharArray().parseDouble(str, off, len);
+        return DoubleFromCharArray.INSTANCE.parseDouble(str, off, len);
     }
 
 }

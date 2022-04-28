@@ -42,7 +42,7 @@ public class FastFloatParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static float parseFloat(CharSequence str, int offset, int length) throws NumberFormatException {
-        return new FloatFromCharSequence().parseFloat(str, offset, length);
+        return FloatFromCharSequence.INSTANCE.parseFloat(str, offset, length);
     }
 
     /**
@@ -71,7 +71,7 @@ public class FastFloatParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static float parseFloat(byte[] str, int off, int len) throws NumberFormatException {
-        return new FloatFromByteArray().parseFloat(str, off, len);
+        return FloatFromByteArray.INSTANCE.parseFloat(str, off, len);
     }
 
 
@@ -100,7 +100,7 @@ public class FastFloatParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static float parseFloat(char[] str, int off, int len) throws NumberFormatException {
-        return new FloatFromCharArray().parseFloat(str, off, len);
+        return FloatFromCharArray.INSTANCE.parseFloat(str, off, len);
     }
 
 }

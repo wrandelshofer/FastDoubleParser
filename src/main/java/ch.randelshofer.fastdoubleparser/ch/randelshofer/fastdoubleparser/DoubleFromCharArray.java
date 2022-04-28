@@ -8,10 +8,11 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Parses a {@code double} from a {@code char} array.
  */
-public final class DoubleFromCharArray extends AbstractFloatValueFromCharArray {
+final class DoubleFromCharArray extends AbstractFloatValueFromCharArray {
 
+    static final DoubleFromCharArray INSTANCE = new DoubleFromCharArray();
 
-    public DoubleFromCharArray() {
+    private DoubleFromCharArray() {
 
     }
 

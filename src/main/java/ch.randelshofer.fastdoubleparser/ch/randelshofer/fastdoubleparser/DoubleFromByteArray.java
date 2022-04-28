@@ -10,10 +10,11 @@ import java.nio.charset.StandardCharsets;
 /**
  * Parses a {@code double} from a {@code byte} array.
  */
-public final class DoubleFromByteArray extends AbstractFloatValueFromByteArray {
+final class DoubleFromByteArray extends AbstractFloatValueFromByteArray {
 
+    static final DoubleFromByteArray INSTANCE = new DoubleFromByteArray();
 
-    public DoubleFromByteArray() {
+    private DoubleFromByteArray() {
 
     }
 
