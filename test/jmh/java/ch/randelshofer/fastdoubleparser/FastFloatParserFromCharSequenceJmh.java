@@ -13,6 +13,7 @@ import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
@@ -53,6 +54,11 @@ public class FastFloatParserFromCharSequenceJmh {
             "0x1.57bd4ep-116"
     })
     public String str;
+
+    @Setup
+    public void setup() {
+        System.out.println(str + "=" + FastFloatParser.parseFloat(str));
+    }
 
     @Benchmark
     public float m() {

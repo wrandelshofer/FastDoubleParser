@@ -83,7 +83,6 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         // Note: a multiplication by a constant is cheaper than an
         //       arbitrary integer multiplication.
         long significand = 0;// significand is treated as an unsigned long
-        int exponent = 0;
         final int significandStartIndex = index;
         int virtualIndexOfPoint = -1;
         char ch = 0;
@@ -93,7 +92,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
                 // This might overflow, we deal with it later.
                 significand = 10 * significand + ch - '0';
             } else if (ch == '.') {
-                if (virtualIndexOfPoint != -1) {
+                if (virtualIndexOfPoint >= 0) {
                     throw newNumberFormatException(str, startIndex, endIndex);
                 }
                 virtualIndexOfPoint = index;
@@ -113,11 +112,13 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         }
         final int digitCount;
         final int significandEndIndex = index;
-        if (virtualIndexOfPoint == -1) {
-            digitCount = significandEndIndex - significandStartIndex;
-            virtualIndexOfPoint = significandEndIndex;
+        int exponent;
+        if (virtualIndexOfPoint < 0) {
+            digitCount = index - significandStartIndex;
+            virtualIndexOfPoint = index;
+            exponent = 0;
         } else {
-            digitCount = significandEndIndex - significandStartIndex - 1;
+            digitCount = index - significandStartIndex - 1;
             exponent = virtualIndexOfPoint - index + 1;
         }
 
@@ -159,6 +160,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         // -----------------------------------------------
         final boolean isSignificandTruncated;
         int skipCountInTruncatedDigits = 0;//counts +1 if we skipped over the decimal point
+        int exponentOfTruncatedSignificand;
         if (digitCount > 19) {
             significand = 0;
             for (index = significandStartIndex; index < significandEndIndex; index++) {
@@ -173,12 +175,14 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
                     }
                 }
             }
+            exponentOfTruncatedSignificand = virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber;
             isSignificandTruncated = (index < significandEndIndex);
         } else {
             isSignificandTruncated = false;
+            exponentOfTruncatedSignificand = 0;
         }
         return valueOfFloatLiteral(str, startIndex, endIndex, isNegative, significand, exponent, isSignificandTruncated,
-                virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber);
+                exponentOfTruncatedSignificand);
     }
 
     /**
@@ -281,7 +285,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
             if (hexValue >= 0) {
                 significand = (significand << 4) | hexValue;// This might overflow, we deal with it later.
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
-                if (virtualIndexOfPoint != -1) {
+                if (virtualIndexOfPoint >= 0) {
                     throw newNumberFormatException(str, startIndex, endIndex);
                 }
                 virtualIndexOfPoint = index;
@@ -302,7 +306,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
             }
         }
         final int significandEndIndex = index;
-        if (virtualIndexOfPoint == -1) {
+        if (virtualIndexOfPoint < 0) {
             digitCount = significandEndIndex - significandStartIndex;
             virtualIndexOfPoint = significandEndIndex;
         } else {

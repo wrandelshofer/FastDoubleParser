@@ -6,15 +6,18 @@
 package ch.randelshofer.fastdoubleparserdemo;
 
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.FastFloatParser;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -25,8 +28,8 @@ import java.util.stream.Collectors;
  * https://github.com/lemire/fast_double_parser/blob/master/benchmarks/benchmark.cpp
  * <p>
  * The code runs the benchmark multiple times, until the confidence interval
- * for a confidence level of {@value DESIRED_CONFIDENCE_LEVEL}
- * is smaller than {@value DESIRED_CONFIDENCE_INTERVAL_WIDTH} of the average
+ * for a confidence level of {@value CONFIDENCE_LEVEL}
+ * is smaller than {@value CONFIDENCE_INTERVAL_WIDTH} of the average
  * measured time.
  * <p>
  * It then prints the the average times, standard deviations and confidence intervals.
@@ -55,11 +58,11 @@ public class Main {
     /**
      * Desired confidence interval width in percent of the average value.
      */
-    private static final double DESIRED_CONFIDENCE_INTERVAL_WIDTH = 0.01;
+    private static final double CONFIDENCE_INTERVAL_WIDTH = 0.01;
     /**
      * One minus desired confidence level in percent.
      */
-    private static final double DESIRED_CONFIDENCE_LEVEL = 0.998;
+    private static final double CONFIDENCE_LEVEL = 0.998;
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
@@ -70,172 +73,204 @@ public class Main {
             System.out.println("You can also provide a filename: it should contain one "
                     + "string per line corresponding to a number.");
         } else {
-            benchmark.fileload(args[0]);
+            benchmark.loadFile(args[0]);
         }
     }
 
     public void demo(int howmany) {
-        System.out.println("parsing random numbers in the range [0,1)");
+        System.out.println("parsing random doubles in the range [0,1)");
         List<String> lines = new Random().doubles(howmany).mapToObj(Double::toString)
                 .collect(Collectors.toList());
         validate(lines);
         process(lines);
     }
 
-    private double findmaxFastDoubleParserParseDouble(List<String> s) {
+    private double sumFastDoubleFromCharSequence(List<String> s) {
         double answer = 0;
         for (String st : s) {
             double x = FastDoubleParser.parseDouble(st);
-            answer = Math.max(answer, x);
+            answer += x;
         }
         return answer;
     }
 
-    private double findmaxFastDoubleParserFromByteArrayParseDouble(List<byte[]> s) {
+    private float sumFastFloatFromCharSequence(List<String> s) {
+        float answer = 0;
+        for (String st : s) {
+            float x = FastFloatParser.parseFloat(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private float sumFastFloatParserFromByteArray(List<byte[]> s) {
+        float answer = 0;
+        for (byte[] st : s) {
+            float x = FastFloatParser.parseFloat(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private float sumFastFloatParserFromCharArray(List<char[]> s) {
+        float answer = 0;
+        for (char[] st : s) {
+            float x = FastFloatParser.parseFloat(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumFastDoubleParserFromByteArray(List<byte[]> s) {
         double answer = 0;
         for (byte[] st : s) {
             double x = FastDoubleParser.parseDouble(st);
-            answer = Math.max(answer, x);
+            answer += x;
         }
         return answer;
     }
 
-    private double findmaxFastDoubleParserFromCharArrayParseDouble(List<char[]> s) {
+    private double sumFastDoubleParserFromCharArray(List<char[]> s) {
         double answer = 0;
         for (char[] st : s) {
             double x = FastDoubleParser.parseDouble(st);
-            answer = Math.max(answer, x);
+            answer += x;
         }
         return answer;
     }
 
-    private double findmaxDoubleParseDouble(List<String> s) {
+    private double sumDoubleParseDouble(List<String> s) {
         double answer = 0;
         for (String st : s) {
             double x = Double.parseDouble(st);
-            answer = Math.max(answer, x);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private float sumFloatParseFloat(List<String> s) {
+        float answer = 0;
+        for (String st : s) {
+            float x = Float.parseFloat(st);
+            answer += x;
         }
         return answer;
     }
 
     private void process(List<String> lines) {
+        Map<String, Supplier<? extends Number>> functions = createMeasuringFunctions(lines);
+
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
 
-        VarianceStatistics fdpStringStatsMBs = new VarianceStatistics();
-        VarianceStatistics fdpByteStatsMBs = new VarianceStatistics();
-        VarianceStatistics fdpCharStatsMBs = new VarianceStatistics();
-        VarianceStatistics doubleStatsMBs = new VarianceStatistics();
-        VarianceStatistics fdpStringStatsNSf = new VarianceStatistics();
-        VarianceStatistics fdpByteStatsNSf = new VarianceStatistics();
-        VarianceStatistics fdpCharStatsNSf = new VarianceStatistics();
-        VarianceStatistics doubleStatsNSf = new VarianceStatistics();
-        int numberOfTrials = NUMBER_OF_TRIALS;
+        // Measure
+        System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+                100 * CONFIDENCE_LEVEL, 100 * CONFIDENCE_INTERVAL_WIDTH);
+        Map<String, VarianceStatistics> results = new LinkedHashMap<>();
+        for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
+            VarianceStatistics warmup = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
+            VarianceStatistics stats = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
+            results.put(entry.getKey(), stats);
+        }
+
+        // Print measurements
+        for (Map.Entry<String, VarianceStatistics> entry : results.entrySet()) {
+            String name = entry.getKey();
+            VarianceStatistics stats = entry.getValue();
+            printStats(lines, volumeMB, name, stats);
+        }
+
+        // Print speedup versus reference implementation
+        System.out.println();
+        String reference = "Double";
+        VarianceStatistics referenceStats = results.get(reference);
+        for (Map.Entry<String, VarianceStatistics> entry : results.entrySet()) {
+            String name = entry.getKey();
+            if (!reference.equals(name)) {
+                VarianceStatistics stats = entry.getValue();
+                System.out.printf("Speedup %-17s vs %s: %,.2f\n", name, reference, referenceStats.getAverage() / stats.getAverage());
+
+            }
+        }
+    }
+
+    private Map<String, Supplier<? extends Number>> createMeasuringFunctions(List<String> lines) {
         List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.ISO_8859_1)).collect(Collectors.toList());
         List<char[]> charArrayLines = lines.stream().map(String::toCharArray).collect(Collectors.toList());
 
-        System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
-                100 * DESIRED_CONFIDENCE_LEVEL, 100 * DESIRED_CONFIDENCE_INTERVAL_WIDTH);
-        double blackHole = 0;
 
-        // Actual measurements
-        blackHole += measure(charArrayLines,
-                this::findmaxFastDoubleParserFromCharArrayParseDouble,
-                volumeMB, fdpCharStatsMBs, fdpCharStatsNSf, numberOfTrials);
-        blackHole += measure(byteArrayLines,
-                this::findmaxFastDoubleParserFromByteArrayParseDouble,
-                volumeMB, fdpByteStatsMBs, fdpByteStatsNSf, numberOfTrials);
-        blackHole += measure(lines,
-                this::findmaxFastDoubleParserParseDouble,
-                volumeMB, fdpStringStatsMBs, fdpStringStatsNSf, numberOfTrials);
-        blackHole += measure(lines,
-                this::findmaxDoubleParseDouble,
-                volumeMB, doubleStatsMBs, doubleStatsNSf, numberOfTrials);
-
-        System.out.println();
-        extractMbStats2("FastDoubleParser", fdpStringStatsMBs, fdpStringStatsNSf);
-        extractMbStats2("FastDoubleParserFromCharArray", fdpCharStatsMBs, fdpCharStatsNSf);
-        extractMbStats2("FastDoubleParserFromByteArray", fdpByteStatsMBs, fdpByteStatsNSf);
-        extractMbStats2("Double", doubleStatsMBs, doubleStatsNSf);
-
-        System.out.println();
-        System.out.printf("Speedup FastDoubleParser               vs Double: %,.2f\n", fdpStringStatsMBs.getAverage() / doubleStatsMBs.getAverage());
-        System.out.printf("Speedup FastDoubleParserFromCharArray  vs Double: %,.2f\n", fdpCharStatsMBs.getAverage() / doubleStatsMBs.getAverage());
-        System.out.printf("Speedup FastDoubleParserFromByteArray  vs Double: %,.2f\n", fdpByteStatsMBs.getAverage() / doubleStatsMBs.getAverage());
-        System.out.print("\n\n");
+        Map<String, Supplier<? extends Number>> functions = new LinkedHashMap<>();
+        functions.put("FastDouble String", () -> sumFastDoubleFromCharSequence(lines));
+        functions.put("FastDouble char[]", () -> sumFastDoubleParserFromCharArray(charArrayLines));
+        functions.put("FastDouble byte[]", () -> sumFastDoubleParserFromByteArray(byteArrayLines));
+        functions.put("Double", () -> sumDoubleParseDouble(lines));
+        functions.put("FastFloat  String", () -> sumFastFloatFromCharSequence(lines));
+        functions.put("FastFloat  char[]", () -> sumFastFloatParserFromCharArray(charArrayLines));
+        functions.put("FastFloat  byte[]", () -> sumFastFloatParserFromByteArray(byteArrayLines));
+        functions.put("Float", () -> sumFloatParseFloat(lines));
+        return functions;
     }
 
-    private <T> double measure(List<T> lines,
-                               Function<List<T>, Double> func,
-                               double volumeMB, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpStringStatsNSf, int numberOfTrials) {
+    private void printStats(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
+        System.out.printf("%-17s :  %7.2f MB/s  %7.2f Mfloat/s  %7.2f ns/f\n",
+                name,
+                volumeMB * 1e9 / stats.getAverage(),
+                lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
+                stats.getAverage() / lines.size()
+        );
+        /*
+        double confidenceWidth = Stats.confidence(1 - CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
+        System.out.printf("%-30s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf)  %7.2f Mfloat/s  %7.2f ns/f\n",
+                name,
+                volumeMB *1e9 / stats.getAverage(),
+                stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
+                100*confidenceWidth,
+                lines.size()*(1e9/1_000_000) / stats.getAverage(),
+                stats.getAverage() / lines.size()
+        );*/
+    }
+
+
+    private VarianceStatistics measure(Supplier<? extends Number> func, int numberOfTrials,
+                                       double confidenceLevel, double confidenceIntervalWidth) {
         long t1;
         double confidenceWidth;
         long t2;
         double elapsed;
-        double blackHole = 0;
         VarianceStatistics stats = new VarianceStatistics();
-        // warmup
-        for (int i = 0; i < numberOfTrials; i++) {
-            blackHole += func.apply(lines);
-        }
 
         // measure
         do {
             for (int i = 0; i < numberOfTrials; i++) {
                 t1 = System.nanoTime();
-                blackHole += func.apply(lines);
+                func.get();
                 t2 = System.nanoTime();
                 elapsed = t2 - t1;
                 stats.accept(elapsed);
-                fdpStringStatsMBs.accept(volumeMB * 1000000000 / elapsed);
-                fdpStringStatsNSf.accept(elapsed / lines.size());
             }
-            confidenceWidth = Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
-        } while (confidenceWidth > DESIRED_CONFIDENCE_INTERVAL_WIDTH);
-        return blackHole;
-    }
-
-    private void extractMbStats2(String fastDoubleParser, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpStringStatsNSf) {
-        System.out.printf("%-30s :  %8.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s    %7.2f ns/f\n",
-                fastDoubleParser,
-                fdpStringStatsMBs.getAverage(),
-                fdpStringStatsMBs.getSampleStandardDeviation() * 100 / fdpStringStatsMBs.getAverage(),
-                1000 / fdpStringStatsNSf.getAverage(),
-                fdpStringStatsNSf.getAverage());
-    }
-
-    private void printMbStats(String fastDoubleParser, VarianceStatistics fdpStringStatsMBs, VarianceStatistics fdpByteStatsMBs) {
-        System.out.printf("%-30s MB/s avg: %8.2f, stdev: +/-%5.2f, conf%,4.1f%%: +/-%,.2f\n",
-                fastDoubleParser,
-                fdpStringStatsMBs.getAverage(),
-                fdpStringStatsMBs.getSampleStandardDeviation(),
-                100 * DESIRED_CONFIDENCE_LEVEL,
-                Stats.confidence(1 - DESIRED_CONFIDENCE_LEVEL, fdpStringStatsMBs.getSampleStandardDeviation(),
-                        fdpByteStatsMBs.getCount()));
+            confidenceWidth = Stats.confidence(1 - confidenceLevel, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
+        } while (confidenceWidth > confidenceIntervalWidth);
+        return stats;
     }
 
     private void validate(List<String> lines) {
-        for (String line : lines) {
-            double expected = Double.parseDouble(line);
-            double actual = FastDoubleParser.parseDouble(line);
-            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
-                System.err.println("FastDoubleParser disagrees. input=" + line + " expected=" + expected + " actual=" + actual);
-            }
-            actual = FastDoubleParser.parseDouble(line.getBytes(StandardCharsets.ISO_8859_1));
-            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
-                System.err.println("FastDoubleParserFromByteArray disagrees. input="
-                        + line + " expected=" + expected + " actual=" + actual
-                );
-            }
-            actual = FastDoubleParser.parseDouble(line.toCharArray());
-            if (Double.doubleToLongBits(expected) != Double.doubleToLongBits(actual)) {
-                System.err.println("FastDoubleParserFromCharArray disagrees. input="
-                        + line + " expected=" + expected + " actual=" + actual
-                );
+        Map<String, Supplier<? extends Number>> map = createMeasuringFunctions(lines);
+
+        Number expectedDoubleValue = sumDoubleParseDouble(lines);
+        Number expectedFloatValue = sumFloatParseFloat(lines);
+
+        for (Map.Entry<String, Supplier<? extends Number>> entry : map.entrySet()) {
+            String name = entry.getKey();
+            Number actual = entry.getValue().get();
+
+            if ((actual instanceof Double) && !expectedDoubleValue.equals(actual)
+                    || (actual instanceof Float) && !expectedFloatValue.equals(actual)) {
+                System.err.println(name + " has an error. expectedSum=" + expectedFloatValue + " actualSum=" + actual);
+
             }
         }
     }
 
-    public void fileload(String filename) throws IOException {
+    public void loadFile(String filename) throws IOException {
         Path path = FileSystems.getDefault().getPath(filename).toAbsolutePath();
         System.out.printf("parsing numbers in file %s\n", path);
         List<String> lines = Files.lines(path).collect(Collectors.toList());

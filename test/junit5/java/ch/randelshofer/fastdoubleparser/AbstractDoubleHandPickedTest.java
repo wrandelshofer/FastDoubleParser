@@ -118,6 +118,8 @@ abstract class AbstractDoubleHandPickedTest {
                 dynamicTest("1e0", () -> testLegalInput("1e0", 1e0)),
                 dynamicTest("1.e0", () -> testLegalInput("1.e0", 1e0)),
                 dynamicTest(".e2", () -> testLegalInput(".e2", 0)),
+                dynamicTest(".8", () -> testLegalInput(".8", 0.8)),
+                dynamicTest("8.", () -> testLegalInput("8.", 8.0)),
                 dynamicTest("1e1", () -> testLegalInput("1e1", 1e1)),
                 dynamicTest("1e+1", () -> testLegalInput("1e+1", 1e+1)),
                 dynamicTest("1e-1", () -> testLegalInput("1e-1", 1e-1)),
