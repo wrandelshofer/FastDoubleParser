@@ -996,8 +996,8 @@ class FastDoubleMath {
             // There are cases, in which rounding has no effect.
             if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponentOfTruncatedSignificand
                     && exponentOfTruncatedSignificand <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
-                double withoutRounding = tryDecFloatToDouble(isNegative, significand, (int) exponentOfTruncatedSignificand);
-                double roundedUp = tryDecFloatToDouble(isNegative, significand + 1, (int) exponentOfTruncatedSignificand);
+                double withoutRounding = tryDecFloatToDouble(isNegative, significand, exponentOfTruncatedSignificand);
+                double roundedUp = tryDecFloatToDouble(isNegative, significand + 1, exponentOfTruncatedSignificand);
                 if (!Double.isNaN(withoutRounding) && roundedUp == withoutRounding) {
                     return withoutRounding;
                 }
