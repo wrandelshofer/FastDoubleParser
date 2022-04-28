@@ -19,6 +19,8 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
+      - name: mkdir
+        run: mkdir -p out
       - name: Compile FastDoubleParser
         run: javac -d out -encoding utf8 -sourcepath src/main/java/ch.randelshofer.fastdoubleparser src/main/java/ch.randelshofer.fastdoubleparser/ch/randelshofer/fastdoubleparser/FastDoubleParser.java
       - name: Compile FastFloatParser
