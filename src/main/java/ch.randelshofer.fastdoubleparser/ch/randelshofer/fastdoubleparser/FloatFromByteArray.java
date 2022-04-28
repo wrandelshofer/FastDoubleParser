@@ -13,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 public class FloatFromByteArray extends AbstractFloatValueFromByteArray {
 
 
+    /**
+     * Creates a new instance.
+     */
     public FloatFromByteArray() {
 
     }
