@@ -5,8 +5,6 @@
 
 package ch.randelshofer.fastdoubleparserdemo;
 
-import jdk.incubator.vector.IntVector;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,8 +57,6 @@ public class SystemInfo {
                 return ex.getMessage();
             }
         }
-
-        buf.append(" SIMD-").append(IntVector.SPECIES_PREFERRED.vectorBitSize());
 
         return buf.toString();
     }
