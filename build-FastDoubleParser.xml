@@ -56,7 +56,7 @@
     <property name="manifest.specification-version" value="${version}"/>
     <property name="manifest.implementation-vendor" value="${groupId}"/>
 
-    <property name="src" value="src/main/java"/>
+    <property name="src" value="src/main/java/ch.randelshofer.fastdoubleparser"/>
     <property name="build" value="build"/>
     <property name="classes" value="build/classes"/>
     <property name="jars" value="build/jar"/>

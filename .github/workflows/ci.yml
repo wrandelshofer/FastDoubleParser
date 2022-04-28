@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        java: [ 8 ]
+        java: [ 18 ]
       fail-fast: false
       max-parallel: 4
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
@@ -19,14 +19,12 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - name: mkdir
-        run: mkdir -p out
       - name: Compile FastDoubleParser
-        run: javac -d out -encoding utf8 -sourcepath src/main/java/ch.randelshofer.fastdoubleparser src/main/java/ch.randelshofer.fastdoubleparser/ch/randelshofer/fastdoubleparser/FastDoubleParser.java src/main/java/ch.randelshofer.fastdoubleparser/ch/randelshofer/fastdoubleparser/FastDoubleParserFromCharArray.java src/main/java/ch.randelshofer.fastdoubleparser/ch/randelshofer/fastdoubleparser/FastDoubleParserFromByteArray.java
+        run: javac -d out -encoding utf8 --module-source-path src/main/java --module ch.randelshofer.fastdoubleparser
       - name: Compile FastDoubleParserDemo
-        run: javac -d out -encoding utf8 -cp out -sourcepath FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo/ch/randelshofer/fastdoubleparserdemo/Main.java
+        run: javac -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
       - name: Run Test 1
-        run: java -cp out ch.randelshofer.fastdoubleparserdemo.Main
+        run: java --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main
       - name: Run Test 2
-        run: java -cp out ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt
+        run: java --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt
 ...
