@@ -23,6 +23,7 @@ public class VectorizedFloatFromByteArray {
     private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
 
+
     /**
      * Parses a {@code FloatValue} without leading or trailing whitespace.
      *
@@ -120,12 +121,12 @@ public class VectorizedFloatFromByteArray {
         long low = digits
                 .castShape(IntVector.SPECIES_256, 1)
                 .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD) & 0xffffffffL;
+                .reduceLanesToLong(ADD);
 
         long high = digits
                 .castShape(IntVector.SPECIES_256, 0)
                 .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD) & 0xffffffffL;
+                .reduceLanesToLong(ADD);
         return high * 1_0000_0000L + low;
     }
 }
