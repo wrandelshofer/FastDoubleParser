@@ -24,7 +24,54 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 abstract class AbstractDoubleHandPickedTest {
 
-    abstract double parse(CharSequence str);
+    /**
+     * Tests input classes that execute different code branches in
+     * method {@link FastDoubleMath#tryDecFloatToDouble(boolean, long, int)}.
+     */
+    @TestFactory
+    List<DynamicNode> dynamicTestsDecFloatLiteralClingerInputClasses() {
+        return Arrays.asList(
+                dynamicTest("Inside Clinger fast path \"1000000000000000000e-340\")", () -> testLegalInput(
+                        "1000000000000000000e-325")),
+                //
+                dynamicTest("Inside Clinger fast path (max_clinger_significand, max_clinger_exponent)", () -> testLegalInput(
+                        "9007199254740991e22")),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand, max_clinger_exponent + 1)", () -> testLegalInput(
+                        "9007199254740991e23")),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand + 1, max_clinger_exponent)", () -> testLegalInput(
+                        "9007199254740992e22")),
+                dynamicTest("Inside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent)", () -> testLegalInput(
+                        "1e-22")),
+                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInput(
+                        "1e-23")),
+                dynamicTest("Outside Clinger fast path, bail-out in semi-fast path, 1e23", () -> testLegalInput(
+                        "1e23")),
+                dynamicTest("Outside Clinger fast path, mantissa overflows in semi-fast path, 7.2057594037927933e+16", () -> testLegalInput(
+                        "7.2057594037927933e+16")),
+                dynamicTest("Outside Clinger fast path, bail-out in semi-fast path, 7.3177701707893310e+15", () -> testLegalInput(
+                        "7.3177701707893310e+15"))
+        );
+    }
+
+    /**
+     * Tests input classes that execute different code branches in
+     * method {@link FastDoubleMath#tryHexFloatToDouble(boolean, long, int)}.
+     */
+    @TestFactory
+    List<DynamicNode> dynamicTestsHexFloatLiteralClingerInputClasses() {
+        return Arrays.asList(
+                dynamicTest("Inside Clinger fast path (max_clinger_significand)", () -> testLegalInput(
+                        "0x1fffffffffffffp74", 0x1fffffffffffffp74)),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand, max_clinger_exponent + 1)", () -> testLegalInput(
+                        "0x1fffffffffffffp74", 0x1fffffffffffffp74)),
+                dynamicTest("Outside Clinger fast path (max_clinger_significand + 1, max_clinger_exponent)", () -> testLegalInput(
+                        "0x20000000000000p74", 0x20000000000000p74)),
+                dynamicTest("Inside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent)", () -> testLegalInput(
+                        "0x1p-74", 0x1p-74)),
+                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInput(
+                        "0x1p-75", 0x1p-75))
+        );
+    }
 
     @TestFactory
     List<DynamicNode> dynamicTestsIllegalInputs() {
@@ -59,42 +106,6 @@ abstract class AbstractDoubleHandPickedTest {
                 dynamicTest("before0$123.4after", () -> testIllegalInputWithPrefixAndSuffix("before0$123.4after", 6, 7))
         );
     }
-
-    private void testIllegalInputWithPrefixAndSuffix(String str, int offset, int length) {
-        try {
-            parse(str, offset, length);
-            fail();
-        } catch (IllegalArgumentException e) {
-            String message = e.getMessage();
-            assertFalse(message.contains(str.substring(0, offset)), "Message must not contain prefix. message=" + message);
-            assertFalse(message.contains(str.substring(offset + length)), "Message must not contain suffix. message=" + message);
-            assertTrue(message.contains(str.substring(offset, offset + length)), "Message must contain body. message=" + message);
-        }
-    }
-
-    @TestFactory
-    List<DynamicNode> dynamicTestsLegalInputsWithPrefixAndSuffix() {
-        return Arrays.asList(
-                dynamicTest("before-1after", () -> testLegalInputWithPrefixAndSuffix("before-1after", 6, 2, -1.0)),
-                dynamicTest("before7.789after", () -> testLegalInputWithPrefixAndSuffix("before7.789after", 6, 5, 7.789)),
-                dynamicTest("before7.78e2after", () -> testLegalInputWithPrefixAndSuffix("before7.78e2after", 6, 6, 7.78e2)),
-                dynamicTest("before0x123.4p0after", () -> testLegalInputWithPrefixAndSuffix("before0x1234p0after", 6, 8, 0x1234p0)),
-                dynamicTest("before0x123.45p0after", () -> testLegalInputWithPrefixAndSuffix("before0x123.45p0after", 6, 10, 0x123.45p0)),
-                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInputWithPrefixAndSuffix(
-                        "before1e-23after", 6, 5, 1e-23)),
-                dynamicTest("before9007199254740992.e-256after", () -> testLegalInputWithPrefixAndSuffix(
-                        "before9007199254740992.e-256after", 6, 22, 9007199254740992.e-256))
-
-
-        );
-    }
-
-    private void testLegalInputWithPrefixAndSuffix(String str, int offset, int length, double expected) {
-        double actual = parse(str, offset, length);
-        assertEquals(expected, actual);
-    }
-
-    protected abstract double parse(String str, int offset, int length);
 
     @TestFactory
     List<DynamicNode> dynamicTestsLegalDecFloatLiterals() {
@@ -175,38 +186,6 @@ abstract class AbstractDoubleHandPickedTest {
         );
     }
 
-    /**
-     * <dl>
-     *     <dt>Rick Regan, 2011-01-31, Java Hangs When Converting 2.2250738585072012e-308.</dt>
-     *     <dd><a href="https://www.exploringbinary.com/java-hangs-when-converting-2-2250738585072012e-308/">exploringbinary.com</a></dd>
-     * </dl>
-     */
-    @TestFactory
-    List<DynamicNode> dynamicTestsNumbersThatCausedJavaToHang() {
-        return Arrays.asList(
-                dynamicTest("2.2250738585072012e-308 (Java got stuck, oscillating between 0x1p-1022 and 0x0.fffffffffffffp-1022)", () -> testLegalInput("2.2250738585072012e-308", 2.2250738585072012e-308)),
-                dynamicTest("0.00022250738585072012e-304 (decimal point placement)", () -> testLegalInput("0.00022250738585072012e-304", 0.00022250738585072012e-304)),
-                dynamicTest("00000000002.2250738585072012e-308 (leading zeros)", () -> testLegalInput("00000000002.2250738585072012e-308", 00000000002.2250738585072012e-308)),
-                dynamicTest("2.225073858507201200000e-308 (trailing zeros)", () -> testLegalInput("2.225073858507201200000e-308", 2.225073858507201200000e-308)),
-                dynamicTest("2.2250738585072012e-00308 (leading zeros in the exponent)", () -> testLegalInput("2.2250738585072012e-00308", 2.2250738585072012e-00308)),
-                dynamicTest("2.2250738585072012997800001e-308 (superfluous digits beyond digit 17)", () -> testLegalInput("2.2250738585072012997800001e-308", 2.2250738585072012997800001e-308)),
-                dynamicTest("6.917529027641081856e+18 (C# rounding bug)", () -> testLegalInput("6.917529027641081856e+18", 6.917529027641081856e+18))
-        );
-    }
-
-
-    @TestFactory
-    List<DynamicNode> dynamicTestsLegalHexFloatLiterals() {
-        return Arrays.asList(
-                dynamicTest("0x0.1234ab78p0", () -> testLegalInput("0x0.1234ab78p0", 0x0.1234ab78p0)),
-                dynamicTest("0x0.1234AB78p0", () -> testLegalInput("0x0.1234AB78p0", 0x0.1234AB78p0)),
-                dynamicTest("0x1.0p8", () -> testLegalInput("0x1.0p8", 256)),
-                dynamicTest("0x1.234567890abcdefp123", () -> testLegalInput("0x1.234567890abcdefp123", 0x1.234567890abcdefp123)),
-                dynamicTest("0x1234567890.abcdefp-45", () -> testLegalInput("0x1234567890.abcdefp-45", 0x1234567890.abcdefp-45)),
-                dynamicTest("0x1234567890.abcdef12p-45", () -> testLegalInput("0x1234567890.abcdef12p-45", 0x1234567890.abcdef12p-45))
-        );
-    }
-
     @TestFactory
     List<DynamicNode> dynamicTestsLegalDecFloatLiteralsExtremeValues() {
         return Arrays.asList(
@@ -227,53 +206,15 @@ abstract class AbstractDoubleHandPickedTest {
         );
     }
 
-
-    /**
-     * Tests input classes that execute different code branches in
-     * method {@link FastDoubleMath#tryDecFloatToDouble(boolean, long, int)}.
-     */
     @TestFactory
-    List<DynamicNode> dynamicTestsDecFloatLiteralClingerInputClasses() {
+    List<DynamicNode> dynamicTestsLegalHexFloatLiterals() {
         return Arrays.asList(
-                dynamicTest("Inside Clinger fast path \"1000000000000000000e-340\")", () -> testLegalInput(
-                        "1000000000000000000e-325")),
-                //
-                dynamicTest("Inside Clinger fast path (max_clinger_significand, max_clinger_exponent)", () -> testLegalInput(
-                        "9007199254740991e22")),
-                dynamicTest("Outside Clinger fast path (max_clinger_significand, max_clinger_exponent + 1)", () -> testLegalInput(
-                        "9007199254740991e23")),
-                dynamicTest("Outside Clinger fast path (max_clinger_significand + 1, max_clinger_exponent)", () -> testLegalInput(
-                        "9007199254740992e22")),
-                dynamicTest("Inside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent)", () -> testLegalInput(
-                        "1e-22")),
-                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInput(
-                        "1e-23")),
-                dynamicTest("Outside Clinger fast path, bail-out in semi-fast path, 1e23", () -> testLegalInput(
-                        "1e23")),
-                dynamicTest("Outside Clinger fast path, mantissa overflows in semi-fast path, 7.2057594037927933e+16", () -> testLegalInput(
-                        "7.2057594037927933e+16")),
-                dynamicTest("Outside Clinger fast path, bail-out in semi-fast path, 7.3177701707893310e+15", () -> testLegalInput(
-                        "7.3177701707893310e+15"))
-        );
-    }
-
-    /**
-     * Tests input classes that execute different code branches in
-     * method {@link FastDoubleMath#tryHexFloatToDouble(boolean, long, int)}.
-     */
-    @TestFactory
-    List<DynamicNode> dynamicTestsHexFloatLiteralClingerInputClasses() {
-        return Arrays.asList(
-                dynamicTest("Inside Clinger fast path (max_clinger_significand)", () -> testLegalInput(
-                        "0x1fffffffffffffp74", 0x1fffffffffffffp74)),
-                dynamicTest("Outside Clinger fast path (max_clinger_significand, max_clinger_exponent + 1)", () -> testLegalInput(
-                        "0x1fffffffffffffp74", 0x1fffffffffffffp74)),
-                dynamicTest("Outside Clinger fast path (max_clinger_significand + 1, max_clinger_exponent)", () -> testLegalInput(
-                        "0x20000000000000p74", 0x20000000000000p74)),
-                dynamicTest("Inside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent)", () -> testLegalInput(
-                        "0x1p-74", 0x1p-74)),
-                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInput(
-                        "0x1p-75", 0x1p-75))
+                dynamicTest("0x0.1234ab78p0", () -> testLegalInput("0x0.1234ab78p0", 0x0.1234ab78p0)),
+                dynamicTest("0x0.1234AB78p0", () -> testLegalInput("0x0.1234AB78p0", 0x0.1234AB78p0)),
+                dynamicTest("0x1.0p8", () -> testLegalInput("0x1.0p8", 256)),
+                dynamicTest("0x1.234567890abcdefp123", () -> testLegalInput("0x1.234567890abcdefp123", 0x1.234567890abcdefp123)),
+                dynamicTest("0x1234567890.abcdefp-45", () -> testLegalInput("0x1234567890.abcdefp-45", 0x1234567890.abcdefp-45)),
+                dynamicTest("0x1234567890.abcdef12p-45", () -> testLegalInput("0x1234567890.abcdef12p-45", 0x1234567890.abcdef12p-45))
         );
     }
 
@@ -302,11 +243,50 @@ abstract class AbstractDoubleHandPickedTest {
     }
 
     @TestFactory
+    List<DynamicNode> dynamicTestsLegalInputsWithPrefixAndSuffix() {
+        return Arrays.asList(
+                dynamicTest("before-1after", () -> testLegalInputWithPrefixAndSuffix("before-1after", 6, 2, -1.0)),
+                dynamicTest("before7.789after", () -> testLegalInputWithPrefixAndSuffix("before7.789after", 6, 5, 7.789)),
+                dynamicTest("before7.78e2after", () -> testLegalInputWithPrefixAndSuffix("before7.78e2after", 6, 6, 7.78e2)),
+                dynamicTest("before0x123.4p0after", () -> testLegalInputWithPrefixAndSuffix("before0x1234p0after", 6, 8, 0x1234p0)),
+                dynamicTest("before0x123.45p0after", () -> testLegalInputWithPrefixAndSuffix("before0x123.45p0after", 6, 10, 0x123.45p0)),
+                dynamicTest("Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", () -> testLegalInputWithPrefixAndSuffix(
+                        "before1e-23after", 6, 5, 1e-23)),
+                dynamicTest("before9007199254740992.e-256after", () -> testLegalInputWithPrefixAndSuffix(
+                        "before9007199254740992.e-256after", 6, 22, 9007199254740992.e-256))
+
+
+        );
+    }
+
+    /**
+     * <dl>
+     *     <dt>Rick Regan, 2011-01-31, Java Hangs When Converting 2.2250738585072012e-308.</dt>
+     *     <dd><a href="https://www.exploringbinary.com/java-hangs-when-converting-2-2250738585072012e-308/">exploringbinary.com</a></dd>
+     * </dl>
+     */
+    @TestFactory
+    List<DynamicNode> dynamicTestsNumbersThatCausedJavaToHang() {
+        return Arrays.asList(
+                dynamicTest("2.2250738585072012e-308 (Java got stuck, oscillating between 0x1p-1022 and 0x0.fffffffffffffp-1022)", () -> testLegalInput("2.2250738585072012e-308", 2.2250738585072012e-308)),
+                dynamicTest("0.00022250738585072012e-304 (decimal point placement)", () -> testLegalInput("0.00022250738585072012e-304", 0.00022250738585072012e-304)),
+                dynamicTest("00000000002.2250738585072012e-308 (leading zeros)", () -> testLegalInput("00000000002.2250738585072012e-308", 00000000002.2250738585072012e-308)),
+                dynamicTest("2.225073858507201200000e-308 (trailing zeros)", () -> testLegalInput("2.225073858507201200000e-308", 2.225073858507201200000e-308)),
+                dynamicTest("2.2250738585072012e-00308 (leading zeros in the exponent)", () -> testLegalInput("2.2250738585072012e-00308", 2.2250738585072012e-00308)),
+                dynamicTest("2.2250738585072012997800001e-308 (superfluous digits beyond digit 17)", () -> testLegalInput("2.2250738585072012997800001e-308", 2.2250738585072012997800001e-308)),
+                dynamicTest("6.917529027641081856e+18 (C# rounding bug)", () -> testLegalInput("6.917529027641081856e+18", 6.917529027641081856e+18))
+        );
+    }
+
+    @TestFactory
     Stream<DynamicNode> dynamicTestsPowerOfTen() {
         return IntStream.range(-307, 309).mapToObj(i -> "1e" + i)
                 .map(d -> dynamicTest(d, () -> testLegalInput(d, Double.parseDouble(d))));
     }
 
+    abstract double parse(CharSequence str);
+
+    protected abstract double parse(String str, int offset, int length);
 
     @TestFactory
     Stream<DynamicNode> testErrorCases() throws IOException {
@@ -321,6 +301,18 @@ abstract class AbstractDoubleHandPickedTest {
             fail();
         } catch (NumberFormatException e) {
             // success
+        }
+    }
+
+    private void testIllegalInputWithPrefixAndSuffix(String str, int offset, int length) {
+        try {
+            parse(str, offset, length);
+            fail();
+        } catch (IllegalArgumentException e) {
+            String message = e.getMessage();
+            assertFalse(message.contains(str.substring(0, offset)), "Message must not contain prefix. message=" + message);
+            assertFalse(message.contains(str.substring(offset + length)), "Message must not contain suffix. message=" + message);
+            assertTrue(message.contains(str.substring(offset, offset + length)), "Message must contain body. message=" + message);
         }
     }
 
@@ -341,6 +333,11 @@ abstract class AbstractDoubleHandPickedTest {
         assertEquals(expected, actual, "str=" + str);
         assertEquals(Double.doubleToLongBits(expected), Double.doubleToLongBits(actual),
                 "longBits of " + expected);
+    }
+
+    private void testLegalInputWithPrefixAndSuffix(String str, int offset, int length, double expected) {
+        double actual = parse(str, offset, length);
+        assertEquals(expected, actual);
     }
 
 }

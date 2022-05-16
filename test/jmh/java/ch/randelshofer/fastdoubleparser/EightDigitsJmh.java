@@ -46,8 +46,8 @@ import java.util.concurrent.TimeUnit;
  * m13StringDecSwar               12345x78  avgt    2   5.228          ns/op
  * m14ByteArrayHexSwar            12345678  avgt    2   6.233          ns/op
  * m14ByteArrayHexSwar            12345x78  avgt    2   3.734          ns/op
- * m15CharArrayHexSwar            12345678  avgt    2   9.601          ns/op
- * m15CharArrayHexSwar            12345x78  avgt    2   7.977          ns/op
+ * m15CharArrayHexSwar            12345678  avgt    2   9.546          ns/op
+ * m15CharArrayHexSwar            12345x78  avgt    2   7.900          ns/op
  *
  * m21ByteArrayDecVector          12345678  avgt    2   5.216          ns/op
  * m21ByteArrayDecVector          12345x78  avgt    2   3.468          ns/op
@@ -118,137 +118,139 @@ public class EightDigitsJmh {
         eightDigitsByteArray = eightDigitsCharSequence.getBytes(StandardCharsets.UTF_8);
     }
 
-    @Benchmark
-    public int m00ByteArray7DecDigitsSwar() {
-        return FastDoubleSimd.tryToParseSevenDigitsUtf8Swar(eightDigitsByteArray, 1);
-    }
-
-
-    @Benchmark
-    public int m01ByteArrayDecScalar() {
-        int value = 0;
-        for (int i = 0; i < eightDigitsByteArray.length; i++) {
-            byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
-            } else {
-                return -1;
-            }
+    /*
+        @Benchmark
+        public int m00ByteArray7DecDigitsSwar() {
+            return FastDoubleSwar.tryToParseSevenDigitsUtf8(eightDigitsByteArray, 1);
         }
-        return value;
-    }
 
-    @Benchmark
-    public int m02CharArrayDecScalar() {
-        int value = 0;
-        for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
-            char ch = eightDigitsCharSequence.charAt(i);
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
-            } else {
-                return -1;
+
+        @Benchmark
+        public int m01ByteArrayDecScalar() {
+            int value = 0;
+            for (int i = 0; i < eightDigitsByteArray.length; i++) {
+                byte ch = eightDigitsByteArray[i];
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                } else {
+                    return -1;
+                }
             }
+            return value;
         }
-        return value;
-    }
 
-    @Benchmark
-    public int m03StringDecScalar() {
-        int value = 0;
-        for (int i = 0; i < eightDigitsCharArray.length; i++) {
-            char ch = eightDigitsCharArray[i];
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
-            } else {
-                return -1;
+        @Benchmark
+        public int m02CharArrayDecScalar() {
+            int value = 0;
+            for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
+                char ch = eightDigitsCharSequence.charAt(i);
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                } else {
+                    return -1;
+                }
             }
+            return value;
         }
-        return value;
-    }
 
-    @Benchmark
-    public int m11ByteArrayDecSwar() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf8Swar(eightDigitsByteArray, 0);
-    }
+        @Benchmark
+        public int m03StringDecScalar() {
+            int value = 0;
+            for (int i = 0; i < eightDigitsCharArray.length; i++) {
+                char ch = eightDigitsCharArray[i];
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                } else {
+                    return -1;
+                }
+            }
+            return value;
+        }
 
-    @Benchmark
-    public int m12CharArrayDecSwar() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(eightDigitsCharArray, 0);
-    }
+        @Benchmark
+        public int m11ByteArrayDecSwar() {
+            return FastDoubleSwar.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
+        }
 
-    @Benchmark
-    public int m13StringDecSwar() {
-        String str = eightDigitsCharSequence;
-        int offset = 0;
+        @Benchmark
+        public int m12CharArrayDecSwar() {
+            return FastDoubleSwar.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
+        }
 
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
-        long first = str.charAt(offset)
-                | (long) str.charAt(offset + 1) << 16
-                | (long) str.charAt(offset + 2) << 32
-                | (long) str.charAt(offset + 3) << 48;
+        @Benchmark
+        public int m13StringDecSwar() {
+            String str = eightDigitsCharSequence;
+            int offset = 0;
 
-        long second = str.charAt(offset + 4)
-                | (long) str.charAt(offset + 5) << 16
-                | (long) str.charAt(offset + 6) << 32
-                | (long) str.charAt(offset + 7) << 48;
+            // Performance: We extract the chars in two steps so that we
+            //              can benefit from out of order execution in the CPU.
+            long first = str.charAt(offset)
+                    | (long) str.charAt(offset + 1) << 16
+                    | (long) str.charAt(offset + 2) << 32
+                    | (long) str.charAt(offset + 3) << 48;
 
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
-    }
+            long second = str.charAt(offset + 4)
+                    | (long) str.charAt(offset + 5) << 16
+                    | (long) str.charAt(offset + 6) << 32
+                    | (long) str.charAt(offset + 7) << 48;
 
-    @Benchmark
-    public long m14ByteArrayHexSwar() {
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf8Swar(eightDigitsByteArray, 0);
-    }
+            return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
+        }
 
+        @Benchmark
+        public long m14ByteArrayHexSwar() {
+            return FastDoubleSwar.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
+        }
+    */
     @Benchmark
     public long m15CharArrayHexSwar() {
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(eightDigitsCharArray, 0);
+        return FastDoubleSwar.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
     }
 
+    /*
 
-    @Benchmark
-    public int m21ByteArrayDecVector() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf8Vector(eightDigitsByteArray, 0);
-    }
+        @Benchmark
+        public int m21ByteArrayDecVector() {
+            return FastDoubleVector.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
+        }
 
-    @Benchmark
-    public int m22CharArrayDecVector() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(eightDigitsCharArray, 0);
-    }
+        @Benchmark
+        public int m22CharArrayDecVector() {
+            return FastDoubleVector.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
+        }
 
-    @Benchmark
-    public int m23StringDecVector() {
-        String str = eightDigitsCharSequence;
-        int offset = 0;
+        @Benchmark
+        public int m23StringDecVector() {
+            String str = eightDigitsCharSequence;
+            int offset = 0;
 
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
-        long first = str.charAt(offset)
-                | (long) str.charAt(offset + 1) << 16
-                | (long) str.charAt(offset + 2) << 32
-                | (long) str.charAt(offset + 3) << 48;
+            // Performance: We extract the chars in two steps so that we
+            //              can benefit from out of order execution in the CPU.
+            long first = str.charAt(offset)
+                    | (long) str.charAt(offset + 1) << 16
+                    | (long) str.charAt(offset + 2) << 32
+                    | (long) str.charAt(offset + 3) << 48;
 
-        long second = str.charAt(offset + 4)
-                | (long) str.charAt(offset + 5) << 16
-                | (long) str.charAt(offset + 6) << 32
-                | (long) str.charAt(offset + 7) << 48;
+            long second = str.charAt(offset + 4)
+                    | (long) str.charAt(offset + 5) << 16
+                    | (long) str.charAt(offset + 6) << 32
+                    | (long) str.charAt(offset + 7) << 48;
 
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Vector(first, second);
-    }
-
-
-    @Benchmark
-    public long m24ByteArrayHexVector() {
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf8Vector(eightDigitsByteArray, 0);
-    }
-
-    @Benchmark
-    public long m25CharArrayHexVector() {
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Vector(eightDigitsCharArray, 0);
-    }
+            return FastDoubleVector.tryToParseEightDigitsUtf16(first, second);
+        }
 
 
+        @Benchmark
+        public long m24ByteArrayHexVector() {
+            return FastDoubleVector.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
+        }
+
+        @Benchmark
+        public long m25CharArrayHexVector() {
+            return FastDoubleVector.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
+        }
+
+    */
     private static boolean isDigit(byte c) {
         return '0' <= c && c <= '9';
     }

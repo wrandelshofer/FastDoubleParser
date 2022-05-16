@@ -33,28 +33,6 @@ public abstract class AbstractFromByteArrayVectorizedTest {
         );
     }
 
-    protected abstract void testTryToParseEightDigits(String str, long expected);
-
-    @TestFactory
-    List<DynamicNode> dynamicTestsTryToParseSevenDigits() {
-        return Arrays.asList(
-                dynamicTest("0000000", () -> testTryToParseSevenDigits("0000000", 0)),
-                dynamicTest("0000001", () -> testTryToParseSevenDigits("0000001", 1)),
-                dynamicTest("0000010", () -> testTryToParseSevenDigits("0000010", 10)),
-                dynamicTest("0000100", () -> testTryToParseSevenDigits("0000100", 100)),
-                dynamicTest("0001000", () -> testTryToParseSevenDigits("0001000", 1000)),
-                dynamicTest("0010000", () -> testTryToParseSevenDigits("0010000", 10000)),
-                dynamicTest("0100000", () -> testTryToParseSevenDigits("0100000", 100000)),
-                dynamicTest("1000000", () -> testTryToParseSevenDigits("1000000", 1000000)),
-                dynamicTest("1234567", () -> testTryToParseSevenDigits("1234567", 1234567)),
-                dynamicTest("9897969", () -> testTryToParseSevenDigits("9897969", 9897969)),
-                dynamicTest("000.000", () -> testTryToParseSevenDigits("000.000", -1)),
-                dynamicTest("000~000", () -> testTryToParseSevenDigits("000~000", -1))
-        );
-    }
-
-    protected abstract void testTryToParseSevenDigits(String str, long expected);
-
     @TestFactory
     List<DynamicNode> dynamicTestsTryToParseEightHexDigits() {
         return Arrays.asList(
@@ -78,5 +56,27 @@ public abstract class AbstractFromByteArrayVectorizedTest {
     }
 
     protected abstract void dynamicTestsTryToParseEightHexDigits(String str, long expected);
+
+    @TestFactory
+    List<DynamicNode> dynamicTestsTryToParseSevenDigits() {
+        return Arrays.asList(
+                dynamicTest("0000000", () -> testTryToParseSevenDigits("0000000", 0)),
+                dynamicTest("0000001", () -> testTryToParseSevenDigits("0000001", 1)),
+                dynamicTest("0000010", () -> testTryToParseSevenDigits("0000010", 10)),
+                dynamicTest("0000100", () -> testTryToParseSevenDigits("0000100", 100)),
+                dynamicTest("0001000", () -> testTryToParseSevenDigits("0001000", 1000)),
+                dynamicTest("0010000", () -> testTryToParseSevenDigits("0010000", 10000)),
+                dynamicTest("0100000", () -> testTryToParseSevenDigits("0100000", 100000)),
+                dynamicTest("1000000", () -> testTryToParseSevenDigits("1000000", 1000000)),
+                dynamicTest("1234567", () -> testTryToParseSevenDigits("1234567", 1234567)),
+                dynamicTest("9897969", () -> testTryToParseSevenDigits("9897969", 9897969)),
+                dynamicTest("000.000", () -> testTryToParseSevenDigits("000.000", -1)),
+                dynamicTest("000~000", () -> testTryToParseSevenDigits("000~000", -1))
+        );
+    }
+
+    protected abstract void testTryToParseEightDigits(String str, long expected);
+
+    protected abstract void testTryToParseSevenDigits(String str, long expected);
 
 }

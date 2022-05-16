@@ -449,11 +449,11 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
     abstract long positiveInfinity();
 
     private int tryToParseEightDigits(byte[] str, int offset) {
-        return FastDoubleSimd.tryToParseEightDigitsUtf8Vector(str, offset);
+        return FastDoubleVector.tryToParseEightDigitsUtf8(str, offset);
     }
     /*
     private long tryToParseEightHexDigits(byte[] str, int offset) {
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf8Vector(str, offset);
+        return FastDoubleVector.tryToParseEightHexDigitsUtf8(str, offset);
     }*/
 
     abstract long valueOfFloatLiteral(

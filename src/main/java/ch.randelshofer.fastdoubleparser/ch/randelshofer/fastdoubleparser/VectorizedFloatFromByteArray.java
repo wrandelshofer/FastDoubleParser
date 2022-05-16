@@ -23,9 +23,9 @@ public class VectorizedFloatFromByteArray {
     private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
 
-
     /**
-     * Parses a {@code FloatValue} without leading or trailing whitespace.
+     * Parses a {@code FloatValue} with up to 16 characters length,
+     * without leading or trailing whitespace.
      *
      * @param str    a string
      * @param offset start offset
@@ -42,7 +42,7 @@ public class VectorizedFloatFromByteArray {
         int isNegative = signMask.laneIsSet(0) ? 1 : 0;// isNegative==1 means true!
 
         // Most character will be digits, we subtract '0' once.
-        ByteVector digitsVector = byteVector.sub((byte) '0');
+        ByteVector digits = byteVector.sub((byte) '0');
 
         // parse the exponent
         // ------------------
@@ -59,10 +59,10 @@ public class VectorizedFloatFromByteArray {
             int exponentSignIndex = signMask.lastTrue();
             int isExponentNegative = exponentSignIndex > exponentIndex ? 1 : 0;// isExponentNegative==1 means true!
 
-            int exponentDigitCount = length - exponentIndex - 1 - isExponentNegative;
+            int exponentLength = length - exponentIndex - 1 - isExponentNegative;
             //To prevent overflow, we only use up to 8 digits.
-            exponentNumber = parseDigits(digitsVector.unslice(ByteVector.SPECIES_128.length() - length),
-                    Math.min(8, exponentDigitCount));
+            exponentNumber = parseDigits(digits.unslice(ByteVector.SPECIES_128.length() - length),
+                    Math.min(8, exponentLength));
             significandEndIndex = exponentIndex;
             if (isExponentNegative != 0) {
                 exponentNumber = -exponentNumber;
@@ -75,22 +75,24 @@ public class VectorizedFloatFromByteArray {
         // parse the significand
         // ---------------------
         int pointIndex = byteVector.compare(EQ, '.').lastTrue();
-        int significandDigitsCount = significandEndIndex - isNegative;
+        int significandLength = significandEndIndex - isNegative;
         int exponentOfSignifand;
         if (pointIndex >= 0) {
-            //-> keep fraction in place; move integer part to the right by 1.
-            int intPartDigitsCount = pointIndex - isNegative;
-            if (intPartDigitsCount > 0) {
-                ByteVector unslicedIntDigits = digitsVector.unslice(1);
+            // Keep fraction in place; move integer part to the right by 1.
+            int integerPartLength = pointIndex - isNegative;
+            if (integerPartLength > 0) {
                 VectorMask<Byte> digitsMask = VectorMask.fromLong(ByteVector.SPECIES_128, 0xffff >>> 15 - pointIndex);
-                digitsVector = digitsVector.blend(unslicedIntDigits, digitsMask);
+                digits = digits.blend(digits.unslice(1), digitsMask);
+
+                // this does the same as the 2 lines above, but it is slower.
+                //digits = digits.unslice(1, digits, 0, VectorMask.fromLong(ByteVector.SPECIES_128, 0xffff >>> 16 - pointIndex));
             }
-            significandDigitsCount -= 1;
-            exponentOfSignifand = pointIndex - significandDigitsCount - isNegative;
+            significandLength -= 1;
+            exponentOfSignifand = pointIndex - significandLength - isNegative;
         } else {
             exponentOfSignifand = 0;
         }
-        long significand = parseDigits(digitsVector.unslice(16 - significandEndIndex), significandDigitsCount);
+        long significand = parseDigits(digits.unslice(16 - significandEndIndex), significandLength);
 
 
         int exponent = (int) (exponentOfSignifand + exponentNumber);

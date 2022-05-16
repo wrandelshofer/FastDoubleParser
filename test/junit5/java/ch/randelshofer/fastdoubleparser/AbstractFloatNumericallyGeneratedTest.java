@@ -40,9 +40,7 @@ abstract class AbstractFloatNumericallyGeneratedTest {
                 .map(d -> dynamicTest(Float.toHexString(d) + "", () -> testLegalInput(d)));
     }
 
-    private void testLegalInput(float expected) {
-        testLegalInput(expected + "", expected);
-    }
+    protected abstract float parse(String str);
 
     private void testLegalInput(String str, float expected) {
         float actual = parse(str);
@@ -51,5 +49,7 @@ abstract class AbstractFloatNumericallyGeneratedTest {
                 "intBits of " + expected);
     }
 
-    protected abstract float parse(String str);
+    private void testLegalInput(float expected) {
+        testLegalInput(expected + "", expected);
+    }
 }

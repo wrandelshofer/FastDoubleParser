@@ -43,8 +43,8 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(10, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
@@ -55,8 +55,8 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(1, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
@@ -67,8 +67,8 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(40, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
@@ -79,8 +79,8 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 100).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithWhitespace(i, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
@@ -93,7 +93,6 @@ abstract class AbstractLexicallyGeneratedTest {
      * @param str the given input string
      */
     protected abstract void testAgainstJdk(String str);
-
 
 
 }

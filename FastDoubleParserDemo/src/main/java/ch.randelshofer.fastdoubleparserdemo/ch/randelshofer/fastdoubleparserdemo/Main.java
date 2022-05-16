@@ -224,9 +224,10 @@ public class Main {
     }
 
     private void printStats(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        System.out.printf("%-17s :  %7.2f MB/s  %7.2f Mfloat/s  %7.2f ns/f\n",
+        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %% stdv)  %7.2f Mfloat/s  %7.2f ns/f\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
+                stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
                 lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
                 stats.getAverage() / lines.size()
         );

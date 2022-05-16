@@ -17,28 +17,52 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class LongFromByteArrayTest {
 
-    @TestFactory
-    List<DynamicNode> dynamicTestsLegalInput16Chars() {
-        return List.of(
-                dynamicTest("1", () -> doLegalTest("1")),
-                dynamicTest("-567", () -> doLegalTest("-567")),
-                dynamicTest("+321", () -> doLegalTest("+321")),
-                dynamicTest("1234567890123456", () -> doLegalTest("1234567890123456")),
-                dynamicTest("-123456789012345", () -> doLegalTest("-123456789012345")),
-                dynamicTest("+123456789012345", () -> doLegalTest("+123456789012345"))
-        );
+    private void doIllegalTest(String s) {
+        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
+        try {
+            Long.parseLong(s);
+            fail();
+        } catch (NumberFormatException e) {
+            //success;
+        }
+        try {
+            new LongFromCharSequence().parseLong(s, 0, s.length());
+            fail();
+        } catch (NumberFormatException e) {
+            //success;
+        }
+        try {
+            new LongFromByteArray().parseLong(bytes, 0, bytes.length);
+            fail();
+        } catch (NumberFormatException e) {
+            //success;
+        }
+        try {
+            new LongFromByteArray().parseLongVectorized(bytes, 0, bytes.length);
+            fail();
+        } catch (NumberFormatException e) {
+            //success;
+        }
     }
 
-    @TestFactory
-    List<DynamicNode> dynamicTestsLegalInputMoreThan16Chars() {
-        return List.of(
-                dynamicTest("-123456789012345678", () -> doLegalTestMoreThan16Chars("-123456789012345678")),
-                dynamicTest("123456789012345678", () -> doLegalTestMoreThan16Chars("123456789012345678")),
-                dynamicTest("-9223372036854775808", () -> doLegalTestMoreThan16Chars("-9223372036854775808")),
-                dynamicTest("9223372036854775807", () -> doLegalTestMoreThan16Chars("9223372036854775807")),
-                dynamicTest("-09223372036854775808", () -> doLegalTestMoreThan16Chars("-09223372036854775808")),
-                dynamicTest("09223372036854775807", () -> doLegalTestMoreThan16Chars("09223372036854775807"))
-        );
+    private void doLegalTest(String s) {
+        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
+        long actualCharSequence = new LongFromCharSequence().parseLong(s, 0, s.length());
+        long actualScalar = new LongFromByteArray().parseLong(bytes, 0, bytes.length);
+        long actualVector = new LongFromByteArray().parseLongVectorized(bytes, 0, bytes.length);
+        long expected = Long.parseLong(s);
+        assertEquals(expected, actualCharSequence);
+        assertEquals(expected, actualScalar);
+        assertEquals(expected, actualVector);
+    }
+
+    private void doLegalTestMoreThan16Chars(String s) {
+        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
+        long actualScalar = new LongFromByteArray().parseLong(bytes, 0, bytes.length);
+        long actualCharSequence = new LongFromCharSequence().parseLong(s, 0, s.length());
+        long expected = Long.parseLong(s);
+        assertEquals(expected, actualScalar);
+        assertEquals(expected, actualCharSequence);
     }
 
     @TestFactory
@@ -66,52 +90,28 @@ public class LongFromByteArrayTest {
         );
     }
 
-    private void doLegalTest(String s) {
-        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
-        long actualCharSequence = new LongFromCharSequence().parseLong(s, 0, s.length());
-        long actualScalar = new LongFromByteArray().parseLong(bytes, 0, bytes.length);
-        long actualVector = new LongFromByteArray().parseLongVectorized(bytes, 0, bytes.length);
-        long expected = Long.parseLong(s);
-        assertEquals(expected, actualCharSequence);
-        assertEquals(expected, actualScalar);
-        assertEquals(expected, actualVector);
+    @TestFactory
+    List<DynamicNode> dynamicTestsLegalInput16Chars() {
+        return List.of(
+                dynamicTest("1", () -> doLegalTest("1")),
+                dynamicTest("-567", () -> doLegalTest("-567")),
+                dynamicTest("+321", () -> doLegalTest("+321")),
+                dynamicTest("1234567890123456", () -> doLegalTest("1234567890123456")),
+                dynamicTest("-123456789012345", () -> doLegalTest("-123456789012345")),
+                dynamicTest("+123456789012345", () -> doLegalTest("+123456789012345"))
+        );
     }
 
-    private void doLegalTestMoreThan16Chars(String s) {
-        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
-        long actualScalar = new LongFromByteArray().parseLong(bytes, 0, bytes.length);
-        long actualCharSequence = new LongFromCharSequence().parseLong(s, 0, s.length());
-        long expected = Long.parseLong(s);
-        assertEquals(expected, actualScalar);
-        assertEquals(expected, actualCharSequence);
-    }
-
-    private void doIllegalTest(String s) {
-        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
-        try {
-            Long.parseLong(s);
-            fail();
-        } catch (NumberFormatException e) {
-            //success;
-        }
-        try {
-            new LongFromCharSequence().parseLong(s, 0, s.length());
-            fail();
-        } catch (NumberFormatException e) {
-            //success;
-        }
-        try {
-            new LongFromByteArray().parseLong(bytes, 0, bytes.length);
-            fail();
-        } catch (NumberFormatException e) {
-            //success;
-        }
-        try {
-            new LongFromByteArray().parseLongVectorized(bytes, 0, bytes.length);
-            fail();
-        } catch (NumberFormatException e) {
-            //success;
-        }
+    @TestFactory
+    List<DynamicNode> dynamicTestsLegalInputMoreThan16Chars() {
+        return List.of(
+                dynamicTest("-123456789012345678", () -> doLegalTestMoreThan16Chars("-123456789012345678")),
+                dynamicTest("123456789012345678", () -> doLegalTestMoreThan16Chars("123456789012345678")),
+                dynamicTest("-9223372036854775808", () -> doLegalTestMoreThan16Chars("-9223372036854775808")),
+                dynamicTest("9223372036854775807", () -> doLegalTestMoreThan16Chars("9223372036854775807")),
+                dynamicTest("-09223372036854775808", () -> doLegalTestMoreThan16Chars("-09223372036854775808")),
+                dynamicTest("09223372036854775807", () -> doLegalTestMoreThan16Chars("09223372036854775807"))
+        );
     }
 
 

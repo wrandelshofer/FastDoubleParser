@@ -16,6 +16,13 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class VectorizedFloatFromByteArrayTest {
 
+    private void doLegalTest(String s) {
+        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
+        float actual = new VectorizedFloatFromByteArray().parseFloat(bytes, 0, bytes.length);
+        float expected = Float.parseFloat(s);
+        assertEquals(expected, actual);
+    }
+
     @TestFactory
     List<DynamicNode> dynamicTestsLegalInput() {
         return List.of(
@@ -53,13 +60,6 @@ public class VectorizedFloatFromByteArrayTest {
                 dynamicTest("3.1415927", () -> doLegalTest("3.1415927")),
                 dynamicTest("1.6162552e-35", () -> doLegalTest("1.6162552e-35"))
         );
-    }
-
-    private void doLegalTest(String s) {
-        byte[] bytes = s.getBytes(StandardCharsets.ISO_8859_1);
-        float actual = new VectorizedFloatFromByteArray().parseFloat(bytes, 0, bytes.length);
-        float expected = Float.parseFloat(s);
-        assertEquals(expected, actual);
     }
 
 

@@ -5,28 +5,13 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import jdk.incubator.vector.ByteVector;
-import jdk.incubator.vector.IntVector;
-import jdk.incubator.vector.LongVector;
-import jdk.incubator.vector.ShortVector;
-import jdk.incubator.vector.VectorMask;
-
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
 
-import static jdk.incubator.vector.VectorOperators.ADD;
-import static jdk.incubator.vector.VectorOperators.LSHL;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_GT;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_LT;
-
 /**
- * This class provides the mathematical functions needed by {@link FastDoubleParser}.
- * <p>
- * This is a C++ to Java port of Daniel Lemire's fast_double_parser.
- * <p>
- * The code contains enhancements from Daniel Lemire's fast_float_parser,
- * so that it can parse double Strings with very long sequences of numbers
+ * This class provides methods for parsing multiple characters at once using
+ * the "SIMD with a register" (SWAR) technique.
  * <p>
  * References:
  * <dl>
@@ -48,16 +33,12 @@ import static jdk.incubator.vector.VectorOperators.UNSIGNED_LT;
  * </dl>
  * </p>
  */
-class FastDoubleSimd {
+class FastDoubleSwar {
 
     public final static VarHandle readLongFromByteArrayLittleEndian =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
     public final static VarHandle readLongFromByteArrayBigEndian =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
-    private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
-            new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16_SHIFTS = IntVector.fromArray(IntVector.SPECIES_256,
-            new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
 
     /**
      * Tries to parse eight decimal digits from a char array using the
@@ -66,9 +47,9 @@ class FastDoubleSimd {
      * @param a      contains 8 utf-16 characters starting at offset
      * @param offset the offset into the array
      * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 hex digits
+     * returns a negative value if {@code value} does not contain 8 hex digits
      */
-    public static int tryToParseEightDigitsUtf16Swar(char[] a, int offset) {
+    public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
         // Performance: We extract the chars in two steps so that we
         //              can benefit from out of order execution in the CPU.
         long first = a[offset]
@@ -81,7 +62,7 @@ class FastDoubleSimd {
                 | (long) a[offset + 6] << 32
                 | (long) a[offset + 7] << 48;
 
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
     /**
@@ -98,7 +79,7 @@ class FastDoubleSimd {
      * @param second the second four characters in big endian order
      * @return the parsed digits or -1
      */
-    public static int tryToParseEightDigitsUtf16Swar(long first, long second) {
+    public static int tryToParseEightDigitsUtf16(long first, long second) {
         long fval = first - 0x0030_0030_0030_0030L;
         long sval = second - 0x0030_0030_0030_0030L;
 
@@ -118,112 +99,16 @@ class FastDoubleSimd {
     }
 
     /**
-     * Tries to parse eight decimal digits from a char array using the
-     * Java Vector API.
-     *
-     * @param a      contains 8 utf-16 characters starting at offset
-     * @param offset the offset into the array
-     * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 hex digits
-     */
-    public static int tryToParseEightDigitsUtf16Vector(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
-                .sub((short) '0');
-        // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
-            return -1;
-        }
-        return (int) vec
-                .castShape(IntVector.SPECIES_256, 0)
-                .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD);
-    }
-
-    /**
-     * Tries to parse eight digits at once using the
-     * Java Vector API.
-     *
-     * <pre>{@literal
-     * char[] chars = ...;
-     * long first  = chars[0]|(chars[1]<<16)|(chars[2]<<32)|(chars[3]<<48);
-     * long second = chars[4]|(chars[5]<<16)|(chars[6]<<32)|(chars[7]<<48);
-     * }</pre>
-     *
-     * @param first  the first four characters in big endian order
-     * @param second the second four characters in big endian order
-     * @return the parsed digits or -1
-     */
-    public static int tryToParseEightDigitsUtf16Vector(long first, long second) {
-        ShortVector vec = LongVector.zero(LongVector.SPECIES_128)
-                .withLane(0, first)
-                .withLane(1, second)
-                .reinterpretAsShorts()
-                .sub((short) '0');
-
-        // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
-            return -1;
-        }
-        return (int) vec
-                .castShape(IntVector.SPECIES_256, 0)
-                .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD);
-    }
-
-    /**
      * Tries to parse eight decimal digits from a byte array using the
      * 'SIMD within a register technique' (SWAR).
      *
      * @param a      contains 8 ascii characters
      * @param offset the offset of the first character in {@code a}
      * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 digits
+     * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static int tryToParseEightDigitsUtf8Swar(byte[] a, int offset) {
-        long value = (long) readLongFromByteArrayLittleEndian.get(a, offset);
-        long val = value - 0x3030303030303030L;
-        long det = ((value + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (det != 0L) {
-            return -1;
-        }
-
-        // The last 2 multiplications in this algorithm are independent of each
-        // other.
-        long mask = 0x000000FF_000000FFL;
-        val = (val * 0xa_01L) >>> 8;// 1+(10<<8)
-        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
-                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
-        return (int) val;
-    }
-
-    /**
-     * Tries to parse seven decimal digits from a byte array using the
-     * 'SIMD within a register technique' (SWAR).
-     *
-     * @param a      contains 8 ascii characters
-     * @param offset the offset of the first character in {@code a}, must be
-     *               {@literal > 0}.
-     * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 digits
-     */
-    public static int tryToParseSevenDigitsUtf8Swar(byte[] a, int offset) {
-        long value = ((long) readLongFromByteArrayLittleEndian.get(a, offset - 1)
-                & 0xffffffff_ffffff00L) | 0x30L;
-        long val = value - 0x3030303030303030L;
-        long det = ((value + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (det != 0L) {
-            return -1;
-        }
-
-        // The last 2 multiplications in this algorithm are independent of each
-        // other.
-        long mask = 0x000000FF_000000FFL;
-        val = (val * 0xa_01L) >>> 8;// 1+(10<<8)
-        val = (((val & mask) * 0x000F4240_00000064L)//100 + (1000000 << 32)
-                + (((val >>> 16) & mask) * 0x00002710_00000001L)) >>> 32;// 1 + (10000 << 32)
-        return (int) val;
+    public static int tryToParseEightDigitsUtf8(byte[] a, int offset) {
+        return tryToParseEightDigitsUtf8((long) readLongFromByteArrayLittleEndian.get(a, offset));
     }
 
     /**
@@ -244,9 +129,9 @@ class FastDoubleSimd {
      *
      * @param value contains 8 ascii characters in little endian order
      * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 digits
+     * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static int tryToParseEightDigitsUtf8Swar(long value) {
+    public static int tryToParseEightDigitsUtf8(long value) {
         long val = value - 0x3030303030303030L;
         long det = ((value + 0x4646464646464646L) | val) &
                 0x8080808080808080L;
@@ -262,37 +147,15 @@ class FastDoubleSimd {
     }
 
     /**
-     * Tries to parse eight decimal digits from a byte array using the
-     * Java Vector API.
-     *
-     * @param a      contains 8 ascii characters
-     * @param offset the offset of the first character in {@code a}
-     * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 digits
-     */
-    public static int tryToParseEightDigitsUtf8Vector(byte[] a, int offset) {
-        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
-            return -1;
-        }
-        return (int) vec
-                .castShape(IntVector.SPECIES_256, 0)
-                .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD);
-    }
-
-    /**
      * Tries to parse eight hex digits from a char array using the
      * 'SIMD within a register technique' (SWAR).
      *
      * @param a      contains 8 utf-16 characters starting at offset
      * @param offset the offset into the array
      * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 hex digits
+     * returns a negative value if {@code value} does not contain 8 hex digits
      */
-    public static long tryToParseEightHexDigitsUtf16Swar(char[] a, int offset) {
+    public static long tryToParseEightHexDigitsUtf16(char[] a, int offset) {
         // Performance: We extract the chars in two steps so that we
         //              can benefit from out of order execution in the CPU.
         long first = (long) a[offset] << 48
@@ -305,7 +168,7 @@ class FastDoubleSimd {
                 | (long) a[offset + 6] << 16
                 | (long) a[offset + 7];
 
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(first, second);
+        return FastDoubleSwar.tryToParseEightHexDigitsUtf16(first, second);
     }
 
     /**
@@ -328,40 +191,12 @@ class FastDoubleSimd {
      * @param first  contains 4 utf-16 characters in big endian order
      * @param second contains 4 utf-16 characters in big endian order
      * @return the parsed number,
-     * returns -1 if the two longs do not contain 8 hex digits
+     * returns a negative value if the two longs do not contain 8 hex digits
      */
-    public static long tryToParseEightHexDigitsUtf16Swar(long first, long second) {
-        long lfirst = tryToParseFourHexDigitsUtf16Swar(first);
-        long lsecond = tryToParseFourHexDigitsUtf16Swar(second);
-        if ((lfirst | lsecond) < 0) {
-            return -1;
-        }
+    public static long tryToParseEightHexDigitsUtf16(long first, long second) {
+        long lfirst = tryToParseFourHexDigitsUtf16(first);
+        long lsecond = tryToParseFourHexDigitsUtf16(second);
         return (lfirst << 16) | lsecond;
-    }
-
-    /**
-     * Tries to parse eight hex digits from a char array using the
-     * Java Vector API.
-     *
-     * @param a      contains 8 utf-16 characters starting at offset
-     * @param offset the offset into the array
-     * @return the parsed number,
-     * returns -1 if {@code a} does not contain 8 hex digits
-     */
-    public static long tryToParseEightHexDigitsUtf16Vector(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
-                .sub((short) '0');
-        VectorMask<Short> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
-        }
-        return vec
-                .sub((short) ('a' - '0' - 10), gt9Msk)
-                .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
-                .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
     /**
@@ -370,10 +205,10 @@ class FastDoubleSimd {
      *
      * @param a      contains 8 ascii characters
      * @param offset the offset of the first character in {@code a}
-     *               returns -1 if {@code value} does not contain 8 digits
+     *               returns a negative value if {@code value} does not contain 8 digits
      */
-    public static long tryToParseEightHexDigitsUtf8Swar(byte[] a, int offset) {
-        return tryToParseEightHexDigitsUtf8Swar((long) readLongFromByteArrayBigEndian.get(a, offset));
+    public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
+        return tryToParseEightHexDigitsUtf8((long) readLongFromByteArrayBigEndian.get(a, offset));
     }
 
     /**
@@ -382,9 +217,9 @@ class FastDoubleSimd {
      *
      * @param value contains 8 ascii characters in big endian order
      * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 digits
+     * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static long tryToParseEightHexDigitsUtf8Swar(long value) {
+    public static long tryToParseEightHexDigitsUtf8(long value) {
         // The following code is based on the technique presented in the paper
         // by Leslie Lamport.
 
@@ -395,16 +230,16 @@ class FastDoubleSimd {
         // Create a predicate for all bytes which are greater than '9'-'0' (0x09).
         // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
         long gt_09 = vec + (0x09_09_09_09_09_09_09_09L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        gt_09 = gt_09 & 0x80_80_80_80_80_80_80_80L;
+        gt_09 &= 0x80_80_80_80_80_80_80_80L;
         // Create a predicate for all bytes which are greater or equal 'a'-'0' (0x30).
         // The predicate is true if the hsb of a byte is set.
         long ge_30 = vec + (0x30303030_30303030L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        ge_30 = ge_30 & 0x80_80_80_80_80_80_80_80L;
+        ge_30 &= 0x80_80_80_80_80_80_80_80L;
 
         // Create a predicate for all bytes which are smaller equal than 'f'-'0' (0x37).
         long le_37 = 0x37_37_37_37_37_37_37_37L + (vec ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
         // we don't need to 'and' with 0x80…L here, because we 'and' this with ge_30 anyway.
-        //le_37 = le_37 & 0x80_80_80_80_80_80_80_80L;
+        //le_37 &= 0x80_80_80_80_80_80_80_80L;
 
 
         // If a character is greater than '9' then it must be greater equal 'a'
@@ -429,39 +264,14 @@ class FastDoubleSimd {
     }
 
     /**
-     * Tries to parse eight hex digits from a byte array using the
-     * Java vector API.
-     *
-     * @param a      contains 8 ascii characters
-     * @param offset the offset of the first character in {@code a}
-     *               returns -1 if {@code value} does not contain 8 digits
-     */
-    public static long tryToParseEightHexDigitsUtf8Vector(byte[] a, int offset) {
-        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        VectorMask<Byte> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0'))
-                .and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
-        }
-        return vec
-                .sub((byte) ('a' - '0' - 10), gt9Msk)
-                .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
-                .reduceLanesToLong(ADD) & 0xffffffffL;
-    }
-
-    /**
      * Tries to parse four hex digits from a long using the
      * 'SIMD within a register technique' (SWAR).
      *
      * @param value contains 4 utf-16 characters in big endian order
      * @return the parsed number,
-     * returns -1 if {@code value} does not contain 8 digits
+     * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static long tryToParseFourHexDigitsUtf16Swar(long value) {
+    public static long tryToParseFourHexDigitsUtf16(long value) {
         // The following code is based on the technique presented in the paper
         // by Leslie Lamport.
 
@@ -501,5 +311,20 @@ class FastDoubleSimd {
         long v5 = (v2 | v2 >>> 24) & 0xffffL;
 
         return v5;
+    }
+
+    /**
+     * Tries to parse seven decimal digits from a byte array using the
+     * 'SIMD within a register technique' (SWAR).
+     *
+     * @param a      contains 8 ascii characters
+     * @param offset the offset of the first character in {@code a}, must be
+     *               {@literal > 0}.
+     * @return the parsed number,
+     * returns a negative value if {@code value} does not contain 8 digits
+     */
+    public static int tryToParseSevenDigitsUtf8(byte[] a, int offset) {
+        return tryToParseEightDigitsUtf8(((long) readLongFromByteArrayLittleEndian.get(a, offset - 1)
+                & 0xffffffff_ffffff00L) | 0x30L);
     }
 }

@@ -61,8 +61,8 @@ public class VectorizedFastFloatFromByteArrayJmh {
 
 
     @Param({
-            "0",
-            "365",
+            //  "0",
+            //  "365",
             "10.1",
             "3.1415927",
             "1.6162552e-35",
