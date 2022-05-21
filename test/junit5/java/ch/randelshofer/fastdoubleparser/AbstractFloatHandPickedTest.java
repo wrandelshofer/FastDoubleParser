@@ -23,7 +23,7 @@ abstract class AbstractFloatHandPickedTest {
 
     /**
      * Tests input classes that execute different code branches in
-     * method {@link FastDoubleMath#tryDecFloatToDoubleAlgorithm(boolean, long, int)}.
+     * method {@link FastFloatMath#tryDecToFloatWithFastAlgorithm(boolean, long, int)}.
      */
     @TestFactory
     List<DynamicNode> dynamicTestsDecFloatLiteralClingerInputClasses() {
@@ -72,6 +72,7 @@ abstract class AbstractFloatHandPickedTest {
                 dynamicTest("-", () -> testIllegalInput("-")),
                 dynamicTest("+", () -> testIllegalInput("+")),
                 dynamicTest("1e", () -> testIllegalInput("1e")),
+                dynamicTest("1ee2", () -> testIllegalInput("1ee2")),
                 dynamicTest("1_000", () -> testIllegalInput("1_000")),
                 dynamicTest("0.000_1", () -> testIllegalInput("0.000_1")),
                 dynamicTest("-e-55", () -> testIllegalInput("-e-55")),

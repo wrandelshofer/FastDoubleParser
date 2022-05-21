@@ -13,7 +13,7 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValueParser {
 
-    private static boolean isDigit(char c) {
+    private boolean isDigit(char c) {
         return '0' <= c && c <= '9';
     }
 
@@ -78,17 +78,14 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                /*
                 for (;index < endIndex - 8;index += 8) {
                     int eightDigits = tryToParseEightDigits(str, index + 1);
-                    if (eightDigits >= 0) {
-                        // This might overflow, we deal with it later.
-                        significand = 100_000_000L * significand + eightDigits;
-                    } else {
+                    if (eightDigits < 0) {
                         break;
                     }
+                    // This might overflow, we deal with it later.
+                    significand = 100_000_000L * significand + eightDigits;
                 }
-                 */
             } else {
                 break;
             }
@@ -116,7 +113,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             }
             illegal |= !isDigit(ch);
             do {
-                // Guard against overflow of expNumber
+                // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + ch - '0';
                 }
@@ -269,12 +266,11 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 /*
-                while (index < endIndex - 8) {
+                for (;index < endIndex - 8; index += 8) {
                     long parsed = tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
-                        index += 8;
                     } else {
                         break;
                     }
@@ -305,7 +301,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             }
             illegal |= !isDigit(ch);
             do {
-                // Guard against overflow of expNumber
+                // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + ch - '0';
                 }
@@ -451,7 +447,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
 
-    static int tryToParseEightDigits(CharSequence str, int offset) {
+    private int tryToParseEightDigits(CharSequence str, int offset) {
         // Performance: We extract the chars in two steps so that we
         //              can benefit from out of order execution in the CPU.
         long first = str.charAt(offset)

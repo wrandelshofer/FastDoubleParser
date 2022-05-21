@@ -25,7 +25,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param endIndex   end index (exclusive) of the {@code FloatValue} production in str
      * @return a new  {@link NumberFormatException}
      */
-    private static NumberFormatException newNumberFormatException(char[] str, int startIndex, int endIndex) {
+    private NumberFormatException newNumberFormatException(char[] str, int startIndex, int endIndex) {
         if (endIndex - startIndex > 1024) {
             // str can be up to Integer.MAX_VALUE characters long
             return new NumberFormatException("For input string of length " + (endIndex - startIndex));
@@ -42,7 +42,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param endIndex end index (exclusive) of the optional white space
      * @return index after the optional white space
      */
-    private static int skipWhitespace(char[] str, int index, int endIndex) {
+    private int skipWhitespace(char[] str, int index, int endIndex) {
         for (; index < endIndex; index++) {
             if ((str[index] & 0xff) > ' ') {
                 break;
@@ -97,12 +97,11 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
                 virtualIndexOfPoint = index;
                 for (; index < endIndex - 8; index += 8) {
                     int eightDigits = tryToParseEightDigits(str, index + 1);
-                    if (eightDigits >= 0) {
-                        // This might overflow, we deal with it later.
-                        significand = 100_000_000L * significand + eightDigits;
-                    } else {
+                    if (eightDigits < 0) {
                         break;
                     }
+                    // This might overflow, we deal with it later.
+                    significand = 100_000_000L * significand + eightDigits;
                 }
             } else {
                 break;
@@ -131,7 +130,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
             }
             illegal |= !isDigit(ch);
             do {
-                // Guard against overflow of expNumber
+                // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + ch - '0';
                 }
@@ -284,12 +283,11 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 /*
-                while (index < endIndex - 8) {
+                for (;index < endIndex - 8; index += 8;) {
                     long parsed = tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         digits = (digits << 32) + parsed;
-                        index += 8;
                     } else {
                         break;
                     }
@@ -320,7 +318,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
             }
             illegal |= !isDigit(ch);
             do {
-                // Guard against overflow of expNumber
+                // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + ch - '0';
                 }
@@ -440,7 +438,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
     abstract long positiveInfinity();
 
     private int tryToParseEightDigits(char[] str, int offset) {
-        return FastDoubleSwar.tryToParseEightDigitsUtf16(str, offset);
+        return FastDoubleVector.tryToParseEightDigitsUtf16(str, offset);
     }
 
     abstract long valueOfFloatLiteral(

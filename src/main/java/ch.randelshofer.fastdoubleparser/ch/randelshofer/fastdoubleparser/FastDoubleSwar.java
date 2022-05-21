@@ -127,13 +127,13 @@ class FastDoubleSwar {
      *             |  (bytes[0]&0xffL);
      * }</pre>
      *
-     * @param value contains 8 ascii characters in little endian order
+     * @param chars contains 8 ascii characters in little endian order
      * @return the parsed number,
      * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static int tryToParseEightDigitsUtf8(long value) {
-        long val = value - 0x3030303030303030L;
-        long det = ((value + 0x4646464646464646L) | val) &
+    public static int tryToParseEightDigitsUtf8(long chars) {
+        long val = chars - 0x3030303030303030L;
+        long det = ((chars + 0x4646464646464646L) | val) &
                 0x8080808080808080L;
         if (det != 0L) {
             return -1;
