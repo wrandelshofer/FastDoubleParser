@@ -17,22 +17,6 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         return '0' <= c && c <= '9';
     }
 
-    static int tryToParseEightDigits(CharSequence str, int offset) {
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
-        long first = str.charAt(offset)
-                | (long) str.charAt(offset + 1) << 16
-                | (long) str.charAt(offset + 2) << 32
-                | (long) str.charAt(offset + 3) << 48;
-
-        long second = str.charAt(offset + 4)
-                | (long) str.charAt(offset + 5) << 16
-                | (long) str.charAt(offset + 6) << 32
-                | (long) str.charAt(offset + 7) << 48;
-
-        return FastDoubleVector.tryToParseEightDigitsUtf16(first, second);
-    }
-
     abstract long nan();
 
     abstract long negativeInfinity();
@@ -84,6 +68,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         long significand = 0;// significand is treated as an unsigned long
         final int significandStartIndex = index;
         int virtualIndexOfPoint = -1;
+        boolean illegal = false;
         char ch = 0;
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
@@ -91,9 +76,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
                 // This might overflow, we deal with it later.
                 significand = 10 * significand + ch - '0';
             } else if (ch == '.') {
-                if (virtualIndexOfPoint >= 0) {
-                    throw newNumberFormatException(str, startIndex, endIndex);
-                }
+                illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 while (index < endIndex - 8) {
                     int eightDigits = tryToParseEightDigits(str, index + 1);
@@ -130,9 +113,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             if (neg_exp || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            if (!isDigit(ch)) {
-                throw newNumberFormatException(str, startIndex, endIndex);
-            }
+            illegal |= !isDigit(ch);
             do {
                 // Guard against overflow of expNumber
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
@@ -149,7 +130,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         // Skip trailing whitespace and check if FloatValue is complete
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
-        if (index < endIndex
+        if (illegal || index < endIndex
                 || !hasLeadingZero && digitCount == 0 && str.charAt(virtualIndexOfPoint) != '.') {
             throw newNumberFormatException(str, startIndex, endIndex);
         }
@@ -275,6 +256,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         final int significandStartIndex = index;
         int virtualIndexOfPoint = -1;
         final int digitCount;
+        boolean illegal = false;
         char ch = 0;
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
@@ -283,9 +265,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             if (hexValue >= 0) {
                 significand = (significand << 4) | hexValue;// This might overflow, we deal with it later.
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
-                if (virtualIndexOfPoint >= 0) {
-                    throw newNumberFormatException(str, startIndex, endIndex);
-                }
+                illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 /*
                 while (index < endIndex - 8) {
@@ -322,9 +302,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             if (neg_exp || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            if (!isDigit(ch)) {
-                throw newNumberFormatException(str, startIndex, endIndex);
-            }
+            illegal |= !isDigit(ch);
             do {
                 // Guard against overflow of expNumber
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
@@ -341,7 +319,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         // Skip trailing whitespace and check if FloatValue is complete
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
-        if (index < endIndex
+        if (illegal || index < endIndex
                 || digitCount == 0 && str.charAt(virtualIndexOfPoint) != '.'
                 || !hasExponent) {
             throw newNumberFormatException(str, startIndex, endIndex);
@@ -472,4 +450,19 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
 
+    static int tryToParseEightDigits(CharSequence str, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = str.charAt(offset)
+                | (long) str.charAt(offset + 1) << 16
+                | (long) str.charAt(offset + 2) << 32
+                | (long) str.charAt(offset + 3) << 48;
+
+        long second = str.charAt(offset + 4)
+                | (long) str.charAt(offset + 5) << 16
+                | (long) str.charAt(offset + 6) << 32
+                | (long) str.charAt(offset + 7) << 48;
+
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
+    }
 }
