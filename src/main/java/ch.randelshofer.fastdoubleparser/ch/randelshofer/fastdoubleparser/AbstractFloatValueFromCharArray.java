@@ -95,12 +95,11 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                while (index < endIndex - 8) {
+                for (; index < endIndex - 8; index += 8) {
                     int eightDigits = tryToParseEightDigits(str, index + 1);
                     if (eightDigits >= 0) {
                         // This might overflow, we deal with it later.
                         significand = 100_000_000L * significand + eightDigits;
-                        index += 8;
                     } else {
                         break;
                     }
