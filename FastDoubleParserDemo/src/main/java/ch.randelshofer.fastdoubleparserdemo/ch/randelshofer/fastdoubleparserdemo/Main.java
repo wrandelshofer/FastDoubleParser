@@ -221,13 +221,13 @@ public class Main {
         functions.put("FastFloat  String", () -> sumFastFloatFromCharSequence(lines));
         functions.put("FastFloat  char[]", () -> sumFastFloatParserFromCharArray(charArrayLines));
         functions.put("FastFloat  byte[]", () -> sumFastFloatParserFromByteArray(byteArrayLines));
-        functions.put("FastFloat  vector", () -> sumFastFloatParserFromVector(byteArrayLines));
+       // functions.put("FastFloat  vector", () -> sumFastFloatParserFromVector(byteArrayLines));
         functions.put("Float", () -> sumFloatParseFloat(lines));
         return functions;
     }
 
     private void printStats(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %7.2f ns/f\n",
+        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
                 stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
