@@ -180,6 +180,9 @@ public class Main {
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics warmup = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
+            results.put(entry.getKey(), warmup);
+        }
+        for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics stats = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), stats);
         }
@@ -224,7 +227,7 @@ public class Main {
     }
 
     private void printStats(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %% stdv)  %7.2f Mfloat/s  %7.2f ns/f\n",
+        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %7.2f ns/f\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
                 stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
