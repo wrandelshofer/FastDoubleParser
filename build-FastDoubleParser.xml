@@ -95,7 +95,6 @@
         <javadoc encoding="UTF-8" destdir="${javadoc}"
                verbose="false"
                  charset="UTF-8"
-                 footer="&lt;font size=-2&gt;${copyright}&lt;/font&gt;"
                  header="${artifactId} ${version}"
                  windowtitle="${artifactId} ${version}"
         >

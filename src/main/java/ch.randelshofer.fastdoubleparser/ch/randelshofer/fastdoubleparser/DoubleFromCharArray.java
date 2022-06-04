@@ -11,6 +11,9 @@ package ch.randelshofer.fastdoubleparser;
 public final class DoubleFromCharArray extends AbstractFloatValueFromCharArray {
 
 
+    /**
+     * Creates a new instance.
+     */
     public DoubleFromCharArray() {
 
     }

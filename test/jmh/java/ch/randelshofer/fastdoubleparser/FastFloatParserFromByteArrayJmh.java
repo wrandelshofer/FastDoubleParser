@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
- * # VM version: JDK 16, OpenJDK 64-Bit Server VM, 16+36-2231
+ * # VM version: JDK 17, OpenJDK 64-Bit Server VM, 17+35-2724
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark    (str)  Mode  Cnt    Score   Error  Units
@@ -34,11 +34,6 @@ import java.util.concurrent.TimeUnit;
  * m        3.1415927  avgt    2   24.022          ns/op
  * m    1.6162552E-35  avgt    2   28.465          ns/op
  * m  0x1.57bd4ep-116  avgt    2  336.391          ns/op
- *
- * // with 7 digits at once!
- * Benchmark                                  (str)  Mode  Cnt   Score   Error  Units
- * FastFloatParserFromByteArrayJmh.m      3.1415927  avgt    2  22.704          ns/op
- * FastFloatParserFromByteArrayJmh.m  1.6162552E-35  avgt    2  28.679          ns/op
  * </pre>
  */
 
@@ -55,12 +50,12 @@ public class FastFloatParserFromByteArrayJmh {
 
 
     @Param({
-            //  "0",
-            //  "365",
-            //  "10.1",
+            "0",
+            "365",
+            "10.1",
             "3.1415927",
             "1.6162552E-35",
-            //   "0x1.57bd4ep-116"
+            "0x1.57bd4ep-116"
     })
     public String str;
     private byte[] byteArray;

@@ -40,9 +40,7 @@ abstract class AbstractDoubleNumericallyGeneratedTest {
                 .mapToObj(d -> dynamicTest(Double.toHexString(d) + "", () -> testLegalInput(d)));
     }
 
-    private void testLegalInput(double expected) {
-        testLegalInput(expected + "", expected);
-    }
+    protected abstract double parse(String str);
 
     private void testLegalInput(String str, double expected) {
         double actual = parse(str);
@@ -51,5 +49,7 @@ abstract class AbstractDoubleNumericallyGeneratedTest {
                 "longBits of " + expected);
     }
 
-    protected abstract double parse(String str);
+    private void testLegalInput(double expected) {
+        testLegalInput(expected + "", expected);
+    }
 }
