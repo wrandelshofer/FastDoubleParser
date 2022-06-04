@@ -83,7 +83,7 @@ public class EightDigitsJmh {
 
     @Benchmark
     public int m00ByteArray7DecDigitsSwar() {
-        return FastDoubleSimd.tryToParseSevenDigitsUtf8Swar(eightDigitsByteArray, 1);
+        return FastDoubleSwar.tryToParseSevenDigitsUtf8(eightDigitsByteArray, 1);
     }
 
 
@@ -131,12 +131,12 @@ public class EightDigitsJmh {
 
     @Benchmark
     public int m11ByteArrayDecSwar() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf8Swar(eightDigitsByteArray, 0);
+        return FastDoubleSwar.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
     }
 
     @Benchmark
     public int m12CharArrayDecSwar() {
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(eightDigitsCharArray, 0);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
     }
 
     @Benchmark
@@ -156,17 +156,17 @@ public class EightDigitsJmh {
                 | (long) str.charAt(offset + 6) << 32
                 | (long) str.charAt(offset + 7) << 48;
 
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(first, second);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
     @Benchmark
     public long m14ByteArrayHexSwar() {
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf8Swar(eightDigitsByteArray, 0);
+        return FastDoubleSwar.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
     }
 
     @Benchmark
     public long m15CharArrayHexSwar() {
-        return FastDoubleSimd.tryToParseEightHexDigitsUtf16Swar(eightDigitsCharArray, 0);
+        return FastDoubleSwar.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
     }
 
     private static boolean isDigit(byte c) {

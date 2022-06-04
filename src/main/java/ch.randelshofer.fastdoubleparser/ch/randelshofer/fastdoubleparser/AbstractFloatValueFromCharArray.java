@@ -438,7 +438,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
     abstract long positiveInfinity();
 
     private int tryToParseEightDigits(char[] str, int offset) {
-        return FastDoubleSimd.tryToParseEightDigitsUtf16Swar(str, offset);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(str, offset);
     }
 
     abstract long valueOfFloatLiteral(

@@ -7,7 +7,6 @@ package ch.randelshofer.fastdoubleparserdemo;
 
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import ch.randelshofer.fastdoubleparser.FastFloatParser;
-import ch.randelshofer.fastdoubleparser.VectorizedFloatFromByteArray;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -108,17 +107,6 @@ public class Main {
         float answer = 0;
         for (byte[] st : s) {
             float x = FastFloatParser.parseFloat(st);
-            answer += x;
-        }
-        return answer;
-    }
-
-    private float sumFastFloatParserFromVector(List<byte[]> s) {
-        VectorizedFloatFromByteArray ffv = new VectorizedFloatFromByteArray();
-        float answer = 0;
-        for (byte[] st : s) {
-
-            float x = (st.length < 17) ? ffv.parseFloat(st, 0, st.length) : FastFloatParser.parseFloat(st);
             answer += x;
         }
         return answer;
