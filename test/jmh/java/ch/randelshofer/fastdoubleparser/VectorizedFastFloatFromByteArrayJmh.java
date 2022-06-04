@@ -24,16 +24,27 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
+ * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 19-ea+20-1369
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * Benchmark  (str)  Mode  Cnt   Score   Error  Units
+ * m              0  avgt    2  33.584          ns/op
+ * m            365  avgt    2  36.287          ns/op
+ * m           10.1  avgt    2  46.346          ns/op
+ * m      3.1415927  avgt    2  47.454          ns/op
+ * m  1.6162552e-35  avgt    2  64.859          ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.28
  * # VM version: JDK 17, OpenJDK 64-Bit Server VM, 17+35-2724
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * Benchmark    (str)  Mode  Cnt    Score   Error  Units
- * m                0  avgt    2    6.570          ns/op
- * m              365  avgt    2   14.525          ns/op
- * m             10.1  avgt    2   16.646          ns/op
- * m        3.1415927  avgt    2   24.022          ns/op
- * m    1.6162552E-35  avgt    2   28.465          ns/op
- * m  0x1.57bd4ep-116  avgt    2  336.391          ns/op
+ * Benchmark  (str)  Mode  Cnt    Score   Error  Units
+ * m              0  avgt    2   51.447          ns/op
+ * m            365  avgt    2   59.366          ns/op
+ * m           10.1  avgt    2   75.002          ns/op
+ * m      3.1415927  avgt    2   77.392          ns/op
+ * m  1.6162552e-35  avgt    2  103.139          ns/op
  * </pre>
  */
 
@@ -46,16 +57,15 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class FastFloatParserFromByteArrayJmh {
+public class VectorizedFastFloatFromByteArrayJmh {
 
 
     @Param({
-            "0",
-            "365",
+            //  "0",
+            //  "365",
             "10.1",
             "3.1415927",
-            "1.6162552E-35",
-            "0x1.57bd4ep-116"
+            "1.6162552e-35",
     })
     public String str;
     private byte[] byteArray;
@@ -67,7 +77,7 @@ public class FastFloatParserFromByteArrayJmh {
 
     @Benchmark
     public double m() {
-        return FastFloatParser.parseFloat(byteArray);
+        return new VectorizedFloatFromByteArray().parseFloat(byteArray, 0, byteArray.length);
     }
 }
 

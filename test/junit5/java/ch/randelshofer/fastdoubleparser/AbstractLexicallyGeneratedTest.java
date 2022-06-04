@@ -5,9 +5,13 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -16,7 +20,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
  * The purpose of this test factory is to discover new cases, where
- * {@link FastDoubleParserOld#parseDouble(CharSequence)} does not
+ * {@link FastDoubleParser#parseDouble(CharSequence)} does not
  * produce the same result like {@link Double#parseDouble(String)}.
  * <p>
  * Unfortunately, the space of input values is huge, it includes
@@ -43,8 +47,8 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(10, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
@@ -55,8 +59,8 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(1, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
@@ -67,8 +71,8 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(40, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
@@ -79,21 +83,31 @@ abstract class AbstractLexicallyGeneratedTest {
         LexicalGenerator gen = new LexicalGenerator(false, false);
         return IntStream.range(1, 100).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithWhitespace(i, rng);
-            return dynamicTest(i + ": " + str,
-                    () -> testAgainstJdk(str));
+                    return dynamicTest(i + ": " + str,
+                            () -> testAgainstJdk(str));
                 }
         );
     }
 
+    @TestFactory
+    @Disabled
+    List<DynamicNode> dynamicTestsAllSingleCharacterInputs() {
+        ArrayList<DynamicNode> list = new ArrayList<>();
+        for (int codePoint = 0; codePoint <= Character.MAX_VALUE; codePoint++) {
+            String str = "" + (char) codePoint;
+            list.add(dynamicTest("0x" + Integer.toHexString(codePoint), () -> testAgainstJdk(str)));
+        }
+        return list;
+    }
+
     /**
      * Given an input String {@code str},
-     * tests if {@link FastDoubleParserOld#parseDouble(CharSequence)}
+     * tests if {@link FastDoubleParser#parseDouble(CharSequence)}
      * produces the same result like {@link Double#parseDouble(String)}.
      *
      * @param str the given input string
      */
     protected abstract void testAgainstJdk(String str);
-
 
 
 }

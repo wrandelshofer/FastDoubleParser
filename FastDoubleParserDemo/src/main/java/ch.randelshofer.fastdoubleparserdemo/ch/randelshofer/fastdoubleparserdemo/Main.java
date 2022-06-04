@@ -7,6 +7,7 @@ package ch.randelshofer.fastdoubleparserdemo;
 
 import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import ch.randelshofer.fastdoubleparser.FastFloatParser;
+import ch.randelshofer.fastdoubleparser.VectorizedFloatFromByteArray;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -112,6 +113,17 @@ public class Main {
         return answer;
     }
 
+    private float sumFastFloatParserFromVector(List<byte[]> s) {
+        VectorizedFloatFromByteArray ffv = new VectorizedFloatFromByteArray();
+        float answer = 0;
+        for (byte[] st : s) {
+
+            float x = (st.length < 17) ? ffv.parseFloat(st, 0, st.length) : FastFloatParser.parseFloat(st);
+            answer += x;
+        }
+        return answer;
+    }
+
     private float sumFastFloatParserFromCharArray(List<char[]> s) {
         float answer = 0;
         for (char[] st : s) {
@@ -168,6 +180,9 @@ public class Main {
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics warmup = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
+            results.put(entry.getKey(), warmup);
+        }
+        for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics stats = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), stats);
         }
@@ -206,14 +221,16 @@ public class Main {
         functions.put("FastFloat  String", () -> sumFastFloatFromCharSequence(lines));
         functions.put("FastFloat  char[]", () -> sumFastFloatParserFromCharArray(charArrayLines));
         functions.put("FastFloat  byte[]", () -> sumFastFloatParserFromByteArray(byteArrayLines));
+       // functions.put("FastFloat  vector", () -> sumFastFloatParserFromVector(byteArrayLines));
         functions.put("Float", () -> sumFloatParseFloat(lines));
         return functions;
     }
 
     private void printStats(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        System.out.printf("%-17s :  %7.2f MB/s  %7.2f Mfloat/s  %7.2f ns/f\n",
+        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
+                stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
                 lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
                 stats.getAverage() / lines.size()
         );

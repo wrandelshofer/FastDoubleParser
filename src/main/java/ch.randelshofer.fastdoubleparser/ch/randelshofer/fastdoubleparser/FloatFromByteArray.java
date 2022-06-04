@@ -13,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 public class FloatFromByteArray extends AbstractFloatValueFromByteArray {
 
 
+    /**
+     * Creates a new instance.
+     */
     public FloatFromByteArray() {
 
     }
@@ -53,7 +56,7 @@ public class FloatFromByteArray extends AbstractFloatValueFromByteArray {
                              long significand, int exponent, boolean isSignificandTruncated,
                              int exponentOfTruncatedSignificand) {
         float result = FastFloatMath.decFloatLiteralToFloat(isNegative, significand, exponent, isSignificandTruncated, exponentOfTruncatedSignificand);
-        return Float.isNaN(result) ? (long) Float.floatToRawIntBits(Float.parseFloat(new String(str, startIndex, endIndex - startIndex, StandardCharsets.ISO_8859_1))) : Float.floatToRawIntBits(result);
+        return (long) Float.floatToRawIntBits(Float.isNaN(result) ? Float.parseFloat(new String(str, startIndex, endIndex - startIndex, StandardCharsets.ISO_8859_1)) : result);
     }
 
     @Override

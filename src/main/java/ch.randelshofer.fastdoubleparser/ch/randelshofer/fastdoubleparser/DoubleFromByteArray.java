@@ -13,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 public final class DoubleFromByteArray extends AbstractFloatValueFromByteArray {
 
 
+    /**
+     * Creates a new instance.
+     */
     public DoubleFromByteArray() {
 
     }
@@ -28,7 +31,7 @@ public final class DoubleFromByteArray extends AbstractFloatValueFromByteArray {
     }
 
     /**
-     * Parses a {@code FloatValue} from a {@codeby byte[]} and converts it
+     * Parses a {@code FloatValue} from a {@code byte[]} and converts it
      * into a {@code double} value.
      * <p>
      * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatValue}.

@@ -11,6 +11,9 @@ package ch.randelshofer.fastdoubleparser;
 public class FloatFromCharSequence extends AbstractFloatValueFromCharSequence {
 
 
+    /**
+     * Creates a new instance.
+     */
     public FloatFromCharSequence() {
 
     }
