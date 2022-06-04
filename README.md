@@ -125,14 +125,38 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
 Method           | MB/s  |stdev|Mfloats/s| ns/f   | JDK
 -----------------|------:|-----:|------:|--------:|--------
-FastDouble String| 543.33|11.4 %|  31.18|    32.07|18.0.1.1
-FastDouble char[]| 585.08| 2.1 %|  33.58|    29.78|18.0.1.1
-FastDouble byte[]| 666.40| 8.8 %|  38.24|    26.15|18.0.1.1
+Double           |  84.75| 2.2 %|   4.86|   205.55|1.8.0_281
+Double           |  93,02| 3,5 %|   5,34|   187,32|11.0.8
 Double           |  88.72| 3.4 %|   5.09|   196.42|18.0.1.1
-FastFloat  String| 502.11| 9.7 %|  28.81|    34.70|18.0.1.1
-FastFloat  char[]| 582.48| 2.2 %|  33.43|    29.92|18.0.1.1
-FastFloat  byte[]| 655.88| 7.7 %|  37.64|    26.57|18.0.1.1
+Double           |  91.93| 2.8 %|   5.28|   189.50|19-ea
+FastDouble byte[]| 545.06| 4.8 %|  31.29|    31.96|1.8.0_281
+FastDouble byte[]| 620,48| 0,7 %|  35,61|    28,08|11.0.8
+FastDouble byte[]| 666.40| 8.8 %|  38.24|    26.15|18.0.1.1
+FastDouble byte[]| 690.99| 4.5 %|  39.67|    25.21|19-ea
+FastDouble char[]| 533.03| 3.3 %|  30.60|    32.68|1.8.0_281
+FastDouble char[]| 534,60| 9,7 %|  30,68|    32,59|11.0.8
+FastDouble char[]| 585.08| 2.1 %|  33.58|    29.78|18.0.1.1
+FastDouble char[]| 648.07| 6.8 %|  37.20|    26.88|19-ea
+FastDouble String| 353.70| 3.2 %|  20.30|    49.25|1.8.0_281
+FastDouble String| 484,87|10,6 %|  27,83|    35,93|11.0.8
+FastDouble String| 543.33|11.4 %|  31.18|    32.07|18.0.1.1
+FastDouble String| 567.70| 2.3 %|  32.59|    30.69|19-ea
+Float            |  89.23| 2.4 %|   5.12|   195.23|1.8.0_281
+Float            |  99,60| 3,5 %|   5,72|   174,94|11.0.8
 Float            |  95.64| 3.7 %|   5.49|   182.19|18.0.1.1
+Float            |  96.52| 3.6 %|   5.54|   180.48|19-ea
+FastFloat  byte[]| 554.65| 3.4 %|  31.84|    31.41|1.8.0_281
+FastFloat  byte[]| 574,24| 6,6 %|  32,96|    30,34|11.0.8
+FastFloat  byte[]| 655.88| 7.7 %|  37.64|    26.57|18.0.1.1
+FastFloat  byte[]| 632.94| 3.7 %|  36.33|    27.52|19-ea
+FastFloat  char[]| 546.20| 4.1 %|  31.35|    31.89|1.8.0_281
+FastFloat  char[]| 522,31| 9,3 %|  29,98|    33,36|11.0.8
+FastFloat  char[]| 582.48| 2.2 %|  33.43|    29.92|18.0.1.1
+FastFloat  char[]| 595.09| 2.2 %|  34.16|    29.27|19-ea
+FastFloat  String| 375.98| 2.3 %|  21.58|    46.33|1.8.0_281
+FastFloat  String| 476,43| 9,6 %|  27,34|    36,57|11.0.8
+FastFloat  String| 502.11| 9.7 %|  28.81|    34.70|18.0.1.1
+FastFloat  String| 528.36| 3.5 %|  30.33|    32.97|19-ea
 
 ## Comparison with C version
 
