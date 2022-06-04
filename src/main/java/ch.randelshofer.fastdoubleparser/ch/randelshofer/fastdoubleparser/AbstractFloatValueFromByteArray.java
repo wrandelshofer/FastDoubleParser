@@ -148,7 +148,7 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex
-                || !hasLeadingZero && digitCount == 0 && str[virtualIndexOfPoint] != '.') {
+                || !hasLeadingZero && digitCount == 0) {
             throw newNumberFormatException(str, startIndex, endIndex);
         }
 

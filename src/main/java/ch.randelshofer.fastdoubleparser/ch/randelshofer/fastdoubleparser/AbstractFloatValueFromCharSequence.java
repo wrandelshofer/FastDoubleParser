@@ -129,7 +129,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex
-                || !hasLeadingZero && digitCount == 0 && str.charAt(virtualIndexOfPoint) != '.') {
+                || !hasLeadingZero && digitCount == 0) {
             throw newNumberFormatException(str, startIndex, endIndex);
         }
 

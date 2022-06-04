@@ -127,13 +127,13 @@ class FastDoubleSwar {
      *             |  (bytes[0]&0xffL);
      * }</pre>
      *
-     * @param chars contains 8 ascii characters in little endian order
+     * @param chunk contains 8 ascii characters in little endian order
      * @return the parsed number,
      * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static int tryToParseEightDigitsUtf8(long chars) {
-        long val = chars - 0x3030303030303030L;
-        long det = ((chars + 0x4646464646464646L) | val) &
+    public static int tryToParseEightDigitsUtf8(long chunk) {
+        long val = chunk - 0x3030303030303030L;
+        long det = ((chunk + 0x4646464646464646L) | val) &
                 0x8080808080808080L;
         if (det != 0L) {
             return -1;
@@ -215,17 +215,17 @@ class FastDoubleSwar {
      * Tries to parse eight digits from a long using the
      * 'SIMD within a register technique' (SWAR).
      *
-     * @param value contains 8 ascii characters in big endian order
+     * @param chunk contains 8 ascii characters in big endian order
      * @return the parsed number,
      * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static long tryToParseEightHexDigitsUtf8(long value) {
+    public static long tryToParseEightHexDigitsUtf8(long chunk) {
         // The following code is based on the technique presented in the paper
         // by Leslie Lamport.
 
 
         // Subtract character '0' (0x30) from each of the eight characters
-        long vec = value - 0x30_30_30_30_30_30_30_30L;
+        long vec = chunk - 0x30_30_30_30_30_30_30_30L;
 
         // Create a predicate for all bytes which are greater than '9'-'0' (0x09).
         // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
@@ -267,17 +267,17 @@ class FastDoubleSwar {
      * Tries to parse four hex digits from a long using the
      * 'SIMD within a register technique' (SWAR).
      *
-     * @param value contains 4 utf-16 characters in big endian order
+     * @param chunk contains 4 utf-16 characters in big endian order
      * @return the parsed number,
      * returns a negative value if {@code value} does not contain 8 digits
      */
-    public static long tryToParseFourHexDigitsUtf16(long value) {
+    public static long tryToParseFourHexDigitsUtf16(long chunk) {
         // The following code is based on the technique presented in the paper
         // by Leslie Lamport.
 
 
         // Subtract character '0' (0x0030) from each of the four characters
-        long vec = value - 0x0030_0030_0030_0030L;
+        long vec = chunk - 0x0030_0030_0030_0030L;
 
         // Create a predicate for all bytes which are greater than '9'-'0' (0x0009).
         // The predicate is true if the hsb of a byte is set: (predicate & 0xa000) != 0.

@@ -81,7 +81,10 @@ abstract class AbstractFloatHandPickedTest {
                 dynamicTest("1§", () -> testIllegalInput("1§")),
                 dynamicTest("NaN x", () -> testIllegalInput("NaN x")),
                 dynamicTest("Infinity x", () -> testIllegalInput("Infinity x")),
-                dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde"))
+                dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde")),
+                dynamicTest(".", () -> testIllegalInput(".")),
+                dynamicTest("0x.", () -> testIllegalInput("0x.")),
+                dynamicTest(".e2", () -> testIllegalInput(".e2"))
         );
     }
 
@@ -118,7 +121,6 @@ abstract class AbstractFloatHandPickedTest {
                 dynamicTest("+1", () -> testLegalInput("+1", +1.0f)),
                 dynamicTest("1e0", () -> testLegalInput("1e0", 1e0f)),
                 dynamicTest("1.e0", () -> testLegalInput("1.e0", 1e0f)),
-                dynamicTest(".e2", () -> testLegalInput(".e2", 0f)),
                 dynamicTest("1e1", () -> testLegalInput("1e1", 1e1f)),
                 dynamicTest("1e+1", () -> testLegalInput("1e+1", 1e+1f)),
                 dynamicTest("1e-1", () -> testLegalInput("1e-1", 1e-1f)),
@@ -165,9 +167,9 @@ abstract class AbstractFloatHandPickedTest {
                         Float.NEGATIVE_INFINITY)),
                 dynamicTest(Float.toString(Float.NaN), () -> testLegalDecInput(
                         Float.NaN)),
-                dynamicTest(Float.toString(Math.nextUp(0.0f)), () -> testLegalHexInput(
+                dynamicTest(Float.toString(Math.nextUp(0.0f)), () -> testLegalDecInput(
                         Math.nextUp(0.0f))),
-                dynamicTest(Float.toString(Math.nextDown(0.0f)), () -> testLegalHexInput(
+                dynamicTest(Float.toString(Math.nextDown(0.0f)), () -> testLegalDecInput(
                         Math.nextDown(0.0f))),
                 dynamicTest("Just above MAX_VALUE: 3.4028236e+38f", () -> testLegalInput(
                         "3.4028236e+38", Float.POSITIVE_INFINITY)),

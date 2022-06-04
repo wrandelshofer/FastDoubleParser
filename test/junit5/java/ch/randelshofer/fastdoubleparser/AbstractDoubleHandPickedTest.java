@@ -83,6 +83,7 @@ abstract class AbstractDoubleHandPickedTest {
                 dynamicTest("-", () -> testIllegalInput("-")),
                 dynamicTest("+", () -> testIllegalInput("+")),
                 dynamicTest("1e", () -> testIllegalInput("1e")),
+                dynamicTest("1ee2", () -> testIllegalInput("1ee2")),
                 dynamicTest("1_000", () -> testIllegalInput("1_000")),
                 dynamicTest("0.000_1", () -> testIllegalInput("0.000_1")),
                 dynamicTest("-e-55", () -> testIllegalInput("-e-55")),
@@ -91,9 +92,13 @@ abstract class AbstractDoubleHandPickedTest {
                 dynamicTest("1§", () -> testIllegalInput("1§")),
                 dynamicTest("NaN x", () -> testIllegalInput("NaN x")),
                 dynamicTest("Infinity x", () -> testIllegalInput("Infinity x")),
-                dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde"))
+                dynamicTest("0x123.456789abcde", () -> testIllegalInput("0x123.456789abcde")),
+                dynamicTest(".", () -> testIllegalInput(".")),
+                dynamicTest("0x.", () -> testIllegalInput("0x.")),
+                dynamicTest(".e2", () -> testIllegalInput(".e2"))
         );
     }
+
 
     @TestFactory
     List<DynamicNode> dynamicTestsIllegalInputsWithPrefixAndSuffix() {
@@ -128,7 +133,6 @@ abstract class AbstractDoubleHandPickedTest {
                 dynamicTest("+1", () -> testLegalInput("+1", +1.0)),
                 dynamicTest("1e0", () -> testLegalInput("1e0", 1e0)),
                 dynamicTest("1.e0", () -> testLegalInput("1.e0", 1e0)),
-                dynamicTest(".e2", () -> testLegalInput(".e2", 0)),
                 dynamicTest(".8", () -> testLegalInput(".8", 0.8)),
                 dynamicTest("8.", () -> testLegalInput("8.", 8.0)),
                 dynamicTest("1e1", () -> testLegalInput("1e1", 1e1)),
@@ -199,6 +203,10 @@ abstract class AbstractDoubleHandPickedTest {
                         Double.NEGATIVE_INFINITY)),
                 dynamicTest(Double.toString(Double.NaN), () -> testLegalDecInput(
                         Double.NaN)),
+                dynamicTest(Double.toString(Math.nextUp(0.0)), () -> testLegalDecInput(
+                        Math.nextUp(0.0))),
+                dynamicTest(Double.toString(Math.nextDown(0.0)), () -> testLegalDecInput(
+                        Math.nextDown(0.0))),
                 dynamicTest("Just above MAX_VALUE: 1.7976931348623159E308", () -> testLegalInput(
                         "1.7976931348623159E308", Double.POSITIVE_INFINITY)),
                 dynamicTest("Just below MIN_VALUE: 2.47E-324", () -> testLegalInput(
@@ -231,6 +239,10 @@ abstract class AbstractDoubleHandPickedTest {
                         Double.NEGATIVE_INFINITY)),
                 dynamicTest(Double.toHexString(Double.NaN), () -> testLegalHexInput(
                         Double.NaN)),
+                dynamicTest(Double.toString(Math.nextUp(0.0f)), () -> testLegalHexInput(
+                        Math.nextUp(0.0))),
+                dynamicTest(Double.toString(Math.nextDown(0.0f)), () -> testLegalHexInput(
+                        Math.nextDown(0.0))),
                 dynamicTest(Double.toHexString(Math.nextUp(0.0)), () -> testLegalHexInput(
                         Math.nextUp(0.0))),
                 dynamicTest(Double.toHexString(Math.nextDown(0.0)), () -> testLegalHexInput(
