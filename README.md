@@ -121,6 +121,19 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
     Speedup FastFloat  byte[] vs Double: 11.70
     Speedup Float             vs Double: 1.02
 
+## Comparison of JDK versions
+
+Method           | MB/s  |stdev|Mfloats/s| ns/f   | JDK
+-----------------|------:|-----:|------:|--------:|--------
+FastDouble String| 543.33|11.4 %|  31.18|    32.07|18.0.1.1
+FastDouble char[]| 585.08| 2.1 %|  33.58|    29.78|18.0.1.1
+FastDouble byte[]| 666.40| 8.8 %|  38.24|    26.15|18.0.1.1
+Double           |  88.72| 3.4 %|   5.09|   196.42|18.0.1.1
+FastFloat  String| 502.11| 9.7 %|  28.81|    34.70|18.0.1.1
+FastFloat  char[]| 582.48| 2.2 %|  33.43|    29.92|18.0.1.1
+FastFloat  byte[]| 655.88| 7.7 %|  37.64|    26.57|18.0.1.1
+Float            |  95.64| 3.7 %|   5.49|   182.19|18.0.1.1
+
 ## Comparison with C version
 
 For comparison, here are the test results

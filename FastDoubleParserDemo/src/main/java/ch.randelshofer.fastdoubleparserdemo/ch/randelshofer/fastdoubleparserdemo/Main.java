@@ -65,16 +65,32 @@ public class Main {
      */
     private static final double CONFIDENCE_LEVEL = 0.998;
 
+    private String filename = null;
+    private boolean markdown = false;
+
+
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
         System.out.println();
+
         Main benchmark = new Main();
-        if (args.length == 0) {
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+            case "--markdown":
+                benchmark.markdown = true;
+                break;
+            default:
+                benchmark.filename = args[i];
+                break;
+            }
+        }
+
+        if (benchmark.filename == null) {
             benchmark.demo(100_000);
             System.out.println("You can also provide a filename: it should contain one "
                     + "string per line corresponding to a number.");
         } else {
-            benchmark.loadFile(args[0]);
+            benchmark.loadFile(benchmark.filename);
         }
     }
 
@@ -188,10 +204,17 @@ public class Main {
         }
 
         // Print measurements
+        if (markdown) {
+            printStatsHeaderMarkdown();
+        }
         for (Map.Entry<String, VarianceStatistics> entry : results.entrySet()) {
             String name = entry.getKey();
             VarianceStatistics stats = entry.getValue();
-            printStats(lines, volumeMB, name, stats);
+            if (markdown) {
+                printStatsMarkdown(lines, volumeMB, name, stats);
+            } else {
+                printStatsAscii(lines, volumeMB, name, stats);
+            }
         }
 
         // Print speedup versus reference implementation
@@ -221,18 +244,24 @@ public class Main {
         functions.put("FastFloat  String", () -> sumFastFloatFromCharSequence(lines));
         functions.put("FastFloat  char[]", () -> sumFastFloatParserFromCharArray(charArrayLines));
         functions.put("FastFloat  byte[]", () -> sumFastFloatParserFromByteArray(byteArrayLines));
-       // functions.put("FastFloat  vector", () -> sumFastFloatParserFromVector(byteArrayLines));
+        // functions.put("FastFloat  vector", () -> sumFastFloatParserFromVector(byteArrayLines));
         functions.put("Float", () -> sumFloatParseFloat(lines));
         return functions;
     }
 
-    private void printStats(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
+    private void printStatsHeaderMarkdown() {
+        System.out.println("Method           | MB/s  |stdev|Mfloats/s| ns/f   | JDK");
+        System.out.println("-----------------|------:|-----:|------:|--------:|--------");
+    }
+
+    private void printStatsMarkdown(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
+        System.out.printf("%-17s|%7.2f|%4.1f %%|%7.2f|%9.2f|%s\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
                 stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
                 lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
-                stats.getAverage() / lines.size()
+                stats.getAverage() / lines.size(),
+                System.getProperty("java.version")
         );
         /*
         double confidenceWidth = Stats.confidence(1 - CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
@@ -246,6 +275,15 @@ public class Main {
         );*/
     }
 
+    private void printStatsAscii(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
+        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
+                name,
+                volumeMB * 1e9 / stats.getAverage(),
+                stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
+                lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
+                stats.getAverage() / lines.size()
+        );
+    }
 
     private VarianceStatistics measure(Supplier<? extends Number> func, int numberOfTrials,
                                        double confidenceLevel, double confidenceIntervalWidth) {
