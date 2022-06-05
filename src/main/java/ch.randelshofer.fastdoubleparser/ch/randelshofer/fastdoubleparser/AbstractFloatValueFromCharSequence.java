@@ -31,7 +31,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
      * @return a new  {@link NumberFormatException}
      */
     private NumberFormatException newNumberFormatException(CharSequence str, int startIndex, int endIndex) {
-        if (endIndex - startIndex > 1024) {
+        if (endIndex - startIndex > 64) {
             // str can be up to Integer.MAX_VALUE characters long
             return new NumberFormatException("For input string of length " + (endIndex - startIndex));
         } else {
@@ -61,7 +61,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
      * @return a float value
      * @throws NumberFormatException on parsing failure
      */
-    private long parseDecimalFloatLiteral(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
+    private long parseDecFloatLiteral(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -216,11 +216,11 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
         if (hasLeadingZero) {
             ch = ++index < endIndex ? str.charAt(index) : 0;
             if (ch == 'x' || ch == 'X') {
-                return parseHexFloatingPointLiteral(str, index + 1, offset, endIndex, isNegative);
+                return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
             }
         }
 
-        return parseDecimalFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
+        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
     }
 
     /**
@@ -245,7 +245,7 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
      * @param isNegative if the resulting number is negative
      * @return a double representation
      */
-    private long parseHexFloatingPointLiteral(
+    private long parseHexFloatLiteral(
             CharSequence str, int index, int startIndex, int endIndex, boolean isNegative) {
 
         // Parse HexSignificand

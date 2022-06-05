@@ -312,19 +312,4 @@ class FastDoubleSwar {
 
         return v5;
     }
-
-    /**
-     * Tries to parse seven decimal digits from a byte array using the
-     * 'SIMD within a register technique' (SWAR).
-     *
-     * @param a      contains 8 ascii characters
-     * @param offset the offset of the first character in {@code a}, must be
-     *               {@literal > 0}.
-     * @return the parsed number,
-     * returns a negative value if {@code value} does not contain 8 digits
-     */
-    public static int tryToParseSevenDigitsUtf8(byte[] a, int offset) {
-        return tryToParseEightDigitsUtf8(((long) readLongFromByteArrayLittleEndian.get(a, offset - 1)
-                & 0xffffffff_ffffff00L) | 0x30L);
-    }
 }

@@ -82,12 +82,6 @@ public class EightDigitsJmh {
     }
 
     @Benchmark
-    public int m00ByteArray7DecDigitsSwar() {
-        return FastDoubleSwar.tryToParseSevenDigitsUtf8(eightDigitsByteArray, 1);
-    }
-
-
-    @Benchmark
     public int m01ByteArrayDecScalar() {
         int value = 0;
         for (int i = 0; i < eightDigitsByteArray.length; i++) {

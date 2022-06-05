@@ -33,7 +33,7 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
      * @return a new  {@link NumberFormatException}
      */
     private NumberFormatException newNumberFormatException(byte[] str, int startIndex, int endIndex) {
-        if (endIndex - startIndex > 1024) {
+        if (endIndex - startIndex > 64) {
             // str can be up to Integer.MAX_VALUE characters long
             return new NumberFormatException("For input string of length " + (endIndex - startIndex));
         } else {
@@ -80,7 +80,7 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
      * @return a float value
      * @throws NumberFormatException on parsing failure
      */
-    private long parseDecimalFloatLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
+    private long parseDecFloatLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -239,7 +239,7 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
             }
         }
 
-        return parseDecimalFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
+        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
     }
 
     /**
@@ -279,7 +279,7 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
         for (; index < endIndex; index++) {
             ch = str[index];
             // Table look up is faster than a sequence of if-else-branches.
-            int hexValue = AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
+            int hexValue = ch < 0 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
             if (hexValue >= 0) {
                 significand = (significand << 4) | hexValue;// This might overflow, we deal with it later.
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
@@ -352,7 +352,7 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
             for (index = significandStartIndex; index < significandEndIndex; index++) {
                 ch = str[index];
                 // Table look up is faster than a sequence of if-else-branches.
-                int hexValue = ch > 127 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
+                int hexValue = ch < 0 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
                 if (hexValue >= 0) {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                         significand = (significand << 4) | hexValue;
