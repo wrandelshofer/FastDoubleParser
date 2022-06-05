@@ -123,6 +123,8 @@ FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
 ## Comparison of JDK versions
 
+The Y-axis shows Mfloat/s.
+
 ![ComparisonOfJvmVersions.png](ComparisonOfJvmVersions.png)
 
 Method|1.8.0_281|11.0.8|18.0.1.1|19-ea|17.0.3graalvm
