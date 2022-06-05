@@ -29,7 +29,7 @@ public class FloatFromCharArray extends AbstractFloatValueFromCharArray {
     }
 
     /**
-     * Parses a {@code FloatValue} from a {@link byte[]} and converts it
+     * Parses a {@code FloatValue} from a {@code byte[]} and converts it
      * into a {@code double} value.
      * <p>
      * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatValue}.

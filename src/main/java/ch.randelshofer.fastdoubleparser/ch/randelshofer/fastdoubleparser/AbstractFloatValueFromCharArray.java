@@ -8,6 +8,11 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Parses a {@code FloatValue} from a {@code char} array.
  * <p>
+ * This class should have a type parameter for the return value of its parse
+ * methods. Unfortunately Java does not support type parameters for primitive
+ * types. As a workaround we use {@code long}. A {@code long} has enough bits to
+ * fit a {@code double} value or a {@code float} value.
+ * <p>
  * See {@link ch.randelshofer.fastdoubleparser} for the grammar of
  * {@code FloatValue}.
  */
@@ -26,7 +31,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @return a new  {@link NumberFormatException}
      */
     private NumberFormatException newNumberFormatException(char[] str, int startIndex, int endIndex) {
-        if (endIndex - startIndex > 1024) {
+        if (endIndex - startIndex > 64) {
             // str can be up to Integer.MAX_VALUE characters long
             return new NumberFormatException("For input string of length " + (endIndex - startIndex));
         } else {
@@ -51,10 +56,6 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         return index;
     }
 
-    abstract long nan();
-
-    abstract long negativeInfinity();
-
     /**
      * Parses a {@code DecimalFloatingPointLiteral} production with optional
      * trailing white space until the end of the text.
@@ -77,7 +78,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @return a float value
      * @throws NumberFormatException on parsing failure
      */
-    private long parseDecimalFloatLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
+    private long parseDecFloatLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -232,11 +233,11 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         if (hasLeadingZero) {
             ch = ++index < endIndex ? str[index] : 0;
             if (ch == 'x' || ch == 'X') {
-                return parseHexFloatingPointLiteral(str, index + 1, offset, endIndex, isNegative);
+                return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
             }
         }
 
-        return parseDecimalFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
+        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
     }
 
     /**
@@ -261,7 +262,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param isNegative if the resulting number is negative
      * @return a double representation
      */
-    private long parseHexFloatingPointLiteral(
+    private long parseHexFloatLiteral(
             char[] str, int index, int startIndex, int endIndex, boolean isNegative) {
 
         // Parse HexSignificand
@@ -435,17 +436,67 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         throw newNumberFormatException(str, index, endIndex);
     }
 
-    abstract long positiveInfinity();
-
     private int tryToParseEightDigits(char[] str, int offset) {
         return FastDoubleSwar.tryToParseEightDigitsUtf16(str, offset);
     }
 
+    /**
+     * @return a NaN constant in the specialized type wrapped in a {@code long}
+     */
+    abstract long nan();
+
+    /**
+     * @return a negative infinity constant in the specialized type wrapped in a
+     * {@code long}
+     */
+    abstract long negativeInfinity();
+
+    /**
+     * @return a positive infinity constant in the specialized type wrapped in a
+     * {@code long}
+     */
+    abstract long positiveInfinity();
+
+    /**
+     * Computes a float value from the given components of a decimal float
+     * literal.
+     *
+     * @param str                            the string that contains the float literal (and maybe more)
+     * @param startIndex                     the start index (inclusive) of the float literal
+     *                                       inside the string
+     * @param endIndex                       the end index (exclusive) of the float literal inside
+     *                                       the string
+     * @param isNegative                     whether the float value is negative
+     * @param significand                    the significand of the float value (can be truncated)
+     * @param exponent                       the exponent of the float value
+     * @param isSignificandTruncated         whether the significand is truncated
+     * @param exponentOfTruncatedSignificand the exponent value of the truncated
+     *                                       significand
+     * @return the float value in the specialized type wrapped in a {@code long}
+     */
     abstract long valueOfFloatLiteral(
             char[] str, int startIndex, int endIndex,
             boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
 
+
+    /**
+     * Computes a float value from the given components of a hexadecimal float
+     * literal.
+     *
+     * @param str                            the string that contains the float literal (and maybe more)
+     * @param startIndex                     the start index (inclusive) of the float literal
+     *                                       inside the string
+     * @param endIndex                       the end index (exclusive) of the float literal inside
+     *                                       the string
+     * @param isNegative                     whether the float value is negative
+     * @param significand                    the significand of the float value (can be truncated)
+     * @param exponent                       the exponent of the float value
+     * @param isSignificandTruncated         whether the significand is truncated
+     * @param exponentOfTruncatedSignificand the exponent value of the truncated
+     *                                       significand
+     * @return the float value in the specialized type wrapped in a {@code long}
+     */
     abstract long valueOfHexLiteral(
             char[] str, int startIndex, int endIndex,
             boolean isNegative, long significand, int exponent,
