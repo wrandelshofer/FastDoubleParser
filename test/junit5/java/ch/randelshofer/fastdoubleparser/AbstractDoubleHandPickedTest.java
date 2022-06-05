@@ -38,7 +38,7 @@ abstract class AbstractDoubleHandPickedTest {
                 dynamicTest("parseFloatValue(): Significand with trailing whitespace", () -> testLegalInput("3   ")),
                 dynamicTest("parseFloatValue(): Empty String", () -> testIllegalInput("")),
                 dynamicTest("parseFloatValue(): Blank String", () -> testIllegalInput("   ")),
-                dynamicTest("parseFloatValue(): Very long non-blank String", () -> testIllegalInput("a".repeat(66))),
+                dynamicTest("parseFloatValue(): Very long non-blank String", () -> testIllegalInput("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")),
                 dynamicTest("parseFloatValue(): Plus Sign", () -> testIllegalInput("+")),
                 dynamicTest("parseFloatValue(): Negative Sign", () -> testIllegalInput("-")),
                 dynamicTest("parseFloatValue(): Infinity", () -> testLegalInput("Infinity")),
