@@ -12,6 +12,7 @@ public class FastDoubleParserFromCharSequenceLexicallyGeneratedTest extends Abst
         return FastDoubleParser.parseDouble(str);
     }
 
+    @Override
     protected void testAgainstJdk(String str) {
         double expected = 0.0;
         boolean isExpectedToFail = false;
