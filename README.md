@@ -127,12 +127,12 @@ The Y-axis shows Mfloat/s.
 
 ![ComparisonOfJvmVersions.png](ComparisonOfJvmVersions.png)
 
-Method|1.8.0_281|11.0.8|18.0.1.1|19-ea|17.0.3graalvm
----|---|---|---|---|---
-Double|4.86|5.34|5.09|5.28|6.96
-FastDouble String|20.30|27.83|31.18|32.59|32.74
-FastDouble char[]|30.60|30.68|33.58|37.20|34.32
-FastDouble byte[]|31.29|35.61|38.24|39.67|40.21
+|Method            |1.8.0_281|11.0.8|18.0.1.1|19-ea|17.0.3graalvm|
+|-------------------|---|---|---|---|---|
+|Double            |4.86|5.34|5.09|5.28|6.96|
+|FastDouble String |20.30|27.83|31.18|32.59|32.74|
+|FastDouble char[] |30.60|30.68|33.58|37.20|34.32|
+|FastDouble byte[] |31.29|35.61|38.24|39.67|40.21|
 
 ## Comparison with C version
 
