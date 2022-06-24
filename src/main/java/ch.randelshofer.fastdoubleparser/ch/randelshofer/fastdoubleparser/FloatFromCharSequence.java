@@ -18,10 +18,12 @@ public class FloatFromCharSequence extends AbstractFloatValueFromCharSequence {
 
     }
 
+    @Override
     long nan() {
         return Float.floatToRawIntBits(Float.NaN);
     }
 
+    @Override
     long negativeInfinity() {
         return Float.floatToRawIntBits(Float.NEGATIVE_INFINITY);
     }
@@ -42,6 +44,7 @@ public class FloatFromCharSequence extends AbstractFloatValueFromCharSequence {
         return Float.intBitsToFloat((int) parseFloatValue(str, offset, length));
     }
 
+    @Override
     long positiveInfinity() {
         return Float.floatToRawIntBits(Float.POSITIVE_INFINITY);
     }
