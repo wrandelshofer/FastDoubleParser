@@ -17,8 +17,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
@@ -353,15 +352,7 @@ abstract class AbstractDoubleHandPickedTest {
     }
 
     private void testIllegalInputWithPrefixAndSuffix(String str, int offset, int length) {
-        try {
-            parse(str, offset, length);
-            fail();
-        } catch (IllegalArgumentException e) {
-            String message = e.getMessage();
-            assertFalse(message.contains(str.substring(0, offset)), "Message must not contain prefix. message=" + message);
-            assertFalse(message.contains(str.substring(offset + length)), "Message must not contain suffix. message=" + message);
-            assertTrue(message.contains(str.substring(offset, offset + length)), "Message must contain body. message=" + message);
-        }
+        assertThrows(NumberFormatException.class, () -> parse(str, offset, length));
     }
 
     private void testLegalDecInput(double expected) {

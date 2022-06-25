@@ -10,13 +10,13 @@ import java.nio.charset.StandardCharsets;
 /**
  * Parses a {@code float} from a {@code byte} array.
  */
-public class FloatFromByteArray extends AbstractFloatValueFromByteArray {
+class FloatBitsFromByteArray extends AbstractFloatValueFromByteArray {
 
 
     /**
      * Creates a new instance.
      */
-    public FloatFromByteArray() {
+    public FloatBitsFromByteArray() {
 
     }
 
@@ -28,22 +28,6 @@ public class FloatFromByteArray extends AbstractFloatValueFromByteArray {
     @Override
     long negativeInfinity() {
         return Float.floatToRawIntBits(Float.NEGATIVE_INFINITY);
-    }
-
-    /**
-     * Parses a {@code FloatValue} from a {@code byte[]} and converts it
-     * into a {@code double} value.
-     * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatValue}.
-     *
-     * @param str    the string to be parsed
-     * @param offset the start offset of the {@code FloatValue} in {@code str}
-     * @param length the length of {@code FloatValue} in {@code str}
-     * @return the parsed double value
-     * @throws NumberFormatException if the string can not be parsed
-     */
-    public float parseFloat(byte[] str, int offset, int length) throws NumberFormatException {
-        return Float.intBitsToFloat((int) parseFloatValue(str, offset, length));
     }
 
     @Override

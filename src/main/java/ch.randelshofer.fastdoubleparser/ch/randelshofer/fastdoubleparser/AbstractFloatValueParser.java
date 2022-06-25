@@ -28,6 +28,20 @@ package ch.randelshofer.fastdoubleparser;
  * </dl>
  */
 abstract class AbstractFloatValueParser {
+    /**
+     * This return value indicates that the input value is not a legal
+     * production of the syntax rule for a float value.
+     * <p>
+     * The value is {@code -1L}.
+     * <p>
+     * Converting this value to a floating point number using
+     * {@code Double.longBitsToDouble(-1L)}, or
+     * {@code Float.intBitsToFloat((int) -1L)} yields a {@code NaN}.
+     * <p>
+     * Although this number yields {@code NaN}, the bit pattern of this value is
+     * intentionally different from {@link Double#NaN}, and {@link Float#NaN}.
+     */
+    final static long PARSE_ERROR = -1L;
     final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000_00000_00000_00000L;
     /**
      * The decimal exponent of a double has a range of -324 to +308.
@@ -68,6 +82,4 @@ abstract class AbstractFloatValueParser {
             AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch] = AbstractFloatValueParser.DECIMAL_POINT_CLASS;
         }
     }
-
-
 }

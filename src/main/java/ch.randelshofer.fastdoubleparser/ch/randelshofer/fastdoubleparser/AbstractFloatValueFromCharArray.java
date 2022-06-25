@@ -23,23 +23,6 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
     }
 
     /**
-     * Creates a new {@link NumberFormatException} for the provided string.
-     *
-     * @param str        a string containing a {@code FloatValue} production
-     * @param startIndex start index (inclusive) of the {@code FloatValue} production in str
-     * @param endIndex   end index (exclusive) of the {@code FloatValue} production in str
-     * @return a new  {@link NumberFormatException}
-     */
-    private NumberFormatException newNumberFormatException(char[] str, int startIndex, int endIndex) {
-        if (endIndex - startIndex > 64) {
-            // str can be up to Integer.MAX_VALUE characters long
-            return new NumberFormatException("For input string of length " + (endIndex - startIndex));
-        } else {
-            return new NumberFormatException("For input string: \"" + new String(str, startIndex, endIndex - startIndex) + "\"");
-        }
-    }
-
-    /**
      * Skips optional white space in the provided string
      *
      * @param str      a string
@@ -75,8 +58,8 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param endIndex       end index (exclusive)
      * @param isNegative     true if the float value is negative
      * @param hasLeadingZero true if we have consumed the optional leading zero
-     * @return a float value
-     * @throws NumberFormatException on parsing failure
+     * @return the bit pattern of the parsed value, if the input is legal;
+     * otherwise, {@code -1L}.
      */
     private long parseDecFloatLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
         // Parse significand
@@ -148,7 +131,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex
                 || !hasLeadingZero && digitCount == 0) {
-            throw newNumberFormatException(str, startIndex, endIndex);
+            return PARSE_ERROR;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -195,17 +178,17 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param str    a string containing a {@code FloatValueWithWhiteSpace}
      * @param offset start offset of {@code FloatValueWithWhiteSpace} in {@code str}
      * @param length length of {@code FloatValueWithWhiteSpace} in {@code str}
-     * @return the parsed value
-     * @throws NumberFormatException on parsing failure
+     * @return the bit pattern of the parsed value, if the input is legal;
+     * otherwise, {@code -1L}.
      */
-    long parseFloatValue(char[] str, int offset, int length) throws NumberFormatException {
+    public long parseFloatValue(char[] str, int offset, int length) {
         final int endIndex = offset + length;
 
         // Skip leading whitespace
         // -------------------
         int index = skipWhitespace(str, offset, endIndex);
         if (index == endIndex) {
-            throw new NumberFormatException("empty String");
+            return PARSE_ERROR;
         }
         char ch = str[index];
 
@@ -215,7 +198,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         if (isNegative || ch == '+') {
             ch = ++index < endIndex ? str[index] : 0;
             if (ch == 0) {
-                throw newNumberFormatException(str, offset, endIndex);
+                return PARSE_ERROR;
             }
         }
 
@@ -260,7 +243,8 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param startIndex the start index of the string
      * @param endIndex   the end index of the string
      * @param isNegative if the resulting number is negative
-     * @return a double representation
+     * @return the bit pattern of the parsed value, if the input is legal;
+     * otherwise, {@code -1L}.
      */
     private long parseHexFloatLiteral(
             char[] str, int index, int startIndex, int endIndex, boolean isNegative) {
@@ -337,7 +321,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
         if (illegal || index < endIndex
                 || digitCount == 0 && str[virtualIndexOfPoint] != '.'
                 || !hasExponent) {
-            throw newNumberFormatException(str, startIndex, endIndex);
+            return PARSE_ERROR;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -401,7 +385,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
                 return negative ? negativeInfinity() : positiveInfinity();
             }
         }
-        throw newNumberFormatException(str, index, endIndex);
+        return PARSE_ERROR;
     }
 
     /**
@@ -433,7 +417,7 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
                 return nan();
             }
         }
-        throw newNumberFormatException(str, index, endIndex);
+        return PARSE_ERROR;
     }
 
     private int tryToParseEightDigits(char[] str, int offset) {
@@ -472,7 +456,8 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param isSignificandTruncated         whether the significand is truncated
      * @param exponentOfTruncatedSignificand the exponent value of the truncated
      *                                       significand
-     * @return the float value in the specialized type wrapped in a {@code long}
+     * @return the bit pattern of the parsed value, if the input is legal;
+     * otherwise, {@code -1L}.
      */
     abstract long valueOfFloatLiteral(
             char[] str, int startIndex, int endIndex,
@@ -495,7 +480,8 @@ abstract class AbstractFloatValueFromCharArray extends AbstractFloatValueParser 
      * @param isSignificandTruncated         whether the significand is truncated
      * @param exponentOfTruncatedSignificand the exponent value of the truncated
      *                                       significand
-     * @return the float value in the specialized type wrapped in a {@code long}
+     * @return the bit pattern of the parsed value, if the input is legal;
+     * otherwise, {@code -1L}.
      */
     abstract long valueOfHexLiteral(
             char[] str, int startIndex, int endIndex,

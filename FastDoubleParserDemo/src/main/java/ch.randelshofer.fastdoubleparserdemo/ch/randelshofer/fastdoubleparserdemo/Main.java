@@ -238,12 +238,12 @@ public class Main {
     }
 
     private void printStatsHeaderMarkdown() {
-        System.out.println("Method           | MB/s  |stdev|Mfloats/s| ns/f   | JDK");
-        System.out.println("-----------------|------:|-----:|------:|--------:|--------");
+        System.out.println("|Method           | MB/s  |stdev|Mfloats/s| ns/f   | JDK    |");
+        System.out.println("|-----------------|------:|-----:|------:|--------:|--------|");
     }
 
     private void printStatsMarkdown(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        System.out.printf("%-17s|%7.2f|%4.1f %%|%7.2f|%9.2f|%s\n",
+        System.out.printf("|%-17s|%7.2f|%4.1f %%|%7.2f|%9.2f|%s|\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
                 stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
