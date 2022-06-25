@@ -109,6 +109,12 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
             exponent += expNumber;
         }
 
+        // Skip optional FloatTypeSuffix
+        // ------------------------
+        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+            index++;
+        }
+
         // Skip trailing whitespace and check if FloatValue is complete
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
@@ -296,6 +302,12 @@ abstract class AbstractFloatValueFromCharSequence extends AbstractFloatValuePars
                 expNumber = -expNumber;
             }
             exponent += expNumber;
+        }
+
+        // Skip optional FloatTypeSuffix
+        // ------------------------
+        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+            index++;
         }
 
         // Skip trailing whitespace and check if FloatValue is complete

@@ -81,7 +81,7 @@ class LexicalGenerator {
             path = FileSystems.getDefault().getPath(args[0]);
         }
         Random rng = new Random(0);
-        LexicalGenerator gen = new LexicalGenerator(false, false);
+        LexicalGenerator gen = new LexicalGenerator(false, true);
         Set<String> produced = new HashSet<>();
         try (BufferedWriter w = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             while (produced.size() < 100_000) {
@@ -252,8 +252,8 @@ class LexicalGenerator {
     }
 
     /**
-     * This method produces nothing because
-     * FloatTypeSuffix is not accepted by {@link Double#parseDouble(String)}.
+     * This method only produces something {@code produceFlaotTypeSuffix}
+     * is set to true.
      *
      * <dl>
      * <dt><i>FloatTypeSuffix:</i>

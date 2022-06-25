@@ -44,7 +44,7 @@ abstract class AbstractLexicallyGeneratedTest {
     @TestFactory
     Stream<DynamicTest> dynamicTestsRandomStringFrom10SyntaxRuleWithoutWhitespace() {
         Random rng = new Random(SEED);
-        LexicalGenerator gen = new LexicalGenerator(false, false);
+        LexicalGenerator gen = new LexicalGenerator(false, true);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(10, rng);
                     return dynamicTest(i + ": " + str,
@@ -56,7 +56,7 @@ abstract class AbstractLexicallyGeneratedTest {
     @TestFactory
     Stream<DynamicTest> dynamicTestsRandomStringFrom1SyntaxRuleWithoutWhitespace() {
         Random rng = new Random(SEED);
-        LexicalGenerator gen = new LexicalGenerator(false, false);
+        LexicalGenerator gen = new LexicalGenerator(false, true);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(1, rng);
                     return dynamicTest(i + ": " + str,
@@ -68,7 +68,7 @@ abstract class AbstractLexicallyGeneratedTest {
     @TestFactory
     Stream<DynamicTest> dynamicTestsRandomStringFrom40SyntaxRuleWithoutWhitespace() {
         Random rng = new Random(SEED);
-        LexicalGenerator gen = new LexicalGenerator(false, false);
+        LexicalGenerator gen = new LexicalGenerator(false, true);
         return IntStream.range(1, 10_000).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithoutWhitespace(40, rng);
                     return dynamicTest(i + ": " + str,
@@ -80,7 +80,7 @@ abstract class AbstractLexicallyGeneratedTest {
     @TestFactory
     Stream<DynamicTest> dynamicTestsRandomStringsOfIncreasingLengthWithWhitespace() {
         Random rng = new Random(SEED);
-        LexicalGenerator gen = new LexicalGenerator(false, false);
+        LexicalGenerator gen = new LexicalGenerator(false, true);
         return IntStream.range(1, 100).mapToObj(i -> {
                     String str = gen.produceRandomInputStringFromLexicalRuleWithWhitespace(i, rng);
                     return dynamicTest(i + ": " + str,

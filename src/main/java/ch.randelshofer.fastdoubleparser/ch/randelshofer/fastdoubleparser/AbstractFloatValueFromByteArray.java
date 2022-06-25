@@ -126,6 +126,12 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
             exponent += expNumber;
         }
 
+        // Skip optional FloatTypeSuffix
+        // ------------------------
+        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+            index++;
+        }
+
         // Skip trailing whitespace and check if FloatValue is complete
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
@@ -314,6 +320,12 @@ abstract class AbstractFloatValueFromByteArray extends AbstractFloatValueParser 
                 expNumber = -expNumber;
             }
             exponent += expNumber;
+        }
+
+        // Skip optional FloatTypeSuffix
+        // ------------------------
+        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+            index++;
         }
 
         // Skip trailing whitespace and check if FloatValue is complete
