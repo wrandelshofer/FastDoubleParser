@@ -252,7 +252,7 @@ class LexicalGenerator {
     }
 
     /**
-     * This method only produces something {@code produceFlaotTypeSuffix}
+     * This method only produces something {@code produceFloatTypeSuffix}
      * is set to true.
      *
      * <dl>
