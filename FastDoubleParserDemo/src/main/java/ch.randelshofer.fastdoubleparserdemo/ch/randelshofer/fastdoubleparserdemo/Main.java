@@ -9,6 +9,7 @@ import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import ch.randelshofer.fastdoubleparser.FastFloatParser;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -70,7 +71,9 @@ public class Main {
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
-        System.out.println();
+        System.out.println("sleeping...");
+        Thread.sleep(10_000);
+        System.out.println("done...");
 
         Main benchmark = new Main();
         for (int i = 0; i < args.length; i++) {
@@ -105,6 +108,15 @@ public class Main {
         double answer = 0;
         for (String st : s) {
             double x = FastDoubleParser.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumBigDecimalFromCharSequence(List<String> s) {
+        double answer = 0;
+        for (String st : s) {
+            double x = new BigDecimal(st).doubleValue();
             answer += x;
         }
         return answer;
@@ -228,12 +240,14 @@ public class Main {
         functions.put("FastDouble String", () -> sumFastDoubleFromCharSequence(lines));
         functions.put("FastDouble char[]", () -> sumFastDoubleParserFromCharArray(charArrayLines));
         functions.put("FastDouble byte[]", () -> sumFastDoubleParserFromByteArray(byteArrayLines));
+        functions.put("BigDecimal", () -> sumBigDecimalFromCharSequence(lines));
         functions.put("Double", () -> sumDoubleParseDouble(lines));
+
         functions.put("FastFloat  String", () -> sumFastFloatFromCharSequence(lines));
         functions.put("FastFloat  char[]", () -> sumFastFloatParserFromCharArray(charArrayLines));
         functions.put("FastFloat  byte[]", () -> sumFastFloatParserFromByteArray(byteArrayLines));
-        // functions.put("FastFloat  vector", () -> sumFastFloatParserFromVector(byteArrayLines));
         functions.put("Float", () -> sumFloatParseFloat(lines));
+
         return functions;
     }
 

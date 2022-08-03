@@ -6,7 +6,7 @@
 package ch.randelshofer.fastdoubleparser;
 
 /**
- * Abstract base class for parsers that parse a {@code FloatValue} from a
+ * Abstract base class for parsers that parse a {@code FloatingPointLiteral} from a
  * character sequence ({@code str}).
  * <p>
  * This is a C++ to Java port of Daniel Lemire's fast_double_parser.

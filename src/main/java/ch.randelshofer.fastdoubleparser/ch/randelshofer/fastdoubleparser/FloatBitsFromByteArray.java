@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Parses a {@code float} from a {@code byte} array.
  */
-class FloatBitsFromByteArray extends AbstractFloatValueFromByteArray {
+class FloatBitsFromByteArray extends AbstractFloatingPointBitsFromByteArray {
 
 
     /**
@@ -40,7 +40,7 @@ class FloatBitsFromByteArray extends AbstractFloatValueFromByteArray {
                              long significand, int exponent, boolean isSignificandTruncated,
                              int exponentOfTruncatedSignificand) {
         float result = FastFloatMath.decFloatLiteralToFloat(isNegative, significand, exponent, isSignificandTruncated, exponentOfTruncatedSignificand);
-        return (long) Float.floatToRawIntBits(Float.isNaN(result) ? Float.parseFloat(new String(str, startIndex, endIndex - startIndex, StandardCharsets.ISO_8859_1)) : result);
+        return Float.floatToRawIntBits(Float.isNaN(result) ? Float.parseFloat(new String(str, startIndex, endIndex - startIndex, StandardCharsets.ISO_8859_1)) : result);
     }
 
     @Override

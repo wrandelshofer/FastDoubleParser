@@ -8,7 +8,7 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Parses a {@code float} from a {@code char} array.
  */
-class FloatBitsFromCharArray extends AbstractFloatValueFromCharArray {
+class FloatBitsFromCharArray extends AbstractFloatingPointBitsFromCharArray {
 
 
     /**

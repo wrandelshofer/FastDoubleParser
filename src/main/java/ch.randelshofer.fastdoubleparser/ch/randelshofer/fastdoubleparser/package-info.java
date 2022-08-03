@@ -4,7 +4,7 @@
  */
 
 /**
- * Provides parsers that parse a {@code FloatValue} from a
+ * Provides parsers that parse a {@code FloatingPointLiteral} from a
  * {@link java.lang.CharSequence}, {@code char} array, or {@code byte} array
  * ({@code str});.
  * <p>
@@ -12,11 +12,11 @@
  * Whitespace is removed as if by the {@link java.lang.String#trim()} method;
  * that is, characters in the range [U+0000,U+0020].
  * <p>
- * The rest of {@code str} should constitute a  {@code FloatValue} as described
+ * The rest of {@code str} should constitute a  {@code FloatingPointLiteral} as described
  * by the lexical syntax rules shown below:
  * <blockquote>
  * <dl>
- * <dt><i>FloatValue:</i></dt>
+ * <dt><i>FloatingPointLiteral:</i></dt>
  * <dd><i>[Sign]</i> {@code NaN}</dd>
  * <dd><i>[Sign]</i> {@code Infinity}</dd>
  * <dd><i>[Sign] DecimalFloatingPointLiteral</i></dd>

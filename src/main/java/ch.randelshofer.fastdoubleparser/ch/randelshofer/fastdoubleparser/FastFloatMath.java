@@ -12,10 +12,10 @@ import static ch.randelshofer.fastdoubleparser.FastDoubleMath.fullMultiplication
 
 /**
  * This class complements {@link FastDoubleMath} with methods for
- * converting {@code FloatValue} productions to floats.
+ * converting {@code FloatingPointLiteral} productions to floats.
  * <p>
  * See {@link ch.randelshofer.fastdoubleparser} for a description of
- * {@code FloatValue}.
+ * {@code FloatingPointLiteral}.
  */
 class FastFloatMath {
     /**

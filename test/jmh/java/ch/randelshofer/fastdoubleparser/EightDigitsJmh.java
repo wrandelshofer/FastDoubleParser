@@ -24,6 +24,27 @@ import java.util.concurrent.TimeUnit;
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
+ * Benchmark (eightDigitsCharSequence)  Mode  Cnt   Score   Error  Units
+ * m01ByteArrayDecScalar      12345678  avgt    2   8.978          ns/op
+ * m01ByteArrayDecScalar      12345x78  avgt    2   7.793          ns/op
+ * m02CharArrayDecScalar      12345678  avgt    2  10.068          ns/op
+ * m02CharArrayDecScalar      12345x78  avgt    2   8.205          ns/op
+ * m03StringDecScalar         12345678  avgt    2   8.919          ns/op
+ * m03StringDecScalar         12345x78  avgt    2   6.695          ns/op
+ * m11ByteArrayDecSwar        12345678  avgt    2   3.676          ns/op
+ * m11ByteArrayDecSwar        12345x78  avgt    2   3.258          ns/op
+ * m12CharArrayDecSwar        12345678  avgt    2   7.432          ns/op
+ * m12CharArrayDecSwar        12345x78  avgt    2   4.567          ns/op
+ * m13StringDecSwar           12345678  avgt    2   6.244          ns/op
+ * m13StringDecSwar           12345x78  avgt    2   4.910          ns/op
+ * m14ByteArrayHexSwar        12345678  avgt    2   6.191          ns/op
+ * m14ByteArrayHexSwar        12345x78  avgt    2   3.436          ns/op
+ * m15CharArrayHexSwar        12345678  avgt    2   8.939          ns/op
+ * m15CharArrayHexSwar        12345x78  avgt    2   7.722          ns/op
+ *
+ * Process finished with exit code 0
+ * </pre>
+ * <pre>
  * # JMH version: 1.28
  * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17+35-2724
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
