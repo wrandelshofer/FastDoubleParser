@@ -12,7 +12,7 @@ jobs:
         arch: [ x64, x86 ]
       fail-fast: false
       max-parallel: 4
-    name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
+    name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}, ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK ${{ matrix.java }}
