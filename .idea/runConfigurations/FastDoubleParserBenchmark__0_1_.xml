@@ -3,6 +3,7 @@
     <option name="ALTERNATIVE_JRE_PATH" value="18" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="FastDoubleParserDemo" />
+    <option name="PROGRAM_PARAMETERS" value="--sleep" />
     <option name="VM_PARAMETERS" value="-XX:+UnlockExperimentalVMOptions --enable-preview" />
     <extension name="coverage">
       <pattern>

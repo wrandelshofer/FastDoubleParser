@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java: [ 19-ea ]
-        arch: [ x64, x86 ]
+        arch: [ x64 ]
       fail-fast: false
       max-parallel: 4
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}, ${{ matrix.arch }}

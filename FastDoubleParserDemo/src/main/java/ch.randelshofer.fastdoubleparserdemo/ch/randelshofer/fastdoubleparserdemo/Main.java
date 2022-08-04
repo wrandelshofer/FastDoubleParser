@@ -87,12 +87,6 @@ public class Main {
             }
         }
 
-        if (benchmark.sleep) {
-            System.out.println("sleeping...");
-            Thread.sleep(10_000);
-            System.out.println("done...");
-        }
-
         if (benchmark.filename == null) {
             benchmark.demo(100_000);
             System.out.println("You can also provide a filename: it should contain one "
@@ -193,10 +187,15 @@ public class Main {
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics warmup = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), warmup);
+            //System.out.println("Warmup: "+entry.getKey()+" "+warmup);
         }
+
+        sleep();
+
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics stats = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), stats);
+            //System.out.println("Measurement: "+entry.getKey()+" "+stats);
         }
 
         // Print measurements
@@ -224,6 +223,18 @@ public class Main {
                 System.out.printf("Speedup %-17s vs %s: %,.2f\n", name, reference, referenceStats.getAverage() / stats.getAverage());
 
             }
+        }
+    }
+
+    private void sleep() {
+        if (sleep) {
+            System.out.println("sleeping...");
+            try {
+                Thread.sleep(10_000);
+            } catch (InterruptedException e) {
+                //stop sleeping
+            }
+            System.out.println("done...");
         }
     }
 
