@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-          arch: ${{ matrix.arch }}
+          architecture: ${{ matrix.arch }}
 
       - name: Compile FastDoubleParser
         run: javac --release 19 --enable-preview -d out -encoding utf8 --module-source-path src/main/java --module ch.randelshofer.fastdoubleparser
