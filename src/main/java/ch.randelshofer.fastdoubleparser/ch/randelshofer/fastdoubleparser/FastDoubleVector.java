@@ -79,8 +79,8 @@ class FastDoubleVector {
      * long second = chars[4]|(chars[5]<<16)|(chars[6]<<32)|(chars[7]<<48);
      * }</pre>
      *
-     * @param first  the first four characters in big endian order
-     * @param second the second four characters in big endian order
+     * @param first  the first four characters
+     * @param second the second four characters
      * @return the parsed digits or -1
      */
     public static int tryToParseEightDigitsUtf16(long first, long second) {
@@ -120,6 +120,30 @@ class FastDoubleVector {
                 .castShape(IntVector.SPECIES_256, 0)
                 .mul(POWERS_OF_10)
                 .reduceLanesToLong(ADD);
+    }
+
+    /**
+     * @param first  the first 4 characters in little endian order
+     * @param second the second 4 characters in little endian order
+     * @return
+     */
+    public static long tryToParseEightHexDigitsUtf16(long first, long second) {
+        ShortVector vec = LongVector.zero(LongVector.SPECIES_128)
+                .withLane(0, first)
+                .withLane(1, second)
+                .reinterpretAsShorts()
+                .sub((short) '0');
+        VectorMask<Short> gt9Msk;
+        // With an unsigned gt we only need to check for > 'f' - '0'
+        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
+                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
+            return -1L;
+        }
+        return vec
+                .sub((short) ('a' - '0' - 10), gt9Msk)
+                .castShape(IntVector.SPECIES_256, 0)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
     /**

@@ -10,23 +10,23 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FastDoubleSwarSwarTest extends AbstractFastDoubleSwarTest {
+public class EightDigitsVectorTest extends AbstractEightDigitsTest {
     @Override
     void testDec(String s, int offset, int expected) {
         char[] chars = s.toCharArray();
 
-        int actual = FastDoubleSwar.tryToParseEightDigitsUtf16(chars, offset);
+        int actual = FastDoubleVector.tryToParseEightDigitsUtf16(chars, offset);
         assertEquals(expected, actual);
 
 
         long first = chars[offset + 0] | ((long) chars[offset + 1] << 16) | ((long) chars[offset + 2] << 32) | ((long) chars[offset + 3] << 48);
         long second = chars[offset + 4] | ((long) chars[offset + 5] << 16) | ((long) chars[offset + 6] << 32) | ((long) chars[offset + 7] << 48);
-        actual = FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
+        actual = FastDoubleVector.tryToParseEightDigitsUtf16(first, second);
         assertEquals(expected, actual);
 
 
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
-        actual = FastDoubleSwar.tryToParseEightDigitsUtf8(bytes, offset);
+        actual = FastDoubleVector.tryToParseEightDigitsUtf8(bytes, offset);
         assertEquals(expected, actual);
 
         long value = ((bytes[offset + 7] & 0xffL) << 56)
@@ -60,30 +60,30 @@ public class FastDoubleSwarSwarTest extends AbstractFastDoubleSwarTest {
     @Override
     void testHex(String s, int offset, long expected) {
         char[] chars = s.toCharArray();
-        long actual = FastDoubleSwar.tryToParseEightHexDigitsUtf16(chars, offset);
+        long actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(chars, offset);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {
             assertEquals(expected, actual);
         }
 
-        long first = (long) chars[offset + 0] << 48
-                | (long) chars[offset + 1] << 32
-                | (long) chars[offset + 2] << 16
-                | (long) chars[offset + 3];
+        long first = (long) chars[offset + 0]
+                | (long) chars[offset + 1] << 16
+                | (long) chars[offset + 2] << 32
+                | (long) chars[offset + 3] << 48;
 
-        long second = (long) chars[offset + 4] << 48
-                | (long) chars[offset + 5] << 32
-                | (long) chars[offset + 6] << 16
-                | (long) chars[offset + 7];
-        actual = FastDoubleSwar.tryToParseEightHexDigitsUtf16(first, second);
+        long second = (long) chars[offset + 4]
+                | (long) chars[offset + 5] << 16
+                | (long) chars[offset + 6] << 32
+                | (long) chars[offset + 7] << 48;
+        actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(first, second);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {
             assertEquals(expected, actual);
         }
 
-        actual = FastDoubleSwar.tryToParseEightHexDigitsUtf8(s.getBytes(StandardCharsets.UTF_8), offset);
+        actual = FastDoubleVector.tryToParseEightHexDigitsUtf8(s.getBytes(StandardCharsets.UTF_8), offset);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {

@@ -24,67 +24,47 @@ import java.util.concurrent.TimeUnit;
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * Benchmark (eightDigitsCharSequence)  Mode  Cnt   Score   Error  Units
- * m01ByteArrayDecScalar      12345678  avgt    2   8.978          ns/op
- * m01ByteArrayDecScalar      12345x78  avgt    2   7.793          ns/op
- * m02CharArrayDecScalar      12345678  avgt    2  10.068          ns/op
- * m02CharArrayDecScalar      12345x78  avgt    2   8.205          ns/op
- * m03StringDecScalar         12345678  avgt    2   8.919          ns/op
- * m03StringDecScalar         12345x78  avgt    2   6.695          ns/op
- * m11ByteArrayDecSwar        12345678  avgt    2   3.676          ns/op
- * m11ByteArrayDecSwar        12345x78  avgt    2   3.258          ns/op
- * m12CharArrayDecSwar        12345678  avgt    2   7.432          ns/op
- * m12CharArrayDecSwar        12345x78  avgt    2   4.567          ns/op
- * m13StringDecSwar           12345678  avgt    2   6.244          ns/op
- * m13StringDecSwar           12345x78  avgt    2   4.910          ns/op
- * m14ByteArrayHexSwar        12345678  avgt    2   6.191          ns/op
- * m14ByteArrayHexSwar        12345x78  avgt    2   3.436          ns/op
- * m15CharArrayHexSwar        12345678  avgt    2   8.939          ns/op
- * m15CharArrayHexSwar        12345x78  avgt    2   7.722          ns/op
+ * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 19-ea+31-2203
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
+ *
+ * Benchmark (DigitsCharSequence)  Mode  Cnt   Score   Error  Units
+ * 01ByteArrayDecScalar  12345678  avgt    2   9.019          ns/op
+ * 01ByteArrayDecScalar  12345x78  avgt    2   7.772          ns/op
+ * 02StringDecScalar     12345678  avgt    2  10.101          ns/op
+ * 02StringDecScalar     12345x78  avgt    2   9.144          ns/op
+ * 03CharArrayDecScalar  12345678  avgt    2   8.879          ns/op
+ * 03CharArrayDecScalar  12345x78  avgt    2   6.655          ns/op
+ *
+ * 11ByteArrayDecSwar    12345678  avgt    2   3.687          ns/op
+ * 11ByteArrayDecSwar    12345x78  avgt    2   3.216          ns/op
+ * 12CharArrayDecSwar    12345678  avgt    2   5.596          ns/op
+ * 12CharArrayDecSwar    12345x78  avgt    2   4.641          ns/op
+ * 13StringDecSwar       12345678  avgt    2   6.208          ns/op
+ * 13StringDecSwar       12345x78  avgt    2   4.847          ns/op
+ * 14ByteArrayHexSwar    12345678  avgt    2   6.116          ns/op
+ * 14ByteArrayHexSwar    12345x78  avgt    2   3.531          ns/op
+ * 15CharArrayHexSwar    12345678  avgt    2   8.928          ns/op
+ * 15CharArrayHexSwar    12345x78  avgt    2   7.679          ns/op
+ *
+ * 21ByteArrayDecVector  12345678  avgt    2   5.053          ns/op
+ * 21ByteArrayDecVector  12345x78  avgt    2   3.231          ns/op
+ * 22CharArrayDecVector  12345678  avgt    2   5.000          ns/op
+ * 22CharArrayDecVector  12345x78  avgt    2   3.045          ns/op
+ * 23StringDecVector     12345678  avgt    2   7.590          ns/op
+ * 23StringDecVector     12345x78  avgt    2   5.064          ns/op
+ * 24ByteArrayHexVector  12345678  avgt    2   6.611          ns/op
+ * 24ByteArrayHexVector  12345x78  avgt    2   3.013          ns/op
+ * 25CharArrayHexVector  12345678  avgt    2   6.433          ns/op
+ * 25CharArrayHexVector  12345x78  avgt    2   2.990          ns/op
+ *
+ * Process finished with exit code 0
  *
  * Process finished with exit code 0
  * </pre>
- * <pre>
- * # JMH version: 1.28
- * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17+35-2724
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
- *
- * Benchmark     (eightDigitsCharSequence)  Mode  Cnt   Score   Error  Units
- * m01ByteArrayDecScalar          12345678  avgt    2   9.477          ns/op
- * m02CharArrayDecScalar          12345678  avgt    2  10.896          ns/op
- * m03StringDecScalar             12345678  avgt    2   9.324          ns/op
- *
- * m11ByteArrayDecSwar            12345678  avgt    2   3.885          ns/op
- * m12CharArrayDecSwar            12345678  avgt    2   5.581          ns/op
- * m13StringDecSwar               12345678  avgt    2   7.074          ns/op
- * m14ByteArrayHexSwar            12345678  avgt    2   6.584          ns/op
- * m15CharArrayHexSwar            12345678  avgt    2   9.392          ns/op
- *
- * m21ByteArrayDecVector          12345678  avgt    2   5.057          ns/op
- * m22CharArrayDecVector          12345678  avgt    2   5.155          ns/op
- * m23StringDecVector             12345678  avgt    2   9.128          ns/op
- * m24ByteArrayHexVector          12345678  avgt    2   6.941          ns/op
- * m25CharArrayHexVector          12345678  avgt    2   6.912          ns/op
- *
- * Benchmark     (eightDigitsCharSequence)  Mode  Cnt  Score   Error  Units
- * m01ByteArrayDecScalar          12345x78  avgt    2  7.523          ns/op
- * m02CharArrayDecScalar          12345x78  avgt    2  9.974          ns/op
- * m03StringDecScalar             12345x78  avgt    2  7.271          ns/op
- *
- * m11ByteArrayDecSwar            12345x78  avgt    2  3.081          ns/op
- * m12CharArrayDecSwar            12345x78  avgt    2  4.565          ns/op
- * m13StringDecSwar               12345x78  avgt    2  5.373          ns/op
- * m14ByteArrayHexSwar            12345x78  avgt    2  4.235          ns/op
- * m15CharArrayHexSwar            12345x78  avgt    2  8.052          ns/op
- *
- * m21ByteArrayDecVector          12345x78  avgt    2  3.226          ns/op
- * m22CharArrayDecVector          12345x78  avgt    2  3.293          ns/op
- * m23StringDecVector             12345x78  avgt    2  6.671          ns/op
- * m24ByteArrayHexVector          12345x78  avgt    2  3.222          ns/op
- * m25CharArrayHexVector          12345x78  avgt    2  3.302          ns/op
- * </pre>
  */
-@Fork(value = 1, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
+@Fork(value = 1, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
+        //    ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/FastDoubleSwar.*"
+})
 @Measurement(iterations = 2)
 @Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -101,7 +81,7 @@ public class EightDigitsJmh {
         eightDigitsCharArray = eightDigitsCharSequence.toCharArray();
         eightDigitsByteArray = eightDigitsCharSequence.getBytes(StandardCharsets.UTF_8);
     }
-
+/*
     @Benchmark
     public int m01ByteArrayDecScalar() {
         int value = 0;
@@ -117,7 +97,7 @@ public class EightDigitsJmh {
     }
 
     @Benchmark
-    public int m02CharArrayDecScalar() {
+    public int m02StringDecScalar() {
         int value = 0;
         for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
             char ch = eightDigitsCharSequence.charAt(i);
@@ -131,7 +111,7 @@ public class EightDigitsJmh {
     }
 
     @Benchmark
-    public int m03StringDecScalar() {
+    public int m03CharArrayDecScalar() {
         int value = 0;
         for (int i = 0; i < eightDigitsCharArray.length; i++) {
             char ch = eightDigitsCharArray[i];
@@ -153,9 +133,29 @@ public class EightDigitsJmh {
     public int m12CharArrayDecSwar() {
         return FastDoubleSwar.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
     }
+*/
+@Benchmark
+    public int m13StringDecSwar() {
+        String str = eightDigitsCharSequence;
+        int offset = 0;
+
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = str.charAt(offset)
+                | (long) str.charAt(offset + 1) << 16
+                | (long) str.charAt(offset + 2) << 32
+                | (long) str.charAt(offset + 3) << 48;
+
+    long second = str.charAt(offset + 4)
+            | (long) str.charAt(offset + 5) << 16
+            | (long) str.charAt(offset + 6) << 32
+            | (long) str.charAt(offset + 7) << 48;
+
+    return FastDoubleSwar.tryToParseEightDigitsUtf16Java18(first, second);
+}
 
     @Benchmark
-    public int m13StringDecSwar() {
+    public int m13StringDecSwarOld() {
         String str = eightDigitsCharSequence;
         int offset = 0;
 
@@ -171,9 +171,9 @@ public class EightDigitsJmh {
                 | (long) str.charAt(offset + 6) << 32
                 | (long) str.charAt(offset + 7) << 48;
 
-        return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16Java1(first, second);
     }
-
+/*
     @Benchmark
     public long m14ByteArrayHexSwar() {
         return FastDoubleSwar.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
@@ -184,6 +184,48 @@ public class EightDigitsJmh {
         return FastDoubleSwar.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
     }
 
+
+    @Benchmark
+    public int m21ByteArrayDecVector() {
+        return FastDoubleVector.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
+    }
+
+    @Benchmark
+    public int m22CharArrayDecVector() {
+        return FastDoubleVector.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
+    }
+
+    @Benchmark
+    public int m23StringDecVector() {
+        String str = this.eightDigitsCharSequence;
+        int offset = 0;
+
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = str.charAt(offset)
+                | (long) str.charAt(offset + 1) << 16
+                | (long) str.charAt(offset + 2) << 32
+                | (long) str.charAt(offset + 3) << 48;
+
+        long second = str.charAt(offset + 4)
+                | (long) str.charAt(offset + 5) << 16
+                | (long) str.charAt(offset + 6) << 32
+                | (long) str.charAt(offset + 7) << 48;
+
+        return FastDoubleVector.tryToParseEightDigitsUtf16(first, second);
+    }
+
+
+    @Benchmark
+    public long m24ByteArrayHexVector() {
+        return FastDoubleVector.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
+    }
+
+    @Benchmark
+    public long m25CharArrayHexVector() {
+        return FastDoubleVector.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
+    }
+
     private static boolean isDigit(byte c) {
         return '0' <= c && c <= '9';
     }
@@ -191,6 +233,8 @@ public class EightDigitsJmh {
     private static boolean isDigit(char c) {
         return '0' <= c && c <= '9';
     }
+
+ */
 }
 
 

@@ -23,7 +23,7 @@ import static ch.randelshofer.fastdoubleparser.FastDoubleMath.clamp;
  */
 abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
-    public static final boolean FALL_BACK_TO_BIGDECIMAL = true;
+    public static final boolean FALL_BACK_TO_BIGDECIMAL = false;
 
     private boolean isDigit(char c) {
         return '0' <= c && c <= '9';
@@ -219,11 +219,14 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
             }
         }
 
+        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
+        /*
         if (FALL_BACK_TO_BIGDECIMAL) {
             return parseDecFloatLiteralBigDecimal(str, index, offset, endIndex, isNegative, hasLeadingZero);
         } else {
             return parseDecFloatLiteralDecimal(str, index, offset, endIndex, isNegative, hasLeadingZero);
         }
+        */
     }
 
     /**
@@ -459,7 +462,7 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
                 | (long) str.charAt(offset + 6) << 32
                 | (long) str.charAt(offset + 7) << 48;
 
-        return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16Java18(first, second);
     }
 
     /**
