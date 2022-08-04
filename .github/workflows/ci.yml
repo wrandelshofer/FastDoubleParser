@@ -9,6 +9,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         java: [ 19-ea ]
+        arch: [ amd64, aarch64 ]
       fail-fast: false
       max-parallel: 4
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
@@ -18,6 +19,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+          arch: ${{ matrix.arch }}
 
       - name: Compile FastDoubleParser
         run: javac --release 19 --enable-preview -d out -encoding utf8 --module-source-path src/main/java --module ch.randelshofer.fastdoubleparser

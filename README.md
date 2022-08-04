@@ -59,22 +59,21 @@ On my Mac mini (2018) I get the results shown below. The speedup factor with res
     
     parsing random doubles in the range [0.1)
     Trying to reach a confidence level of 99.8 % which only deviates by 1 % from the average measured duration.
-    FastDouble String :   566.18 MB/s (+/- 1.2 %)    32.50 Mfloat/s      30.77 ns/f
-    FastDouble char[] :   606.77 MB/s (+/- 3.6 %)    34.83 Mfloat/s      28.71 ns/f
-    FastDouble byte[] :   692.78 MB/s (+/- 2.2 %)    39.77 Mfloat/s      25.14 ns/f
-    Double            :    98.41 MB/s (+/- 2.6 %)     5.65 Mfloat/s     176.99 ns/f
-    FastFloat  String :   587.98 MB/s (+/- 2.4 %)    33.76 Mfloat/s      29.62 ns/f
-    FastFloat  char[] :   607.66 MB/s (+/- 4.2 %)    34.89 Mfloat/s      28.67 ns/f
-    FastFloat  byte[] :   699.88 MB/s (+/- 2.3 %)    40.18 Mfloat/s      24.89 ns/f
-    Float             :   103.88 MB/s (+/- 2.8 %)     5.96 Mfloat/s     167.68 ns/f
+    FastDouble String :   573.48 MB/s (+/- 6.3 %)    32.92 Mfloat/s      30.38 ns/f
+    FastDouble char[] :   606.53 MB/s (+/- 5.9 %)    34.82 Mfloat/s      28.72 ns/f
+    FastDouble byte[] :   689.95 MB/s (+/- 4.7 %)    39.60 Mfloat/s      25.25 ns/f
+    Double            :    95.66 MB/s (+/- 2.3 %)     5.49 Mfloat/s     182.12 ns/f
+    FastFloat  String :   533.88 MB/s (+/- 2.3 %)    30.65 Mfloat/s      32.63 ns/f
+    FastFloat  char[] :   631.52 MB/s (+/- 4.1 %)    36.25 Mfloat/s      27.59 ns/f
+    FastFloat  byte[] :   689.57 MB/s (+/- 4.9 %)    39.58 Mfloat/s      25.26 ns/f
+    Float             :   101.22 MB/s (+/- 2.6 %)     5.81 Mfloat/s     172.11 ns/f
     
-    Speedup FastDouble String vs Double: 5.75
-    Speedup FastDouble char[] vs Double: 6.17
-    Speedup FastDouble byte[] vs Double: 7.04
-    Speedup BigDecimal        vs Double: 0.58
-    Speedup FastFloat  String vs Double: 5.97
-    Speedup FastFloat  char[] vs Double: 6.17
-    Speedup FastFloat  byte[] vs Double: 7.11
+    Speedup FastDouble String vs Double: 6.00
+    Speedup FastDouble char[] vs Double: 6.34
+    Speedup FastDouble byte[] vs Double: 7.21
+    Speedup FastFloat  String vs Double: 5.58
+    Speedup FastFloat  char[] vs Double: 6.60
+    Speedup FastFloat  byte[] vs Double: 7.21
     Speedup Float             vs Double: 1.06
 
 '
@@ -82,22 +81,22 @@ On my Mac mini (2018) I get the results shown below. The speedup factor with res
     parsing numbers in file /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/data/canada.txt
     read 111126 lines
     Trying to reach a confidence level of 99.8 % which only deviates by 1 % from the average measured duration.
-    FastDouble String :   439.15 MB/s (+/- 1.8 %)    25.24 Mfloat/s      39.63 ns/f
-    FastDouble char[] :   529.73 MB/s (+/- 4.7 %)    30.44 Mfloat/s      32.85 ns/f
-    FastDouble byte[] :   546.55 MB/s (+/- 1.5 %)    31.41 Mfloat/s      31.84 ns/f
-    Double            :    87.78 MB/s (+/- 3.1 %)     5.04 Mfloat/s     198.25 ns/f
-    FastFloat  String :   443.34 MB/s (+/- 2.4 %)    25.48 Mfloat/s      39.25 ns/f
-    FastFloat  char[] :   527.18 MB/s (+/- 3.5 %)    30.30 Mfloat/s      33.01 ns/f
-    FastFloat  byte[] :   583.36 MB/s (+/- 4.6 %)    33.52 Mfloat/s      29.83 ns/f
-    Float             :   100.85 MB/s (+/- 3.7 %)     5.80 Mfloat/s     172.55 ns/f
-    
-    Speedup FastDouble String vs Double: 5.00
-    Speedup FastDouble char[] vs Double: 6.04
-    Speedup FastDouble byte[] vs Double: 6.23
-    Speedup FastFloat  String vs Double: 5.05
-    Speedup FastFloat  char[] vs Double: 6.01
-    Speedup FastFloat  byte[] vs Double: 6.65
-    Speedup Float             vs Double: 1.15
+    FastDouble String :   432.57 MB/s (+/- 3.4 %)    24.86 Mfloat/s      40.23 ns/f
+    FastDouble char[] :   550.44 MB/s (+/- 3.5 %)    31.63 Mfloat/s      31.61 ns/f
+    FastDouble byte[] :   578.14 MB/s (+/- 3.1 %)    33.22 Mfloat/s      30.10 ns/f
+    Double            :    82.24 MB/s (+/- 3.0 %)     4.73 Mfloat/s     211.60 ns/f
+    FastFloat  String :   430.42 MB/s (+/- 2.9 %)    24.73 Mfloat/s      40.43 ns/f
+    FastFloat  char[] :   547.38 MB/s (+/- 4.7 %)    31.46 Mfloat/s      31.79 ns/f
+    FastFloat  byte[] :   590.19 MB/s (+/- 4.9 %)    33.92 Mfloat/s      29.48 ns/f
+    Float             :   101.20 MB/s (+/- 2.2 %)     5.82 Mfloat/s     171.95 ns/f
+
+    Speedup FastDouble String vs Double: 5.26
+    Speedup FastDouble char[] vs Double: 6.69
+    Speedup FastDouble byte[] vs Double: 7.03
+    Speedup FastFloat  String vs Double: 5.23
+    Speedup FastFloat  char[] vs Double: 6.66
+    Speedup FastFloat  byte[] vs Double: 7.18
+    Speedup Float             vs Double: 1.23
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
