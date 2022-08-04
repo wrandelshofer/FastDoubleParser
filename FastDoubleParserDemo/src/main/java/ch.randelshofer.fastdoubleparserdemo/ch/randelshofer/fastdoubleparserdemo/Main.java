@@ -126,6 +126,7 @@ public class Main {
         }
         return answer;
     }
+
     private float sumFastFloatParserFromByteArray(List<byte[]> s) {
         float answer = 0;
         for (byte[] st : s) {
@@ -134,6 +135,7 @@ public class Main {
         }
         return answer;
     }
+
     private float sumFastFloatParserFromCharArray(List<char[]> s) {
         float answer = 0;
         for (char[] st : s) {
