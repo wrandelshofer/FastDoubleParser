@@ -61,19 +61,30 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
         int virtualIndexOfPoint = -1;
         boolean illegal = false;
         char ch = 0;
-        for (; index < endIndex; index++) {
-            ch = str.charAt(index);
-            if (isDigit(ch)) {
-                // This might overflow, we deal with it later.
-                significand = 10 * significand + ch - '0';
-            } else if (ch == '.') {
-                illegal |= virtualIndexOfPoint >= 0;
-                virtualIndexOfPoint = index;
-                for (; index < endIndex - 8; index += 8) {
-                    int eightDigits = tryToParseEightDigits(str, index + 1);
-                    if (eightDigits < 0) {
-                        break;
-                    }
+     Outer:
+     for (; index < endIndex; index++) {
+         ch = str.charAt(index);
+         if (isDigit(ch)) {
+             // This might overflow, we deal with it later.
+             significand = 10 * significand + ch - '0';
+         } else if (ch == '.') {
+             illegal |= virtualIndexOfPoint >= 0;
+             virtualIndexOfPoint = index;
+             for (; index < endIndex - 8; index += 8) {
+                 int eightDigits = tryToParseEightDigits(str, index + 1);
+                 if (eightDigits < 0) {
+                     index++;
+                     for (; index < endIndex; index++) {
+                         ch = str.charAt(index);
+                         if (isDigit(ch)) {
+                             // This might overflow, we deal with it later.
+                             significand = 10 * significand + ch - '0';
+                         } else {
+                             break Outer;
+                         }
+                     }
+                     break;
+                 }
                     // This might overflow, we deal with it later.
                     significand = 100_000_000L * significand + eightDigits;
                 }

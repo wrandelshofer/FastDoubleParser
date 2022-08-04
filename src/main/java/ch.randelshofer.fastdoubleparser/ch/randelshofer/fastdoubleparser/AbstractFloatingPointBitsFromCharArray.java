@@ -71,6 +71,7 @@ abstract class AbstractFloatingPointBitsFromCharArray extends AbstractFloatValue
         int virtualIndexOfPoint = -1;
         boolean illegal = false;
         char ch = 0;
+        Outer:
         for (; index < endIndex; index++) {
             ch = str[index];
             if (isDigit(ch)) {
@@ -82,6 +83,16 @@ abstract class AbstractFloatingPointBitsFromCharArray extends AbstractFloatValue
                 for (; index < endIndex - 8; index += 8) {
                     int eightDigits = tryToParseEightDigits(str, index + 1);
                     if (eightDigits < 0) {
+                        index++;
+                        for (; index < endIndex; index++) {
+                            ch = str[index];
+                            if (isDigit(ch)) {
+                                // This might overflow, we deal with it later.
+                                significand = 10 * significand + ch - '0';
+                            } else {
+                                break Outer;
+                            }
+                        }
                         break;
                     }
                     // This might overflow, we deal with it later.

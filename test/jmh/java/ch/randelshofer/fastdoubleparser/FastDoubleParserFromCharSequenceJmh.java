@@ -22,35 +22,15 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
- * # VM version: JDK 17.0.4, OpenJDK 64-Bit Server VM, 17.0.4+8-jvmci-22.2-b06
+ * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 19-ea+33-2224
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark             (str)  Mode  Cnt   Score   Error  Units
- * m                         0  avgt    2   3.301          ns/op
- * m                       1.0  avgt    2   8.832          ns/op
- * m                       365  avgt    2   7.611          ns/op
- * m                      10.1  avgt    2  15.050          ns/op
- * m    123.45678901234567e123  avgt    2  47.701          ns/op
- * m      123.4567890123456789  avgt    2  32.883          ns/op
- * m  123.4567890123456789e123  avgt    2  36.771          ns/op
- * m      -0.29235596393453456  avgt    2  27.865          ns/op
- * m     0x123.456789abcdep123  avgt    2  29.254          ns/op
- * </pre>
- * <pre>
- * # JMH version: 1.28
- * # VM version: JDK 17.0.1, OpenJDK 64-Bit Server VM, 17.0.1+12-jvmci-21.3-b05
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
- *
- * Benchmark             (str)  Mode  Cnt   Score   Error  Units
- * m                         0  avgt    2   6.842          ns/op
- * m                       1.0  avgt    2  15.523          ns/op
- * m                       365  avgt    2  14.116          ns/op
- * m                      10.1  avgt    2  16.245          ns/op
- * m    123.45678901234567e123  avgt    2  46.071          ns/op (regression)
- * m      123.4567890123456789  avgt    2  28.477          ns/op
- * m  123.4567890123456789e123  avgt    2  35.852          ns/op
- * m      -0.29235596393453456  avgt    2  24.824          ns/op
- * m     0x123.456789abcdep123  avgt    2  28.582          ns/op
+ * m    123.45678901234567e123  avgt    2  37.911          ns/op
+ * m      123.4567890123456789  avgt    2  30.436          ns/op
+ * m  123.4567890123456789e123  avgt    2  37.480          ns/op
+ * m      -0.29235596393453456  avgt    2  26.962          ns/op
+ * m     0x123.456789abcdep123  avgt    2  28.824          ns/op
  * </pre>
  * <pre>
  * # JMH version: 1.28

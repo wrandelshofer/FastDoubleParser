@@ -28,29 +28,14 @@ import java.util.concurrent.TimeUnit;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark             (str)  Mode  Cnt   Score   Error  Units
- * m                         0  avgt    2   5.693          ns/op
- * m                       365  avgt    2  12.696          ns/op
- * m                      10.1  avgt    2  15.071          ns/op
- * m    123.45678901234567e123  avgt    2  34.540          ns/op
- * m      123.4567890123456789  avgt    2  23.182          ns/op
- * m  123.4567890123456789e123  avgt    2  29.311          ns/op
- * m      -0.29235596393453456  avgt    2  20.927          ns/op
- * m     0x123.456789abcdep123  avgt    2  29.703          ns/op
- * </pre>
- * <pre>
- * # JMH version: 1.28
- * # VM version: JDK 17, OpenJDK 64-Bit Server VM, 17+35-2724
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
- *
- * Benchmark             (str)  Mode  Cnt   Score   Error  Units
- * m                         0  avgt    2   5.817          ns/op
- * m                       365  avgt    2  13.326          ns/op
- * m                      10.1  avgt    2  15.387          ns/op
- * m    123.45678901234567e123  avgt    2  36.986          ns/op
- * m      123.4567890123456789  avgt    2  24.286          ns/op
- * m  123.4567890123456789e123  avgt    2  33.748          ns/op
- * m      -0.29235596393453456  avgt    2  23.058          ns/op
- * m     0x123.456789abcdep123  avgt    2  30.115          ns/op
+ * m                         0  avgt    2   5.768          ns/op
+ * m                       365  avgt    2  12.564          ns/op
+ * m                      10.1  avgt    2  15.003          ns/op
+ * m    123.45678901234567e123  avgt    2  32.278          ns/op
+ * m      123.4567890123456789  avgt    2  25.071          ns/op
+ * m  123.4567890123456789e123  avgt    2  31.646          ns/op
+ * m      -0.29235596393453456  avgt    2  22.116          ns/op
+ * m     0x123.456789abcdep123  avgt    2  29.530          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"

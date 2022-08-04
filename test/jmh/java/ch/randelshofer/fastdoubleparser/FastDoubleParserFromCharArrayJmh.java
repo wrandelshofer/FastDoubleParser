@@ -23,19 +23,19 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.28
- * # VM version: JDK 17, OpenJDK 64-Bit Server VM, 17+35-2724
+ * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 19-ea+33-2224
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark             (str)  Mode  Cnt   Score   Error  Units
- * m                         0  avgt    2   5.856          ns/op
- * m                       1.0  avgt    2  15.131          ns/op
- * m                       365  avgt    2  13.471          ns/op
- * m                      10.1  avgt    2  15.856          ns/op
- * m    123.45678901234567e123  avgt    2  44.903          ns/op
- * m      123.4567890123456789  avgt    2  26.945          ns/op
- * m  123.4567890123456789e123  avgt    2  35.607          ns/op
- * m      -0.29235596393453456  avgt    2  26.443          ns/op
- * m     0x123.456789abcdep123  avgt    2  29.227          ns/op
+ * m                         0  avgt    2   5.994          ns/op
+ * m                       1.0  avgt    2  14.652          ns/op
+ * m                       365  avgt    2  13.342          ns/op
+ * m                      10.1  avgt    2  15.305          ns/op
+ * m    123.45678901234567e123  avgt    2  36.936          ns/op
+ * m      123.4567890123456789  avgt    2  27.347          ns/op
+ * m  123.4567890123456789e123  avgt    2  35.310          ns/op
+ * m      -0.29235596393453456  avgt    2  26.045          ns/op
+ * m     0x123.456789abcdep123  avgt    2  30.100          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"})
