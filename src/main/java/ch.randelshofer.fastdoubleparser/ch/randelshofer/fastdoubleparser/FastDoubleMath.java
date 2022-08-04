@@ -770,11 +770,12 @@ class FastDoubleMath {
      * @return uint128 product of x and y
      */
 
-    static UInt128 fullMultiplication(long x, long y) {//since Java 18
-        return new UInt128(Math.unsignedMultiplyHigh(x, y), x * y);
+    static UInt128 fullMultiplication1(long x, long y) {//since Java 18
+        return fullMultiplication(x, y);
+        // return new UInt128(Math.unsignedMultiplyHigh(x, y), x * y);
     }
 
-    static UInt128 fullMultiplication1(long x, long y) {//before Java 18
+    static UInt128 fullMultiplication(long x, long y) {//before Java 18
         long x0 = x & 0xffffffffL, x1 = x >>> 32;
         long y0 = y & 0xffffffffL, y1 = y >>> 32;
         long p11 = x1 * y1, p01 = x0 * y1;
@@ -790,12 +791,12 @@ class FastDoubleMath {
     }
 
     static long unsignedMultiplyHigh(long x, long y) {//since Java 18
-        return unsignedMultiplyHighJava18(x, y);
+        return unsignedMultiplyHighJava1(x, y);
     }
-
+/*
     static long unsignedMultiplyHighJava18(long x, long y) {//since Java 18
         return Math.unsignedMultiplyHigh(x, y);
-    }
+    }*/
 
     static long unsignedMultiplyHighJava1(long x, long y) {//since Java 1
         long x0 = x & 0xffffffffL, x1 = x >>> 32;

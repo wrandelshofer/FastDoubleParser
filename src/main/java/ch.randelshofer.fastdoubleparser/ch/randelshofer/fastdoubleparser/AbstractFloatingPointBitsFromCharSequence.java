@@ -462,7 +462,7 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
                 | (long) str.charAt(offset + 6) << 32
                 | (long) str.charAt(offset + 7) << 48;
 
-        return FastDoubleSwar.tryToParseEightDigitsUtf16Java18(first, second);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
     /**

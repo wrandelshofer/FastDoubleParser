@@ -9,7 +9,6 @@ import ch.randelshofer.fastdoubleparser.FastDoubleParser;
 import ch.randelshofer.fastdoubleparser.FastFloatParser;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -67,13 +66,11 @@ public class Main {
 
     private String filename = null;
     private boolean markdown = false;
+    private boolean sleep = false;
 
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
-        System.out.println("sleeping...");
-        Thread.sleep(10_000);
-        System.out.println("done...");
 
         Main benchmark = new Main();
         for (int i = 0; i < args.length; i++) {
@@ -81,10 +78,19 @@ public class Main {
             case "--markdown":
                 benchmark.markdown = true;
                 break;
+            case "--sleep":
+                benchmark.sleep = true;
+                break;
             default:
                 benchmark.filename = args[i];
                 break;
             }
+        }
+
+        if (benchmark.sleep) {
+            System.out.println("sleeping...");
+            Thread.sleep(10_000);
+            System.out.println("done...");
         }
 
         if (benchmark.filename == null) {
@@ -112,16 +118,6 @@ public class Main {
         }
         return answer;
     }
-
-    private double sumBigDecimalFromCharSequence(List<String> s) {
-        double answer = 0;
-        for (String st : s) {
-            double x = new BigDecimal(st).doubleValue();
-            answer += x;
-        }
-        return answer;
-    }
-
     private float sumFastFloatFromCharSequence(List<String> s) {
         float answer = 0;
         for (String st : s) {
@@ -240,7 +236,6 @@ public class Main {
         functions.put("FastDouble String", () -> sumFastDoubleFromCharSequence(lines));
         functions.put("FastDouble char[]", () -> sumFastDoubleParserFromCharArray(charArrayLines));
         functions.put("FastDouble byte[]", () -> sumFastDoubleParserFromByteArray(byteArrayLines));
-        functions.put("BigDecimal", () -> sumBigDecimalFromCharSequence(lines));
         functions.put("Double", () -> sumDoubleParseDouble(lines));
 
         functions.put("FastFloat  String", () -> sumFastFloatFromCharSequence(lines));

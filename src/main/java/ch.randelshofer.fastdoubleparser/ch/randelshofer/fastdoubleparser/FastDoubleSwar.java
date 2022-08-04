@@ -62,7 +62,7 @@ class FastDoubleSwar {
                 | (long) a[offset + 6] << 32
                 | (long) a[offset + 7] << 48;
 
-        return FastDoubleSwar.tryToParseEightDigitsUtf16Java18(first, second);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
     /**
@@ -79,7 +79,7 @@ class FastDoubleSwar {
      * @param second the second four characters in big endian order
      * @return the parsed digits or -1
      */
-    public static int tryToParseEightDigitsUtf16Java18(long first, long second) {//since Java 18
+    public static int tryToParseEightDigitsUtf16(long first, long second) {//since Java 18
         long fval = first - 0x0030_0030_0030_0030L;
         long sval = second - 0x0030_0030_0030_0030L;
 
@@ -93,33 +93,8 @@ class FastDoubleSwar {
             return -1;
         }
 
-        int fvali = (int) FastDoubleMath.unsignedMultiplyHigh(fval << 12, 0x3e80_0640_00a0_0010L) & 0xffff;
-        int svali = (int) FastDoubleMath.unsignedMultiplyHigh(sval << 12, 0x3e80_0640_00a0_0010L) & 0xffff;
-
-        return svali + 10000 * fvali;
-    }
-
-    public static int tryToParseEightDigitsUtf16Java1(long first, long second) {//since Java 1
-        long fval = first - 0x0030_0030_0030_0030L;
-        long sval = second - 0x0030_0030_0030_0030L;
-
-        // Create a predicate for all bytes which are smaller than '0' (0x0030)
-        // or greater than '9' (0x0039).
-        // We have 0x007f - 0x0039 = 0x0046.
-        // The predicate is true if the hsb of a byte is set: (predicate & 0xff80) != 0.
-        long fpre = first + 0x0046_0046_0046_0046L | fval;
-        long spre = second + 0x0046_0046_0046_0046L | sval;
-        if (((fpre | spre) & 0xff80_ff80_ff80_ff80L) != 0L) {
-            return -1;
-        }
-
-        fval = (fval * 0xa_00_01L) >>> 16;// (10<<32)+1
-        sval = (sval * 0xa_00_01L) >>> 16;// (10<<32)+1
-
-        int fvali = (100 * ((int) fval & 0xff) + (int) (fval >>> 32));
-        int svali = (100 * ((int) sval & 0xff) + (int) (sval >>> 32));
-
-        return svali + 10000 * fvali;
+        return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
+                + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
     }
 
     /**

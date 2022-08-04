@@ -436,7 +436,7 @@ abstract class AbstractFloatingPointBitsFromCharArray extends AbstractFloatValue
     }
 
     private int tryToParseEightDigits(char[] str, int offset) {
-        return FastDoubleVector.tryToParseEightDigitsUtf16(str, offset);
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(str, offset);
     }
 
     /**

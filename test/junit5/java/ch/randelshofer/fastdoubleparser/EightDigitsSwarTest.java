@@ -21,7 +21,7 @@ public class EightDigitsSwarTest extends AbstractEightDigitsTest {
 
         long first = chars[offset + 0] | ((long) chars[offset + 1] << 16) | ((long) chars[offset + 2] << 32) | ((long) chars[offset + 3] << 48);
         long second = chars[offset + 4] | ((long) chars[offset + 5] << 16) | ((long) chars[offset + 6] << 32) | ((long) chars[offset + 7] << 48);
-        actual = FastDoubleSwar.tryToParseEightDigitsUtf16Java18(first, second);
+        actual = FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
         assertEquals(expected, actual);
 
 
