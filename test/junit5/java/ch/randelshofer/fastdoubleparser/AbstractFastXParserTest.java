@@ -45,20 +45,20 @@ public abstract class AbstractFastXParserTest {
                 new TestData("Double Dec Limit b", Double.toString(Double.MAX_VALUE), Double.MAX_VALUE, (float) Double.MAX_VALUE),
                 new TestData("Double Dec Limit c", Double.toString(Math.nextUp(0.0)), Math.nextUp(0.0), (float) Math.nextUp(0.0)),
                 new TestData("Double Dec Limit d", Double.toString(Math.nextDown(0.0)), Math.nextDown(0.0), (float) Math.nextDown(0.0)),
-                new TestData("Float Dec Limit a", Float.toString(Float.MIN_VALUE), 1.4E-45, (float) Float.MIN_VALUE),
-                new TestData("Float Dec Limit b", Float.toString(Float.MAX_VALUE), 3.4028235E38, (float) Float.MAX_VALUE),
-                new TestData("Float Dec Limit c", Float.toString(Math.nextUp(0.0f)), 1.4E-45, (float) Math.nextUp(0.0f)),
-                new TestData("Float Dec Limit d", Float.toString(Math.nextDown(0.0f)), -1.4E-45, (float) Math.nextDown(0.0f)),
+                new TestData("Float Dec Limit a", Float.toString(Float.MIN_VALUE), 1.4E-45, Float.MIN_VALUE),
+                new TestData("Float Dec Limit b", Float.toString(Float.MAX_VALUE), 3.4028235E38, Float.MAX_VALUE),
+                new TestData("Float Dec Limit c", Float.toString(Math.nextUp(0.0f)), 1.4E-45, Math.nextUp(0.0f)),
+                new TestData("Float Dec Limit d", Float.toString(Math.nextDown(0.0f)), -1.4E-45, Math.nextDown(0.0f)),
 
                 new TestData("Double Hex Limit a", Double.toHexString(Double.MIN_VALUE), Double.MIN_VALUE, (float) Double.MIN_VALUE),
                 new TestData("Double Hex Limit b", Double.toHexString(Double.MAX_VALUE), Double.MAX_VALUE, (float) Double.MAX_VALUE),
                 new TestData("Double Hex Limit c", Double.toHexString(Math.nextUp(0.0)), Math.nextUp(0.0), 0f),
                 new TestData("Double Hex Limit d", Double.toHexString(Math.nextDown(0.0)), Math.nextDown(0.0), -0f),
 
-                new TestData("Float Hex Limit", Float.toHexString(Float.MIN_VALUE), Float.MIN_VALUE, (float) Float.MIN_VALUE),
-                new TestData("Float Hex Limit", Float.toHexString(Float.MAX_VALUE), Float.MAX_VALUE, (float) Float.MAX_VALUE),
-                new TestData("Float Hex Limit", Float.toHexString(Math.nextUp(0.0f)), Math.nextUp(0.0f), (float) Math.nextUp(0.0f)),
-                new TestData("Float Hex Limit", Float.toHexString(Math.nextDown(0.0f)), Math.nextDown(0.0f), (float) Math.nextDown(0.0f))
+                new TestData("Float Hex Limit", Float.toHexString(Float.MIN_VALUE), Float.MIN_VALUE, Float.MIN_VALUE),
+                new TestData("Float Hex Limit", Float.toHexString(Float.MAX_VALUE), Float.MAX_VALUE, Float.MAX_VALUE),
+                new TestData("Float Hex Limit", Float.toHexString(Math.nextUp(0.0f)), Math.nextUp(0.0f), Math.nextUp(0.0f)),
+                new TestData("Float Hex Limit", Float.toHexString(Math.nextDown(0.0f)), Math.nextDown(0.0f), Math.nextDown(0.0f))
         );
     }
 
@@ -223,7 +223,7 @@ public abstract class AbstractFastXParserTest {
                 new TestData("parseFloatValue(): Significand with trailing whitespace", "3   ", 0, 4, 0, 4, 3d, 3f, true),
                 new TestData("parseFloatValue(): Empty String", "", 0, 0, 0, 0, 0d, 0f, false),
                 new TestData("parseFloatValue(): Blank String", "   ", 0, 3, 0, 3, 0d, 0f, false),
-                new TestData("parseFloatValue(): Very long non-blank String", "a".repeat(66), 0, 66, 0, 66, 0d, 0f, false),
+                new TestData("parseFloatValue(): Very long non-blank String", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 0, 66, 0, 66, 0d, 0f, false),
                 new TestData("parseFloatValue(): Plus Sign", "+", 0, 1, 0, 1, 0d, 0f, false),
                 new TestData("parseFloatValue(): Negative Sign", "-", 0, 1, 0, 1, 0d, 0f, false),
                 new TestData("parseFloatValue(): Infinity", "Infinity", 0, 8, 0, 8, Double.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, true),
