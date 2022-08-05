@@ -5,8 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
@@ -41,9 +39,6 @@ class FastDoubleSwar {
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
     public final static VarHandle readLongFromByteArrayBigEndian =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
-    private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
-            .withBitAlignment(16);
-
     /**
      * Tries to parse eight decimal digits from a char array using the
      * 'SIMD within a register technique' (SWAR).
@@ -54,14 +49,7 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 hex digits
      */
 
-    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
-        // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
-        MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
-        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
-
-        /*
         long first = a[offset]
                 | (long) a[offset + 1] << 16
                 | (long) a[offset + 2] << 32
@@ -70,7 +58,6 @@ class FastDoubleSwar {
                 | (long) a[offset + 5] << 16
                 | (long) a[offset + 6] << 32
                 | (long) a[offset + 7] << 48;
-        */
 
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
@@ -105,21 +92,6 @@ class FastDoubleSwar {
 
         return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
                 + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
-    }
-
-    public static int tryToParseFourDigitsUtf16(long second) {//since Java 18
-        long sval = second - 0x0030_0030_0030_0030L;
-
-        // Create a predicate for all bytes which are smaller than '0' (0x0030)
-        // or greater than '9' (0x0039).
-        // We have 0x007f - 0x0039 = 0x0046.
-        // The predicate is true if the hsb of a byte is set: (predicate & 0xff80) != 0.
-        long spre = second + 0x0046_0046_0046_0046L | sval;
-        if ((spre & 0xff80_ff80_ff80_ff80L) != 0L) {
-            return -1;
-        }
-
-        return (int) (sval * 0x03e8_0064_000a_0001L >>> 48);
     }
 
     /**

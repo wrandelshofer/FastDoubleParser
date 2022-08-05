@@ -90,7 +90,6 @@ public class FastDoubleParserTest extends AbstractFastXParserTest {
     }
 
     private void test(TestData d, ToDoubleFunction<TestData> f) {
-        byte[] bytes = d.input().getBytes(StandardCharsets.UTF_8);
         if (!d.valid()) {
             try {
                 assertEquals(-1L, f.applyAsDouble(d));
@@ -104,7 +103,6 @@ public class FastDoubleParserTest extends AbstractFastXParserTest {
     }
 
     private void testBits(TestData d, ToLongFunction<TestData> f) {
-        byte[] bytes = d.input().getBytes(StandardCharsets.UTF_8);
         if (!d.valid()) {
             assertEquals(-1L, f.applyAsLong(d));
         } else {
