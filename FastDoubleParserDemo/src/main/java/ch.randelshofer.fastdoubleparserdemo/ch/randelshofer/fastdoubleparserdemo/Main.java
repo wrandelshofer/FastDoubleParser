@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  * https://github.com/lemire/fast_double_parser/blob/master/benchmarks/benchmark.cpp
  * <p>
  * The code runs the benchmark multiple times, until the confidence interval
- * for a confidence level of {@value CONFIDENCE_LEVEL}
- * is smaller than {@value CONFIDENCE_INTERVAL_WIDTH} of the average
+ * for a confidence level of {@value MEASUREMENT_CONFIDENCE_LEVEL}
+ * is smaller than {@value MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH} of the average
  * measured time.
  * <p>
  * It then prints the the average times, standard deviations and confidence intervals.
@@ -58,16 +58,31 @@ public class Main {
     /**
      * Desired confidence interval width in percent of the average value.
      */
-    private static final double CONFIDENCE_INTERVAL_WIDTH = 0.01;
+    private static final double MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH = 0.01;
+
+    /**
+     * Desired confidence interval width in percent of the average value.
+     */
+    /**
+     * Desired confidence interval width in percent of the average value.
+     */
+    private static final double WARMUP_CONFIDENCE_INTERVAL_WIDTH = 0.02;
+
     /**
      * One minus desired confidence level in percent.
      */
-    private static final double CONFIDENCE_LEVEL = 0.998;
+    private static final double MEASUREMENT_CONFIDENCE_LEVEL = 0.998;
+
+    /**
+     * One minus desired confidence level in percent.
+     */
+    private static final double WARMUP_CONFIDENCE_LEVEL = 0.99;
 
     private String filename = null;
     private boolean markdown = false;
     private boolean sleep = false;
 
+    private boolean printConfidenceWidth = false;
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
@@ -80,6 +95,9 @@ public class Main {
                 break;
             case "--sleep":
                 benchmark.sleep = true;
+                break;
+            case "--print-confidence":
+                benchmark.printConfidenceWidth = true;
                 break;
             default:
                 benchmark.filename = args[i];
@@ -180,25 +198,30 @@ public class Main {
 
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
 
-        // Measure
-        System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
-                100 * CONFIDENCE_LEVEL, 100 * CONFIDENCE_INTERVAL_WIDTH);
+        // Warm up
+        System.out.printf("Warmup: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+                100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
-            VarianceStatistics warmup = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
+            VarianceStatistics warmup = measure(entry.getValue(), NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), warmup);
-            //System.out.println("Warmup: "+entry.getKey()+" "+warmup);
+            System.out.println("  " + entry.getKey() + " " + warmup);
         }
 
+        // Allow time for connecting VisualVM
         sleep();
 
+        // Measure
+        System.out.printf("Measurement: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+                100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
-            VarianceStatistics stats = measure(entry.getValue(), NUMBER_OF_TRIALS, CONFIDENCE_LEVEL, CONFIDENCE_INTERVAL_WIDTH);
+            VarianceStatistics stats = measure(entry.getValue(), NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), stats);
-            //System.out.println("Measurement: "+entry.getKey()+" "+stats);
+            System.out.println("  " + entry.getKey() + " " + stats);
         }
 
-        // Print measurements
+        // Print results
+        System.out.println("Results:");
         if (markdown) {
             printStatsHeaderMarkdown();
         }
@@ -271,26 +294,28 @@ public class Main {
                 stats.getAverage() / lines.size(),
                 System.getProperty("java.version")
         );
-        /*
-        double confidenceWidth = Stats.confidence(1 - CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
-        System.out.printf("%-30s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf)  %7.2f Mfloat/s  %7.2f ns/f\n",
-                name,
-                volumeMB *1e9 / stats.getAverage(),
-                stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
-                100*confidenceWidth,
-                lines.size()*(1e9/1_000_000) / stats.getAverage(),
-                stats.getAverage() / lines.size()
-        );*/
     }
 
     private void printStatsAscii(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
-                name,
-                volumeMB * 1e9 / stats.getAverage(),
-                stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
-                lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
-                stats.getAverage() / lines.size()
-        );
+        if (printConfidenceWidth) {
+            double confidenceWidth = Stats.confidence(1 - MEASUREMENT_CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
+            System.out.printf("%-30s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf)  %7.2f Mfloat/s  %7.2f ns/f\n",
+                    name,
+                    volumeMB * 1e9 / stats.getAverage(),
+                    stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
+                    100 * confidenceWidth,
+                    lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
+                    stats.getAverage() / lines.size()
+            );
+        } else {
+            System.out.printf("%-17s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
+                    name,
+                    volumeMB * 1e9 / stats.getAverage(),
+                    stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
+                    lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
+                    stats.getAverage() / lines.size()
+            );
+        }
     }
 
     private VarianceStatistics measure(Supplier<? extends Number> func, int numberOfTrials,

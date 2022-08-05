@@ -41,8 +41,8 @@ class FastDoubleSwar {
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
     public final static VarHandle readLongFromByteArrayBigEndian =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
-    private final static ValueLayout.OfLong BYTE_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
-            .withBitAlignment(8);
+    private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
+            .withBitAlignment(16);
 
     /**
      * Tries to parse eight decimal digits from a char array using the
@@ -57,12 +57,10 @@ class FastDoubleSwar {
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
         MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(BYTE_ALIGNED_LONG, (offset << 1));
-        long second = seg.get(BYTE_ALIGNED_LONG, (offset << 1) + 8);
+        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
+        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
 
         /*
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
         long first = a[offset]
                 | (long) a[offset + 1] << 16
                 | (long) a[offset + 2] << 32

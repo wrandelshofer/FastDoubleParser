@@ -257,7 +257,7 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
 
         // Parse HexSignificand
         // ------------
-        long significand = 0;// digits is treated as an unsigned long
+        long significand = 0;// significand is treated as an unsigned long
         int exponent = 0;
         final int significandStartIndex = index;
         int virtualIndexOfPoint = -1;
