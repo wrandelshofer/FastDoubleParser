@@ -20,7 +20,8 @@ When you clone the code repository from github. you can choose from the followin
 
 - `main` The code in this branch requires Java 17.
 - `java8` The code in this branch requires Java 8.
-- `dev` This code may or may not work. This code uses the experimental Vector API that is included in Java 17 and 18.
+- `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
+  that are included in Java 19.
 
 How to run the performance tests on a Mac:
 
@@ -54,26 +55,26 @@ On my Mac mini (2018) I get the results shown below. The speedup factor with res
     WARNING: Using incubator modules: jdk.incubator.vector
     Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
     x86_64. Mac OS X. 12.4. 12
-    OpenJDK 64-Bit Server VM. Oracle Corporation. 18.0.1.1+2-6
+    OpenJDK 64-Bit Server VM. Oracle Corporation. 19-ea+33-2224
     -XX:+UnlockExperimentalVMOptions
     
     parsing random doubles in the range [0.1)
     Trying to reach a confidence level of 99.8 % which only deviates by 1 % from the average measured duration.
-    FastDouble String :   526.13 MB/s (+/-11.9 %)    30.20 Mfloat/s    33.11 ns/f
-    FastDouble char[] :   623.89 MB/s (+/-11.5 %)    35.81 Mfloat/s    27.93 ns/f
-    FastDouble byte[] :   661.94 MB/s (+/- 8.9 %)    37.99 Mfloat/s    26.32 ns/f
-    Double            :    94.14 MB/s (+/- 3.6 %)     5.40 Mfloat/s   185.07 ns/f
-    FastFloat  String :   514.73 MB/s (+/-12.4 %)    29.54 Mfloat/s    33.85 ns/f
-    FastFloat  char[] :   607.26 MB/s (+/-10.7 %)    34.85 Mfloat/s    28.69 ns/f
-    FastFloat  byte[] :   646.66 MB/s (+/- 9.2 %)    37.12 Mfloat/s    26.94 ns/f
-    Float             :    99.37 MB/s (+/- 3.3 %)     5.70 Mfloat/s   175.33 ns/f
+    FastDouble String :   573.48 MB/s (+/- 6.3 %)    32.92 Mfloat/s      30.38 ns/f
+    FastDouble char[] :   606.53 MB/s (+/- 5.9 %)    34.82 Mfloat/s      28.72 ns/f
+    FastDouble byte[] :   689.95 MB/s (+/- 4.7 %)    39.60 Mfloat/s      25.25 ns/f
+    Double            :    95.66 MB/s (+/- 2.3 %)     5.49 Mfloat/s     182.12 ns/f
+    FastFloat  String :   533.88 MB/s (+/- 2.3 %)    30.65 Mfloat/s      32.63 ns/f
+    FastFloat  char[] :   631.52 MB/s (+/- 4.1 %)    36.25 Mfloat/s      27.59 ns/f
+    FastFloat  byte[] :   689.57 MB/s (+/- 4.9 %)    39.58 Mfloat/s      25.26 ns/f
+    Float             :   101.22 MB/s (+/- 2.6 %)     5.81 Mfloat/s     172.11 ns/f
     
-    Speedup FastDouble String vs Double: 5.59
-    Speedup FastDouble char[] vs Double: 6.63
-    Speedup FastDouble byte[] vs Double: 7.03
-    Speedup FastFloat  String vs Double: 5.47
-    Speedup FastFloat  char[] vs Double: 6.45
-    Speedup FastFloat  byte[] vs Double: 6.87
+    Speedup FastDouble String vs Double: 6.00
+    Speedup FastDouble char[] vs Double: 6.34
+    Speedup FastDouble byte[] vs Double: 7.21
+    Speedup FastFloat  String vs Double: 5.58
+    Speedup FastFloat  char[] vs Double: 6.60
+    Speedup FastFloat  byte[] vs Double: 7.21
     Speedup Float             vs Double: 1.06
 
 '
@@ -81,23 +82,22 @@ On my Mac mini (2018) I get the results shown below. The speedup factor with res
     parsing numbers in file /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/data/canada.txt
     read 111126 lines
     Trying to reach a confidence level of 99.8 % which only deviates by 1 % from the average measured duration.
-    FastDouble String :   394.75 MB/s (+/- 9.6 %)    22.69 Mfloat/s      44.08 ns/f
-    FastDouble char[] :   501.84 MB/s (+/-10.2 %)    28.84 Mfloat/s      34.67 ns/f
-    FastDouble byte[] :   540.35 MB/s (+/- 7.9 %)    31.05 Mfloat/s      32.20 ns/f
-    Double            :    87.28 MB/s (+/- 3.8 %)     5.02 Mfloat/s     199.37 ns/f
-    FastFloat  String :   416.39 MB/s (+/- 9.8 %)    23.93 Mfloat/s      41.79 ns/f
-    FastFloat  char[] :   530.80 MB/s (+/- 9.6 %)    30.50 Mfloat/s      32.78 ns/f
-    FastFloat  byte[] :   523.87 MB/s (+/- 9.2 %)    30.10 Mfloat/s      33.22 ns/f
-    FastFloat  vector :   496.87 MB/s (+/- 7.3 %)    28.55 Mfloat/s      35.02 ns/f
-    Float             :   104.80 MB/s (+/- 3.5 %)     6.02 Mfloat/s     166.04 ns/f
-    
-    Speedup FastDouble String vs Double: 4.52
-    Speedup FastDouble char[] vs Double: 5.75
-    Speedup FastDouble byte[] vs Double: 6.19
-    Speedup FastFloat  String vs Double: 4.77
-    Speedup FastFloat  char[] vs Double: 6.08
-    Speedup FastFloat  byte[] vs Double: 6.00
-    Speedup Float             vs Double: 1.20
+    FastDouble String :   432.57 MB/s (+/- 3.4 %)    24.86 Mfloat/s      40.23 ns/f
+    FastDouble char[] :   550.44 MB/s (+/- 3.5 %)    31.63 Mfloat/s      31.61 ns/f
+    FastDouble byte[] :   578.14 MB/s (+/- 3.1 %)    33.22 Mfloat/s      30.10 ns/f
+    Double            :    82.24 MB/s (+/- 3.0 %)     4.73 Mfloat/s     211.60 ns/f
+    FastFloat  String :   430.42 MB/s (+/- 2.9 %)    24.73 Mfloat/s      40.43 ns/f
+    FastFloat  char[] :   547.38 MB/s (+/- 4.7 %)    31.46 Mfloat/s      31.79 ns/f
+    FastFloat  byte[] :   590.19 MB/s (+/- 4.9 %)    33.92 Mfloat/s      29.48 ns/f
+    Float             :   101.20 MB/s (+/- 2.2 %)     5.82 Mfloat/s     171.95 ns/f
+
+    Speedup FastDouble String vs Double: 5.26
+    Speedup FastDouble char[] vs Double: 6.69
+    Speedup FastDouble byte[] vs Double: 7.03
+    Speedup FastFloat  String vs Double: 5.23
+    Speedup FastFloat  char[] vs Double: 6.66
+    Speedup FastFloat  byte[] vs Double: 7.18
+    Speedup Float             vs Double: 1.23
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 
@@ -127,12 +127,12 @@ The Y-axis shows Mfloat/s.
 
 ![ComparisonOfJvmVersions.png](ComparisonOfJvmVersions.png)
 
-Method|1.8.0_281|11.0.8|18.0.1.1|19-ea|17.0.3graalvm
----|---|---|---|---|---
-Double|4.86|5.34|5.09|5.28|6.96
-FastDouble String|20.30|27.83|31.18|32.59|32.74
-FastDouble char[]|30.60|30.68|33.58|37.20|34.32
-FastDouble byte[]|31.29|35.61|38.24|39.67|40.21
+|Method            |1.8.0_281|11.0.8|18.0.1.1|19-ea|17.0.3graalvm|
+|-------------------|---|---|---|---|---|
+|Double            |4.86|5.34|5.09|5.28|6.96|
+|FastDouble String |20.30|27.83|31.18|32.59|32.74|
+|FastDouble char[] |30.60|30.68|33.58|37.20|34.32|
+|FastDouble byte[] |31.29|35.61|38.24|39.67|40.21|
 
 ## Comparison with C version
 
@@ -156,11 +156,11 @@ on the same computer:
     abseil                                  :   467.27 MB/s (+/- 9.0 %)    22.27 Mfloat/s      44.90 ns/f 
     fastfloat                               :   880.79 MB/s (+/- 6.6 %)    41.98 Mfloat/s      23.82 ns/f 
 
-    OpenJDK 18.0.1.1+2-6
-    FastDouble String                       :   526.13 MB/s (+/-11.9 %)    30.20 Mfloat/s      33.11 ns/f
-    FastDouble char[]                       :   623.89 MB/s (+/-11.5 %)    35.81 Mfloat/s      27.93 ns/f
-    FastDouble byte[]                       :   661.94 MB/s (+/- 8.9 %)    37.99 Mfloat/s      26.32 ns/f
-    Double                                  :    94.14 MB/s (+/- 3.6 %)     5.40 Mfloat/s     185.07 ns/f
+    OpenJDK 19-ea+33-2224
+    FastDouble String                       :   566.18 MB/s (+/- 1.2 %)    32.50 Mfloat/s      30.77 ns/f
+    FastDouble char[]                       :   606.77 MB/s (+/- 3.6 %)    34.83 Mfloat/s      28.71 ns/f
+    FastDouble byte[]                       :   692.78 MB/s (+/- 2.2 %)    39.77 Mfloat/s      25.14 ns/f
+    Double                                  :    98.41 MB/s (+/- 2.6 %)     5.65 Mfloat/s     176.99 ns/f
 
 '
 
@@ -173,8 +173,8 @@ on the same computer:
     abseil                                  :   411.11 MB/s (+/- 7.3 %)    23.63 Mfloat/s      42.33 ns/f 
     fastfloat                               :   741.32 MB/s (+/- 5.3 %)    42.60 Mfloat/s      23.47 ns/f 
 
-    OpenJDK 18.0.1.1+2-6
-    FastDouble String                       :   394.75 MB/s (+/- 9.6 %)    22.69 Mfloat/s      44.08 ns/f
-    FastDouble char[]                       :   501.84 MB/s (+/-10.2 %)    28.84 Mfloat/s      34.67 ns/f
-    FastDouble byte[]                       :   540.35 MB/s (+/- 7.9 %)    31.05 Mfloat/s      32.20 ns/f
-    Double                                  :    87.28 MB/s (+/- 3.8 %)     5.02 Mfloat/s     199.37 ns/f
+    OpenJDK 19-ea+33-2224
+    FastDouble String                       :   430.24 MB/s (+/- 0.8 %)    24.72 Mfloat/s      40.45 ns/f
+    FastDouble char[]                       :   512.85 MB/s (+/- 7.0 %)    29.47 Mfloat/s      33.93 ns/f
+    FastDouble byte[]                       :   515.65 MB/s (+/- 4.2 %)    29.63 Mfloat/s      33.75 ns/f
+    Double                                  :    87.33 MB/s (+/- 4.0 %)     5.02 Mfloat/s     199.27 ns/f

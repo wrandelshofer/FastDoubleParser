@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FastDoubleParserFromByteArrayLexicallyGeneratedTest extends AbstractLexicallyGeneratedTest {
-
     @Override
     protected void testAgainstJdk(String str) {
         double expected = 0.0;

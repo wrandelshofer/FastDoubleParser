@@ -53,7 +53,7 @@ public class FastFloatParserFromByteArrayJmh {
             "0",
             "365",
             "10.1",
-            "3.1415927",
+            "3.14159267",
             "1.6162552E-35",
             "0x1.57bd4ep-116"
     })

@@ -8,13 +8,13 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Parses a {@code double} from a {@code char} array.
  */
-public final class DoubleFromCharArray extends AbstractFloatValueFromCharArray {
+final class DoubleBitsFromCharArray extends AbstractFloatingPointBitsFromCharArray {
 
 
     /**
      * Creates a new instance.
      */
-    public DoubleFromCharArray() {
+    public DoubleBitsFromCharArray() {
 
     }
 
@@ -26,22 +26,6 @@ public final class DoubleFromCharArray extends AbstractFloatValueFromCharArray {
     @Override
     long negativeInfinity() {
         return Double.doubleToRawLongBits(Double.NEGATIVE_INFINITY);
-    }
-
-    /**
-     * Parses a {@code FloatValue} from a {@code char[]} and converts it
-     * into a {@code double} value.
-     * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatValue}.
-     *
-     * @param str    the string to be parsed
-     * @param offset the start offset of the {@code FloatValue} in {@code str}
-     * @param length the length of {@code FloatValue} in {@code str}
-     * @return the parsed double value
-     * @throws NumberFormatException if the string can not be parsed
-     */
-    public double parseDouble(char[] str, int offset, int length) throws NumberFormatException {
-        return Double.longBitsToDouble(parseFloatValue(str, offset, length));
     }
 
     @Override

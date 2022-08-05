@@ -5,8 +5,40 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.nio.ByteOrder;
+
+/**
+ * This class provides methods for parsing multiple characters at once using
+ * the "SIMD with a register" (SWAR) technique.
+ * <p>
+ * References:
+ * <dl>
+ *     <dt>Leslie Lamport, Multiple Byte Processing with Full-Word Instructions</dt>
+ *     <dd><a href="https://lamport.azurewebsites.net/pubs/multiple-byte.pdf">azurewebsites.net</a></dd>
+ *
+ *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
+ *     Apache License 2.0 or Boost Software License.</dt>
+ *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
+ *
+ *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
+ *     Apache License 2.0.</dt>
+ *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
+ *
+ *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second,
+ *     Software: Practice and Experience 51 (8), 2021.
+ *     arXiv.2101.11408v3 [cs.DS] 24 Feb 2021</dt>
+ *     <dd><a href="https://arxiv.org/pdf/2101.11408.pdf">arxiv.org</a></dd>
+ * </dl>
+ * </p>
+ */
 class FastDoubleSwar {
 
+    public final static VarHandle readLongFromByteArrayLittleEndian =
+            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
+    public final static VarHandle readLongFromByteArrayBigEndian =
+            MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
     /**
      * Tries to parse eight decimal digits from a char array using the
      * 'SIMD within a register technique' (SWAR).
@@ -16,14 +48,12 @@ class FastDoubleSwar {
      * @return the parsed number,
      * returns a negative value if {@code value} does not contain 8 hex digits
      */
+
     public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
         long first = a[offset]
                 | (long) a[offset + 1] << 16
                 | (long) a[offset + 2] << 32
                 | (long) a[offset + 3] << 48;
-
         long second = a[offset + 4]
                 | (long) a[offset + 5] << 16
                 | (long) a[offset + 6] << 32
@@ -46,23 +76,22 @@ class FastDoubleSwar {
      * @param second the second four characters in big endian order
      * @return the parsed digits or -1
      */
-    public static int tryToParseEightDigitsUtf16(long first, long second) {
+    public static int tryToParseEightDigitsUtf16(long first, long second) {//since Java 18
         long fval = first - 0x0030_0030_0030_0030L;
         long sval = second - 0x0030_0030_0030_0030L;
 
-        long fdet = ((first + 0x0046_0046_0046_0046L) | fval);
-        long sdet = ((second + 0x0046_0046_0046_0046L) | sval);
-        if (((fdet | sdet) & 0xff80_ff80_ff80_ff80L) != 0L) {
+        // Create a predicate for all bytes which are smaller than '0' (0x0030)
+        // or greater than '9' (0x0039).
+        // We have 0x007f - 0x0039 = 0x0046.
+        // The predicate is true if the hsb of a byte is set: (predicate & 0xff80) != 0.
+        long fpre = first + 0x0046_0046_0046_0046L | fval;
+        long spre = second + 0x0046_0046_0046_0046L | sval;
+        if (((fpre | spre) & 0xff80_ff80_ff80_ff80L) != 0L) {
             return -1;
         }
 
-        fval = (fval * 0xa_00_01L) >>> 16;// (10<<32)+1
-        sval = (sval * 0xa_00_01L) >>> 16;// (10<<32)+1
-
-        fval = 100 * (fval & 0xff) + (fval >>> 32);
-        sval = 100 * (sval & 0xff) + (sval >>> 32);
-
-        return (int) (sval + 10000 * fval);
+        return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
+                + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
     }
 
     /**
@@ -75,7 +104,7 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 digits
      */
     public static int tryToParseEightDigitsUtf8(byte[] a, int offset) {
-        return tryToParseEightDigitsUtf8(readLongFromByteArrayLittleEndian(a, offset));
+        return tryToParseEightDigitsUtf8((long) readLongFromByteArrayLittleEndian.get(a, offset));
     }
 
     /**
@@ -99,10 +128,11 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 digits
      */
     public static int tryToParseEightDigitsUtf8(long chunk) {
+        // Create a predicate for all bytes which are greater than '0' (0x30).
+        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
         long val = chunk - 0x3030303030303030L;
-        long det = ((chunk + 0x4646464646464646L) | val) &
-                0x8080808080808080L;
-        if (det != 0L) {
+        long predicate = ((chunk + 0x4646464646464646L) | val) & 0x8080808080808080L;
+        if (predicate != 0L) {
             return -1;
         }
 
@@ -175,7 +205,7 @@ class FastDoubleSwar {
      *               returns a negative value if {@code value} does not contain 8 digits
      */
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
-        return tryToParseEightHexDigitsUtf8(readLongFromByteArrayBigEndian(a, offset));
+        return tryToParseEightHexDigitsUtf8((long) readLongFromByteArrayBigEndian.get(a, offset));
     }
 
     /**
@@ -278,42 +308,5 @@ class FastDoubleSwar {
         long v5 = (v2 | v2 >>> 24) & 0xffffL;
 
         return v5;
-    }
-
-    /**
-     * Tries to parse seven decimal digits from a byte array using the
-     * 'SIMD within a register technique' (SWAR).
-     *
-     * @param a      contains 8 ascii characters
-     * @param offset the offset of the first character in {@code a}, must be
-     *               {@literal > 0}.
-     * @return the parsed number,
-     * returns a negative value if {@code value} does not contain 8 digits
-     */
-    public static int tryToParseSevenDigitsUtf8(byte[] a, int offset) {
-        return tryToParseEightDigitsUtf8((readLongFromByteArrayLittleEndian(a, offset - 1)
-                & 0xffffffff_ffffff00L) | 0x30L);
-    }
-
-    public static long readLongFromByteArrayLittleEndian(byte[] a, int offset) {
-        return ((a[offset + 7] & 0xffL) << 56)
-                | ((a[offset + 6] & 0xffL) << 48)
-                | ((a[offset + 5] & 0xffL) << 40)
-                | ((a[offset + 4] & 0xffL) << 32)
-                | ((a[offset + 3] & 0xffL) << 24)
-                | ((a[offset + 2] & 0xffL) << 16)
-                | ((a[offset + 1] & 0xffL) << 8)
-                | (a[offset] & 0xffL);
-    }
-
-    public static long readLongFromByteArrayBigEndian(byte[] a, int offset) {
-        return ((a[offset] & 0xffL) << 56)
-                | ((a[offset + 1] & 0xffL) << 48)
-                | ((a[offset + 2] & 0xffL) << 40)
-                | ((a[offset + 3] & 0xffL) << 32)
-                | ((a[offset + 4] & 0xffL) << 24)
-                | ((a[offset + 5] & 0xffL) << 16)
-                | ((a[offset + 6] & 0xffL) << 8)
-                | (a[offset + 7] & 0xffL);
     }
 }

@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FastFloatParserFromByteArrayLexicallyGeneratedTest extends AbstractLexicallyGeneratedTest {
-
     @Override
     protected void testAgainstJdk(String str) {
         float expected = 0.0f;

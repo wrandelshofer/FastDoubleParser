@@ -9,9 +9,5 @@
         <outputRelativeToContentRoot value="true" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="FastDoubleParser"  />
-      <module name="fastdoubleparser" />
-    </bytecodeTargetLevel>
   </component>
 </project>
