@@ -53,7 +53,13 @@ public class Main {
      * Number of trials must be ≥ 30 to approximate normal distribution of
      * the test samples.
      */
-    public static final int NUMBER_OF_TRIALS = 64;
+    public static final int MEASUREMENT_NUMBER_OF_TRIALS = 64;
+    /**
+     * Number of trials must be ≥ 30 to approximate normal distribution of
+     * the test samples. Must be large enough, so that Java hits the C2
+     * compiler.
+     */
+    public static final int WARMUP_NUMBER_OF_TRIALS = 256;
 
     /**
      * Desired confidence interval width in percent of the average value.
@@ -203,7 +209,7 @@ public class Main {
                 100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
-            VarianceStatistics warmup = measure(entry.getValue(), NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH);
+            VarianceStatistics warmup = measure(entry.getValue(), WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), warmup);
             System.out.println("  " + entry.getKey() + " " + warmup);
         }
@@ -215,7 +221,7 @@ public class Main {
         System.out.printf("Measurement: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
-            VarianceStatistics stats = measure(entry.getValue(), NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
+            VarianceStatistics stats = measure(entry.getValue(), MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), stats);
             System.out.println("  " + entry.getKey() + " " + stats);
         }

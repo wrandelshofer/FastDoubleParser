@@ -56,6 +56,7 @@ class FastDoubleSwar {
 
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
+        // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
         MemorySegment seg = MemorySegment.ofArray(a);
         long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
         long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
