@@ -53,7 +53,7 @@ public class Main {
      * Number of trials must be ≥ 30 to approximate normal distribution of
      * the test samples.
      */
-    public static final int MEASUREMENT_NUMBER_OF_TRIALS = 64;
+    public static final int MEASUREMENT_NUMBER_OF_TRIALS = 32;
     /**
      * Number of trials must be ≥ 30 to approximate normal distribution of
      * the test samples. Must be large enough, so that Java hits the C2
@@ -66,9 +66,6 @@ public class Main {
      */
     private static final double MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH = 0.01;
 
-    /**
-     * Desired confidence interval width in percent of the average value.
-     */
     /**
      * Desired confidence interval width in percent of the average value.
      */
@@ -121,7 +118,7 @@ public class Main {
     }
 
     public void demo(int howmany) {
-        System.out.println("parsing random doubles in the range [0,1)");
+        System.out.println("Parsing random doubles in the range [0,1).");
         List<String> lines = new Random().doubles(howmany).mapToObj(Double::toString)
                 .collect(Collectors.toList());
         validate(lines);
@@ -205,25 +202,26 @@ public class Main {
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
 
         // Warm up
-        System.out.printf("Warmup: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
-                100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
+        System.out.println("Warming JVM up (code must be compiled by C2 compiler for optimal performance).");
+        //System.out.printf("Warmup: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+        //       100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics warmup = measure(entry.getValue(), WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), warmup);
-            System.out.println("  " + entry.getKey() + " " + warmup);
+            //System.out.println("  " + entry.getKey() + " " + warmup);
         }
 
-        // Allow time for connecting VisualVM
+        // Allow time for connecting with VisualVM
         sleep();
 
         // Measure
-        System.out.printf("Measurement: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+        System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
         for (Map.Entry<String, Supplier<? extends Number>> entry : functions.entrySet()) {
             VarianceStatistics stats = measure(entry.getValue(), MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
             results.put(entry.getKey(), stats);
-            System.out.println("  " + entry.getKey() + " " + stats);
+            //System.out.println("  " + entry.getKey() + " " + stats);
         }
 
         // Print results
@@ -366,9 +364,9 @@ public class Main {
 
     public void loadFile(String filename) throws IOException {
         Path path = FileSystems.getDefault().getPath(filename).toAbsolutePath();
-        System.out.printf("parsing numbers in file %s\n", path);
+        System.out.printf("Parsing numbers in file %s\n", path);
         List<String> lines = Files.lines(path).collect(Collectors.toList());
-        System.out.printf("read %d lines\n", lines.size());
+        System.out.printf("Read %d lines\n", lines.size());
         validate(lines);
         process(lines);
     }
