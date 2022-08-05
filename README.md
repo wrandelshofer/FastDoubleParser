@@ -20,7 +20,8 @@ When you clone the code repository from github. you can choose from the followin
 
 - `main` The code in this branch requires Java 17.
 - `java8` The code in this branch requires Java 8.
-- `dev` This code may or may not work. This code uses the experimental Vector API that is included in Java 17 and 18.
+- `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
+  that are included in Java 19.
 
 How to run the performance tests on a Mac:
 

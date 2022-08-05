@@ -125,7 +125,7 @@ class FastDoubleVector {
     /**
      * @param first  the first 4 characters in little endian order
      * @param second the second 4 characters in little endian order
-     * @return
+     * @return the parsed value or -1
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
         ShortVector vec = LongVector.zero(LongVector.SPECIES_128)
