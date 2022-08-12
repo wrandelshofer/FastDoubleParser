@@ -50,7 +50,6 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 hex digits
      */
 
-    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
         long first = a[offset]
                 | (long) a[offset + 1] << 16

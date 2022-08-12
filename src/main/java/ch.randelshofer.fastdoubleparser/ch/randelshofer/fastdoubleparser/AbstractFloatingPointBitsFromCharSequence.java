@@ -18,8 +18,6 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
-    public static final boolean FALL_BACK_TO_BIGDECIMAL = false;
-
     private boolean isDigit(char c) {
         return '0' <= c && c <= '9';
     }
