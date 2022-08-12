@@ -335,7 +335,7 @@ abstract class AbstractFloatingPointBitsFromByteArray extends AbstractFloatValue
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex
-                || digitCount == 0 && str[virtualIndexOfPoint] != '.'
+                || digitCount == 0
                 || !hasExponent) {
             return PARSE_ERROR;
         }

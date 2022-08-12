@@ -331,7 +331,7 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex
-                || digitCount == 0 && str.charAt(virtualIndexOfPoint) != '.'
+                || digitCount == 0
                 || !hasExponent) {
             return PARSE_ERROR;
         }
