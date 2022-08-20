@@ -56,9 +56,12 @@
     <property name="manifest.specification-version" value="${version}"/>
     <property name="manifest.implementation-vendor" value="${groupId}"/>
 
+    <property name="release.version" value="19"/>
     <property name="src" value="src/main/java/ch.randelshofer.fastdoubleparser"/>
+    <property name="src.demo" value="FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo"/>
     <property name="build" value="build"/>
-    <property name="classes" value="build/classes"/>
+    <property name="classes" value="build/classes/ch.randelshofer.fastdoubleparser"/>
+    <property name="classes.demo" value="build/classes/ch.randelshofer.fastdoubleparserdemo"/>
     <property name="jars" value="build/jar"/>
     <property name="javadoc" value="build/javadoc"/>
     <property name="dist" value="build/dist/${name}-${version}"/>
@@ -80,13 +83,24 @@
 
     <target name="compile">
         <mkdir dir="${classes}"/>
-        <javac encoding="UTF-8" destdir="${classes}"
-               debug="true"
-               verbose="false"
-        >
+        <javac encoding="UTF-8" destdir="${classes}" debug="true" verbose="false">
             <src path="${src}"/>
             <compilerarg value="-Xlint"/>
             <compilerarg value="-version"/>
+            <compilerarg value="--enable-preview"/>
+            <compilerarg value="--release"/>
+            <compilerarg value="${release.version}"/>
+        </javac>
+        <mkdir dir="${classes.demo}"/>
+        <javac encoding="UTF-8" destdir="${classes.demo}" debug="true" verbose="false">
+            <src path="${src.demo}"/>
+            <compilerarg value="-p"/>
+            <compilerarg value="${classes}"/>
+            <compilerarg value="-Xlint"/>
+            <compilerarg value="-version"/>
+            <compilerarg value="--enable-preview"/>
+            <compilerarg value="--release"/>
+            <compilerarg value="${release.version}"/>
         </javac>
     </target>
 
