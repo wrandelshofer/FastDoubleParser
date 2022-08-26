@@ -61,7 +61,7 @@ public class Main {
      * the test samples. Must be large enough, so that Java hits the C2
      * compiler.
      */
-    public static final int WARMUP_NUMBER_OF_TRIALS = 1024;
+    public static final int WARMUP_NUMBER_OF_TRIALS = 32;
 
     /**
      * Desired confidence interval width in percent of the average value.
@@ -82,6 +82,7 @@ public class Main {
      * One minus desired confidence level in percent.
      */
     private static final double WARMUP_CONFIDENCE_LEVEL = 0.99;
+    private static final int WARMUP_MIN_TRIALS = 128;
 
     private String filename = null;
     private boolean markdown = false;
@@ -160,7 +161,7 @@ public class Main {
     }
 
     private VarianceStatistics measure(Supplier<? extends Number> func, int numberOfTrials,
-                                       double confidenceLevel, double confidenceIntervalWidth) {
+                                       double confidenceLevel, double confidenceIntervalWidth, int minTrials) {
         long t1;
         double confidenceWidth;
         long t2;
@@ -168,6 +169,7 @@ public class Main {
         VarianceStatistics stats = new VarianceStatistics();
 
         // measure
+        int trials = 0;
         do {
             for (int i = 0; i < numberOfTrials; i++) {
                 t1 = System.nanoTime();
@@ -177,14 +179,15 @@ public class Main {
                 stats.accept(elapsed);
             }
             confidenceWidth = Stats.confidence(1 - confidenceLevel, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
-        } while (confidenceWidth > confidenceIntervalWidth);
+            trials += numberOfTrials;
+        } while (trials < minTrials || confidenceWidth > confidenceIntervalWidth);
         return stats;
     }
 
     private void printStatsAscii(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
         if (printConfidenceWidth) {
             double confidenceWidth = Stats.confidence(1 - MEASUREMENT_CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
-            System.out.printf("%-23s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d samples)  %7.2f Mfloat/s  %7.2f ns/f\n",
+            System.out.printf("%-23s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -229,9 +232,13 @@ public class Main {
         //       100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
-            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH);
+            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS);
             results.put(entry.getKey(), warmup);
             //System.out.println("  " + entry.getKey() + " " + warmup);
+        }
+        if (printConfidenceWidth) {
+            printResults("Warmup results:", lines, volumeMB, results);
+            System.out.println();
         }
 
         // Allow time for connecting with VisualVM
@@ -241,25 +248,13 @@ public class Main {
         System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
         for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
-            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
+            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1);
             results.put(entry.getKey(), stats);
             //System.out.println("  " + entry.getKey() + " " + stats);
         }
 
         // Print results
-        System.out.println("Results:");
-        if (markdown) {
-            printStatsHeaderMarkdown();
-        }
-        for (Map.Entry<String, VarianceStatistics> entry : results.entrySet()) {
-            String name = entry.getKey();
-            VarianceStatistics stats = entry.getValue();
-            if (markdown) {
-                printStatsMarkdown(lines, volumeMB, name, stats);
-            } else {
-                printStatsAscii(lines, volumeMB, name, stats);
-            }
-        }
+        printResults("Measurement results:", lines, volumeMB, results);
 
         // Print speedup versus reference implementation
         System.out.println();
@@ -271,6 +266,23 @@ public class Main {
                 VarianceStatistics stats = entry.getValue();
                 System.out.printf("Speedup %-23s vs %-17s: %,.2f\n", name, reference, referenceStats.getAverage() / stats.getAverage());
 
+            }
+        }
+    }
+
+    private void printResults(String title, List<String> lines, double volumeMB, Map<String, VarianceStatistics> results) {
+        System.out.println();
+        System.out.println(title);
+        if (markdown) {
+            printStatsHeaderMarkdown();
+        }
+        for (Map.Entry<String, VarianceStatistics> entry : results.entrySet()) {
+            String name = entry.getKey();
+            VarianceStatistics stats = entry.getValue();
+            if (markdown) {
+                printStatsMarkdown(lines, volumeMB, name, stats);
+            } else {
+                printStatsAscii(lines, volumeMB, name, stats);
             }
         }
     }
