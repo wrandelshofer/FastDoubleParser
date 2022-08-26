@@ -61,7 +61,7 @@ public class Main {
      * the test samples. Must be large enough, so that Java hits the C2
      * compiler.
      */
-    public static final int WARMUP_NUMBER_OF_TRIALS = 256;
+    public static final int WARMUP_NUMBER_OF_TRIALS = 1024;
 
     /**
      * Desired confidence interval width in percent of the average value.
@@ -184,11 +184,12 @@ public class Main {
     private void printStatsAscii(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
         if (printConfidenceWidth) {
             double confidenceWidth = Stats.confidence(1 - MEASUREMENT_CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
-            System.out.printf("%-23s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf)  %7.2f Mfloat/s  %7.2f ns/f\n",
+            System.out.printf("%-23s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d samples)  %7.2f Mfloat/s  %7.2f ns/f\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
                     100 * confidenceWidth,
+                    stats.getCount(),
                     lines.size() * (1e9 / 1_000_000) / stats.getAverage(),
                     stats.getAverage() / lines.size()
             );

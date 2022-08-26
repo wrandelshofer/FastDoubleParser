@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="FastDoubleParserBenchmark canada.txt (with confidence)" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="18" />
+    <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
+    <module name="FastDoubleParserDemo" />
+    <option name="PROGRAM_PARAMETERS" value="--print-confidence data/canada.txt" />
+    <option name="VM_PARAMETERS" value="-XX:+UnlockExperimentalVMOptions --enable-preview" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="ch.randelshofer.fastdoubleparser.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
