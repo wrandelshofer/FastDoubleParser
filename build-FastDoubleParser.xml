@@ -106,12 +106,10 @@
 
     <target name="javadoc">
         <mkdir dir="${javadoc}"/>
-        <javadoc encoding="UTF-8" destdir="${javadoc}"
-               verbose="false"
-                 charset="UTF-8"
-                 header="${artifactId} ${version}"
-                 windowtitle="${artifactId} ${version}"
-        >
+        <javadoc encoding="UTF-8" destdir="${javadoc}" verbose="false" charset="UTF-8" header="${artifactId} ${version}" windowtitle="${artifactId} ${version}">
+            <arg value="--enable-preview"/>
+            <arg value="--release"/>
+            <arg value="19"/>
             <sourcepath path="${src}"/>
         </javadoc>
     </target>

@@ -83,7 +83,7 @@ public class FastDoubleParserFromByteArrayJmh {
 
     @Benchmark
     public double m() {
-        return FastDoubleParser.parseDouble(byteArray);
+        return JavaDoubleParser.parseDouble(byteArray);
     }
 }
 

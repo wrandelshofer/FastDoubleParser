@@ -1,129 +1,123 @@
 /*
- * @(#)FastDoubleParser2.java
+ * @(#)FastFloatParser2.java
  * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
  */
 
 package ch.randelshofer.fastdoubleparser;
 
 /**
- * Provides static method for parsing a {@code double} from a
+ * Provides static method for parsing a {@code float} from a
  * {@link CharSequence}, {@code char} array or {@code byte} array.
+ * <p>
+ * See {@link JavaDoubleParser} for a description of the supported grammar.
  */
-public class FastDoubleParser {
-
+public class JavaFloatParser {
 
     /**
      * Don't let anyone instantiate this class.
      */
-    private FastDoubleParser() {
+    private JavaFloatParser() {
 
     }
 
     /**
-     * Convenience method for calling {@link #parseDouble(CharSequence, int, int)}.
+     * Convenience method for calling {@link #parseFloat(CharSequence, int, int)}.
      *
      * @param str the string to be parsed
-     * @return the parsed double value
+     * @return the parsed value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(CharSequence str) throws NumberFormatException {
-        return parseDouble(str, 0, str.length());
+    public static float parseFloat(CharSequence str) throws NumberFormatException {
+        return parseFloat(str, 0, str.length());
     }
 
     /**
      * Parses a {@code FloatingPointLiteral} from a {@link CharSequence} and converts it
-     * into a {@code double} value.
-     * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatingPointLiteral}.
+     * into a {@code float} value.
      *
      * @param str    the string to be parsed
      * @param offset the start offset of the {@code FloatingPointLiteral} in {@code str}
      * @param length the length of {@code FloatingPointLiteral} in {@code str}
-     * @return the parsed double value
+     * @return the parsed value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new DoubleBitsFromCharSequence().parseFloatingPointLiteral(str, offset, length);
+    public static float parseFloat(CharSequence str, int offset, int length) throws NumberFormatException {
+        long bitPattern = new JavaFloatBitsFromCharSequence().parseFloatingPointLiteral(str, offset, length);
         if (bitPattern == AbstractFloatValueParser.PARSE_ERROR) {
             throw new NumberFormatException("Illegal input");
         }
-        return Double.longBitsToDouble(bitPattern);
+        return Float.intBitsToFloat((int) bitPattern);
     }
 
     /**
-     * Convenience method for calling {@link #parseDouble(byte[], int, int)}.
+     * Convenience method for calling {@link #parseFloat(byte[], int, int)}.
      *
      * @param str the string to be parsed, a byte array with characters
      *            in ISO-8859-1, ASCII or UTF-8 encoding
-     * @return the parsed double value
+     * @return the parsed value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(byte[] str) throws NumberFormatException {
-        return parseDouble(str, 0, str.length);
+    public static float parseFloat(byte[] str) throws NumberFormatException {
+        return parseFloat(str, 0, str.length);
     }
 
     /**
      * Parses a {@code FloatingPointLiteral} from a {@code byte}-Array and converts it
-     * into a {@code double} value.
-     * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatingPointLiteral}.
+     * into a {@code float} value.
      *
      * @param str    the string to be parsed, a byte array with characters
      *               in ISO-8859-1, ASCII or UTF-8 encoding
      * @param offset The index of the first byte to parse
      * @param length The number of bytes to parse
-     * @return the parsed double value
+     * @return the parsed value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(byte[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new DoubleBitsFromByteArray().parseFloatingPointLiteral(str, offset, length);
+    public static float parseFloat(byte[] str, int offset, int length) throws NumberFormatException {
+        long bitPattern = new JavaFloatBitsFromByteArray().parseFloatingPointLiteral(str, offset, length);
         if (bitPattern == AbstractFloatValueParser.PARSE_ERROR) {
             throw new NumberFormatException("Illegal input");
         }
-        return Double.longBitsToDouble(bitPattern);
+        return Float.intBitsToFloat((int) bitPattern);
     }
 
+
     /**
-     * Convenience method for calling {@link #parseDouble(char[], int, int)}.
+     * Convenience method for calling {@link #parseFloat(char[], int, int)}.
      *
      * @param str the string to be parsed
-     * @return the parsed double value
+     * @return the parsed value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(char[] str) throws NumberFormatException {
-        return parseDouble(str, 0, str.length);
+    public static float parseFloat(char[] str) throws NumberFormatException {
+        return parseFloat(str, 0, str.length);
     }
 
     /**
      * Parses a {@code FloatingPointLiteral} from a {@code byte}-Array and converts it
-     * into a {@code double} value.
-     * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatingPointLiteral}.
+     * into a {@code float} value.
      *
      * @param str    the string to be parsed, a byte array with characters
      *               in ISO-8859-1, ASCII or UTF-8 encoding
      * @param offset The index of the first character to parse
      * @param length The number of characters to parse
-     * @return the parsed double value
+     * @return the parsed value
      * @throws NumberFormatException if the string can not be parsed
      */
-    public static double parseDouble(char[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new DoubleBitsFromCharArray().parseFloatingPointLiteral(str, offset, length);
+    public static float parseFloat(char[] str, int offset, int length) throws NumberFormatException {
+        long bitPattern = new JavaFloatBitsFromCharArray().parseFloatingPointLiteral(str, offset, length);
         if (bitPattern == AbstractFloatValueParser.PARSE_ERROR) {
             throw new NumberFormatException("Illegal input");
         }
-        return Double.longBitsToDouble(bitPattern);
+        return Float.intBitsToFloat((int) bitPattern);
     }
 
     /**
      * Parses a {@code FloatingPointLiteral} from a {@link CharSequence} and converts it
-     * into a bit pattern that encodes a {@code double} value.
-     * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatingPointLiteral}.
+     * into a bit pattern that encodes a {@code float} value.
      * <p>
      * Usage example:
      * <pre>
-     *     long bitPattern = parseDoubleBits("3.14", 0, 4);
+     *     long bitPattern = parseFloatBits("3.14", 0, 4);
      *     if (bitPattern == -1L) {
      *         ...handle parse error...
      *     } else {
@@ -137,17 +131,15 @@ public class FastDoubleParser {
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public static long parseDoubleBits(CharSequence str, int offset, int length) {
-        return new DoubleBitsFromCharSequence().parseFloatingPointLiteral(str, offset, length);
+    public static long parseFloatBits(CharSequence str, int offset, int length) {
+        return new JavaFloatBitsFromCharSequence().parseFloatingPointLiteral(str, offset, length);
     }
 
     /**
      * Parses a {@code FloatingPointLiteral} from a {@code byte}-Array and converts it
-     * into a bit pattern that encodes a {@code double} value.
+     * into a bit pattern that encodes a {@code float} value.
      * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatingPointLiteral}.
-     * <p>
-     * See {@link #parseDoubleBits(CharSequence, int, int)} for a usage example.
+     * See {@link #parseFloatBits(CharSequence, int, int)} for a usage example.
      *
      * @param str    the string to be parsed, a byte array with characters
      *               in ISO-8859-1, ASCII or UTF-8 encoding
@@ -156,17 +148,15 @@ public class FastDoubleParser {
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public static long parseDoubleBits(byte[] str, int offset, int length) {
-        return new DoubleBitsFromByteArray().parseFloatingPointLiteral(str, offset, length);
+    public static long parseFloatBits(byte[] str, int offset, int length) {
+        return new JavaFloatBitsFromByteArray().parseFloatingPointLiteral(str, offset, length);
     }
 
     /**
      * Parses a {@code FloatingPointLiteral} from a {@code byte}-Array and converts it
-     * into a bit pattern that encodes a {@code double} value.
+     * into a bit pattern that encodes a {@code float} value.
      * <p>
-     * See {@link ch.randelshofer.fastdoubleparser} for the syntax of {@code FloatingPointLiteral}.
-     * <p>
-     * See {@link #parseDoubleBits(CharSequence, int, int)} for a usage example.
+     * See {@link #parseFloatBits(CharSequence, int, int)} for a usage example.
      *
      * @param str    the string to be parsed, a byte array with characters
      *               in ISO-8859-1, ASCII or UTF-8 encoding
@@ -175,7 +165,7 @@ public class FastDoubleParser {
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public static long parseDoubleBits(char[] str, int offset, int length) {
-        return new DoubleBitsFromCharArray().parseFloatingPointLiteral(str, offset, length);
+    public static long parseFloatBits(char[] str, int offset, int length) {
+        return new JavaFloatBitsFromCharArray().parseFloatingPointLiteral(str, offset, length);
     }
 }

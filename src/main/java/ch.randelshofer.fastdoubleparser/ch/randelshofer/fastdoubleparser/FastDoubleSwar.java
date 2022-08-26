@@ -89,7 +89,7 @@ class FastDoubleSwar {
      * @param second the second four characters in big endian order
      * @return the parsed digits or -1
      */
-    public static int tryToParseEightDigitsUtf16(long first, long second) {//since Java 18
+    public static int tryToParseEightDigitsUtf16(long first, long second) {
         long fval = first - 0x0030_0030_0030_0030L;
         long sval = second - 0x0030_0030_0030_0030L;
 
@@ -107,7 +107,7 @@ class FastDoubleSwar {
                 + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
     }
 
-    public static int tryToParseFourDigitsUtf16(long second) {//since Java 18
+    public static int tryToParseFourDigitsUtf16(long second) {
         long sval = second - 0x0030_0030_0030_0030L;
 
         // Create a predicate for all bytes which are smaller than '0' (0x0030)

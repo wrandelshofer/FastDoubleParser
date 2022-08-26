@@ -67,7 +67,7 @@ public class FastFloatParserFromByteArrayJmh {
 
     @Benchmark
     public double m() {
-        return FastFloatParser.parseFloat(byteArray);
+        return JavaFloatParser.parseFloat(byteArray);
     }
 }
 

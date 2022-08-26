@@ -6,7 +6,7 @@
 package ch.randelshofer.fastdoubleparser;
 
 /**
- * This class provides the mathematical functions needed by {@link FastDoubleParser}.
+ * This class provides the mathematical functions needed by {@link JavaDoubleParser}.
  * <p>
  * References:
  * <dl>

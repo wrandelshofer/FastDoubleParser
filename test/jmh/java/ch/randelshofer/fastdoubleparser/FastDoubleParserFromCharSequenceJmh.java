@@ -94,7 +94,7 @@ public class FastDoubleParserFromCharSequenceJmh {
 
     @Benchmark
     public double m() {
-        return FastDoubleParser.parseDouble(str);
+        return JavaDoubleParser.parseDouble(str);
     }
 }
 

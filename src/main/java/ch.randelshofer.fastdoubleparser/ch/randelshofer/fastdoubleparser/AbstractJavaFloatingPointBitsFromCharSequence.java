@@ -11,19 +11,19 @@ import java.math.BigInteger;
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.clamp;
 
 /**
- * Parses a {@code FloatingPointLiteral} from a {@link CharSequence}.
+ * Parses a Java {@code FloatingPointLiteral} from a {@link CharSequence}.
  * <p>
  * This class should have a type parameter for the return value of its parse
  * methods. Unfortunately Java does not support type parameters for primitive
  * types. As a workaround we use {@code long}. A {@code long} has enough bits to
  * fit a {@code double} value or a {@code float} value.
  * <p>
- * See {@link ch.randelshofer.fastdoubleparser} for the grammar of
- * {@code FloatingPointLiteral}.
+ * See {@link JavaDoubleParser} for the grammar of {@code FloatingPointLiteral}.
  */
-abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
+abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
-    public static final boolean FALL_BACK_TO_BIGDECIMAL = false;
+    private static final boolean FALL_BACK_TO_BIGDECIMAL = false;
+    private static final boolean FALL_BACK_TO_DECIMAL = false;
 
     private boolean isDigit(char c) {
         return '0' <= c && c <= '9';
@@ -40,7 +40,7 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
      * <dd><i>DecimalFloatingPointLiteral [WhiteSpace] EOT</i></dd>
      * </dl>
      * </blockquote>
-     * See {@link ch.randelshofer.fastdoubleparser} for the grammar of
+     * See {@link JavaDoubleParser} for the grammar of
      * {@code DecimalFloatingPointLiteral} and {@code DecSignificand}.
      *
      * @param str            a string
@@ -168,7 +168,7 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
      * <dd><i>[WhiteSpace] FloatingPointLiteral [WhiteSpace]</i></dd>
      * </dl>
      * </blockquote>
-     * See {@link ch.randelshofer.fastdoubleparser} for the grammar of
+     * See {@link JavaDoubleParser} for the grammar of
      * {@code FloatingPointLiteral}.
      *
      * @param str    a string containing a {@code FloatingPointLiteralWithWhiteSpace}
@@ -219,14 +219,13 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
             }
         }
 
-        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
-        /*
         if (FALL_BACK_TO_BIGDECIMAL) {
             return parseDecFloatLiteralBigDecimal(str, index, offset, endIndex, isNegative, hasLeadingZero);
-        } else {
+        } else if (FALL_BACK_TO_DECIMAL) {
             return parseDecFloatLiteralDecimal(str, index, offset, endIndex, isNegative, hasLeadingZero);
+        } else {
+            return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
         }
-        */
     }
 
     /**
@@ -665,7 +664,7 @@ abstract class AbstractFloatingPointBitsFromCharSequence extends AbstractFloatVa
         return valueOfFloatLiteral(isNegative, bigSignificand, exponent);
     }
 
-    protected long parseDecFloatLiteralDecimal(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
+    private long parseDecFloatLiteralDecimal(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an

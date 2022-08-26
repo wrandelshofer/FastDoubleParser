@@ -10,13 +10,13 @@ import java.nio.charset.StandardCharsets;
 /**
  * Parses a {@code float} from a {@code byte} array.
  */
-class FloatBitsFromByteArray extends AbstractFloatingPointBitsFromByteArray {
+class JavaFloatBitsFromByteArray extends AbstractJavaFloatingPointBitsFromByteArray {
 
 
     /**
      * Creates a new instance.
      */
-    public FloatBitsFromByteArray() {
+    public JavaFloatBitsFromByteArray() {
 
     }
 

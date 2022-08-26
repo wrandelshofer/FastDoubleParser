@@ -6,15 +6,14 @@
 package ch.randelshofer.fastdoubleparser;
 
 /**
- * Parses a {@code double} from a {@link CharSequence}.
+ * Parses a {@code double} from a {@code char} array.
  */
-final class DoubleBitsFromCharSequence extends AbstractFloatingPointBitsFromCharSequence {
-
+final class JavaDoubleBitsFromCharArray extends AbstractJavaFloatingPointBitsFromCharArray {
 
     /**
      * Creates a new instance.
      */
-    public DoubleBitsFromCharSequence() {
+    public JavaDoubleBitsFromCharArray() {
 
     }
 
@@ -34,21 +33,20 @@ final class DoubleBitsFromCharSequence extends AbstractFloatingPointBitsFromChar
     }
 
     @Override
-    long valueOfFloatLiteral(CharSequence str, int startIndex, int endIndex, boolean isNegative,
+    long valueOfFloatLiteral(char[] str, int startIndex, int endIndex, boolean isNegative,
                              long significand, int exponent, boolean isSignificandTruncated,
                              int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-        return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(str.subSequence(startIndex, endIndex).toString()) : d);
+        return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex)) : d);
     }
 
     @Override
     long valueOfHexLiteral(
-            CharSequence str, int startIndex, int endIndex, boolean isNegative, long significand, int exponent,
+            char[] str, int startIndex, int endIndex, boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryHexFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-        return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(str.subSequence(startIndex, endIndex).toString()) : d);
+        return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex)) : d);
     }
-
 }

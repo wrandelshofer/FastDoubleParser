@@ -57,6 +57,6 @@ public class FastDoubleParserFromCharArrayJmh {
 
     @Benchmark
     public double m() {
-        return FastDoubleParser.parseDouble(charArray);
+        return JavaDoubleParser.parseDouble(charArray);
     }
 }

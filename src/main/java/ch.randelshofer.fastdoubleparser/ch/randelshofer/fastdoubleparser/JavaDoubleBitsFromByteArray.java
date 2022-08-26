@@ -10,13 +10,12 @@ import java.nio.charset.StandardCharsets;
 /**
  * Parses a {@code double} from a {@code byte} array.
  */
-final class DoubleBitsFromByteArray extends AbstractFloatingPointBitsFromByteArray {
-
+final class JavaDoubleBitsFromByteArray extends AbstractJavaFloatingPointBitsFromByteArray {
 
     /**
      * Creates a new instance.
      */
-    public DoubleBitsFromByteArray() {
+    public JavaDoubleBitsFromByteArray() {
 
     }
 
@@ -52,5 +51,4 @@ final class DoubleBitsFromByteArray extends AbstractFloatingPointBitsFromByteArr
                 exponentOfTruncatedSignificand);
         return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex, StandardCharsets.ISO_8859_1)) : d);
     }
-
 }

@@ -57,12 +57,12 @@ public class FastFloatParserFromCharSequenceJmh {
 
     @Setup
     public void setup() {
-        System.out.println(str + "=" + FastFloatParser.parseFloat(str));
+        System.out.println(str + "=" + JavaFloatParser.parseFloat(str));
     }
 
     @Benchmark
     public float m() {
-        return FastFloatParser.parseFloat(str);
+        return JavaFloatParser.parseFloat(str);
     }
 }
 

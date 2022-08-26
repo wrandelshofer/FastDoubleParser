@@ -16,23 +16,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
- * Tests class {@link FastDoubleParser}
+ * Tests class {@link JavaDoubleParser}
  */
-public class FastFloatParserTest extends AbstractFastXParserTest {
+public class FastFloatParserTest extends AbstractJavaFloatValueParserTest {
     @TestFactory
     Stream<DynamicNode> dynamicTestsParseDoubleCharSequence() {
         return createAllTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> FastFloatParser.parseFloat(u.input()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input()))));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsParseDoubleCharSequenceIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> FastFloatParser.parseFloat(u.input(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
@@ -41,14 +41,14 @@ public class FastFloatParserTest extends AbstractFastXParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> FastFloatParser.parseFloat(u.input().getBytes(StandardCharsets.UTF_8)))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().getBytes(StandardCharsets.UTF_8)))));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsParseDoubleByteArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> FastFloatParser.parseFloat(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
@@ -57,35 +57,35 @@ public class FastFloatParserTest extends AbstractFastXParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> FastFloatParser.parseFloat(u.input().toCharArray()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toCharArray()))));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsParseDoubleCharArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> FastFloatParser.parseFloat(u.input().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toCharArray(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsParseDoubleBitsCharSequenceIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> testBits(t, u -> FastFloatParser.parseFloatBits(u.input(), u.charOffset(), u.charLength()))));
+                        () -> testBits(t, u -> JavaFloatParser.parseFloatBits(u.input(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsParseDoubleBitsByteArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> testBits(t, u -> FastFloatParser.parseFloatBits(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> testBits(t, u -> JavaFloatParser.parseFloatBits(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
     Stream<DynamicNode> dynamicTestsParseDoubleBitsCharArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> testBits(t, u -> FastFloatParser.parseFloatBits(u.input().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> testBits(t, u -> JavaFloatParser.parseFloatBits(u.input().toCharArray(), u.charOffset(), u.charLength()))));
     }
 
     private void test(TestData d, ToFloatFunction<TestData> f) {
@@ -103,7 +103,6 @@ public class FastFloatParserTest extends AbstractFastXParserTest {
     }
 
     private void testBits(TestData d, ToLongFunction<TestData> f) {
-        byte[] bytes = d.input().getBytes(StandardCharsets.UTF_8);
         if (!d.valid()) {
             assertEquals(-1L, f.applyAsLong(d));
         } else {

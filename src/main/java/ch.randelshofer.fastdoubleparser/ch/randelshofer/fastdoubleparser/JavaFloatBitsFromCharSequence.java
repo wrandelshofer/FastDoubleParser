@@ -8,13 +8,13 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Parses a {@code float} from a {@link CharSequence}.
  */
-class FloatBitsFromCharSequence extends AbstractFloatingPointBitsFromCharSequence {
+class JavaFloatBitsFromCharSequence extends AbstractJavaFloatingPointBitsFromCharSequence {
 
 
     /**
      * Creates a new instance.
      */
-    public FloatBitsFromCharSequence() {
+    public JavaFloatBitsFromCharSequence() {
 
     }
 

@@ -8,13 +8,13 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Parses a {@code float} from a {@code char} array.
  */
-class FloatBitsFromCharArray extends AbstractFloatingPointBitsFromCharArray {
+class JavaFloatBitsFromCharArray extends AbstractJavaFloatingPointBitsFromCharArray {
 
 
     /**
      * Creates a new instance.
      */
-    public FloatBitsFromCharArray() {
+    public JavaFloatBitsFromCharArray() {
 
     }
 

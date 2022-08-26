@@ -15,7 +15,7 @@ package ch.randelshofer.fastdoubleparser;
 public class PrintCompilation {
     public static double measureFastDoubleParser17DigitsWith3DigitExp() {
         String str = "123.45678901234567e123";
-        return FastDoubleParser.parseDouble(str);
+        return JavaDoubleParser.parseDouble(str);
     }
 
     public static void main(String... args) {

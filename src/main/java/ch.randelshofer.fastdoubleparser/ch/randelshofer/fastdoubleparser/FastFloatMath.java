@@ -14,7 +14,7 @@ import static ch.randelshofer.fastdoubleparser.FastDoubleMath.fullMultiplication
  * This class complements {@link FastDoubleMath} with methods for
  * converting {@code FloatingPointLiteral} productions to floats.
  * <p>
- * See {@link ch.randelshofer.fastdoubleparser} for a description of
+ * See {@link JavaDoubleParser} for a description of
  * {@code FloatingPointLiteral}.
  */
 class FastFloatMath {
