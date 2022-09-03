@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * This benchmark for {@link JavaDoubleParser} aims to provide results that
+ * This benchmark for {@link ch.randelshofer.fastdoubleparser.JavaDoubleParser} aims to provide results that
  * can be compared easily with the benchmark of Daniel Lemire's fast_double_parser.
  * <p>
  * Most of the code in this class stems from
