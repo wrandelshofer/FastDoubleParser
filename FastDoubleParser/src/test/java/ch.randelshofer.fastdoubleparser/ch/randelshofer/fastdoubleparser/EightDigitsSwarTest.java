@@ -59,15 +59,21 @@ public class EightDigitsSwarTest extends AbstractEightDigitsTest {
 
     @Override
     public void testHex(String s, int offset, long expected) {
+        long actual = FastDoubleSwar.tryToParseEightHexDigitsCharSequence(s, offset);
+        if (expected < 0) {
+            assertTrue(actual < 0);
+        } else {
+            assertEquals(expected, actual);
+        }
         char[] chars = s.toCharArray();
-        long actual = FastDoubleSwar.tryToParseEightHexDigitsUtf16(chars, offset);
+        actual = FastDoubleSwar.tryToParseEightHexDigitsUtf16(chars, offset);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {
             assertEquals(expected, actual);
         }
 
-        long first = (long) chars[offset + 0] << 48
+        long first = (long) chars[offset] << 48
                 | (long) chars[offset + 1] << 32
                 | (long) chars[offset + 2] << 16
                 | (long) chars[offset + 3];

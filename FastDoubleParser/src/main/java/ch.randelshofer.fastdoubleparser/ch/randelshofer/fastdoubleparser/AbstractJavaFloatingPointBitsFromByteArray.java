@@ -5,6 +5,9 @@
 
 package ch.randelshofer.fastdoubleparser;
 
+import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10;
+import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10L;
+
 /**
  * Parses a Java {@code FloatingPointLiteral} from a {@code byte} array.
  * <p>
@@ -74,7 +77,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             ch = str[index];
             if (isDigit(ch)) {
                 // This might overflow, we deal with it later.
-                significand = 10 * significand + ch - '0';
+                significand = mul10L(significand) + ch - '0';
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
@@ -115,7 +118,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch - '0';
+                    expNumber = mul10(expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
             } while (isDigit(ch));
@@ -152,7 +155,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
                     skipCountInTruncatedDigits++;
                 } else {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = 10 * significand + ch - '0';
+                        significand = mul10L(significand) + ch - '0';
                     } else {
                         break;
                     }
@@ -275,9 +278,8 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                /*
                 for (;index < endIndex - 8;index += 8) {
-                    long parsed = tryToParseEightHexDigits(str, index + 1)
+                    long parsed = tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         significand = (significand << 32) + parsed;
@@ -286,7 +288,6 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
                         break;
                     }
                 }
-                */
             } else {
                 break;
             }
@@ -314,7 +315,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch - '0';
+                    expNumber = mul10(expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
             } while (isDigit(ch));
@@ -439,10 +440,9 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         return FastDoubleSwar.tryToParseEightDigitsUtf8(str, offset);
     }
 
-    /*
     private static long tryToParseEightHexDigits(byte[] str, int offset) {
         return FastDoubleVector.tryToParseEightHexDigitsUtf8(str, offset);
-    }*/
+    }
 
     /**
      * @return a NaN constant in the specialized type wrapped in a {@code long}

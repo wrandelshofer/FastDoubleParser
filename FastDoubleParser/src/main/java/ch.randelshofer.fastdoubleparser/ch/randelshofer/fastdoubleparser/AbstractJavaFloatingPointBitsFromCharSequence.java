@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.clamp;
+import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10;
+import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10L;
 
 /**
  * Parses a Java {@code FloatingPointLiteral} from a {@link CharSequence}.
@@ -65,7 +67,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             ch = str.charAt(index);
             if (isDigit(ch)) {
                 // This might overflow, we deal with it later.
-                significand = 10 * significand + ch - '0';
+                significand = mul10L(significand) + ch - '0';
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
@@ -106,7 +108,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch - '0';
+                    expNumber = mul10(expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (isDigit(ch));
@@ -143,7 +145,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                     skipCountInTruncatedDigits++;
                 } else {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = 10 * significand + ch - '0';
+                        significand = mul10L(significand) + ch - '0';
                     } else {
                         break;
                     }
@@ -272,17 +274,17 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                /*
+
                 for (;index < endIndex - 8; index += 8) {
                     long parsed = tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
-                        digits = (digits << 32) + parsed;
+                        significand = (significand << 32) + parsed;
                     } else {
                         break;
                     }
                 }
-                */
+
             } else {
                 break;
             }
@@ -310,7 +312,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch - '0';
+                    expNumber = mul10(expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (isDigit(ch));
@@ -452,6 +454,10 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         return FastDoubleSwar.tryToParseEightDigitsCharSequence(str, offset);
     }
 
+    private long tryToParseEightHexDigits(CharSequence str, int offset) {
+        return FastDoubleSwar.tryToParseEightHexDigitsCharSequence(str, offset);
+    }
+
     /**
      * @return a NaN constant in the specialized type wrapped in a {@code long}
      */
@@ -566,7 +572,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
             if (isDigit(ch)) {
-                smallSignificand = smallSignificand * 10 + ch - '0';
+                smallSignificand = mul10L(smallSignificand) + ch - '0';
             } else {
                 break;
             }
@@ -592,7 +598,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             for (; index < endIndex; index++) {
                 ch = str.charAt(index);
                 if (isDigit(ch)) {
-                    smallSignificand = smallSignificand * 10 + ch - '0';
+                    smallSignificand = mul10L(smallSignificand) + ch - '0';
                 } else {
                     break;
                 }
@@ -624,7 +630,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch - '0';
+                    expNumber = mul10(expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (isDigit(ch));
@@ -714,7 +720,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch - '0';
+                    expNumber = mul10(expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (isDigit(ch));

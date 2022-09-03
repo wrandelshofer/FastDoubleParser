@@ -1113,4 +1113,28 @@ class FastDoubleMath {
         //noinspection ManualMinMaxCalculation
         return value < min ? min : (value > max ? max : value);
     }
+
+    /**
+     * Returns {@code a * 10}.
+     * <p>
+     * We compute {@code (a + a * 4) * 2}, which is {@code (a + (a << 2)) << 1}.
+     * <p>
+     * Expected assembly code on x64:
+     * <pre>
+     *         lea     eax, [rdi+rdi*4]
+     *         add     eax, eax
+     * </pre>
+     * Expected assembly code on aarch64:
+     * <pre>
+     *         add     w0, w0, w0, lsl 2
+     *         lsl     w0, w0, 1
+     * </pre>
+     */
+    public static long mul10L(long a) {
+        return (a + (a << 2)) << 1;
+    }
+
+    public static int mul10(int a) {
+        return (a + (a << 2)) << 1;
+    }
 }
