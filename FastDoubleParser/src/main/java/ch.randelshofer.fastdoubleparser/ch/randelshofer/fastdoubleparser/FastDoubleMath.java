@@ -1121,19 +1121,35 @@ class FastDoubleMath {
      * <p>
      * Expected assembly code on x64:
      * <pre>
-     *         lea     eax, [rdi+rdi*4]
-     *         add     eax, eax
+     * lea     rax, [rdi+rdi*4]
+     * add     rax, rax
      * </pre>
      * Expected assembly code on aarch64:
      * <pre>
-     *         add     w0, w0, w0, lsl 2
-     *         lsl     w0, w0, 1
+     * add     x0, x0, x0, lsl 2
+     * lsl     x0, x0, 1
      * </pre>
      */
     public static long mul10L(long a) {
         return (a + (a << 2)) << 1;
     }
 
+    /**
+     * Returns {@code a * 10}.
+     * <p>
+     * We compute {@code (a + a * 4) * 2}, which is {@code (a + (a << 2)) << 1}.
+     * <p>
+     * Expected assembly code on x64:
+     * <pre>
+     * lea     eax, [rdi+rdi*4]
+     * add     eax, eax
+     * </pre>
+     * Expected assembly code on aarch64:
+     * <pre>
+     * add     w0, w0, w0, lsl 2
+     * lsl     w0, w0, 1
+     * </pre>
+     */
     public static int mul10(int a) {
         return (a + (a << 2)) << 1;
     }
