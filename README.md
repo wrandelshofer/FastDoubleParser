@@ -1,53 +1,59 @@
 # FastDoubleParser
 
-This is a Java port of Daniel Lemire's fast_double_parser.
+This is a Java port of Daniel Lemire's [fast_double_parser](https://github.com/lemire/fast_double_parser).
 
-https://github.com/lemire/fast_double_parser
 
-Usage:
+## Usage
 
-    import ch.randelshofer.fastdoubleparser.FastDoubleParser;
-    import ch.randelshofer.fastdoubleparser.FastFloatParser;
+```java
+import ch.randelshofer.fastdoubleparser.FastDoubleParser;
+import ch.randelshofer.fastdoubleparser.FastFloatParser;
 
-    double d = FastDoubleParser.parseDouble("1.2345");
-    float f = FastFloatParser.parseFloat("1.2345");
+double d = FastDoubleParser.parseDouble("1.2345");
+float f = FastFloatParser.parseFloat("1.2345");
+```
 
-Method `parseDouble()` takes a `CharacterSequence`. a `char`-array or a `byte`-array as argument. This way. you can
+Method `parseDouble()` takes a `CharacterSequence`, a `char`-array or a `byte`-array as argument. Therefore, you can
 parse from a `StringBuffer` or an array without having to convert your input to a `String`. Parsing from an array is
-faster. because the parser can process multiple characters at once using SIMD instructions.
+faster, because the parser can process multiple characters at once using SIMD instructions.
 
-When you clone the code repository from github. you can choose from the following branches:
+## Branches
+When you clone the code repository from GitHub, you can choose from the following branches:
 
-- `main` The code in this branch requires Java 17.
-- `java8` The code in this branch requires Java 8.
-- `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
-  that are included in Java 19.
+- `main`: The code in this branch requires Java 17.
+- `java8`: The code in this branch requires Java 8.
+- `dev`: This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API, that are included in Java 19.
 
+## Run tests
 How to run the performance tests on a Mac:
 
 1. Install Java JDK 8 or higher. for example [OpenJDK Java 18](https://jdk.java.net/18/)
 2. Install the XCode command line tools from Apple.
 3. Open the Terminal and execute the following commands:
 
-Command sequence for Java 17 or higher:
+### For Java 17 or higher
 
-     git clone https://github.com/wrandelshofer/FastDoubleParser.git
-     cd FastDoubleParser 
-     javac -d out -encoding utf8 --module-source-path src/main/java --module ch.randelshofer.fastdoubleparser    
-     javac -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
-     java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
-     java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+```sh
+git clone https://github.com/wrandelshofer/FastDoubleParser.git
+cd FastDoubleParser 
+javac -d out -encoding utf8 --module-source-path src/main/java --module ch.randelshofer.fastdoubleparser    
+javac -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
+java -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+```
 
-Command sequence for Java 8 or higher:
+### For Java 8 or higher
 
-     git clone https://github.com/wrandelshofer/FastDoubleParser.git
-     cd FastDoubleParser 
-     git checkout java8
-     mkdir out
-     javac -d out -encoding utf8 -sourcepath src/main/java/ch.randelshofer.fastdoubleparser src/main/java/ch.randelshofer.fastdoubleparser/**/*.java    
-     javac -d out -encoding utf8 -cp out -sourcepath FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo/**/*.java
-     java -cp out ch.randelshofer.fastdoubleparserdemo.Main  
-     java -cp out ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+```sh
+git clone https://github.com/wrandelshofer/FastDoubleParser.git
+cd FastDoubleParser 
+git checkout java8
+mkdir out
+javac -d out -encoding utf8 -sourcepath src/main/java/ch.randelshofer.fastdoubleparser src/main/java/ch.randelshofer.fastdoubleparser/**/*.java    
+javac -d out -encoding utf8 -cp out -sourcepath FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo/**/*.java
+java -cp out ch.randelshofer.fastdoubleparserdemo.Main  
+java -cp out ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+```
 
 On my Mac mini (2018) I get the results shown below. The speedup factor with respect to `Double.parseDouble` ranges from
 0.5 to 6 depending on the shape of the input data. You can expect a speedup factor of 4 for common input data shapes.
@@ -99,7 +105,7 @@ On my Mac mini (2018) I get the results shown below. The speedup factor with res
     Speedup FastFloat  byte[] vs Double: 7.18
     Speedup Float             vs Double: 1.23
 
-FastDoubleParser also speeds up parsing of hexadecimal float literals:
+`FastDoubleParser` also speeds up parsing of hexadecimal float literals:
 
     parsing numbers in file /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/data/canada_hex.txt
     read 111126 lines
