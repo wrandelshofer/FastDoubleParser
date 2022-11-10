@@ -28,7 +28,7 @@ jobs:
       - name: Compile FastDoubleParserDemo
         run: javac --release 20 --enable-preview -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
       - name: Run Test 1
-        run: java --enable-preview --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --print-confidence
+        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --print-confidence
       - name: Run Test 2
-        run: java --enable-preview --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --print-confidence FastDoubleParserDemo/data/canada.txt
+        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --print-confidence FastDoubleParserDemo/data/canada.txt
 ...
