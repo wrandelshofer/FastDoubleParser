@@ -386,16 +386,60 @@ class FastDoubleSwar {
      * returns a negative value if the two longs do not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
-        long highBytes = Long.compress(first | second, 0xff00ff00_ff00ff00L);
-        if (highBytes != 0L) {
-            return -1L;
-        }
-        long utf8Bytes = (Long.compress(first, 0x00ff00ff_00ff00ffL) << 32)
-                | Long.compress(second, 0x00ff00ff_00ff00ffL);
-
-        return tryToParseEightHexDigitsUtf8(utf8Bytes);
+        long lfirst = tryToParseFourHexDigitsUtf16(first);
+        long lsecond = tryToParseFourHexDigitsUtf16(second);
+        return (lfirst << 16) | lsecond;
     }
 
+    /**
+     * Tries to parse four hex digits from a long using the
+     * 'SIMD within a register technique' (SWAR).
+     *
+     * @param chunk contains 4 utf-16 characters in big endian order
+     * @return the parsed number,
+     * returns a negative value if {@code value} does not contain 8 digits
+     */
+    public static long tryToParseFourHexDigitsUtf16(long chunk) {
+        // The following code is based on the technique presented in the paper
+        // by Leslie Lamport.
+
+
+        // Subtract character '0' (0x0030) from each of the four characters
+        long vec = chunk - 0x0030_0030_0030_0030L;
+
+        // Create a predicate for all bytes which are greater than '9'-'0' (0x0009).
+        // The predicate is true if the hsb of a byte is set: (predicate & 0xa000) != 0.
+        long gt_09 = vec + (0x0009_0009_0009_0009L ^ 0x7fff_7fff_7fff_7fffL);
+        gt_09 = gt_09 & 0x8000_8000_8000_8000L;
+        // Create a predicate for all bytes which are greater or equal 'a'-'0' (0x0030).
+        // The predicate is true if the hsb of a byte is set.
+        long ge_30 = vec + (0x0030_0030_0030_0030L ^ 0x7fff_7fff_7fff_7fffL);
+        ge_30 = ge_30 & 0x8000_8000_8000_8000L;
+
+        // Create a predicate for all bytes which are smaller equal than 'f'-'0' (0x0037).
+        long le_37 = 0x0037_0037_0037_0037L + (vec ^ 0x7fff_7fff_7fff_7fffL);
+        // Not needed, because we are going to and this value with ge_30 anyway.
+        //le_37 = le_37 & 0x8000_8000_8000_8000L;
+
+
+        // If a character is greater than '9' then it must be greater equal 'a'
+        // and smaller equal 'f'.
+        if (gt_09 != (ge_30 & le_37)) {
+            return -1;
+        }
+
+        // Expand the predicate to a char mask
+        long gt_09mask = (gt_09 >>> 15) * 0xffffL;
+
+        // Subtract 'a'-'0'+10 (0x0027) from all bytes that are greater than 0x09.
+        long v = vec & ~gt_09mask | vec - (0x0027_0027_0027_0027L & gt_09mask);
+
+        // Compact all nibbles
+        long v2 = v | v >>> 12;
+        long v5 = (v2 | v2 >>> 24) & 0xffffL;
+
+        return v5;
+    }
     /**
      * Tries to parse eight hex digits from a byte array using the
      * 'SIMD within a register technique' (SWAR).
@@ -452,6 +496,11 @@ class FastDoubleSwar {
         long v = vec & ~gt_09mask | vec - (0x27272727_27272727L & gt_09mask);
 
         // Compact all nibbles
-        return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19
+        long v2 = v | v >>> 4;
+        long v3 = v2 & 0x00ff00ff_00ff00ffL;
+        long v4 = v3 | v3 >>> 8;
+        long v5 = ((v4 >>> 16) & 0xffff_0000L) | v4 & 0xffffL;
+
+        return v5;
     }
 }

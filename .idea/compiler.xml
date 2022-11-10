@@ -6,14 +6,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="FastDoubleParserDemo" />
-        <module name="FastDoubleParser" />
+        <module name="FastDoubleParser (1)" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="FastDoubleParserDemo" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FastDoubleParser" options="-Xlint:all" />
+      <module name="FastDoubleParser" options="" />
+      <module name="FastDoubleParser (1)" options="-Xlint:all" />
       <module name="FastDoubleParserDemo" options="-Xlint:all" />
     </option>
   </component>
