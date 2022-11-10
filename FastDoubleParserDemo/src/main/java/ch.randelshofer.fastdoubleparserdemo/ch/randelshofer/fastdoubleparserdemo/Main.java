@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * can be compared easily with the benchmark of Daniel Lemire's fast_double_parser.
  * <p>
  * Most of the code in this class stems from
- * https://github.com/lemire/fast_double_parser/blob/master/benchmarks/benchmark.cpp
+ * <a href="https://github.com/lemire/fast_double_parser/blob/master/benchmarks/benchmark.cpp">github.com/lemire/fast_double_parser</a>
  * <p>
  * The code runs the benchmark multiple times, until the confidence interval
  * for a confidence level of {@value MEASUREMENT_CONFIDENCE_LEVEL}
@@ -61,8 +61,10 @@ public class Main {
     /**
      * Number of trials must be ≥ 30 to approximate normal distribution of
      * the test samples.
+     * <p>
+     * Must be large enough so that the JVM hits the C2 compiler.
      */
-    public static final int WARMUP_NUMBER_OF_TRIALS = 32;
+    public static final int WARMUP_NUMBER_OF_TRIALS = 256;
 
     /**
      * Desired confidence interval width in percent of the average value.
@@ -155,9 +157,9 @@ public class Main {
         return functions;
     }
 
-    public void demo(int howmany) {
+    public void demo(int howMany) {
         System.out.println("Parsing random doubles in the range [0,1).");
-        List<String> lines = new Random().doubles(howmany).mapToObj(Double::toString)
+        List<String> lines = new Random().doubles(howMany).mapToObj(Double::toString)
                 .collect(Collectors.toList());
         Map<String, BenchmarkFunction> validated = validate(lines);
         process(lines, validated);
