@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main canada" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
+    <module name="FastDoubleParserDemo" />
+    <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
+    <option name="VM_PARAMETERS" value="--enable-preview -XX:+UnlockDiagnosticVMOptions -XX:-PrintInlining" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="ch.randelshofer.fastdoubleparserdemo.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

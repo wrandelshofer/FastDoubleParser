@@ -1,4 +1,5 @@
+/FastDoubleParser/target/
+/FastDoubleParserDemo/target/
 /out/
-/lib/
-/build/
-/dist/
+/target/
+/FastDoubleParserDemo/target/
