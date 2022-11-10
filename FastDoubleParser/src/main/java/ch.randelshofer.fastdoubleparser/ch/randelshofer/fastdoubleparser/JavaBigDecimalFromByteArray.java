@@ -58,12 +58,12 @@ final class JavaBigDecimalFromByteArray {
                 illegal |= decimalPointIndex >= 0;
                 decimalPointIndex = index;
                 for (; index < endIndex - 4; index += 4) {
-                    int eightDigits = FastDoubleSwar.tryToParseFourDigitsUtf8(str, index + 1);
-                    if (eightDigits < 0) {
+                    int digits = FastDoubleSwar.tryToParseFourDigitsUtf8(str, index + 1);
+                    if (digits < 0) {
                         break;
                     }
                     // This might overflow, we deal with it later.
-                    significand = 10_000L * significand + eightDigits;
+                    significand = 10_000L * significand + digits;
                 }
             } else {
                 break;

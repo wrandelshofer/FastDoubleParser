@@ -63,12 +63,12 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 for (; index < endIndex - 4; index += 4) {
-                    int fourDigits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
-                    if (fourDigits < 0) {
+                    int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
+                    if (digits < 0) {
                         break;
                     }
                     // This might overflow, we deal with it later.
-                    significand = 10_000L * significand + fourDigits;
+                    significand = 10_000L * significand + digits;
                 }
             } else {
                 break;
