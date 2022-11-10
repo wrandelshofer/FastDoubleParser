@@ -32,7 +32,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public long parseNumber(char[] str, int offset, int length) {
+    public final long parseNumber(char[] str, int offset, int length) {
         final int endIndex = offset + length;
         if (offset < 0 || length == 0 || endIndex > str.length) {
             return PARSE_ERROR;
