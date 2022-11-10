@@ -38,7 +38,9 @@ final class JavaDoubleBitsFromCharSequence extends AbstractJavaFloatingPointBits
                              int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-        return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(str.subSequence(startIndex, endIndex).toString()) : d);
+        return Double.doubleToRawLongBits(Double.isNaN(d)
+                ? Double.parseDouble(str.subSequence(startIndex, endIndex).toString())
+                : d);
     }
 
     @Override
@@ -47,6 +49,8 @@ final class JavaDoubleBitsFromCharSequence extends AbstractJavaFloatingPointBits
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryHexFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-        return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(str.subSequence(startIndex, endIndex).toString()) : d);
+        return Double.doubleToRawLongBits(Double.isNaN(d)
+                ? Double.parseDouble(str.subSequence(startIndex, endIndex).toString())
+                : d);
     }
 }

@@ -13,18 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EightDigitsSwarTest extends AbstractEightDigitsTest {
     @Override
     public void testDec(String s, int offset, int expected) {
-        char[] chars = s.toCharArray();
+        testDecUtf16(s, offset, expected);
+        testDecUtf8(s, offset, expected);
+    }
 
-        int actual = FastDoubleSwar.tryToParseEightDigitsUtf16(chars, offset);
-        assertEquals(expected, actual);
-
-
-        long first = chars[offset + 0] | ((long) chars[offset + 1] << 16) | ((long) chars[offset + 2] << 32) | ((long) chars[offset + 3] << 48);
-        long second = chars[offset + 4] | ((long) chars[offset + 5] << 16) | ((long) chars[offset + 6] << 32) | ((long) chars[offset + 7] << 48);
-        actual = FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
-        assertEquals(expected, actual);
-
-
+    private static void testDecUtf8(String s, int offset, int expected) {
+        int actual;
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         actual = FastDoubleSwar.tryToParseEightDigitsUtf8(bytes, offset);
         assertEquals(expected, actual);
@@ -57,9 +51,19 @@ public class EightDigitsSwarTest extends AbstractEightDigitsTest {
         assertEquals(expected, actual);
     }
 
+    private static void testDecUtf16(String s, int offset, int expected) {
+        char[] chars = s.toCharArray();
+        int actual = FastDoubleSwar.tryToParseEightDigitsUtf16(chars, offset);
+        assertEquals(expected, actual);
+        long first = chars[offset + 0] | ((long) chars[offset + 1] << 16) | ((long) chars[offset + 2] << 32) | ((long) chars[offset + 3] << 48);
+        long second = chars[offset + 4] | ((long) chars[offset + 5] << 16) | ((long) chars[offset + 6] << 32) | ((long) chars[offset + 7] << 48);
+        actual = FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
+        assertEquals(expected, actual);
+    }
+
     @Override
     public void testHex(String s, int offset, long expected) {
-        long actual = FastDoubleSwar.tryToParseEightHexDigitsCharSequence(s, offset);
+        long actual = FastDoubleSwar.tryToParseEightHexDigits(s, offset);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {

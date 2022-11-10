@@ -5,11 +5,13 @@
 
 package ch.randelshofer.fastdoubleparserdemo;
 
+import ch.randelshofer.fastdoubleparser.JavaBigDecimalParser;
 import ch.randelshofer.fastdoubleparser.JavaDoubleParser;
 import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import ch.randelshofer.fastdoubleparser.JsonDoubleParser;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -58,8 +60,7 @@ public class Main {
     public static final int MEASUREMENT_NUMBER_OF_TRIALS = 32;
     /**
      * Number of trials must be ≥ 30 to approximate normal distribution of
-     * the test samples. Must be large enough, so that Java hits the C2
-     * compiler.
+     * the test samples.
      */
     public static final int WARMUP_NUMBER_OF_TRIALS = 32;
 
@@ -82,13 +83,15 @@ public class Main {
      * One minus desired confidence level in percent.
      */
     private static final double WARMUP_CONFIDENCE_LEVEL = 0.99;
-    private static final int WARMUP_MIN_TRIALS = 128;
-
+    /**
+     * Must be large enough, so that Java hits the C2 compiler.
+     */
+    private static final int WARMUP_MIN_TRIALS = 256;
     private String filename = null;
     private boolean markdown = false;
     private boolean sleep = false;
 
-    private boolean printConfidenceWidth = false;
+    private boolean printConfidence = false;
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
@@ -103,7 +106,7 @@ public class Main {
                 benchmark.sleep = true;
                 break;
             case "--print-confidence":
-                benchmark.printConfidenceWidth = true;
+                benchmark.printConfidence = true;
                 break;
             default:
                 benchmark.filename = args[i];
@@ -127,17 +130,26 @@ public class Main {
 
         Map<String, BenchmarkFunction> functions = new LinkedHashMap<>();
         List.of(
-                new BenchmarkFunction("java.lang.Double", "java.lang.Double", () -> sumDoubleParseDouble(lines)),
-                new BenchmarkFunction("java.lang.Float", "java.lang.Float", () -> sumFloatParseFloat(lines)),
+                new BenchmarkFunction("java.lang.Double", "java.lang.Double", () -> sumJavaLangDouble(lines)),
+                new BenchmarkFunction("java.lang.Float", "java.lang.Float", () -> sumJavaLangFloat(lines)),
+                new BenchmarkFunction("java.math.BigDecimal", "java.math.BigDecimal", () -> sumJavaLangBigDecimal(lines)),
+
                 new BenchmarkFunction("JavaDoubleParser String", "java.lang.Double", () -> sumFastDoubleFromCharSequence(lines)),
                 new BenchmarkFunction("JavaDoubleParser char[]", "java.lang.Double", () -> sumFastDoubleParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaDoubleParser byte[]", "java.lang.Double", () -> sumFastDoubleParserFromByteArray(byteArrayLines)),
+
                 new BenchmarkFunction("JsonDoubleParser String", "java.lang.Double", () -> sumJsonDoubleFromCharSequence(lines)),
                 new BenchmarkFunction("JsonDoubleParser char[]", "java.lang.Double", () -> sumJsonDoubleParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JsonDoubleParser byte[]", "java.lang.Double", () -> sumJsonDoubleParserFromByteArray(byteArrayLines)),
+
                 new BenchmarkFunction("JavaFloatParser  String", "java.lang.Float", () -> sumFastFloatFromCharSequence(lines)),
                 new BenchmarkFunction("JavaFloatParser  char[]", "java.lang.Float", () -> sumFastFloatParserFromCharArray(charArrayLines)),
-                new BenchmarkFunction("JavaFloatParser  byte[]", "java.lang.Float", () -> sumFastFloatParserFromByteArray(byteArrayLines))
+                new BenchmarkFunction("JavaFloatParser  byte[]", "java.lang.Float", () -> sumFastFloatParserFromByteArray(byteArrayLines)),
+
+                new BenchmarkFunction("JavaBigDecimalParser String", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharSequence(lines)),
+                new BenchmarkFunction("JavaBigDecimalParser char[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharArray(charArrayLines)),
+                new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines))
+
         ).forEach(b -> functions.put(b.title, b));
 
         return functions;
@@ -184,10 +196,10 @@ public class Main {
         return stats;
     }
 
-    private void printStatsAscii(List<String> lines, double volumeMB, String name, VarianceStatistics stats) {
-        if (printConfidenceWidth) {
-            double confidenceWidth = Stats.confidence(1 - MEASUREMENT_CONFIDENCE_LEVEL, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
-            System.out.printf("%-23s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f\n",
+    private void printStatsAscii(List<String> lines, double volumeMB, String name, VarianceStatistics stats, double confidenceLevel) {
+        if (printConfidence) {
+            double confidenceWidth = Stats.confidence(1 - confidenceLevel, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
+            System.out.printf("%-27s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -197,7 +209,7 @@ public class Main {
                     stats.getAverage() / lines.size()
             );
         } else {
-            System.out.printf("%-23s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
+            System.out.printf("%-27s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -227,34 +239,32 @@ public class Main {
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
 
         // Warm up
-        System.out.println("Warming JVM up (code must be compiled by C2 compiler for optimal performance).");
-        //System.out.printf("Warmup: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
-        //       100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
-        Map<String, VarianceStatistics> results = new LinkedHashMap<>();
+        System.out.printf("Warming Up: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+                100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
+        Map<String, VarianceStatistics> warmupResults = new LinkedHashMap<>();
         for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
+            System.out.println("  " + entry.getKey() + " ...");
             VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS);
-            results.put(entry.getKey(), warmup);
+            warmupResults.put(entry.getKey(), warmup);
             //System.out.println("  " + entry.getKey() + " " + warmup);
         }
-        if (printConfidenceWidth) {
-            printResults("Warmup results:", lines, volumeMB, results);
-            System.out.println();
-        }
 
-        // Allow time for connecting with VisualVM
         sleep();
 
-        // Measure
-        System.out.printf("Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+        System.out.printf("Measuring: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
+        Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
+            System.out.println("  " + entry.getKey() + " ...");
+
             VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1);
             results.put(entry.getKey(), stats);
             //System.out.println("  " + entry.getKey() + " " + stats);
         }
 
         // Print results
-        printResults("Measurement results:", lines, volumeMB, results);
+        printResults("Warmup results:", lines, volumeMB, warmupResults, WARMUP_CONFIDENCE_LEVEL);
+        printResults("Measurement results:", lines, volumeMB, results, MEASUREMENT_CONFIDENCE_LEVEL);
 
         // Print speedup versus reference implementation
         System.out.println();
@@ -264,13 +274,13 @@ public class Main {
             if (!reference.equals(name)) {
                 VarianceStatistics referenceStats = results.get(reference);
                 VarianceStatistics stats = entry.getValue();
-                System.out.printf("Speedup %-23s vs %-17s: %,.2f\n", name, reference, referenceStats.getAverage() / stats.getAverage());
+                System.out.printf("Speedup %-27s vs %-20s: %,.2f\n", name, reference, referenceStats.getAverage() / stats.getAverage());
 
             }
         }
     }
 
-    private void printResults(String title, List<String> lines, double volumeMB, Map<String, VarianceStatistics> results) {
+    private void printResults(String title, List<String> lines, double volumeMB, Map<String, VarianceStatistics> results, double confidenceLevel) {
         System.out.println();
         System.out.println(title);
         if (markdown) {
@@ -282,28 +292,64 @@ public class Main {
             if (markdown) {
                 printStatsMarkdown(lines, volumeMB, name, stats);
             } else {
-                printStatsAscii(lines, volumeMB, name, stats);
+                printStatsAscii(lines, volumeMB, name, stats, confidenceLevel);
             }
         }
     }
 
     private void sleep() {
         if (sleep) {
-            System.out.println("sleeping...");
+            System.out.println("sleeping for 10 seconds...");
             try {
                 Thread.sleep(10_000);
             } catch (InterruptedException e) {
                 //stop sleeping
             }
-            System.out.println("done...");
+            System.out.println("done sleeping...");
         }
     }
 
-    private double sumDoubleParseDouble(List<String> s) {
+    private double sumJavaLangDouble(List<String> s) {
         double answer = 0;
         for (String st : s) {
             double x = Double.parseDouble(st);
             answer += x;
+        }
+        return answer;
+    }
+
+    private int sumJavaLangBigDecimal(List<String> s) {
+        int answer = 0;
+        for (String st : s) {
+            BigDecimal x = new BigDecimal(st);
+            answer += x.scale();
+        }
+        return answer;
+    }
+
+    private int sumFastBigDecimalFromCharSequence(List<String> s) {
+        int answer = 0;
+        for (String st : s) {
+            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
+            answer += x.scale();
+        }
+        return answer;
+    }
+
+    private int sumFastBigDecimalFromByteArray(List<byte[]> s) {
+        int answer = 0;
+        for (byte[] st : s) {
+            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
+            answer += x.scale();
+        }
+        return answer;
+    }
+
+    private int sumFastBigDecimalFromCharArray(List<char[]> s) {
+        int answer = 0;
+        for (char[] st : s) {
+            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
+            answer += x.scale();
         }
         return answer;
     }
@@ -362,7 +408,7 @@ public class Main {
         return answer;
     }
 
-    private float sumFloatParseFloat(List<String> s) {
+    private float sumJavaLangFloat(List<String> s) {
         float answer = 0;
         for (String st : s) {
             float x = Float.parseFloat(st);
@@ -402,19 +448,46 @@ public class Main {
     private Map<String, BenchmarkFunction> validate(List<String> lines) {
         Map<String, BenchmarkFunction> map = createBenchmarkFunctions(lines);
 
-        Number expectedDoubleValue = sumDoubleParseDouble(lines);
-        Number expectedFloatValue = sumFloatParseFloat(lines);
+        Number expectedDoubleValue;
+        Number expectedFloatValue;
+        Number expectedBigDecimalValue;
+        try {
+            expectedDoubleValue = sumJavaLangDouble(lines);
+        } catch (NumberFormatException e) {
+            expectedDoubleValue = 0;
+        }
+        try {
+            expectedFloatValue = sumJavaLangFloat(lines);
+        } catch (NumberFormatException e) {
+            expectedFloatValue = 0;
+        }
+        try {
+            expectedBigDecimalValue = sumJavaLangBigDecimal(lines);
+        } catch (NumberFormatException e) {
+            expectedBigDecimalValue = 0;
+        }
+
 
         for (Iterator<Map.Entry<String, BenchmarkFunction>> iterator = map.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, BenchmarkFunction> entry = iterator.next();
             String name = entry.getKey();
             try {
-                Number actual = entry.getValue().supplier.get();
+                BenchmarkFunction function = entry.getValue();
+                Number actual = function.supplier.get();
+                if (actual instanceof Double) {
+                    if (!expectedDoubleValue.equals(actual)) {
+                        throw new NumberFormatException("expectedSum=" + expectedDoubleValue + " actualSum=" + actual);
 
-                if ((actual instanceof Double) && !expectedDoubleValue.equals(actual)
-                        || (actual instanceof Float) && !expectedFloatValue.equals(actual)) {
-                    System.err.println(name + " has an error. expectedSum=" + expectedFloatValue + " actualSum=" + actual);
+                    }
+                } else if (actual instanceof Float) {
+                    if (!expectedFloatValue.equals(actual)) {
+                        throw new NumberFormatException("expectedSum=" + expectedFloatValue + " actualSum=" + actual);
 
+                    }
+                } else if (actual instanceof Integer) {
+                    if (!expectedBigDecimalValue.equals(actual)) {
+                        throw new NumberFormatException("expectedSum=" + expectedBigDecimalValue + " actualSum=" + actual);
+                    }
                 }
             } catch (NumberFormatException e) {
                 System.err.println(name + " has encountered an error: " + e);

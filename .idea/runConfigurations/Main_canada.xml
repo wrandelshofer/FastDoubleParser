@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="FastDoubleParserDemo" />
     <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
-    <option name="VM_PARAMETERS" value="--enable-preview" />
+    <option name="VM_PARAMETERS" value="--enable-preview -XX:+UnlockDiagnosticVMOptions -XX:-PrintInlining" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
     <extension name="coverage">
       <pattern>

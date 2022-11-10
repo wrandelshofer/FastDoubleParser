@@ -20,9 +20,6 @@ import org.openjdk.jmh.annotations.Warmup;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
-import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10;
-import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10L;
-
 
 /**
  * Benchmarks for selected floating point strings.
@@ -147,90 +144,89 @@ public class EightDigitsJmh {
         return value;
     }
 
-    /*
 
-        @Benchmark
-        public int m02StringDecScalar() {
-            int value = 0;
-            for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
-                char ch = eightDigitsCharSequence.charAt(i);
-                if (isDigit(ch)) {
-                    value = value * 10 + ch - '0';
-                } else {
-                    return -1;
-                }
+    @Benchmark
+    public int m02StringDecScalar() {
+        int value = 0;
+        for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
+            char ch = eightDigitsCharSequence.charAt(i);
+            if (isDigit(ch)) {
+                value = value * 10 + ch - '0';
+            } else {
+                return -1;
             }
-            return value;
         }
+        return value;
+    }
 
-        @Benchmark
-        public int m03CharArrayDecScalar() {
-            int value = 0;
-            for (int i = 0; i < eightDigitsCharArray.length; i++) {
-                char ch = eightDigitsCharArray[i];
-                if (isDigit(ch)) {
-                    value = value * 10 + ch - '0';
-                } else {
-                    return -1;
-                }
+    @Benchmark
+    public int m03CharArrayDecScalar() {
+        int value = 0;
+        for (int i = 0; i < eightDigitsCharArray.length; i++) {
+            char ch = eightDigitsCharArray[i];
+            if (isDigit(ch)) {
+                value = value * 10 + ch - '0';
+            } else {
+                return -1;
             }
-            return value;
         }
+        return value;
+    }
 
-        @Benchmark
-        public int m11ByteArrayDecSwar() {
-            return FastDoubleSwar.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
-        }
+    @Benchmark
+    public int m11ByteArrayDecSwar() {
+        return FastDoubleSwar.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
+    }
 
-        @Benchmark
-        public int m12CharArrayDecSwar() {
-            return FastDoubleSwar.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
-        }
+    @Benchmark
+    public int m12CharArrayDecSwar() {
+        return FastDoubleSwar.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
+    }
 
-        @Benchmark
-        public int m13StringDecSwar() {
-            return FastDoubleSwar.tryToParseEightDigitsCharSequence(eightDigitsCharSequence, 0);
-        }
+    @Benchmark
+    public int m13StringDecSwar() {
+        return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharSequence, 0);
+    }
 
-        @Benchmark
-        public long m14ByteArrayHexSwar() {
-            return FastDoubleSwar.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
-        }
+    @Benchmark
+    public long m14ByteArrayHexSwar() {
+        return FastDoubleSwar.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
+    }
 
-        @Benchmark
-        public long m15CharArrayHexSwar() {
-            return FastDoubleSwar.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
-        }
-
-
-        @Benchmark
-        public int m21ByteArrayDecVector() {
-            return FastDoubleVector.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
-        }
-
-        @Benchmark
-        public int m22CharArrayDecVector() {
-            return FastDoubleVector.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
-        }
+    @Benchmark
+    public long m15CharArrayHexSwar() {
+        return FastDoubleSwar.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
+    }
 
 
-        @Benchmark
-        public int m23StringDecVector() {
-            return FastDoubleVector.tryToParseEightDigitsCharSequence(eightDigitsCharSequence, 0);
-        }
+    @Benchmark
+    public int m21ByteArrayDecVector() {
+        return FastDoubleVector.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
+    }
+
+    @Benchmark
+    public int m22CharArrayDecVector() {
+        return FastDoubleVector.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
+    }
 
 
-        @Benchmark
-        public long m24ByteArrayHexVector() {
-            return FastDoubleVector.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
-        }
+    @Benchmark
+    public int m23StringDecVector() {
+        return FastDoubleVector.tryToParseEightDigits(eightDigitsCharSequence, 0);
+    }
 
-        @Benchmark
-        public long m25CharArrayHexVector() {
-            return FastDoubleVector.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
-        }
 
-    */
+    @Benchmark
+    public long m24ByteArrayHexVector() {
+        return FastDoubleVector.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
+    }
+
+    @Benchmark
+    public long m25CharArrayHexVector() {
+        return FastDoubleVector.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
+    }
+
+
     private static boolean isDigit(byte c) {
         return '0' <= c && c <= '9';
     }
@@ -239,7 +235,45 @@ public class EightDigitsJmh {
         return '0' <= c && c <= '9';
     }
 
+    /**
+     * Returns {@code a * 10}.
+     * <p>
+     * We compute {@code (a + a * 4) * 2}, which is {@code (a + (a << 2)) << 1}.
+     * <p>
+     * Expected assembly code on x64:
+     * <pre>
+     * lea     rax, [rdi+rdi*4]
+     * add     rax, rax
+     * </pre>
+     * Expected assembly code on aarch64:
+     * <pre>
+     * add     x0, x0, x0, lsl 2
+     * lsl     x0, x0, 1
+     * </pre>
+     */
+    public static long mul10L(long a) {
+        return (a + (a << 2)) << 1;
+    }
 
+    /**
+     * Returns {@code a * 10}.
+     * <p>
+     * We compute {@code (a + a * 4) * 2}, which is {@code (a + (a << 2)) << 1}.
+     * <p>
+     * Expected assembly code on x64:
+     * <pre>
+     * lea     eax, [rdi+rdi*4]
+     * add     eax, eax
+     * </pre>
+     * Expected assembly code on aarch64:
+     * <pre>
+     * add     w0, w0, w0, lsl 2
+     * lsl     w0, w0, 1
+     * </pre>
+     */
+    public static int mul10(int a) {
+        return (a + (a << 2)) << 1;
+    }
 }
 
 

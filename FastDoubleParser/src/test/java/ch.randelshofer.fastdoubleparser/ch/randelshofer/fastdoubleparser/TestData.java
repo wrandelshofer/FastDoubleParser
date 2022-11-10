@@ -5,13 +5,13 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-record TestData(String title,
-                String input,
-                int charOffset, int charLength,
-                int byteOffset, int byteLength,
-                double expectedDoubleValue,
-                float expectedFloatValue,
-                boolean valid) {
+public record TestData(String title,
+                       String input,
+                       int charOffset, int charLength,
+                       int byteOffset, int byteLength,
+                       double expectedDoubleValue,
+                       float expectedFloatValue,
+                       boolean valid) {
     public TestData(String input, double expectedDoubleValue, float expectedFloatValue) {
         this(input, input, 0, input.length(), 0, input.length(),
                 expectedDoubleValue,

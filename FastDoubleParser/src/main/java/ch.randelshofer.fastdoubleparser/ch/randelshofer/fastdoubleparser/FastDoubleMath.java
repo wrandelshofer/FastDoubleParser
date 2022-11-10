@@ -1005,7 +1005,6 @@ class FastDoubleMath {
             }
 
             // We have to take a slow path.
-            //return Double.parseDouble(str.toString());
             result = Double.NaN;
 
         } else if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponent && exponent <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
@@ -1107,11 +1106,6 @@ class FastDoubleMath {
             this.high = high;
             this.low = low;
         }
-    }
-
-    public static long clamp(long value, long min, long max) {
-        //noinspection ManualMinMaxCalculation
-        return value < min ? min : (value > max ? max : value);
     }
 
     /**

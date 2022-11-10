@@ -82,8 +82,8 @@ public class FastDoubleMathTest {
             long expectedLow = MANTISSA_128[p - FastDoubleMath.DOUBLE_MIN_EXPONENT_POWER_OF_TEN];
 
             byte[] expectedBytes = new byte[17];
-            FastDoubleSwar.readLongFromByteArrayBigEndian.set(expectedBytes, 1, expectedHigh);
-            FastDoubleSwar.readLongFromByteArrayBigEndian.set(expectedBytes, 1 + 8, expectedLow);
+            FastDoubleSwar.readLongBE.set(expectedBytes, 1, expectedHigh);
+            FastDoubleSwar.readLongBE.set(expectedBytes, 1 + 8, expectedLow);
             BigInteger expectedShifted = new BigInteger(expectedBytes);
 
             BigInteger inverse = bigOne.divide(value);
@@ -91,8 +91,8 @@ public class FastDoubleMathTest {
             assertTrue(bitLength >= 128, "we need at least 128 bits of precision: " + bitLength);
             BigInteger actualShifted = inverse.shiftRight(bitLength - 128);
             byte[] actualBytes = actualShifted.toByteArray();
-            long actualHigh = (long) FastDoubleSwar.readLongFromByteArrayBigEndian.get(actualBytes, 1);
-            long actualLow = (long) FastDoubleSwar.readLongFromByteArrayBigEndian.get(actualBytes, 1 + 8);
+            long actualHigh = (long) FastDoubleSwar.readLongBE.get(actualBytes, 1);
+            long actualLow = (long) FastDoubleSwar.readLongBE.get(actualBytes, 1 + 8);
 
             assertEquals(expectedShifted, actualShifted, "p=" + p);
             assertEquals(expectedHigh, actualHigh, "(high) " + p + ":" + toUnsignedString(expectedHigh) + "," + toUnsignedString(expectedLow)
@@ -123,15 +123,15 @@ public class FastDoubleMathTest {
             long expectedLow = MANTISSA_128[p - FastDoubleMath.DOUBLE_MIN_EXPONENT_POWER_OF_TEN];
 
             byte[] expectedBytes = new byte[17];
-            FastDoubleSwar.readLongFromByteArrayBigEndian.set(expectedBytes, 1, expectedHigh);
-            FastDoubleSwar.readLongFromByteArrayBigEndian.set(expectedBytes, 1 + 8, expectedLow);
+            FastDoubleSwar.readLongBE.set(expectedBytes, 1, expectedHigh);
+            FastDoubleSwar.readLongBE.set(expectedBytes, 1 + 8, expectedLow);
             BigInteger expectedShifted = new BigInteger(expectedBytes);
 
             int bitLength = value.bitLength();
             BigInteger actualShifted = bitLength <= 128 ? value.shiftLeft(128 - bitLength) : value.shiftRight(bitLength - 128);
             byte[] actualBytes = actualShifted.toByteArray();
-            long actualHigh = (long) FastDoubleSwar.readLongFromByteArrayBigEndian.get(actualBytes, 1);
-            long actualLow = (long) FastDoubleSwar.readLongFromByteArrayBigEndian.get(actualBytes, 1 + 8);
+            long actualHigh = (long) FastDoubleSwar.readLongBE.get(actualBytes, 1);
+            long actualLow = (long) FastDoubleSwar.readLongBE.get(actualBytes, 1 + 8);
 
             assertEquals(expectedShifted, actualShifted, "p=" + p);
             assertEquals(expectedHigh, actualHigh, "(high) " + p + ":" + toUnsignedString(expectedHigh) + "," + toUnsignedString(expectedLow)

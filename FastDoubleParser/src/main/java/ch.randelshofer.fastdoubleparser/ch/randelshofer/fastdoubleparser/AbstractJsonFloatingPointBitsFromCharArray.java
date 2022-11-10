@@ -68,13 +68,12 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
         final int significandStartIndex = index;
         int virtualIndexOfPoint = -1;
         boolean illegal = false;
-        char ch1 = 0;
         for (; index < endIndex; index++) {
-            ch1 = str[index];
-            if (isDigit(ch1)) {
+            ch = str[index];
+            if (isDigit(ch)) {
                 // This might overflow, we deal with it later.
-                significand = 10 * significand + ch1 - '0';
-            } else if (ch1 == '.') {
+                significand = 10 * significand + ch - '0';
+            } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 for (; index < endIndex - 8; index += 8) {
@@ -104,21 +103,21 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
         // Parse exponent number
         // ---------------------
         int expNumber = 0;
-        if (ch1 == 'e' || ch1 == 'E') {
-            ch1 = ++index < endIndex ? str[index] : 0;
-            boolean neg_exp = ch1 == '-';
-            if (neg_exp || ch1 == '+') {
-                ch1 = ++index < endIndex ? str[index] : 0;
+        if (ch == 'e' || ch == 'E') {
+            ch = ++index < endIndex ? str[index] : 0;
+            boolean isExponentNegative = ch == '-';
+            if (isExponentNegative || ch == '+') {
+                ch = ++index < endIndex ? str[index] : 0;
             }
-            illegal |= !isDigit(ch1);
+            illegal |= !isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch1 - '0';
+                    expNumber = 10 * expNumber + ch - '0';
                 }
-                ch1 = ++index < endIndex ? str[index] : 0;
-            } while (isDigit(ch1));
-            if (neg_exp) {
+                ch = ++index < endIndex ? str[index] : 0;
+            } while (isDigit(ch));
+            if (isExponentNegative) {
                 expNumber = -expNumber;
             }
             exponent += expNumber;
@@ -139,12 +138,12 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
         if (digitCount > 19) {
             significand = 0;
             for (index = significandStartIndex; index < significandEndIndex; index++) {
-                ch1 = str[index];
-                if (ch1 == '.') {
+                ch = str[index];
+                if (ch == '.') {
                     skipCountInTruncatedDigits++;
                 } else {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = 10 * significand + ch1 - '0';
+                        significand = 10 * significand + ch - '0';
                     } else {
                         break;
                     }

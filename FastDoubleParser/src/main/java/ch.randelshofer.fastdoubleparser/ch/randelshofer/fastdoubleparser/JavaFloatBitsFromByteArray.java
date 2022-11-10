@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Parses a {@code float} from a {@code byte} array.
  */
-class JavaFloatBitsFromByteArray extends AbstractJavaFloatingPointBitsFromByteArray {
+final class JavaFloatBitsFromByteArray extends AbstractJavaFloatingPointBitsFromByteArray {
 
 
     /**

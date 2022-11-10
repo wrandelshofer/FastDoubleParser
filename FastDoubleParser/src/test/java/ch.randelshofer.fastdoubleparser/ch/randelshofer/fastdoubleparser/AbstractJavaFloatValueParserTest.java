@@ -254,6 +254,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForHexadecimalClingerInputClasses());
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createTestDataForInputClassesInMethodParseFloatValue());
+        list.addAll(createDataForSignificandDigitsInputClasses());
         return list;
     }
 

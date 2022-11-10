@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        java: [ 19-ea ]
+        java: [ 20-ea ]
         arch: [ x64 ]
       fail-fast: false
       max-parallel: 4
@@ -22,9 +22,9 @@ jobs:
           architecture: ${{ matrix.arch }}
 
       - name: Compile FastDoubleParser
-        run: javac --release 19 --enable-preview -d out -encoding utf8 --module-source-path FastDoubleParser/src/main/java --module ch.randelshofer.fastdoubleparser
+        run: javac --release 20 --enable-preview -d out -encoding utf8 --module-source-path FastDoubleParser/src/main/java --module ch.randelshofer.fastdoubleparser
       - name: Compile FastDoubleParserDemo
-        run: javac --release 19 --enable-preview -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+        run: javac --release 20 --enable-preview -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
       - name: Run Test 1
         run: java --enable-preview --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --print-confidence
       - name: Run Test 2

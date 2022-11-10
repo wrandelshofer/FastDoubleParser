@@ -39,6 +39,22 @@ import java.util.concurrent.TimeUnit;
  * </pre>
  * <pre>
  * # JMH version: 1.28
+ * # VM version: JDK 19, OpenJDK 64-Bit Server VM, 19+36-2238
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * Only parsing:
+ * Benchmark             (str)  Mode  Cnt   Score   Error  Units
+ * m                         0  avgt    2   5.007          ns/op
+ * m                       365  avgt    2   8.716          ns/op
+ * m                      10.1  avgt    2  10.825          ns/op
+ * m    123.45678901234567e123  avgt    2  36.389          ns/op
+ * m      123.4567890123456789  avgt    2  16.122          ns/op
+ * m  123.4567890123456789e123  avgt    2  22.514          ns/op
+ * m      -0.29235596393453456  avgt    2  14.513          ns/op
+ * m     0x123.456789abcdep123  avgt    2  27.800          ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.28
  * # VM version: JDK 17, OpenJDK 64-Bit Server VM, 17+35-2724
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
@@ -53,7 +69,10 @@ import java.util.concurrent.TimeUnit;
  * m     0x123.456789abcdep123  avgt    2  30.115          ns/op
  * </pre>
  */
-@Fork(value = 1, jvmArgsAppend = {"-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
+@Fork(value = 1, jvmArgsAppend = {
+        "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
+        , "--enable-preview"
+
         //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/FastDoubleParser.*"
 
 })
@@ -62,7 +81,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class FastDoubleParserFromByteArrayJmh {
+public class JavaDoubleFromByteArrayJmh {
     @Param({
             "0",
             "365",

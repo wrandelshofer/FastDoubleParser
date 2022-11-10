@@ -37,9 +37,11 @@ import java.nio.ByteOrder;
  */
 class FastDoubleSwar {
 
-    public final static VarHandle readLongFromByteArrayLittleEndian =
+    public final static VarHandle readLongLE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
-    public final static VarHandle readLongFromByteArrayBigEndian =
+    public final static VarHandle readIntLE =
+            MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.LITTLE_ENDIAN);
+    public final static VarHandle readLongBE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
     private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
             .withBitAlignment(16);
@@ -75,6 +77,41 @@ class FastDoubleSwar {
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
+    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
+    public static int tryToParseFourDigitsUtf16(char[] a, int offset) {
+        // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
+        MemorySegment seg = MemorySegment.ofArray(a);
+        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
+        /*
+        long first = a[offset]
+                | (long) a[offset + 1] << 16
+                | (long) a[offset + 2] << 32
+                | (long) a[offset + 3] << 48;
+        */
+        return FastDoubleSwar.tryToParseFourDigitsUtf16(first);
+    }
+
+    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
+    public static int parseEightDigitsUtf16(char[] a, int offset) {
+        // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
+        MemorySegment seg = MemorySegment.ofArray(a);
+        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
+        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
+
+        /*
+        long first = a[offset]
+                | (long) a[offset + 1] << 16
+                | (long) a[offset + 2] << 32
+                | (long) a[offset + 3] << 48;
+        long second = a[offset + 4]
+                | (long) a[offset + 5] << 16
+                | (long) a[offset + 6] << 32
+                | (long) a[offset + 7] << 48;
+        */
+
+        return FastDoubleSwar.parseEightDigitsUtf16(first, second);
+    }
+
     /**
      * Tries to parse eight digits at once using the
      * 'SIMD within a register technique' (SWAR).
@@ -83,7 +120,7 @@ class FastDoubleSwar {
      * @param offset the index of the first character in the character sequence
      * @return the parsed digits or -1
      */
-    public static int tryToParseEightDigitsCharSequence(CharSequence str, int offset) {
+    public static int tryToParseEightDigits(CharSequence str, int offset) {
         // Performance: We extract the chars in two steps so that we
         //              can benefit from out of order execution in the CPU.
         long first = str.charAt(offset)
@@ -99,6 +136,33 @@ class FastDoubleSwar {
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
+    public static int tryToParseFourDigits(CharSequence str, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = str.charAt(offset)
+                | (long) str.charAt(offset + 1) << 16
+                | (long) str.charAt(offset + 2) << 32
+                | (long) str.charAt(offset + 3) << 48;
+
+        return FastDoubleSwar.tryToParseFourDigitsUtf16(first);
+    }
+
+    public static int parseEightDigits(CharSequence str, int offset) {
+        // Performance: We extract the chars in two steps so that we
+        //              can benefit from out of order execution in the CPU.
+        long first = str.charAt(offset)
+                | (long) str.charAt(offset + 1) << 16
+                | (long) str.charAt(offset + 2) << 32
+                | (long) str.charAt(offset + 3) << 48;
+
+        long second = str.charAt(offset + 4)
+                | (long) str.charAt(offset + 5) << 16
+                | (long) str.charAt(offset + 6) << 32
+                | (long) str.charAt(offset + 7) << 48;
+
+        return FastDoubleSwar.parseEightDigitsUtf16(first, second);
+    }
+
     /**
      * Tries to parse eight digits at once using the
      * 'SIMD within a register technique' (SWAR).
@@ -107,7 +171,7 @@ class FastDoubleSwar {
      * @param offset the index of the first character in the character sequence
      * @return the parsed digits or -1
      */
-    public static long tryToParseEightHexDigitsCharSequence(CharSequence str, int offset) {
+    public static long tryToParseEightHexDigits(CharSequence str, int offset) {
         // Performance: We extract the chars in two steps so that we
         //              can benefit from out of order execution in the CPU.
 
@@ -156,6 +220,29 @@ class FastDoubleSwar {
                 + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
     }
 
+    public static int tryToParseFourDigitsUtf16(long first) {
+        long fval = first - 0x0030_0030_0030_0030L;
+
+        // Create a predicate for all bytes which are smaller than '0' (0x0030)
+        // or greater than '9' (0x0039).
+        // We have 0x007f - 0x0039 = 0x0046.
+        // The predicate is true if the hsb of a byte is set: (predicate & 0xff80) != 0.
+        long fpre = first + 0x0046_0046_0046_0046L | fval;
+        if ((fpre & 0xff80_ff80_ff80_ff80L) != 0L) {
+            return -1;
+        }
+
+        return (int) (fval * 0x03e8_0064_000a_0001L >>> 48);
+    }
+
+    public static int parseEightDigitsUtf16(long first, long second) {
+        long fval = first - 0x0030_0030_0030_0030L;
+        long sval = second - 0x0030_0030_0030_0030L;
+
+        return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
+                + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
+    }
+
     /**
      * Tries to parse eight decimal digits from a byte array using the
      * 'SIMD within a register technique' (SWAR).
@@ -166,7 +253,19 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 digits
      */
     public static int tryToParseEightDigitsUtf8(byte[] a, int offset) {
-        return tryToParseEightDigitsUtf8((long) readLongFromByteArrayLittleEndian.get(a, offset));
+        return tryToParseEightDigitsUtf8((long) readLongLE.get(a, offset));
+    }
+
+    public static int tryToParseFourDigitsUtf8(byte[] a, int offset) {
+        return tryToParseFourDigitsUtf8((int) readIntLE.get(a, offset));
+    }
+
+    public static int parseEightDigitsUtf8(byte[] a, int offset) {
+        return parseEightDigitsUtf8((long) readLongLE.get(a, offset));
+    }
+
+    public static int parseFourDigitsUtf8(byte[] a, int offset) {
+        return parseFourDigitsUtf8((int) readIntLE.get(a, offset));
     }
 
     /**
@@ -187,7 +286,7 @@ class FastDoubleSwar {
      *
      * @param chunk contains 8 ascii characters in little endian order
      * @return the parsed number,
-     * returns a negative value if {@code value} does not contain 8 digits
+     * returns ~(number of leading digits) if not all characters are digits.
      */
     public static int tryToParseEightDigitsUtf8(long chunk) {
         // Create a predicate for all bytes which are greater than '0' (0x30).
@@ -195,7 +294,7 @@ class FastDoubleSwar {
         long val = chunk - 0x3030303030303030L;
         long predicate = ((chunk + 0x4646464646464646L) | val) & 0x8080808080808080L;
         if (predicate != 0L) {
-            return -1;
+            return -1;//~(Long.numberOfTrailingZeros(predicate)>>3);
         }
 
         // The last 2 multiplications are independent of each other.
@@ -203,6 +302,44 @@ class FastDoubleSwar {
         val = (val & 0xff_000000ffL) * (100 + (100_0000L << 32))
                 + (val >>> 16 & 0xff_000000ffL) * (1 + (1_0000L << 32)) >>> 32;
         return (int) val;
+    }
+
+    public static int tryToParseFourDigitsUtf8(int chunk) {
+        // Create a predicate for all bytes which are greater than '0' (0x30).
+        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        int val = chunk - 0x30303030;
+        int predicate = ((chunk + 0x46464646) | val) & 0x80808080;
+        if (predicate != 0L) {
+            return -1;//~(Integer.numberOfTrailingZeros(predicate)>>3);
+        }
+
+        // The last 2 multiplications are independent of each other.
+        val = val * (1 + (10 << 8)) >>> 8;
+        val = (val & 0xff) * 100 + ((val & 0xff0000) >> 16);
+        return val;
+    }
+
+    public static int parseEightDigitsUtf8(long chunk) {
+        // Create a predicate for all bytes which are greater than '0' (0x30).
+        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        long val = chunk - 0x3030303030303030L;
+
+        // The last 2 multiplications are independent of each other.
+        val = val * (1 + (10 << 8)) >>> 8;
+        val = (val & 0xff_000000ffL) * (100 + (100_0000L << 32))
+                + (val >>> 16 & 0xff_000000ffL) * (1 + (1_0000L << 32)) >>> 32;
+        return (int) val;
+    }
+
+    public static int parseFourDigitsUtf8(int chunk) {
+        // Create a predicate for all bytes which are greater than '0' (0x30).
+        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        int val = chunk - 0x30303030;
+
+        // The last 2 multiplications are independent of each other.
+        val = val * (1 + (10 << 8)) >>> 8;
+        val = (val & 0xff) * 100 + ((val & 0xff0000) >> 16);
+        return val;
     }
 
     /**
@@ -272,7 +409,7 @@ class FastDoubleSwar {
      *               returns a negative value if {@code value} does not contain 8 digits
      */
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
-        return tryToParseEightHexDigitsUtf8((long) readLongFromByteArrayBigEndian.get(a, offset));
+        return tryToParseEightHexDigitsUtf8((long) readLongBE.get(a, offset));
     }
 
     /**

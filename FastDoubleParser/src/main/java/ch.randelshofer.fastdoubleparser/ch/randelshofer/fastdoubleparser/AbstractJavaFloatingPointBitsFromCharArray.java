@@ -5,9 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10;
-import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10L;
-
 /**
  * Parses a Java {@code FloatingPointLiteral} from a {@code char} array.
  * <p>
@@ -77,17 +74,17 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             ch = str[index];
             if (isDigit(ch)) {
                 // This might overflow, we deal with it later.
-                significand = mul10L(significand) + ch - '0';
+                significand = 10 * (significand) + ch - '0';
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                for (; index < endIndex - 8; index += 8) {
-                    int eightDigits = tryToParseEightDigits(str, index + 1);
+                for (; index < endIndex - 4; index += 4) {
+                    int eightDigits = FastDoubleSwar.tryToParseFourDigitsUtf16(str, index + 1);
                     if (eightDigits < 0) {
                         break;
                     }
                     // This might overflow, we deal with it later.
-                    significand = 100_000_000L * significand + eightDigits;
+                    significand = 10_000L * significand + eightDigits;
                 }
             } else {
                 break;
@@ -110,19 +107,19 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         int expNumber = 0;
         if (ch == 'e' || ch == 'E') {
             ch = ++index < endIndex ? str[index] : 0;
-            boolean neg_exp = ch == '-';
-            if (neg_exp || ch == '+') {
+            boolean isExponentNegative = ch == '-';
+            if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str[index] : 0;
             }
             illegal |= !isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = mul10(expNumber) + ch - '0';
+                    expNumber = 10 * (expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
             } while (isDigit(ch));
-            if (neg_exp) {
+            if (isExponentNegative) {
                 expNumber = -expNumber;
             }
             exponent += expNumber;
@@ -155,7 +152,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
                     skipCountInTruncatedDigits++;
                 } else {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = mul10L(significand) + ch - '0';
+                        significand = 10 * (significand) + ch - '0';
                     } else {
                         break;
                     }
@@ -278,6 +275,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
+                /*
                 for (; index < endIndex - 8; index += 8) {
                     long parsed = tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
@@ -286,7 +284,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
                     } else {
                         break;
                     }
-                }
+                }*/
 
             } else {
                 break;
@@ -307,19 +305,19 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         final boolean hasExponent = (ch == 'p') || (ch == 'P');
         if (hasExponent) {
             ch = ++index < endIndex ? str[index] : 0;
-            boolean neg_exp = ch == '-';
-            if (neg_exp || ch == '+') {
+            boolean isExponentNegative = ch == '-';
+            if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str[index] : 0;
             }
             illegal |= !isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = mul10(expNumber) + ch - '0';
+                    expNumber = 10 * (expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
             } while (isDigit(ch));
-            if (neg_exp) {
+            if (isExponentNegative) {
                 expNumber = -expNumber;
             }
             exponent += expNumber;
@@ -434,10 +432,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             }
         }
         return PARSE_ERROR;
-    }
-
-    private int tryToParseEightDigits(char[] str, int offset) {
-        return FastDoubleSwar.tryToParseEightDigitsUtf16(str, offset);
     }
 
     private long tryToParseEightHexDigits(char[] str, int offset) {

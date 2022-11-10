@@ -5,13 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import static ch.randelshofer.fastdoubleparser.FastDoubleMath.clamp;
-import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10;
-import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10L;
-
 /**
  * Parses a Java {@code FloatingPointLiteral} from a {@link CharSequence}.
  * <p>
@@ -23,9 +16,6 @@ import static ch.randelshofer.fastdoubleparser.FastDoubleMath.mul10L;
  * See {@link JavaDoubleParser} for the grammar of {@code FloatingPointLiteral}.
  */
 abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
-
-    private static final boolean FALL_BACK_TO_BIGDECIMAL = false;
-    private static final boolean FALL_BACK_TO_DECIMAL = false;
 
     private boolean isDigit(char c) {
         return '0' <= c && c <= '9';
@@ -46,7 +36,8 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * {@code DecimalFloatingPointLiteral} and {@code DecSignificand}.
      *
      * @param str            a string
-     * @param index          start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
+     * @param index          the current index
+     * @param startIndex          start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
      * @param endIndex       end index (exclusive)
      * @param isNegative     true if the float value is negative
      * @param hasLeadingZero true if we have consumed the optional leading zero
@@ -67,17 +58,17 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             ch = str.charAt(index);
             if (isDigit(ch)) {
                 // This might overflow, we deal with it later.
-                significand = mul10L(significand) + ch - '0';
+                significand = 10 * significand + ch - '0';
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                for (; index < endIndex - 8; index += 8) {
-                    int eightDigits = tryToParseEightDigits(str, index + 1);
-                    if (eightDigits < 0) {
+                for (; index < endIndex - 4; index += 4) {
+                    int fourDigits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
+                    if (fourDigits < 0) {
                         break;
                     }
                     // This might overflow, we deal with it later.
-                    significand = 100_000_000L * significand + eightDigits;
+                    significand = 10_000L * significand + fourDigits;
                 }
             } else {
                 break;
@@ -100,19 +91,19 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         int expNumber = 0;
         if (ch == 'e' || ch == 'E') {
             ch = ++index < endIndex ? str.charAt(index) : 0;
-            boolean neg_exp = ch == '-';
-            if (neg_exp || ch == '+') {
+            boolean isExponentNegative = ch == '-';
+            if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
             illegal |= !isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = mul10(expNumber) + ch - '0';
+                    expNumber = 10 * expNumber + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (isDigit(ch));
-            if (neg_exp) {
+            if (isExponentNegative) {
                 expNumber = -expNumber;
             }
             exponent += expNumber;
@@ -145,7 +136,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                     skipCountInTruncatedDigits++;
                 } else {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = mul10L(significand) + ch - '0';
+                        significand = 10 * significand + ch - '0';
                     } else {
                         break;
                     }
@@ -221,13 +212,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             }
         }
 
-        if (FALL_BACK_TO_BIGDECIMAL) {
-            return parseDecFloatLiteralBigDecimal(str, index, offset, endIndex, isNegative, hasLeadingZero);
-        } else if (FALL_BACK_TO_DECIMAL) {
-            return parseDecFloatLiteralDecimal(str, index, offset, endIndex, isNegative, hasLeadingZero);
-        } else {
-            return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
-        }
+        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
     }
 
     /**
@@ -274,17 +259,16 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-
-                for (;index < endIndex - 8; index += 8) {
-                    long parsed = tryToParseEightHexDigits(str, index + 1);
+                /*
+                for (; index < endIndex - 8; index += 8) {
+                    long parsed = FastDoubleSwar.tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
                         // This might overflow, we deal with it later.
                         significand = (significand << 32) + parsed;
                     } else {
                         break;
                     }
-                }
-
+                }*/
             } else {
                 break;
             }
@@ -304,19 +288,19 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         final boolean hasExponent = (ch == 'p') || (ch == 'P');
         if (hasExponent) {
             ch = ++index < endIndex ? str.charAt(index) : 0;
-            boolean neg_exp = ch == '-';
-            if (neg_exp || ch == '+') {
+            boolean isExponentNegative = ch == '-';
+            if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
             illegal |= !isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = mul10(expNumber) + ch - '0';
+                    expNumber = 10 * (expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (isDigit(ch));
-            if (neg_exp) {
+            if (isExponentNegative) {
                 expNumber = -expNumber;
             }
             exponent += expNumber;
@@ -450,14 +434,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         return index;
     }
 
-    private int tryToParseEightDigits(CharSequence str, int offset) {
-        return FastDoubleSwar.tryToParseEightDigitsCharSequence(str, offset);
-    }
-
-    private long tryToParseEightHexDigits(CharSequence str, int offset) {
-        return FastDoubleSwar.tryToParseEightHexDigitsCharSequence(str, offset);
-    }
-
     /**
      * @return a NaN constant in the specialized type wrapped in a {@code long}
      */
@@ -520,238 +496,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             CharSequence str, int startIndex, int endIndex,
             boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
-
-    private final static BigInteger[] BIG_DIGIT = {
-            BigInteger.ZERO, BigInteger.ONE,
-            BigInteger.valueOf(2),
-            BigInteger.valueOf(3),
-            BigInteger.valueOf(4),
-            BigInteger.valueOf(5),
-            BigInteger.valueOf(6),
-            BigInteger.valueOf(7),
-            BigInteger.valueOf(8),
-            BigInteger.valueOf(9),
-    };
-    private final static BigInteger[] BIG_POWERS = {
-            BigInteger.ONE,
-            BigInteger.valueOf(10),
-            BigInteger.valueOf(100),
-            BigInteger.valueOf(1000),
-            BigInteger.valueOf(10000),
-            BigInteger.valueOf(100000),
-            BigInteger.valueOf(1000000),
-            BigInteger.valueOf(10000000),
-    };
-
-    private long parseDecFloatLiteralBigDecimal(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
-        // Parse significand
-        // -----------------
-        // Note: a multiplication by a constant is cheaper than an
-        //       arbitrary integer multiplication.
-        BigInteger bigSignificand = BigInteger.ZERO;
-        BigInteger ONE_HUNDRED_MILLION = BigInteger.valueOf(100_000_000L);
-        byte[] magnitude = new byte[8];
-        final int significandStartIndex = index;
-        int virtualIndexOfPoint = -1;
-        boolean illegal = false;
-        char ch = 0;
-        // parse digits before decimal point
-        for (; index < endIndex - 7; index += 8) {
-            int eightDigits = tryToParseEightDigits(str, index);
-            if (eightDigits < 0) {
-                break;
-            }
-            bigSignificand = bigSignificand.multiply(ONE_HUNDRED_MILLION);
-            if (eightDigits != 0L) {
-                FastDoubleSwar.readLongFromByteArrayBigEndian.set(magnitude, 0, eightDigits);
-                bigSignificand = bigSignificand.add(new BigInteger(1, magnitude));
-            }
-        }
-        int smallSignificandStart = index;
-        long smallSignificand = 0L;
-        for (; index < endIndex; index++) {
-            ch = str.charAt(index);
-            if (isDigit(ch)) {
-                smallSignificand = mul10L(smallSignificand) + ch - '0';
-            } else {
-                break;
-            }
-        }
-        bigSignificand = bigSignificand.multiply(BIG_POWERS[index - smallSignificandStart]).add(BigInteger.valueOf(smallSignificand));
-        if (index < endIndex && str.charAt(index) == '.') {
-            virtualIndexOfPoint = index;
-            index++;
-            // parse digits after decimal point
-            for (; index < endIndex - 7; index += 8) {
-                int eightDigits = tryToParseEightDigits(str, index);
-                if (eightDigits < 0) {
-                    break;
-                }
-                bigSignificand = bigSignificand.multiply(ONE_HUNDRED_MILLION);
-                if (eightDigits != 0L) {
-                    FastDoubleSwar.readLongFromByteArrayBigEndian.set(magnitude, 0, eightDigits);
-                    bigSignificand = bigSignificand.add(new BigInteger(1, magnitude));
-                }
-            }
-            smallSignificandStart = index;
-            smallSignificand = 0L;
-            for (; index < endIndex; index++) {
-                ch = str.charAt(index);
-                if (isDigit(ch)) {
-                    smallSignificand = mul10L(smallSignificand) + ch - '0';
-                } else {
-                    break;
-                }
-            }
-            bigSignificand = bigSignificand.multiply(BIG_POWERS[index - smallSignificandStart]).add(BigInteger.valueOf(smallSignificand));
-        }
-        final int digitCount;
-        final int significandEndIndex = index;
-        int exponent;
-        if (virtualIndexOfPoint < 0) {
-            digitCount = significandEndIndex - significandStartIndex;
-            virtualIndexOfPoint = significandEndIndex;
-            exponent = 0;
-        } else {
-            digitCount = significandEndIndex - significandStartIndex - 1;
-            exponent = virtualIndexOfPoint - significandEndIndex + 1;
-        }
-
-        // Parse exponent number
-        // ---------------------
-        int expNumber = 0;
-        if (ch == 'e' || ch == 'E') {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
-            boolean neg_exp = ch == '-';
-            if (neg_exp || ch == '+') {
-                ch = ++index < endIndex ? str.charAt(index) : 0;
-            }
-            illegal = !isDigit(ch);
-            do {
-                // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = mul10(expNumber) + ch - '0';
-                }
-                ch = ++index < endIndex ? str.charAt(index) : 0;
-            } while (isDigit(ch));
-            if (neg_exp) {
-                expNumber = -expNumber;
-            }
-            long longExponent = (long) exponent + expNumber;
-            exponent = (int) clamp(longExponent, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        }
-
-        // Skip optional FloatTypeSuffix
-        // ------------------------
-        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
-            index++;
-        }
-
-        // Skip trailing whitespace and check if FloatingPointLiteral is complete
-        // ------------------------
-        index = skipWhitespace(str, index, endIndex);
-        if (illegal || index < endIndex
-                || !hasLeadingZero && digitCount == 0) {
-            return PARSE_ERROR;
-        }
-
-        return valueOfFloatLiteral(isNegative, bigSignificand, exponent);
-    }
-
-    private long parseDecFloatLiteralDecimal(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
-        // Parse significand
-        // -----------------
-        // Note: a multiplication by a constant is cheaper than an
-        //       arbitrary integer multiplication.
-        Decimal significand = new Decimal();
-        byte[] digits = significand.digits;
-        final int significandStartIndex = index;
-        int virtualIndexOfPoint = -1;
-        boolean illegal = false;
-        char ch = 0;
-        // parse digits before decimal point
-        for (; index < endIndex; index++) {
-            ch = str.charAt(index);
-            if (isDigit(ch)) {
-                if (significand.num_digits < digits.length) {
-                    digits[significand.num_digits++] = (byte) (ch - '0');
-                }
-            } else {
-                break;
-            }
-        }
-        if (index < endIndex && str.charAt(index) == '.') {
-            virtualIndexOfPoint = index;
-            index++;
-            // parse digits after decimal point
-            for (; index < endIndex; index++) {
-                ch = str.charAt(index);
-                if (isDigit(ch)) {
-                    if (significand.num_digits < digits.length) {
-                        digits[significand.num_digits++] = (byte) (ch - '0');
-                    }
-                } else {
-                    break;
-                }
-            }
-        }
-        final int digitCount;
-        final int significandEndIndex = index;
-        int exponent;
-        if (virtualIndexOfPoint < 0) {
-            digitCount = significandEndIndex - significandStartIndex;
-            virtualIndexOfPoint = significandEndIndex;
-            exponent = 0;
-        } else {
-            digitCount = significandEndIndex - significandStartIndex - 1;
-            exponent = virtualIndexOfPoint - significandEndIndex + 1;
-        }
-
-        // Parse exponent number
-        // ---------------------
-        int expNumber = 0;
-        if (ch == 'e' || ch == 'E') {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
-            boolean neg_exp = ch == '-';
-            if (neg_exp || ch == '+') {
-                ch = ++index < endIndex ? str.charAt(index) : 0;
-            }
-            illegal = !isDigit(ch);
-            do {
-                // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = mul10(expNumber) + ch - '0';
-                }
-                ch = ++index < endIndex ? str.charAt(index) : 0;
-            } while (isDigit(ch));
-            if (neg_exp) {
-                expNumber = -expNumber;
-            }
-            long longExponent = (long) exponent + expNumber;
-            exponent = (int) clamp(longExponent, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        }
-
-        // Skip optional FloatTypeSuffix
-        // ------------------------
-        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
-            index++;
-        }
-
-        // Skip trailing whitespace and check if FloatingPointLiteral is complete
-        // ------------------------
-        index = skipWhitespace(str, index, endIndex);
-        if (illegal || index < endIndex
-                || !hasLeadingZero && digitCount == 0) {
-            return PARSE_ERROR;
-        }
-
-        return valueOfFloatLiteral(isNegative, significand, exponent, digitCount);
-    }
-
-    protected long valueOfFloatLiteral(boolean isNegative, BigInteger significand, int exponent) {
-        BigDecimal bigDecimal = new BigDecimal(isNegative ? significand.negate() : significand, -exponent);
-        return Double.doubleToLongBits(bigDecimal.doubleValue());
-    }
 
     protected long valueOfFloatLiteral(boolean isNegative, Decimal significand, int exponent, int digitCount) {
         significand.negative = isNegative;

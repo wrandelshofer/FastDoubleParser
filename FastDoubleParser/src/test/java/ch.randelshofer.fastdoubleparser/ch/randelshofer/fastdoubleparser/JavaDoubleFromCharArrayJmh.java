@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class FastDoubleParserFromCharArrayJmh {
+public class JavaDoubleFromCharArrayJmh {
 
     @Param({"0", "1.0", "365", "10.1", "123.45678901234567e123", "123.4567890123456789", "123.4567890123456789e123", "-0.29235596393453456", "0x123.456789abcdep123"})
     public String str;
