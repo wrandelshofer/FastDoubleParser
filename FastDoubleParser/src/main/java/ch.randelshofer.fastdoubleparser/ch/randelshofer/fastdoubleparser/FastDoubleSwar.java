@@ -5,8 +5,6 @@
 
 package ch.randelshofer.fastdoubleparser;
 
-import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
@@ -43,8 +41,6 @@ class FastDoubleSwar {
             MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.LITTLE_ENDIAN);
     public final static VarHandle readLongBE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
-    private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
-            .withBitAlignment(16);
 
     /**
      * Tries to parse eight decimal digits from a char array using the
@@ -59,11 +55,11 @@ class FastDoubleSwar {
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
+        /*
         MemorySegment seg = MemorySegment.ofArray(a);
         long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
         long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
-
-        /*
+        */
         long first = a[offset]
                 | (long) a[offset + 1] << 16
                 | (long) a[offset + 2] << 32
@@ -72,33 +68,34 @@ class FastDoubleSwar {
                 | (long) a[offset + 5] << 16
                 | (long) a[offset + 6] << 32
                 | (long) a[offset + 7] << 48;
-        */
 
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int tryToParseFourDigitsUtf16(char[] a, int offset) {
+        /*
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
         MemorySegment seg = MemorySegment.ofArray(a);
         long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
-        /*
+        */
         long first = a[offset]
                 | (long) a[offset + 1] << 16
                 | (long) a[offset + 2] << 32
                 | (long) a[offset + 3] << 48;
-        */
+
         return FastDoubleSwar.tryToParseFourDigitsUtf16(first);
     }
 
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int parseEightDigitsUtf16(char[] a, int offset) {
+        /*
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
         MemorySegment seg = MemorySegment.ofArray(a);
         long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
         long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
+        */
 
-        /*
         long first = a[offset]
                 | (long) a[offset + 1] << 16
                 | (long) a[offset + 2] << 32
@@ -107,7 +104,6 @@ class FastDoubleSwar {
                 | (long) a[offset + 5] << 16
                 | (long) a[offset + 6] << 32
                 | (long) a[offset + 7] << 48;
-        */
 
         return FastDoubleSwar.parseEightDigitsUtf16(first, second);
     }

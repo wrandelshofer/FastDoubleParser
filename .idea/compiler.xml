@@ -13,8 +13,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FastDoubleParser" options="-Xlint:all --enable-preview" />
-      <module name="FastDoubleParserDemo" options="-Xlint:all --enable-preview" />
+      <module name="FastDoubleParser" options="-Xlint:all" />
+      <module name="FastDoubleParserDemo" options="-Xlint:all" />
     </option>
   </component>
 </project>
