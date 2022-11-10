@@ -73,6 +73,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         return Arrays.asList(
                 new TestData("0", 0, 0f),
                 new TestData("00", 0, 0f),
+                new TestData("007", 7, 7f),
                 new TestData("1", 1, 1f),
                 new TestData("1.2", 1.2, 1.2f),
                 new TestData("1.2e3", 1.2e3, 1.2e3f),

@@ -15,6 +15,7 @@ public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValu
         return Arrays.asList(
                 new TestData("empty", ""),
                 new TestData("00"),
+                new TestData("007"),
                 new TestData("000000000"),
                 new TestData("0000.0000"),
                 new TestData("+"),
@@ -166,13 +167,11 @@ public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValu
 
     List<TestData> createAllTestData() {
         List<TestData> list = new ArrayList<>();
-        /*
         list.addAll(createDataForDecimalLimits());
         list.addAll(createDataForBadStrings());
         list.addAll(createDataForLegalDecStrings());
         list.addAll(createDataForDecimalClingerInputClasses());
         list.addAll(createDataForLegalCroppedStrings());
-         */
         list.addAll(createTestDataForInputClassesInMethodParseNumber());
         return list;
     }
