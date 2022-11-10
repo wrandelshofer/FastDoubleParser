@@ -17,7 +17,7 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatValueParser {
 
-    private boolean isDigit(byte c) {
+    private static boolean isDigit(byte c) {
         return (byte) '0' <= c && c <= (byte) '9';
     }
 
@@ -32,7 +32,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public long parseNumber(byte[] str, int offset, int length) {
+    public final long parseNumber(byte[] str, int offset, int length) {
         final int endIndex = offset + length;
         if (offset < 0 || length == 0 || endIndex > str.length) {
             return PARSE_ERROR;

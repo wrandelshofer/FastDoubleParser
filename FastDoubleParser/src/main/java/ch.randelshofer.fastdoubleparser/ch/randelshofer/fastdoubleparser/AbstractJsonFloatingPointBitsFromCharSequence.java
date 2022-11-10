@@ -17,7 +17,7 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
-    private boolean isDigit(char c) {
+    private static boolean isDigit(char c) {
         return '0' <= c && c <= '9';
     }
 
@@ -32,7 +32,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public long parseNumber(CharSequence str, int offset, int length) {
+    public final long parseNumber(CharSequence str, int offset, int length) {
         final int endIndex = offset + length;
         if (offset < 0 || length == 0 || endIndex > str.length()) {
             return PARSE_ERROR;
@@ -77,7 +77,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 for (; index < endIndex - 4; index += 4) {
-                    int fourDigits = tryToParseFourDigits(str, index + 1);
+                    int fourDigits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (fourDigits < 0) {
                         break;
                     }
@@ -157,14 +157,6 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         }
         return valueOfFloatLiteral(str, offset, endIndex, isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-    }
-
-    private int tryToParseEightDigits(CharSequence str, int offset) {
-        return FastDoubleSwar.tryToParseEightDigits(str, offset);
-    }
-
-    private int tryToParseFourDigits(CharSequence str, int offset) {
-        return FastDoubleSwar.tryToParseFourDigits(str, offset);
     }
 
     /**

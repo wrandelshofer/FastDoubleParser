@@ -17,7 +17,7 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
-    private boolean isDigit(char c) {
+    private static boolean isDigit(char c) {
         return '0' <= c && c <= '9';
     }
 
@@ -37,7 +37,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      *
      * @param str            a string
      * @param index          the current index
-     * @param startIndex          start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
+     * @param startIndex     start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
      * @param endIndex       end index (exclusive)
      * @param isNegative     true if the float value is negative
      * @param hasLeadingZero true if we have consumed the optional leading zero
@@ -95,7 +95,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            illegal |= !isDigit(ch);
+            illegal |= !(isDigit(ch));
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
@@ -110,8 +110,9 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         }
 
         // Skip optional FloatTypeSuffix
+        // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
             index++;
         }
 
@@ -170,7 +171,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
+    public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
         final int endIndex = offset + length;
         if (offset < 0 || endIndex > str.length()) {
             return PARSE_ERROR;
@@ -194,12 +195,10 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             }
         }
 
-        // Parse NaN or Infinity
+        // Parse NaN or Infinity (this occurs rarely)
         // ---------------------
         if (ch >= 'I') {
-            return ch == 'N'
-                    ? parseNaN(str, index, endIndex)
-                    : parseInfinity(str, index, endIndex, isNegative);
+            return parseNaNOrInfinity(str, index, endIndex, isNegative);
         }
 
         // Parse optional leading zero
@@ -213,6 +212,38 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         }
 
         return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
+    }
+
+    private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
+        if (str.charAt(index) == 'N') {
+            if (index + 2 < endIndex
+                    // && str.charAt(index) == 'N'
+                    && str.charAt(index + 1) == 'a'
+                    && str.charAt(index + 2) == 'N') {
+
+                index = skipWhitespace(str, index + 3, endIndex);
+                if (index == endIndex) {
+                    return nan();
+                }
+            }
+        } else {
+            if (index + 7 < endIndex
+                    && str.charAt(index) == 'I'
+                    && str.charAt(index + 1) == 'n'
+                    && str.charAt(index + 2) == 'f'
+                    && str.charAt(index + 3) == 'i'
+                    && str.charAt(index + 4) == 'n'
+                    && str.charAt(index + 5) == 'i'
+                    && str.charAt(index + 6) == 't'
+                    && str.charAt(index + 7) == 'y'
+            ) {
+                index = skipWhitespace(str, index + 8, endIndex);
+                if (index == endIndex) {
+                    return isNegative ? negativeInfinity() : positiveInfinity();
+                }
+            }
+        }
+        return PARSE_ERROR;
     }
 
     /**
@@ -292,7 +323,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            illegal |= !isDigit(ch);
+            illegal |= !(isDigit(ch));
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
@@ -307,8 +338,9 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         }
 
         // Skip optional FloatTypeSuffix
+        // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
             index++;
         }
 
@@ -351,73 +383,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
     }
 
     /**
-     * Parses a {@code Infinity} production with optional trailing white space
-     * until the end of the text.
-     * <blockquote>
-     * <dl>
-     * <dt><i>InfinityWithWhiteSpace:</i></dt>
-     * <dd>{@code Infinity} <i>[WhiteSpace] EOT</i></dd>
-     * </dl>
-     * </blockquote>
-     *
-     * @param str      a string
-     * @param index    index of the "I" character
-     * @param endIndex end index (exclusive)
-     * @return a positive or negative infinity value
-     * @throws NumberFormatException on parsing failure
-     */
-    private long parseInfinity(CharSequence str, int index, int endIndex, boolean negative) {
-        if (index + 7 < endIndex
-                && str.charAt(index) == 'I'
-                && str.charAt(index + 1) == 'n'
-                && str.charAt(index + 2) == 'f'
-                && str.charAt(index + 3) == 'i'
-                && str.charAt(index + 4) == 'n'
-                && str.charAt(index + 5) == 'i'
-                && str.charAt(index + 6) == 't'
-                && str.charAt(index + 7) == 'y'
-        ) {
-            index = skipWhitespace(str, index + 8, endIndex);
-            if (index == endIndex) {
-                return negative ? negativeInfinity() : positiveInfinity();
-            }
-        }
-        return PARSE_ERROR;
-    }
-
-    /**
-     * Parses a {@code Nan} production with optional trailing white space
-     * until the end of the text.
-     * Given that the String contains a 'N' character at the current
-     * {@code index}.
-     * <blockquote>
-     * <dl>
-     * <dt><i>NanWithWhiteSpace:</i></dt>
-     * <dd>{@code NaN} <i>[WhiteSpace] EOT</i></dd>
-     * </dl>
-     * </blockquote>
-     *
-     * @param str      a string that contains a "N" character at {@code index}
-     * @param index    index of the "N" character
-     * @param endIndex end index (exclusive)
-     * @return a NaN value
-     * @throws NumberFormatException on parsing failure
-     */
-    private long parseNaN(CharSequence str, int index, int endIndex) {
-        if (index + 2 < endIndex
-                // && str.charAt(index) == 'N'
-                && str.charAt(index + 1) == 'a'
-                && str.charAt(index + 2) == 'N') {
-
-            index = skipWhitespace(str, index + 3, endIndex);
-            if (index == endIndex) {
-                return nan();
-            }
-        }
-        return PARSE_ERROR;
-    }
-
-    /**
      * Skips optional white space in the provided string
      *
      * @param str      a string
@@ -425,7 +390,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * @param endIndex end index (exclusive) of the optional white space
      * @return index after the optional white space
      */
-    private int skipWhitespace(CharSequence str, int index, int endIndex) {
+    private static int skipWhitespace(CharSequence str, int index, int endIndex) {
         for (; index < endIndex; index++) {
             if (str.charAt(index) > ' ') {
                 break;

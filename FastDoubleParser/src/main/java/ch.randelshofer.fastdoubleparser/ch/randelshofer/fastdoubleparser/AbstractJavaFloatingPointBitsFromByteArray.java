@@ -17,8 +17,8 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatValueParser {
 
-    private boolean isDigit(byte c) {
-        return (byte) '0' <= c && c <= (byte) '9';
+    private static boolean isDigit(byte c) {
+        return '0' <= c && c <= '9';
     }
 
     /**
@@ -29,7 +29,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
      * @param endIndex end index (exclusive) of the optional white space
      * @return index after the optional white space
      */
-    private int skipWhitespace(byte[] str, int index, int endIndex) {
+    private static int skipWhitespace(byte[] str, int index, int endIndex) {
         for (; index < endIndex; index++) {
             if ((str[index] & 0xff) > ' ') {
                 break;
@@ -127,8 +127,9 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         }
 
         // Skip optional FloatTypeSuffix
+        // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
             index++;
         }
 
@@ -214,9 +215,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // Parse NaN or Infinity
         // ---------------------
         if (ch >= 'I') {
-            return ch == 'N'
-                    ? parseNaN(str, index, endIndex)
-                    : parseInfinity(str, index, endIndex, isNegative);
+            return parseNaNOrInfinity(str, index, endIndex, isNegative);
         }
 
         // Parse optional leading zero
@@ -230,6 +229,41 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         }
 
         return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
+    }
+
+    private long parseNaNOrInfinity(byte[] str, int index, int endIndex, boolean isNegative) {
+        if (str[index] == 'N') {
+            if (index + 2 < endIndex
+                    // && str[index] == 'N'
+                    && str[index + 1] == 'a'
+                    && str[index + 2] == 'N') {
+
+                index = skipWhitespace(str, index + 3, endIndex);
+                if (index == endIndex) {
+                    return nan();
+                }
+            }
+        } else {
+            if (index + 7 < endIndex
+                    && (long) FastDoubleSwar.readLongLE.get(str, index) == 0x7974696e69666e49L//Infinity
+                    /*
+                    && str[index1] == 'I'
+                    && str[index1 + 1] == 'n'
+                    && str[index1 + 2] == 'f'
+                    && str[index1 + 3] == 'i'
+                    && str[index1 + 4] == 'n'
+                    && str[index1 + 5] == 'i'
+                    && str[index1 + 6] == 't'
+                    && str[index1 + 7] == 'y'
+                     */
+            ) {
+                index = skipWhitespace(str, index + 8, endIndex);
+                if (index == endIndex) {
+                    return isNegative ? negativeInfinity() : positiveInfinity();
+                }
+            }
+        }
+        return PARSE_ERROR;
     }
 
     /**
@@ -325,8 +359,9 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         }
 
         // Skip optional FloatTypeSuffix
+        // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (index < endIndex && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F')) {
+        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
             index++;
         }
 
@@ -366,73 +401,6 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
 
         return valueOfHexLiteral(str, startIndex, endIndex, isNegative, significand, exponent, isSignificandTruncated,
                 virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber);
-    }
-
-    /**
-     * Parses a {@code Infinity} production with optional trailing white space
-     * until the end of the text.
-     * <blockquote>
-     * <dl>
-     * <dt><i>InfinityWithWhiteSpace:</i></dt>
-     * <dd>{@code Infinity} <i>[WhiteSpace] EOT</i></dd>
-     * </dl>
-     * </blockquote>
-     *
-     * @param str      a string
-     * @param index    index of the "I" character
-     * @param endIndex end index (exclusive)
-     * @return a positive or negative infinity value
-     * @throws NumberFormatException on parsing failure
-     */
-    private long parseInfinity(byte[] str, int index, int endIndex, boolean negative) {
-        if (index + 7 < endIndex
-                && str[index] == 'I'
-                && str[index + 1] == 'n'
-                && str[index + 2] == 'f'
-                && str[index + 3] == 'i'
-                && str[index + 4] == 'n'
-                && str[index + 5] == 'i'
-                && str[index + 6] == 't'
-                && str[index + 7] == 'y'
-        ) {
-            index = skipWhitespace(str, index + 8, endIndex);
-            if (index == endIndex) {
-                return negative ? negativeInfinity() : positiveInfinity();
-            }
-        }
-        return PARSE_ERROR;
-    }
-
-    /**
-     * Parses a {@code Nan} production with optional trailing white space
-     * until the end of the text.
-     * Given that the String contains a 'N' character at the current
-     * {@code index}.
-     * <blockquote>
-     * <dl>
-     * <dt><i>NanWithWhiteSpace:</i></dt>
-     * <dd>{@code NaN} <i>[WhiteSpace] EOT</i></dd>
-     * </dl>
-     * </blockquote>
-     *
-     * @param str      a string that contains a "N" character at {@code index}
-     * @param index    index of the "N" character
-     * @param endIndex end index (exclusive)
-     * @return a NaN value
-     * @throws NumberFormatException on parsing failure
-     */
-    private long parseNaN(byte[] str, int index, int endIndex) {
-        if (index + 2 < endIndex
-                // && str[index] == 'N'
-                && str[index + 1] == 'a'
-                && str[index + 2] == 'N') {
-
-            index = skipWhitespace(str, index + 3, endIndex);
-            if (index == endIndex) {
-                return nan();
-            }
-        }
-        return PARSE_ERROR;
     }
 
     /**

@@ -365,6 +365,7 @@ public class Main {
         return answer;
     }
 
+
     private double sumFastDoubleParserFromByteArray(List<byte[]> s) {
         double answer = 0;
         for (byte[] st : s) {
