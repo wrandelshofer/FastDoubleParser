@@ -82,8 +82,17 @@ final class JavaBigDecimalFromByteArray {
 
     }
 
+    /**
+     * Parses digits using a recursive algorithm in O(n) with a large
+     * constant overhead if there are less than about 100 digits.
+     *
+     * @param str      the input string
+     * @param from     the start index of the digit sequence in str (inclusive)
+     * @param to       the end index of the digit sequence in str (exclusive)
+     * @param exponent the exponent of the digits
+     * @return a {@link BigDecimal}
+     */
     static BigDecimal parseDigitsRecursive(byte[] str, int from, int to, int exponent) {
-
         // Base case: All sequences of 18 or fewer digits fit into a long.
         int numDigits = to - from;
         if (numDigits <= 18) {
@@ -100,6 +109,16 @@ final class JavaBigDecimalFromByteArray {
         return low.add(high);
     }
 
+    /**
+     * Parses up to 18 digits using a linear algorithm in O(n^2), with
+     * a small constant overhead.
+     *
+     * @param str      the input string
+     * @param from     the start index of the digit sequence in str (inclusive)
+     * @param to       the end index of the digit sequence in str (exclusive)
+     * @param exponent the exponent of the digits
+     * @return a {@link BigDecimal}
+     */
     static BigDecimal parseDigitsUpTo18(byte[] str, int from, int to, int exponent) {
         int numDigits = to - from;
         int significand = 0;
@@ -114,9 +133,17 @@ final class JavaBigDecimalFromByteArray {
         return BigDecimal.valueOf(significandL, -exponent);
     }
 
+    /**
+     * Parses digits using a linear algorithm in O(n^2) with a large
+     * constant overhead if there are less than 19 digits.
+     *
+     * @param str      the input string
+     * @param from     the start index of the digit sequence in str (inclusive)
+     * @param to       the end index of the digit sequence in str (exclusive)
+     * @param exponent the exponent of the digits
+     * @return a {@link BigDecimal}
+     */
     static BigDecimal parseDigitsLinear(byte[] str, int from, int to, int exponent) {
-        // Parse significand
-        // -----------------
         int numDigits = to - from;
         BigSignificand bigSignificand = new BigSignificand(BigSignificand.estimateNumBits(numDigits));
         int significand = 0;
@@ -357,6 +384,11 @@ final class JavaBigDecimalFromByteArray {
         return parseLargeDecFloatLiteral(str, integerPartIndex, decimalPointIndex, exponentIndicatorIndex, isNegative, (int) exponent);
     }
 
+    /**
+     * Parses digits using a multi-threaded recursive algorithm in O(n)
+     * with a large constant overhead if there are less than about 1000
+     * digits.
+     */
     static class ParseDigitsTask extends RecursiveTask<BigDecimal> {
         private final int from, to;
         private final byte[] str;
