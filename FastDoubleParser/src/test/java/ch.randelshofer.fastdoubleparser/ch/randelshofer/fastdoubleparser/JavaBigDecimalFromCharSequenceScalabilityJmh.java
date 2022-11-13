@@ -29,12 +29,12 @@ import java.util.concurrent.TimeUnit;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  *    (digits)  Mode  Cnt       _   _  Score   Error  Units
- * m       100  avgt    2       _   _756.939          ns/op
- * m      1000  avgt    2       _  9_989.409          ns/op
- * m     10000  avgt    2       _265_456.893          ns/op
- * m    100000  avgt    2      9_130_925.801          ns/op
- * m   1000000  avgt    2    303_638_502.013          ns/op
- * m  10000000  avgt    2 10_162_931_172.500          ns/op
+ * m    _   _100  avgt    2       _   _756.939          ns/op
+ * m    _  1_000  avgt    2       _  9_989.409          ns/op
+ * m    _ 10_000  avgt    2       _265_456.893          ns/op
+ * m    _100_000  avgt    2      9_130_925.801          ns/op
+ * m   1_000_000  avgt    2    303_638_502.013          ns/op
+ * m  10_000_000  avgt    2 10_162_931_172.500          ns/op
  * </pre>
  */
 

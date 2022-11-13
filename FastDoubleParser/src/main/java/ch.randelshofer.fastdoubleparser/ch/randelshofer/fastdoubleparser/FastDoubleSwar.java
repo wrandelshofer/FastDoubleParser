@@ -41,6 +41,8 @@ class FastDoubleSwar {
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
     public final static VarHandle readIntLE =
             MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.LITTLE_ENDIAN);
+    public final static VarHandle readIntBE =
+            MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.BIG_ENDIAN);
     public final static VarHandle readLongBE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
     private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
@@ -431,6 +433,7 @@ class FastDoubleSwar {
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
         return tryToParseEightHexDigitsUtf8((long) readLongBE.get(a, offset));
     }
+
 
     /**
      * Tries to parse eight digits from a long using the

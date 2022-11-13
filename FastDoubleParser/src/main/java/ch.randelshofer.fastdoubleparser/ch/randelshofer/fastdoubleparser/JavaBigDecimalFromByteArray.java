@@ -25,7 +25,7 @@ final class JavaBigDecimalFromByteArray {
      * Set this to {@link Integer#MAX_VALUE} if you only want to use the
      * sequential algorithm.
      * <p>
-     * Set this to {@link 0} if you only want to use the recursive algorithm.
+     * Set this to {@code 0} if you only want to use the recursive algorithm.
      * <p>
      * Rationale for choosing a specific threshold value:
      * The sequential algorithm is quadratic, the recursive algorithm is
@@ -40,7 +40,7 @@ final class JavaBigDecimalFromByteArray {
      * Set this to {@link Integer#MAX_VALUE} if you only want to use
      * the single-threaded algorithm.
      * <p>
-     * Set this to {@link 0} if you only want to use the multi-threaded
+     * Set this to {@code 0} if you only want to use the multi-threaded
      * algorithm.
      * <p>
      * Rationale for choosing a specific threshold value:
@@ -83,7 +83,7 @@ final class JavaBigDecimalFromByteArray {
     }
 
     /**
-     * Parses digits using a recursive algorithm in O(n) with a large
+     * Parses digits using a recursive algorithm in O(n^1.5) with a large
      * constant overhead if there are less than about 100 digits.
      *
      * @param str      the input string
@@ -385,7 +385,7 @@ final class JavaBigDecimalFromByteArray {
     }
 
     /**
-     * Parses digits using a multi-threaded recursive algorithm in O(n)
+     * Parses digits using a multi-threaded recursive algorithm in O(n^1.5)
      * with a large constant overhead if there are less than about 1000
      * digits.
      */

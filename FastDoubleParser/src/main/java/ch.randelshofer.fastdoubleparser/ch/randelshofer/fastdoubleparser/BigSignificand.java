@@ -120,7 +120,7 @@ class BigSignificand {
         return new BigInteger(x);
     }
 
-    public static long estimateNumBits(int numDecimalDigits) {
+    public static long estimateNumBits(long numDecimalDigits) {
         // For the decimal number 10 we need log_2(10) = 3.3219 bits.
         // The following formula uses 3.322 * 1024 = 3401.8 rounded up
         // and adds 1, so that we overestimate but never underestimate

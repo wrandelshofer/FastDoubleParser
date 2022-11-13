@@ -29,13 +29,13 @@ import java.util.concurrent.TimeUnit;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  *    (digits)  Mode  Cnt    _   _   _  Score   Error  Units
- * m         1  avgt    2    _   _   _ 23.866          ns/op
- * m        10  avgt    2    _   _   _ 64.853          ns/op
- * m       100  avgt    2    _   _   _505.986          ns/op
- * m      1000  avgt    2    _   _ 15_322.876          ns/op
- * m     10000  avgt    2    _  1_211_620.965          ns/op
- * m    100000  avgt    2    _117_030_135.430          ns/op
- * m   1000000  avgt    2  11_883_795_509.500          ns/op
+ * m    _   _  1  avgt    2    _   _   _ 23.866          ns/op
+ * m    _   _ 10  avgt    2    _   _   _ 64.853          ns/op
+ * m    _   _100  avgt    2    _   _   _505.986          ns/op
+ * m    _  1_000  avgt    2    _   _ 15_322.876          ns/op
+ * m    _ 10_000  avgt    2    _  1_211_620.965          ns/op
+ * m    _100_000  avgt    2    _117_030_135.430          ns/op
+ * m   1_000_000  avgt    2  11_883_795_509.500          ns/op
  * </pre>
  */
 
@@ -49,13 +49,14 @@ public class BigIntegerScalabilityJmh {
 
 
     @Param({
-            "1",
-            "10",
-            "100",
-            "1000",
-            "10000",
-            "100000",
-            "1000000"
+            //    "1",
+            //    "10",
+            //    "100",
+            //    "1000",
+            //    "10000",
+            //    "100000",
+            //    "1000000"
+            "1292782621"
     })
     public int digits;
     private String str;

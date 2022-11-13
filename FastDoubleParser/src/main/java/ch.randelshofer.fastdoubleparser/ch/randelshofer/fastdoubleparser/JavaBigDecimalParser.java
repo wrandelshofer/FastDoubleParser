@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * Provides static method for parsing a {@code double} from a
+ * Provides static method for parsing a {@link BigDecimal} from a
  * {@link CharSequence}, {@code char} array or {@code byte} array.
  * <p>
  * <b>Syntax</b>
@@ -81,8 +81,9 @@ import java.math.BigInteger;
  *     The significand of a {@link BigDecimal} uses a {@link BigInteger}
  *     to represent its significand. A {@link BigInteger} can work with up to
  *     {@code (1L << 28) - 4 = 2_147_483_616} significant bytes. A decimal digit
- *     needs about {@code 3.322265625} bits. This would allow for 5_171_076_943
- *     digits.
+ *     needs about {@code 3.322265625} bits. This would allow for 5_171_130_447L
+ *     digits. However, we can not have Strings that are longer than
+ *     {@link Integer#MAX_VALUE} - 4.
  *     <p>
  *     However the constructor {@link BigInteger#BigInteger(String)}
  *     checks if the number of bits is less than {@code (1L << 32) - 31}.
@@ -245,6 +246,10 @@ public class JavaBigDecimalParser {
      */
     public static BigDecimal parseBigDecimalOrNull(byte[] str, int offset, int length) {
         return new JavaBigDecimalFromByteArray().parseBigDecimalString(str, offset, length);
+    }
+
+    public static BigDecimal parseBigDecimalOrNull(byte[] str) {
+        return new JavaBigDecimalFromByteArray().parseBigDecimalString(str, 0, str.length);
     }
 
     /**
