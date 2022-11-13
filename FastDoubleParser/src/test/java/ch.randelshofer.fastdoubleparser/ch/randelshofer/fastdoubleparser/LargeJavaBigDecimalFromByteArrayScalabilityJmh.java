@@ -203,7 +203,7 @@ public class LargeJavaBigDecimalFromByteArrayScalabilityJmh {
 
     @Benchmark
     public BigDecimal i() {
-        return new JavaBigDecimalFromByteArray().parseFloatingPointLiteral(integerPart, 0, integerPart.length);
+        return new JavaBigDecimalFromByteArray().parseBigDecimalString(integerPart, 0, integerPart.length);
     }
     // @Benchmark
     // public BigDecimal f() {

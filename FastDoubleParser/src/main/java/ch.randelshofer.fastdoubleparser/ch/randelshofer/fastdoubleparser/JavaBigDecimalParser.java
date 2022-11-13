@@ -14,12 +14,16 @@ import java.math.BigInteger;
  * <p>
  * <b>Syntax</b>
  * <p>
- * Leading and trailing whitespace characters in {@code str} are ignored.
- * Whitespace is removed as if by the {@link String#trim()} method;
- * that is, characters in the range [U+0000,U+0020].
- * <p>
- * The rest of {@code str} should constitute a Java {@code FloatingPointLiteral}
- * as described by the lexical syntax rules shown below:
+ * Parses a {@code BigDecimalString} that is compatible with
+ * the grammar specified in {@link BigDecimal#BigDecimal(String)}.
+ * The range of the input values is limited as follows:
+ * <ol>
+ *     <li>The significand is limited to 536,870,919 digits.
+ *     <li>The exponent is limited to the range from
+ *     {@link Integer#MIN_VALUE} (exclusive) to
+ *     {@link Integer#MAX_VALUE} (inclusive)</li></li>
+ * </ol>
+ * Formal specification of the grammar:
  * <blockquote>
  * <dl>
  * <dt><i>BigDecimalString:</i></dt>
@@ -132,7 +136,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static BigDecimal parseBigDecimal(CharSequence str, int offset, int length) throws NumberFormatException {
-        BigDecimal result = new JavaBigDecimalFromCharSequence().parseFloatingPointLiteral(str, offset, length);
+        BigDecimal result = new JavaBigDecimalFromCharSequence().parseBigDecimalString(str, offset, length);
         if (result == null) {
             throw new NumberFormatException("Illegal input");
         }
@@ -163,7 +167,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static BigDecimal parseBigDecimal(byte[] str, int offset, int length) throws NumberFormatException {
-        BigDecimal result = new JavaBigDecimalFromByteArray().parseFloatingPointLiteral(str, offset, length);
+        BigDecimal result = new JavaBigDecimalFromByteArray().parseBigDecimalString(str, offset, length);
         if (result == null) {
             throw new NumberFormatException("Illegal input");
         }
@@ -195,7 +199,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException if the string can not be parsed
      */
     public static BigDecimal parseBigDecimal(char[] str, int offset, int length) throws NumberFormatException {
-        BigDecimal result = new JavaBigDecimalFromCharArray().parseFloatingPointLiteral(str, offset, length);
+        BigDecimal result = new JavaBigDecimalFromCharArray().parseBigDecimalString(str, offset, length);
         if (result == null) {
             throw new NumberFormatException("Illegal input");
         }
@@ -223,7 +227,7 @@ public class JavaBigDecimalParser {
      * otherwise, {@code -1L}.
      */
     public static BigDecimal parseBigDecimalOrNull(CharSequence str, int offset, int length) {
-        return new JavaBigDecimalFromCharSequence().parseFloatingPointLiteral(str, offset, length);
+        return new JavaBigDecimalFromCharSequence().parseBigDecimalString(str, offset, length);
     }
 
     /**
@@ -240,7 +244,7 @@ public class JavaBigDecimalParser {
      * otherwise, {@code -1L}.
      */
     public static BigDecimal parseBigDecimalOrNull(byte[] str, int offset, int length) {
-        return new JavaBigDecimalFromByteArray().parseFloatingPointLiteral(str, offset, length);
+        return new JavaBigDecimalFromByteArray().parseBigDecimalString(str, offset, length);
     }
 
     /**
@@ -257,6 +261,6 @@ public class JavaBigDecimalParser {
      * otherwise, {@code -1L}.
      */
     public static BigDecimal parseBigDecimalOrNull(char[] str, int offset, int length) {
-        return new JavaBigDecimalFromCharArray().parseFloatingPointLiteral(str, offset, length);
+        return new JavaBigDecimalFromCharArray().parseBigDecimalString(str, offset, length);
     }
 }

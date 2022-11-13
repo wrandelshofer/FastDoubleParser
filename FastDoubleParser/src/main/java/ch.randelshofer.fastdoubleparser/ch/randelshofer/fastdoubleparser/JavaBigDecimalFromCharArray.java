@@ -33,7 +33,7 @@ final class JavaBigDecimalFromCharArray {
         return FastDoubleSwar.parseEightDigitsUtf16(str, offset);
     }
 
-    public BigDecimal parseFloatingPointLiteral(char[] str, int offset, int length) {
+    public BigDecimal parseBigDecimalString(char[] str, int offset, int length) {
         long significand = 0L;
         final int integerPartIndex;
         int decimalPointIndex = -1;
@@ -126,19 +126,15 @@ final class JavaBigDecimalFromCharArray {
         if (digitCount <= 18) {
             return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
         }
-        return parseDecFloatLiteral(str, integerPartIndex, decimalPointIndex, exponentIndicatorIndex, isNegative, (int) exponent);
-    }
-
-    private BigDecimal parseDecFloatLiteral(char[] str, int integerPartIndex, int pointIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
-        boolean hasFractionalPart = exponentIndicatorIndex - pointIndex > 1;
-        BigDecimal significand;
+        boolean hasFractionalPart = exponentIndicatorIndex - decimalPointIndex > 1;
+        BigDecimal significand1;
         if (hasFractionalPart) {
-            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex - 1)
-                    .add(parseDigits(str, pointIndex + 1, exponentIndicatorIndex, exponent));
+            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex - 1)
+                    .add(parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, (int) exponent));
         } else {
-            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex);
+            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex);
         }
-        return isNegative ? significand.negate() : significand;
+        return isNegative ? significand1.negate() : significand1;
     }
 
     private BigDecimal parseDigits(char[] str, int index, int endIndex, int exponent) {

@@ -164,18 +164,6 @@ final class JavaBigDecimalFromByteArray {
         return (byte) '0' <= c && c <= (byte) '9';
     }
 
-    private BigDecimal parseLargeDecFloatLiteral(byte[] str, int integerPartIndex, int pointIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
-        boolean hasFractionalPart = exponentIndicatorIndex - pointIndex > 1;
-        BigDecimal significand;
-        if (hasFractionalPart) {
-            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex - 1)
-                    .add(parseDigits(str, pointIndex + 1, exponentIndicatorIndex, exponent));
-        } else {
-            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex);
-        }
-        return isNegative ? significand.negate() : significand;
-    }
-
     private BigDecimal parseDigits(byte[] str, int from, int to, int exponent) {
         int numDigits = to - from;
         if (numDigits < PARALLEL_THRESHOLD) {
@@ -184,9 +172,9 @@ final class JavaBigDecimalFromByteArray {
         return new ParseDigitsTask(from, to, str, exponent).compute();
     }
 
-    public BigDecimal parseFloatingPointLiteral(byte[] str, int offset, int length) {
+    public BigDecimal parseBigDecimalString(byte[] str, int offset, int length) {
         if (length >= LARGE_THRESHOLD) {
-            return parseLargeFloatingPointLiteral(str, offset, length);
+            return parseLargeBigDecimalString(str, offset, length);
         }
         long significand = 0L;
         final int integerPartIndex;
@@ -280,22 +268,27 @@ final class JavaBigDecimalFromByteArray {
         if (digitCount <= 18) {
             return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
         }
-        return parseDecFloatLiteral(str, integerPartIndex, decimalPointIndex, exponentIndicatorIndex, isNegative, (int) exponent);
-    }
-
-    private BigDecimal parseDecFloatLiteral(byte[] str, int integerPartIndex, int pointIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
-        boolean hasFractionalPart = exponentIndicatorIndex - pointIndex > 1;
-        BigDecimal significand;
+        boolean hasFractionalPart = exponentIndicatorIndex - decimalPointIndex > 1;
+        BigDecimal significand1;
         if (hasFractionalPart) {
-            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex - 1)
-                    .add(parseDigits(str, pointIndex + 1, exponentIndicatorIndex, exponent));
+            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex - 1)
+                    .add(parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, (int) exponent));
         } else {
-            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex);
+            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex);
         }
-        return isNegative ? significand.negate() : significand;
+        return isNegative ? significand1.negate() : significand1;
     }
 
-    private BigDecimal parseLargeFloatingPointLiteral(byte[] str, int offset, int length) {
+    /**
+     * Parses a 'big decimal floo
+     *
+     * @param str
+     * @param offset
+     * @param length
+     * @return
+     */
+
+    private BigDecimal parseLargeBigDecimalString(byte[] str, int offset, int length) {
         final int integerPartIndex;
         int decimalPointIndex = -1;
         final int exponentIndicatorIndex;
@@ -304,7 +297,6 @@ final class JavaBigDecimalFromByteArray {
         int index = offset;
         byte ch = index < endIndex ? str[index] : 0;
         boolean illegal = false;
-
 
         // Parse optional sign
         // -------------------
@@ -316,7 +308,7 @@ final class JavaBigDecimalFromByteArray {
             }
         }
 
-        // Parse significand
+        // Count digits of significand
         // -----------------
         // Count digits of integer part
         integerPartIndex = index;
@@ -381,7 +373,15 @@ final class JavaBigDecimalFromByteArray {
                 || digitCount > MAX_DIGIT_COUNT) {
             return null;
         }
-        return parseLargeDecFloatLiteral(str, integerPartIndex, decimalPointIndex, exponentIndicatorIndex, isNegative, (int) exponent);
+        boolean hasFractionalPart = exponentIndicatorIndex - decimalPointIndex > 1;
+        BigDecimal significand;
+        if (hasFractionalPart) {
+            significand = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex - 1)
+                    .add(parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, (int) exponent));
+        } else {
+            significand = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex);
+        }
+        return isNegative ? significand.negate() : significand;
     }
 
     /**

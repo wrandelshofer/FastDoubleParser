@@ -53,7 +53,7 @@ public class LargeJavaBigDecimalFromByteArrayTest extends AbstractBigDecimalPars
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> new JavaBigDecimalFromByteArray().parseFloatingPointLiteral(
+                        () -> test(t, u -> new JavaBigDecimalFromByteArray().parseBigDecimalString(
                                 u.input().getBytes(StandardCharsets.ISO_8859_1),
                                 u.byteOffset(), u.byteLength()))));
 
@@ -66,7 +66,7 @@ public class LargeJavaBigDecimalFromByteArrayTest extends AbstractBigDecimalPars
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> new JavaBigDecimalFromByteArray().parseFloatingPointLiteral(
+                        () -> test(t, u -> new JavaBigDecimalFromByteArray().parseBigDecimalString(
                                 u.input().getBytes(StandardCharsets.ISO_8859_1),
                                 u.byteOffset(), u.byteLength()))));
 
