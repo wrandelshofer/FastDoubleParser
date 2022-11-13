@@ -18,51 +18,44 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.28
- * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 19+36-2238
+ * # JMH version: 1.35
+ * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 20-ea+22-1594
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *    (digits)  Mode  Cnt       _   _  Score   Error  Units
- * m       100  avgt    2       _   _756.939          ns/op
- * m      1000  avgt    2       _  9_989.409          ns/op
- * m     10000  avgt    2       _265_456.893          ns/op
- * m    100000  avgt    2      9_130_925.801          ns/op
- * m   1000000  avgt    2    303_638_502.013          ns/op
- * m  10000000  avgt    2 10_162_931_172.500          ns/op
+ *    (digits)  Mode  Cnt    _   _   _  Score   Error  Units
+ * m         1  avgt    2    _   _   _ 23.866          ns/op
+ * m        10  avgt    2    _   _   _ 64.853          ns/op
+ * m       100  avgt    2    _   _   _505.986          ns/op
+ * m      1000  avgt    2    _   _ 15_322.876          ns/op
+ * m     10000  avgt    2    _  1_211_620.965          ns/op
+ * m    100000  avgt    2    _117_030_135.430          ns/op
+ * m   1000000  avgt    2  11_883_795_509.500          ns/op
  * </pre>
  */
 
-@Fork(value = 1, jvmArgsAppend = {
-        "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
-        , "--enable-preview"
-        , "-XX:+UnlockDiagnosticVMOptions"
-        // "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/*.*"
-        , "-XX:-PrintInlining"
-
-})
+@Fork(value = 1)
 @Measurement(iterations = 2)
 @Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JavaBigDecimalFromCharSequenceScalabilityJmh {
+public class BigIntegerScalabilityJmh {
 
 
     @Param({
-            // "1",
-            // "10",
-            // "100",
-            // "1000",
-            // "10000",
-            // "100000",
-            // "1000000",
-            "10000000"
+            "1",
+            "10",
+            "100",
+            "1000",
+            "10000",
+            "100000",
+            "1000000"
     })
     public int digits;
     private String str;
@@ -73,8 +66,8 @@ public class JavaBigDecimalFromCharSequenceScalabilityJmh {
     }
 
     @Benchmark
-    public BigDecimal m() {
-        return JavaBigDecimalParser.parseBigDecimal(str);
+    public BigInteger m() {
+        return new BigInteger(str);
     }
 }
 

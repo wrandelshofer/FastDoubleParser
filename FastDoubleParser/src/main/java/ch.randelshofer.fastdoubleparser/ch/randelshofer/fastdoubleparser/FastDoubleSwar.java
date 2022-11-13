@@ -256,6 +256,14 @@ class FastDoubleSwar {
         return tryToParseEightDigitsUtf8((long) readLongLE.get(a, offset));
     }
 
+    public static int countUpToEightDigitsUtf8(byte[] a, int offset) {
+        return countUpToEightDigitsUtf8((long) readLongLE.get(a, offset));
+    }
+
+    public static boolean isEightDigitsUtf8(byte[] a, int offset) {
+        return isEightDigitsUtf8((long) readLongLE.get(a, offset));
+    }
+
     public static int tryToParseFourDigitsUtf8(byte[] a, int offset) {
         return tryToParseFourDigitsUtf8((int) readIntLE.get(a, offset));
     }
@@ -302,6 +310,18 @@ class FastDoubleSwar {
         val = (val & 0xff_000000ffL) * (100 + (100_0000L << 32))
                 + (val >>> 16 & 0xff_000000ffL) * (1 + (1_0000L << 32)) >>> 32;
         return (int) val;
+    }
+
+    public static int countUpToEightDigitsUtf8(long chunk) {
+        long val = chunk - 0x3030303030303030L;
+        long predicate = ((chunk + 0x4646464646464646L) | val) & 0x8080808080808080L;
+        return predicate == 0L ? 8 : Long.numberOfTrailingZeros(predicate) >> 3;
+    }
+
+    public static boolean isEightDigitsUtf8(long chunk) {
+        long val = chunk - 0x3030303030303030L;
+        long predicate = ((chunk + 0x4646464646464646L) | val) & 0x8080808080808080L;
+        return predicate == 0L;
     }
 
     public static int tryToParseFourDigitsUtf8(int chunk) {

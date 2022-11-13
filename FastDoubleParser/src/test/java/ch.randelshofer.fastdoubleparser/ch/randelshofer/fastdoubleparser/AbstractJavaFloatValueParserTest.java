@@ -242,6 +242,13 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         );
     }
 
+    protected List<TestData> createDataForVeryLongStrings() {
+        return Arrays.asList(
+                // This should be Float.POSITIVE_INFINITY instead of -1f
+                new TestData("9 repeated MAX_VALUE", "9".repeat(Integer.MAX_VALUE - 8), Double.POSITIVE_INFINITY, -1f)
+        );
+    }
+
     List<TestData> createAllTestData() {
         List<TestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
@@ -256,6 +263,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
+        //list.addAll(createDataForVeryLongStrings());
         return list;
     }
 

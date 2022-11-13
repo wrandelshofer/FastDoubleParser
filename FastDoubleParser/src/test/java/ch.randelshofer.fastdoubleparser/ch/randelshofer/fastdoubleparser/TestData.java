@@ -25,7 +25,10 @@ public record TestData(String title,
     }
 
     public TestData(String title, String input, double expectedDoubleValue, float expectedFloatValue) {
-        this(title.contains(input) ? title : title + " " + input, input, 0, input.length(), 0, input.length(),
+        this(title.length() + (long) input.length() > 100 || title.contains(input)
+                        ? title
+                        : title + " " + input,
+                input, 0, input.length(), 0, input.length(),
                 expectedDoubleValue,
                 expectedFloatValue, true);
     }

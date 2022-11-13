@@ -28,20 +28,22 @@ import java.util.concurrent.TimeUnit;
  * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 19+36-2238
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * Benchmark    Mode  Cnt              Score   Error   Units   Factor
- * m         1  avgt    2    _   _   _ 13.139          ns/op
- * m        10  avgt    2    _   _   _ 24.150          ns/op      1.8
- * m       100  avgt    2    _   _   _496.133          ns/op     20.5
- * m      1000  avgt    2    _   _ 14_948.645          ns/op     30.1
- * m     10000  avgt    2    _  1_186_259.863          ns/op     79.4
- * m    100000  avgt    2    _116_006_218.534          ns/op     97.8
- * m   1000000  avgt    2  11_915_720_193.000          ns/op    102.7
+ * Benchmark    Mode     Cnt                 Score   Error   Units   Factor
+ * m         1  avgt       2       _   _   _ 13.139          ns/op
+ * m        10  avgt       2       _   _   _ 24.150          ns/op      1.8
+ * m       100  avgt       2       _   _   _496.133          ns/op     20.5
+ * m      1000  avgt       2       _   _ 14_948.645          ns/op     30.1
+ * m     10000  avgt       2       _  1_186_259.863          ns/op     79.4
+ * m    100000  avgt       2       _116_006_218.534          ns/op     97.8
+ * m   1000000  avgt       2     11_915_720_193.000          ns/op    102.7
+ * m  10000000  avgt       1  1_322_734_437_937.000          ns/op    111.0
+ * m 100000000
  * </pre>
  */
 
 @Fork(value = 1)
-@Measurement(iterations = 2)
-@Warmup(iterations = 2)
+@Measurement(iterations = 1)
+@Warmup(iterations = 0)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -49,13 +51,16 @@ public class BigDecimalScalabilityJmh {
 
 
     @Param({
-            "1",
-            "10",
-            "100",
-            "1000",
-            "10000",
-            "100000",
-            "1000000"
+            // "1",
+            // "10",
+            // "100",
+            // "1000",
+            // "10000",
+            // "100000",
+            // "1000000",
+            "10000000",
+            "100000000",
+            "536870919"
     })
     public int digits;
     private String str;

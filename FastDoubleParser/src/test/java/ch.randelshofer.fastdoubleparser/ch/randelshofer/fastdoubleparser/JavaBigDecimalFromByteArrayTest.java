@@ -1,16 +1,40 @@
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class JavaBigDecimalFromByteArrayTest extends AbstractBigDecimalParserTest {
 
 
-    protected void testParse(String s) {
-        BigDecimal expected = new BigDecimal(s);
-        BigDecimal actual = JavaBigDecimalParser.parseBigDecimal(s.getBytes(StandardCharsets.ISO_8859_1));
-        assertEquals(expected, actual);
+    private void test(BigDecimalTestData d, Function<BigDecimalTestData, BigDecimal> f) {
+        BigDecimal expectedValue = d.expectedValue().get();
+        BigDecimal actual = f.apply(d);
+        if (expectedValue != null) {
+            assertEquals(0, expectedValue.compareTo(actual),
+                    "expected:" + expectedValue + " <> actual:" + actual);
+            assertEquals(expectedValue, actual);
+        } else {
+            assertNull(actual);
+        }
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTestsParseBigDecimalFromByteArray() {
+        return createRegularTestData().stream()
+                .filter(t -> t.charLength() == t.input().length()
+                        && t.charOffset() == 0)
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimalOrNull(u.input().getBytes(StandardCharsets.ISO_8859_1),
+                                u.byteOffset(), u.byteLength()))));
+
     }
 }

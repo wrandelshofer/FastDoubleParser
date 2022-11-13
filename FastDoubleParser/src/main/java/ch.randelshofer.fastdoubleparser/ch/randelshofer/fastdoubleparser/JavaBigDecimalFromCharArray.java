@@ -11,7 +11,11 @@ import java.math.BigDecimal;
  * Parses a {@code double} from a {@code char} array.
  */
 final class JavaBigDecimalFromCharArray {
-    final static int MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
+    /**
+     * See {@link JavaBigDecimalParser}.
+     */
+    private final static int MAX_DIGIT_COUNT = 536_870_919;
+    private final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
 
 
     /**
@@ -37,7 +41,7 @@ final class JavaBigDecimalFromCharArray {
 
         final int endIndex = offset + length;
         int index = offset;
-        char ch = str[index];
+        char ch = index < endIndex ? str[index] : 0;
         boolean illegal = false;
 
 
@@ -88,7 +92,7 @@ final class JavaBigDecimalFromCharArray {
 
         // Parse exponent number
         // ---------------------
-        int expNumber = 0;
+        long expNumber = 0;
         if (ch == 'e' || ch == 'E') {
             exponentIndicatorIndex = index;
             ch = ++index < endIndex ? str[index] : 0;
@@ -113,7 +117,9 @@ final class JavaBigDecimalFromCharArray {
         }
         if (illegal || index < endIndex
                 || digitCount == 0
-                || Math.abs(exponent) > MAX_EXPONENT_NUMBER) {
+                || exponent < Integer.MIN_VALUE
+                || exponent > Integer.MAX_VALUE
+                || digitCount > MAX_DIGIT_COUNT) {
             return null;
         }
 
@@ -124,17 +130,15 @@ final class JavaBigDecimalFromCharArray {
     }
 
     private BigDecimal parseDecFloatLiteral(char[] str, int integerPartIndex, int pointIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
-        boolean hasIntegerPart = pointIndex - integerPartIndex > 0;
         boolean hasFractionalPart = exponentIndicatorIndex - pointIndex > 1;
-        BigDecimal integerPart = hasIntegerPart
-                ? parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex - (hasFractionalPart ? 1 : 0))
-                : BigDecimal.ZERO;
-        BigDecimal fractionalPart = hasFractionalPart
-                ? parseDigits(str, pointIndex + 1, exponentIndicatorIndex, exponent)
-                : BigDecimal.ZERO;
-
-        BigDecimal result = integerPart.add(fractionalPart);
-        return isNegative ? result.negate() : result;
+        BigDecimal significand;
+        if (hasFractionalPart) {
+            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex - 1)
+                    .add(parseDigits(str, pointIndex + 1, exponentIndicatorIndex, exponent));
+        } else {
+            significand = parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex);
+        }
+        return isNegative ? significand.negate() : significand;
     }
 
     private BigDecimal parseDigits(char[] str, int index, int endIndex, int exponent) {
