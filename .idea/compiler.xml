@@ -2,20 +2,20 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="FastDoubleParserDemo" />
         <module name="FastDoubleParser (1)" />
+        <module name="FastDoubleParser" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="FastDoubleParserDemo" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FastDoubleParser" options="" />
+      <module name="FastDoubleParser" options="-Xlint:all" />
       <module name="FastDoubleParser (1)" options="-Xlint:all" />
       <module name="FastDoubleParserDemo" options="-Xlint:all" />
     </option>

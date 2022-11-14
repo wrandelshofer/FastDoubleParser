@@ -2,7 +2,6 @@
   <configuration default="false" name="Main [0,1)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="FastDoubleParserDemo" />
-    <option name="PROGRAM_PARAMETERS" value="--print-confidence" />
     <option name="VM_PARAMETERS" value="-XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=inline,java/lang/String.charAt" />
     <extension name="coverage">
       <pattern>

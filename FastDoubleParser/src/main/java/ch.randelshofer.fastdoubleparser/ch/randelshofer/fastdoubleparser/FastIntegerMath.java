@@ -48,7 +48,6 @@ public class FastIntegerMath {
         return (a + (a << 2)) << 1;
     }
 
-
     /**
      * Computes {@code uint128 product = (uint64)x * (uint64)y}.
      * <p>
@@ -63,11 +62,7 @@ public class FastIntegerMath {
      * @param y uint64 factor y
      * @return uint128 product of x and y
      */
-    static UInt128 fullMultiplication(long x, long y) {//since Java 18
-        return new UInt128(Math.unsignedMultiplyHigh(x, y), x * y);
-    }
-
-    static long unsignedMultiplyHighJava1(long x, long y) {//since Java 1
+    static UInt128 fullMultiplication(long x, long y) {//before Java 18
         long x0 = x & 0xffffffffL, x1 = x >>> 32;
         long y0 = y & 0xffffffffL, y1 = y >>> 32;
         long p11 = x1 * y1, p01 = x0 * y1;
@@ -75,10 +70,12 @@ public class FastIntegerMath {
 
         // 64-bit product + two 32-bit values
         long middle = p10 + (p00 >>> 32) + (p01 & 0xffffffffL);
-        return  // 64-bit product + two 32-bit values
-                p11 + (middle >>> 32) + (p01 >>> 32);
+        return new UInt128(
+                // 64-bit product + two 32-bit values
+                p11 + (middle >>> 32) + (p01 >>> 32),
+                // Add LOW PART and lower half of MIDDLE PART
+                (middle << 32) | (p00 & 0xffffffffL));
     }
-
     static class UInt128 {
         final long high, low;
 

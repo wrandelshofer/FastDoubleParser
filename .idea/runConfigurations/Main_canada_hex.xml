@@ -1,9 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main canada.txt" type="Application" factoryName="Application">
+  <configuration default="false" name="Main canada_hex" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="FastDoubleParserDemo" />
-    <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
-    <option name="VM_PARAMETERS" value="--enable-preview -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=inline,java/lang/String.charAt" />
+    <option name="PROGRAM_PARAMETERS" value="data/canada_hex.txt" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
     <extension name="coverage">
       <pattern>
