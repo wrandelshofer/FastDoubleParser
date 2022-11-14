@@ -74,7 +74,6 @@ class FastDoubleSwar {
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
-    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int tryToParseFourDigitsUtf16(char[] a, int offset) {
         /*
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
@@ -89,7 +88,6 @@ class FastDoubleSwar {
         return FastDoubleSwar.tryToParseFourDigitsUtf16(first);
     }
 
-    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int parseEightDigitsUtf16(char[] a, int offset) {
         /*
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
