@@ -274,9 +274,14 @@ class FastDoubleSwar {
     }
 
     public static boolean isEightDigits(char[] a, int offset) {
-        MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
-        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
+        long first = a[offset]
+                | (long) a[offset + 1] << 16
+                | (long) a[offset + 2] << 32
+                | (long) a[offset + 3] << 48;
+        long second = a[offset + 4]
+                | (long) a[offset + 5] << 16
+                | (long) a[offset + 6] << 32
+                | (long) a[offset + 7] << 48;
 
         return isEightDigitsUtf16(first, second);
     }
