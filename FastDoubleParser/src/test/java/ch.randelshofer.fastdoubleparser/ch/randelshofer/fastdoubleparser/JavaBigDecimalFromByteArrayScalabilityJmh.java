@@ -95,7 +95,7 @@ public class JavaBigDecimalFromByteArrayScalabilityJmh {
     @Param({
             "1"
             , "10"
-            "100"
+            , "100"
             , "1000"
             , "10000"
             , "100000"
