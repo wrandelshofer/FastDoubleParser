@@ -33,7 +33,7 @@ public class JavaBigIntegerFromByteArrayTest extends AbstractBigIntegerParserTes
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaBigIntegerParser.parseBigIntegerOrNull(u.input().getBytes(StandardCharsets.ISO_8859_1),
+                        () -> test(t, u -> JavaBigIntegerParser.parseBigIntegerOrNull(u.input().toString().getBytes(StandardCharsets.ISO_8859_1),
                                 u.byteOffset(), u.byteLength()))));
 
     }

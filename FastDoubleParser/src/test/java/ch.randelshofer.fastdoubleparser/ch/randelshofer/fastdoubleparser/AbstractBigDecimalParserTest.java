@@ -122,7 +122,14 @@ public abstract class AbstractBigDecimalParserTest {
                 new BigDecimalTestData("+1.2E+3", new BigDecimal("1.2e3")),
                 new BigDecimalTestData("1234567890", new BigDecimal("1234567890")),
                 new BigDecimalTestData("000000000", new BigDecimal("000000000")),
-                new BigDecimalTestData("0000.0000", new BigDecimal("0000.0000"))
+                new BigDecimalTestData("0000.0000", new BigDecimal("0000.0000")),
+
+                new BigDecimalTestData("8." + ("9".repeat(19)) + "e68", new BigDecimal("8." + ("9".repeat(19)) + "e68")),
+                new BigDecimalTestData("103203303403503603703803903.122232425262728292", new BigDecimal("103203303403503603703803903.122232425262728292")),
+                new BigDecimalTestData("122232425262728292.103203303403503603703803903", new BigDecimal("122232425262728292.103203303403503603703803903")),
+                new BigDecimalTestData("-103203303403503603703803903.122232425262728292e6789", new BigDecimal("-103203303403503603703803903.122232425262728292e6789")),
+                new BigDecimalTestData("122232425262728292.103203303403503603703803903e-6789", new BigDecimal("122232425262728292.103203303403503603703803903e-6789")),
+                new BigDecimalTestData("-122232425262728292.103203303403503603703803903e-6789", new BigDecimal("-122232425262728292.103203303403503603703803903e-6789"))
         );
     }
 
@@ -145,6 +152,7 @@ public abstract class AbstractBigDecimalParserTest {
 
     protected List<BigDecimalTestData> createDataForVeryLongStrings() {
         return Arrays.asList(
+                /*
                 // new BigDecimalTestData("BigDecimal Max Big Integer",
                 //         MAX_BIG_INTEGER.toString(), new BigDecimal(MAX_BIG_INTEGER,0)),
                 // new BigDecimalTestData("BigDecimal Min Big Integer",
@@ -162,6 +170,75 @@ public abstract class AbstractBigDecimalParserTest {
                         () -> new BigDecimal("1e100000000").subtract(BigDecimal.ONE)),
                 new BigDecimalTestData("DIGIT ** 536_870_919", "9".repeat(536_870_919),
                         () -> new BigDecimal("1e536870919").subtract(BigDecimal.ONE))
+                        
+                 */
+        );
+    }
+
+    protected List<BigDecimalTestData> createTestDataForInputClassesInMethodParseBigDecimalString() {
+        return Arrays.asList(
+                new BigDecimalTestData("parseBigDecimalString(): illegal empty string", ""),
+                new BigDecimalTestData("parseBigDecimalString(): illegal sign", "§"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal only negative sign", "-"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal only positive sign", "+"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal only point", "."),
+                new BigDecimalTestData("parseBigDecimalString(): integer significand", "1", true),
+                new BigDecimalTestData("parseBigDecimalString(): fractional significand", "0.1", true),
+                new BigDecimalTestData("parseBigDecimalString(): point before significand", ".1", true),
+                new BigDecimalTestData("parseBigDecimalString(): point after significand", "1.", true),
+                new BigDecimalTestData("parseBigDecimalString(): point before significand, 40 digits", ".1234567890123456789012345678901234567890", true),
+                new BigDecimalTestData("parseBigDecimalString(): point after significand, 40 digits", "1234567890123456789012345678901234567890.", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 18 digits in integer part", "123456789012345678", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 18 digits in fraction part", ".123456789012345678", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 18 digits in integer and fraction part together", "1234567890.12345678", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 19 digits in integer part", "1234567890123456789", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 19 digits in fraction part", ".1234567890123456789", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 19 digits in integer and fraction part together", "1234567890.123456789", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 40 digits in integer part", "1234567890123456789012345678901234567890", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 40 digits in fraction part", ".1234567890123456789012345678901234567890", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 40 digits in integer and fraction part together", "1234567890.123456789012345678901234567890", true),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 18 digits in integer part", "123456789012345u78"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 18 digits in fraction part", ".1234567890123u5678"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 18 digits in integer and fraction part together", "123456789u.12345678"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 19 digits in integer part", "12345678901234567u9"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 19 digits in fraction part", ".12345678901234567u9"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 19 digits in integer and fraction part together", "1234567890.12345u789"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 40 digits in integer part", "1234567890123456789012345678901234567u9"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 40 digits in fraction part", ".1234567890123456789012345678901234567u9"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal digit in significand with 40 digits in integer and fraction part together", "123456789012345678901234567890.12345u789"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal only exponent indicator e", "e"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal only exponent indicator E", "E"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal exponent without number", "1e"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal exponent without number +", "1e+"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal exponent without number -", "1e-"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal exponent without number §", "1e§"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal duplicate point", "1.2.3e4"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal duplicate sign", "--1.2e4"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal duplicate sign after point", "-1.-2e5"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal duplicate sign inside significand", "-1-2e5"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal duplicate sign inside exponent", "-12e5-6"),
+                new BigDecimalTestData("parseBigDecimalString(): illegal duplicate  exponent", "-12e5e6"),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 18 digits in integer part and exponent", "123456789012345678e-887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 18 digits in fraction part and exponent", "-.123456789012345678e887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 18 digits in integer and fraction part together and exponent", "1234567890.12345678e-887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 19 digits in integer part and exponent", "-1234567890123456789e887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 19 digits in fraction part and exponent", "-.1234567890123456789e-887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 19 digits in integer and fraction part together and exponent", "-1234567890.123456789e887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 40 digits in integer part and exponent", "-1234567890123456789012345678901234567890e887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 40 digits in fraction part and exponent", "-.1234567890123456789012345678901234567890e-887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 40 digits in integer and fraction part together and exponent", "-123456789012345678901234567890.1234567890e887799", true),
+                new BigDecimalTestData("parseBigDecimalString(): significand too many digits (BigInteger would overflow supported range)", new VirtualCharSequence('1', 1_292_782_621 + 1)),
+
+                new BigDecimalTestData("parseBigDecimalString(): significand with 127 integer digits (below recursion threshold)", new VirtualCharSequence('7', 127), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 128 integer digits (above recursion threshold)", new VirtualCharSequence('7', 128), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 127 fraction digits (below recursion threshold)", new VirtualCharSequence(".", '7', 128), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 128 fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', 129), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 1023 integer digits (below parallel threshold)", new VirtualCharSequence('7', 1023), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 1024 integer digits (above parallel threshold)", new VirtualCharSequence('7', 1024), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 2048 integer digits (twice above parallel threshold)", new VirtualCharSequence('7', 2048), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 1023 fraction digits (below parallel threshold)", new VirtualCharSequence(".", '7', 1024), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 1024 fraction digits (above parallel threshold)", new VirtualCharSequence(".", '7', 1025), true),
+                new BigDecimalTestData("parseBigDecimalString(): significand with 2048 integer digits, 4096 fraction digits (above parallel threshold)", new VirtualCharSequence("", 2048, ".", "", '7', 2048 + 4096 + 1), true)
         );
     }
 
@@ -186,5 +263,6 @@ public abstract class AbstractBigDecimalParserTest {
         list.addAll(createDataForLegalCroppedStrings());
         return list;
     }
+
 
 }

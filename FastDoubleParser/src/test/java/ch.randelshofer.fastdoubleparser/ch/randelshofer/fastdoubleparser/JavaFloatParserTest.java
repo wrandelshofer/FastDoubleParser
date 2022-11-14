@@ -41,14 +41,14 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().getBytes(StandardCharsets.UTF_8)))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().getBytes(StandardCharsets.UTF_8)))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
@@ -57,14 +57,14 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toCharArray()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().toCharArray()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
@@ -78,18 +78,18 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleBitsByteArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> testBits(t, u -> JavaFloatParser.parseFloatBits(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> testBits(t, u -> JavaFloatParser.parseFloatBits(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleBitsCharArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> testBits(t, u -> JavaFloatParser.parseFloatBits(u.input().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> testBits(t, u -> JavaFloatParser.parseFloatBits(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
     }
 
-    private void test(TestData d, ToFloatFunction<TestData> f) {
-        byte[] bytes = d.input().getBytes(StandardCharsets.UTF_8);
+    private void test(FloatTestData d, ToFloatFunction<FloatTestData> f) {
+        byte[] bytes = d.input().toString().getBytes(StandardCharsets.UTF_8);
         if (!d.valid()) {
             try {
                 assertEquals(-1L, f.applyAsFloat(d));
@@ -102,7 +102,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
         }
     }
 
-    private void testBits(TestData d, ToLongFunction<TestData> f) {
+    private void testBits(FloatTestData d, ToLongFunction<FloatTestData> f) {
         if (!d.valid()) {
             assertEquals(-1L, f.applyAsLong(d));
         } else {

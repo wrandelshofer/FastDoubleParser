@@ -32,7 +32,7 @@ public class JavaBigDecimalFromCharArrayTest extends AbstractBigDecimalParserTes
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimalOrNull(u.input().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimalOrNull(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
 
     }
 

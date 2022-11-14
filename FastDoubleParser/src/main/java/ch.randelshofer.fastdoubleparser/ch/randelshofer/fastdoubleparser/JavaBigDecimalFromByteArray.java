@@ -6,6 +6,10 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.concurrent.RecursiveTask;
 
 
@@ -14,28 +18,23 @@ import java.util.concurrent.RecursiveTask;
  */
 final class JavaBigDecimalFromByteArray {
     /**
-     * See {@link JavaBigDecimalParser}.
-     */
-    private final static int MAX_DIGIT_COUNT = 536_870_919;
-    private final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
-
-    /**
-     * Threshold for recursive algorithm vs. sequential algorithm.
+     * Threshold on the number of digits for selecting the
+     * recursive algorithm instead of the quadratic algorithm.
      * <p>
      * Set this to {@link Integer#MAX_VALUE} if you only want to use the
-     * sequential algorithm.
+     * quadratic algorithm.
      * <p>
      * Set this to {@code 0} if you only want to use the recursive algorithm.
      * <p>
      * Rationale for choosing a specific threshold value:
-     * The sequential algorithm is quadratic, the recursive algorithm is
-     * linear. We speculate that we break even somewhere at twice the
-     * threshold.
+     * The quadratic algorithm has a smaller constant overhead than the
+     * recursive algorithm. We speculate that we break even somewhere at twice
+     * the threshold value.
      */
-    public static final int RECURSIVE_THRESHOLD = 128;
-
+    public static final int RECURSION_THRESHOLD = 128;
     /**
-     * Threshold for single-threaded algorithm vs. multi-threaded algorithm.
+     * Threshold on the number of digits for selecting the multi-threaded
+     * algorithm instead of the single-thread algorithm.
      * <p>
      * Set this to {@link Integer#MAX_VALUE} if you only want to use
      * the single-threaded algorithm.
@@ -48,21 +47,21 @@ final class JavaBigDecimalFromByteArray {
      * before it is worth using multiple threads.
      */
     public static final int PARALLEL_THRESHOLD = 1024;
-
     /**
-     * Threshold for algorithm for short input sequences vs. algorithm for
-     * long input sequences.
+     * Threshold on the number of input characters for selecting the
+     * algorithm optimised for few digits in the significand vs. the algorithm for many
+     * digits in the significand.
      * <p>
      * Set this to {@link Integer#MAX_VALUE} if you only want to use
-     * the algorithm for short inputs.
+     * the algorithm optimised for few digits in the significand.
      * <p>
      * Set this to {@code 0} if you only want to use the algorithm for
      * long inputs.
      * <p>
      * Rationale for choosing a specific threshold value:
-     * We speculate that we only need to use the algorithm for long inputs
-     * if there is no chance, that we can parse the input with the algorithm
-     * for short inputs.
+     * We speculate that we only need to use the algorithm for large inputs
+     * if there is zero chance, that we can parse the input with the algorithm
+     * for small inputs.
      * <pre>
      * optional significant sign = 1
      * 18 significant digits = 18
@@ -72,8 +71,31 @@ final class JavaBigDecimalFromByteArray {
      * 10 exponent digits = 10
      * </pre>
      */
-    public static final int LARGE_THRESHOLD = 1 + 18 + 1 + 1 + 1 + 10;
-
+    public static final int MANY_DIGITS_THRESHOLD = 1 + 18 + 1 + 1 + 1 + 10;
+    /**
+     * See {@link JavaBigDecimalParser}.
+     */
+    private final static int MAX_DIGIT_COUNT = 1_292_782_621;
+    private final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
+    private final static Map<Integer, BigInteger> SMALL_POWERS_OF_TEN = Map.ofEntries(
+            Map.entry(0, BigInteger.ONE),
+            Map.entry(1, BigInteger.TEN),
+            Map.entry(2, BigInteger.valueOf(100L)),
+            Map.entry(3, BigInteger.valueOf(1_000L)),
+            Map.entry(4, BigInteger.valueOf(10_000L)),
+            Map.entry(5, BigInteger.valueOf(100_000L)),
+            Map.entry(6, BigInteger.valueOf(1_000_000L)),
+            Map.entry(7, BigInteger.valueOf(10_000_000L)),
+            Map.entry(8, BigInteger.valueOf(100_000_000L)),
+            Map.entry(9, BigInteger.valueOf(1_000_000_000L)),
+            Map.entry(10, BigInteger.valueOf(10_000_000_000L)),
+            Map.entry(11, BigInteger.valueOf(100_000_000_000L)),
+            Map.entry(12, BigInteger.valueOf(1_000_000_000_000L)),
+            Map.entry(13, BigInteger.valueOf(10_000_000_000_000L)),
+            Map.entry(14, BigInteger.valueOf(100_000_000_000_000L)),
+            Map.entry(15, BigInteger.valueOf(1_000_000_000_000_000L))
+    );
+    private final static BigInteger TEN_POW_16 = BigInteger.valueOf(10_000_000_000_000_000L);
 
     /**
      * Creates a new instance.
@@ -83,98 +105,166 @@ final class JavaBigDecimalFromByteArray {
     }
 
     /**
+     * Parses digits in O(n^2) with a large
+     * constant overhead if there are less than 19 digits.
+     *
+     * @param str  the input string
+     * @param from the start index of the digit sequence in str (inclusive)
+     * @param to   the end index of the digit sequence in str (exclusive)
+     * @return a {@link BigDecimal}
+     */
+    static BigInteger parseDigitsQuadratic(byte[] str, int from, int to) {
+        int numDigits = to - from;
+        BigSignificand bigSignificand = new BigSignificand(BigSignificand.estimateNumBits(numDigits));
+        int preroll = from + (numDigits & 7);
+        bigSignificand.add(FastDoubleSwar.parseUpTo7DigitsUtf8(str, from, preroll));
+        for (from = preroll; from < to; from += 8) {
+            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigitsUtf8(str, from));
+        }
+
+        return bigSignificand.toBigInteger();
+    }
+
+    /**
      * Parses digits using a recursive algorithm in O(n^1.5) with a large
      * constant overhead if there are less than about 100 digits.
      *
-     * @param str      the input string
-     * @param from     the start index of the digit sequence in str (inclusive)
-     * @param to       the end index of the digit sequence in str (exclusive)
-     * @param exponent the exponent of the digits
+     * @param str  the input string
+     * @param from the start index of the digit sequence in str (inclusive)
+     * @param to   the end index of the digit sequence in str (exclusive)
      * @return a {@link BigDecimal}
      */
-    static BigDecimal parseDigitsRecursive(byte[] str, int from, int to, int exponent) {
+    private static BigInteger parseDigitsRecursive(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
         // Base case: All sequences of 18 or fewer digits fit into a long.
         int numDigits = to - from;
         if (numDigits <= 18) {
-            return parseDigitsUpTo18(str, from, to, exponent);
+            return parseDigitsUpTo18(str, from, to);
         }
-        if (numDigits <= RECURSIVE_THRESHOLD) {
-            return parseDigitsLinear(str, from, to, exponent);
+        if (numDigits <= RECURSION_THRESHOLD) {
+            return parseDigitsQuadratic(str, from, to);
         }
 
         // Recursion case: Sequences of more than 18 digits do not fit into a long.
-        int mid = (from + to) >>> 1;
-        BigDecimal high = parseDigitsRecursive(str, from, mid, exponent + to - mid);
-        BigDecimal low = parseDigitsRecursive(str, mid, to, exponent);
+        int mid = split(from, to);
+        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
+        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
+
+        high = high.multiply(powersOfTen.get(to - mid));
         return low.add(high);
     }
 
     /**
-     * Parses up to 18 digits using a linear algorithm in O(n^2), with
+     * Parses up to 18 digits in O(n), with
      * a small constant overhead.
      *
-     * @param str      the input string
-     * @param from     the start index of the digit sequence in str (inclusive)
-     * @param to       the end index of the digit sequence in str (exclusive)
-     * @param exponent the exponent of the digits
-     * @return a {@link BigDecimal}
+     * @param str  the input string
+     * @param from the start index of the digit sequence in str (inclusive)
+     * @param to   the end index of the digit sequence in str (exclusive)
      */
-    static BigDecimal parseDigitsUpTo18(byte[] str, int from, int to, int exponent) {
+    private static BigInteger parseDigitsUpTo18(byte[] str, int from, int to) {
         int numDigits = to - from;
-        int significand = 0;
-        int prerollLimit = from + (numDigits & 7);
-        for (; from < prerollLimit; from++) {
-            significand = 10 * (significand) + str[from] - '0';
+        int preroll = from + (numDigits & 7);
+        long significand = FastDoubleSwar.parseUpTo7DigitsUtf8(str, from, preroll);
+        for (from = preroll; from < to; from += 8) {
+            significand = significand * 100_000_000L + FastDoubleSwar.parseEightDigitsUtf8(str, from);
         }
-        long significandL = significand;
-        for (; from < to; from += 8) {
-            significandL = significandL * 100_000_000L + FastDoubleSwar.parseEightDigitsUtf8(str, from);
-        }
-        return BigDecimal.valueOf(significandL, -exponent);
+        return BigInteger.valueOf(significand);
+    }
+
+    private static int split(int from, int to) {
+        int mid = (from + to) >>> 1;// split in half
+        mid = to - (((to - mid + 15) >> 4) << 4);// make numDigits of low a multiple of 16
+        return mid;
     }
 
     /**
-     * Parses digits using a linear algorithm in O(n^2) with a large
-     * constant overhead if there are less than 19 digits.
+     * Computes the n-th power of ten.
      *
-     * @param str      the input string
-     * @param from     the start index of the digit sequence in str (inclusive)
-     * @param to       the end index of the digit sequence in str (exclusive)
-     * @param exponent the exponent of the digits
-     * @return a {@link BigDecimal}
+     * @param powersOfTen A map with pre-computed powers of ten
+     * @param n           the power
+     * @return the computed power of ten
      */
-    static BigDecimal parseDigitsLinear(byte[] str, int from, int to, int exponent) {
-        int numDigits = to - from;
-        BigSignificand bigSignificand = new BigSignificand(BigSignificand.estimateNumBits(numDigits));
-        int significand = 0;
-        int prerollLimit = from + (numDigits & 7);
-        for (; from < prerollLimit; from++) {
-            significand = 10 * (significand) + str[from] - '0';
+    private BigInteger computePowerOfTen(NavigableMap<Integer, BigInteger> powersOfTen, int n) {
+        BigInteger pow;
+        BigInteger p = powersOfTen.get(n);
+        if (p == null) {
+            p = computeTenRaisedByNFloor16Recursive(powersOfTen, n);
         }
-        bigSignificand.add(significand);
-        for (; from < to; from += 8) {
-            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigitsUtf8(str, from));
+        int remainder = n & 15;
+        if (remainder == 0) {
+            pow = p;
+        } else {
+            pow = p.parallelMultiply(SMALL_POWERS_OF_TEN.get(remainder));
         }
-
-        return new BigDecimal(bigSignificand.toBigInteger(), -exponent);
+        return pow;
     }
 
+    /**
+     * Computes 10<sup>n&~15</sup>.
+     */
+    private BigInteger computeTenRaisedByNFloor16Recursive(NavigableMap<Integer, BigInteger> powersOfTen, int n) {
+        n = n & ~15;
+        Map.Entry<Integer, BigInteger> floorEntry = powersOfTen.floorEntry(n);
+        int floorPower = floorEntry.getKey();
+        BigInteger floorValue = floorEntry.getValue();
+        if (floorPower == n) {
+            return floorValue;
+        }
+        int diff = n - floorPower;
+        BigInteger diffValue = powersOfTen.get(diff);
+        if (diffValue == null) {
+            diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff);
+            powersOfTen.put(diff, diffValue);
+        }
+        return floorValue.parallelMultiply(diffValue);
+    }
+
+    /**
+     * Fills the provided map with powers of 10. The map only contains powers that
+     * are divisible by 16.
+     * <p>
+     * This algorithm uses the same split-method that the recursion algorithm
+     * in method {@link #parseDigitsRecursive(byte[], int, int, Map)}
+     * uses. This ensures that compute all powers of ten, that the
+     * recursion algorithm needs.
+     *
+     * @param from index of the first digit character (inclusive)
+     * @param to   index of the last digit character (exclusive)
+     * @return a map with the powers of 10 that the recursion algorithm
+     * needs.
+     */
+    private void fillPowersOfTenFloor16Recursive(NavigableMap<Integer, BigInteger> powersOfTen, int from, int to) {
+        int numDigits = to - from;
+        // base case:
+        if (numDigits <= 18) {
+            return;
+        }
+        // recursion case:
+        int mid = split(from, to);
+        int n = to - mid;
+        if (!powersOfTen.containsKey(n)) {
+            fillPowersOfTenFloor16Recursive(powersOfTen, from, mid);
+            fillPowersOfTenFloor16Recursive(powersOfTen, mid, to);
+            powersOfTen.put(n, computeTenRaisedByNFloor16Recursive(powersOfTen, n));
+        }
+        return;
+    }
 
     private boolean isDigit(byte c) {
         return (byte) '0' <= c && c <= (byte) '9';
     }
 
-    private BigDecimal parseDigits(byte[] str, int from, int to, int exponent) {
-        int numDigits = to - from;
-        if (numDigits < PARALLEL_THRESHOLD) {
-            return parseDigitsRecursive(str, from, to, exponent);
-        }
-        return new ParseDigitsTask(from, to, str, exponent).compute();
-    }
-
+    /**
+     * Parses a {@code BigDecimalString} as specified in {@link JavaBigDecimalParser}.
+     *
+     * @param str    the input string
+     * @param offset start of the input data
+     * @param length length of the input data
+     * @return the parsed {@link BigDecimal} or null
+     */
     public BigDecimal parseBigDecimalString(byte[] str, int offset, int length) {
-        if (length >= LARGE_THRESHOLD) {
-            return parseLargeBigDecimalString(str, offset, length);
+        if (length >= MANY_DIGITS_THRESHOLD) {
+            return parseBigDecimalStringWithManyDigits(str, offset, length);
         }
         long significand = 0L;
         final int integerPartIndex;
@@ -268,27 +358,13 @@ final class JavaBigDecimalFromByteArray {
         if (digitCount <= 18) {
             return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
         }
-        boolean hasFractionalPart = exponentIndicatorIndex - decimalPointIndex > 1;
-        BigDecimal significand1;
-        if (hasFractionalPart) {
-            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex - 1)
-                    .add(parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, (int) exponent));
-        } else {
-            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex);
-        }
-        return isNegative ? significand1.negate() : significand1;
+        return valueOfBigDecimalString(str, integerPartIndex, decimalPointIndex, exponentIndicatorIndex, isNegative, (int) exponent);
     }
 
     /**
-     * Parses a 'big decimal floo
-     *
-     * @param str
-     * @param offset
-     * @param length
-     * @return
+     * Parses a big decimal string that has many digits.
      */
-
-    private BigDecimal parseLargeBigDecimalString(byte[] str, int offset, int length) {
+    private BigDecimal parseBigDecimalStringWithManyDigits(byte[] str, int offset, int length) {
         final int integerPartIndex;
         int decimalPointIndex = -1;
         final int exponentIndicatorIndex;
@@ -373,15 +449,63 @@ final class JavaBigDecimalFromByteArray {
                 || digitCount > MAX_DIGIT_COUNT) {
             return null;
         }
-        boolean hasFractionalPart = exponentIndicatorIndex - decimalPointIndex > 1;
-        BigDecimal significand;
-        if (hasFractionalPart) {
-            significand = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex - 1)
-                    .add(parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, (int) exponent));
+        return valueOfBigDecimalString(str, integerPartIndex, decimalPointIndex, exponentIndicatorIndex, isNegative, (int) exponent);
+    }
+
+    private BigInteger parseDigits(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
+        int numDigits = to - from;
+        if (numDigits < PARALLEL_THRESHOLD) {
+            return parseDigitsRecursive(str, from, to, powersOfTen);
         } else {
-            significand = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex);
+            return new ParseDigitsTask(str, from, to, powersOfTen).compute();
         }
-        return isNegative ? significand.negate() : significand;
+    }
+
+    private BigDecimal valueOfBigDecimalString(byte[] str, int integerPartIndex, int decimalPointIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
+        int fractionDigitsCount = exponentIndicatorIndex - decimalPointIndex - 1;
+        int integerDigitsCount = decimalPointIndex - integerPartIndex;
+
+        // Create a map with powers of ten. The map is used for combining
+        // sequences of digits. A navigable map is useful for filling the map,
+        // however for querying, a hash map has better performance.
+        // This is why we copy the map before we call the parseDigits() method.
+        NavigableMap<Integer, BigInteger> powersOfTen = new TreeMap<>();
+        powersOfTen.put(0, BigInteger.ONE);
+        powersOfTen.put(16, TEN_POW_16);
+
+        BigInteger integerPart;
+        if (integerDigitsCount > 0) {
+            if (integerDigitsCount > RECURSION_THRESHOLD) {
+                fillPowersOfTenFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
+                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, Map.copyOf(powersOfTen));
+            } else {
+                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, null);
+            }
+        } else {
+            integerPart = BigInteger.ZERO;
+        }
+
+        BigInteger significand;
+        if (fractionDigitsCount > 0) {
+            BigInteger fractionalPart;
+            if (fractionDigitsCount > RECURSION_THRESHOLD) {
+                fillPowersOfTenFloor16Recursive(powersOfTen, decimalPointIndex + 1, exponentIndicatorIndex);
+                fractionalPart = parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, Map.copyOf(powersOfTen));
+            } else {
+                fractionalPart = parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, null);
+            }
+            if (integerPart.signum() == 0) {
+                significand = fractionalPart;
+            } else {
+                BigInteger integerPower = computePowerOfTen(powersOfTen, exponentIndicatorIndex - decimalPointIndex - 1);
+                significand = integerPart.parallelMultiply(integerPower).add(fractionalPart);
+            }
+        } else {
+            significand = integerPart;
+        }
+
+        BigDecimal result = new BigDecimal(significand, -exponent);
+        return isNegative ? result.negate() : result;
     }
 
     /**
@@ -389,35 +513,33 @@ final class JavaBigDecimalFromByteArray {
      * with a large constant overhead if there are less than about 1000
      * digits.
      */
-    static class ParseDigitsTask extends RecursiveTask<BigDecimal> {
+    static class ParseDigitsTask extends RecursiveTask<BigInteger> {
         private final int from, to;
         private final byte[] str;
-        private final int exponent;
+        private final Map<Integer, BigInteger> powersOfTen;
 
-        ParseDigitsTask(int from, int to, byte[] str, int exponent) {
+        ParseDigitsTask(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
             this.from = from;
             this.to = to;
             this.str = str;
-            this.exponent = exponent;
+            this.powersOfTen = powersOfTen;
         }
 
-        protected BigDecimal compute() {
+        protected BigInteger compute() {
             int range = to - from;
-
             // Base case:
             if (range <= PARALLEL_THRESHOLD) {
-                return parseDigitsRecursive(str, from, to, exponent);
+                return parseDigitsRecursive(str, from, to, powersOfTen);
             }
 
             // Recursion case:
-            int mid = (from + to) >>> 1;// split in half
-            ParseDigitsTask high = new ParseDigitsTask(from, mid, str, exponent + to - mid);
-            ParseDigitsTask low = new ParseDigitsTask(mid, to, str, exponent);
+            int mid = split(from, to);
+            JavaBigIntegerFromByteArray.ParseDigitsTask high = new JavaBigIntegerFromByteArray.ParseDigitsTask(str, from, mid, powersOfTen);
+            JavaBigIntegerFromByteArray.ParseDigitsTask low = new JavaBigIntegerFromByteArray.ParseDigitsTask(str, mid, to, powersOfTen);
             // perform about half the work locally
-            high.fork();
-            BigDecimal lowValue = low.compute();
-            return lowValue.add(high.join());
+            low.fork();
+            BigInteger highValue = high.compute().parallelMultiply(powersOfTen.get(to - mid));
+            return low.join().add(highValue);
         }
     }
-
 }

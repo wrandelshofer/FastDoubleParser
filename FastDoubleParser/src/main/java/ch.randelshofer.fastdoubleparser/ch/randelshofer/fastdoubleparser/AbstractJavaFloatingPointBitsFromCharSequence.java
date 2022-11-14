@@ -461,10 +461,4 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             CharSequence str, int startIndex, int endIndex,
             boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
-
-    protected long valueOfFloatLiteral(boolean isNegative, Decimal significand, int exponent, int digitCount) {
-        significand.negative = isNegative;
-        significand.decimal_point = exponent + digitCount;
-        return Double.doubleToLongBits(significand.doubleValue());
-    }
 }

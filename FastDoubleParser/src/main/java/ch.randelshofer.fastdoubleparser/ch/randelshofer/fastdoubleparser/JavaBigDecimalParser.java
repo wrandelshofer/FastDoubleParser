@@ -76,7 +76,7 @@ import java.math.BigInteger;
  * <p>
  * Expected character lengths for values produced by {@link BigDecimal#toString}:
  * <ul>
- *     <li>{@code Significand}: 1 to 536_870_919 digits.
+ *     <li>{@code Significand}: 1 to 1_292_782_621 digits.
  *     <p>
  *     The significand of a {@link BigDecimal} uses a {@link BigInteger}
  *     to represent its significand. A {@link BigInteger} can work with up to
@@ -87,10 +87,7 @@ import java.math.BigInteger;
  *     <p>
  *     However the constructor {@link BigInteger#BigInteger(String)}
  *     checks if the number of bits is less than {@code (1L << 32) - 31}.
- *     This would allow for 1_292_782_621 decimal digits.
- *     <p>
- *     Yet a {@link BigDecimal} can only perform computations when
- *     the significand has no more than 536_870_919 decimal digits.
+ *     This yields the final limit of 1_292_782_621 decimal digits.
  *     </li>
  *     <li>{@code SignedInteger} in exponent: 1 to 10 digits. Exponents
  *     with more digits would yield to a {@link BigDecimal#scale()} that

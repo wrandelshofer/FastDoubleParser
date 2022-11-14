@@ -274,6 +274,14 @@ class FastDoubleSwar {
         return parseEightDigitsUtf8((long) readLongLE.get(a, offset));
     }
 
+    public static int parseUpTo7DigitsUtf8(byte[] str, int from, int to) {
+        int result = 0;
+        for (; from < to; from++) {
+            result = 10 * (result) + str[from] - '0';
+        }
+        return result;
+    }
+
     public static int parseFourDigitsUtf8(byte[] a, int offset) {
         return parseFourDigitsUtf8((int) readIntLE.get(a, offset));
     }

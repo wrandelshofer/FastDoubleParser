@@ -22,10 +22,17 @@ class JavaBigIntegerFromByteArray {
      */
     public final static int PARALLEL_THRESHOLD = 1024;
 
-    public BigInteger parseBigIntegerLiteral(byte[] str, int offset, int length) {
+    /**
+     * Parses a {@code BigIntegerLiteral} as specified in {@link JavaBigIntegerParser}.
+     *
+     * @return result (always non-null)
+     * @throws NumberFormatException if parsing fails
+     */
+    public BigInteger parseBigIntegerLiteral(byte[] str, int offset, int length)
+            throws NumberFormatException {
         final int endIndex = offset + length;
         if (offset < 0 || endIndex > str.length) {
-            return null;
+            throw new NumberFormatException("Illegal offset or length");
         }
         // Parse optional sign
         // -------------------
@@ -35,11 +42,11 @@ class JavaBigIntegerFromByteArray {
         if (isNegative || ch == '+') {
             ch = ++index < endIndex ? str[index] : 0;
             if (ch == 0) {
-                return null;
+                throw new NumberFormatException("No digit after sign character");
             }
         }
 
-        // Parse optional leading zero
+        // Parse '0x' | '0X' character sequence
         // ---------------------------
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
@@ -49,7 +56,6 @@ class JavaBigIntegerFromByteArray {
             }
         }
 
-        // not yet implemented
         return parseDecBigIntegerLiteral(str, index, endIndex, isNegative);
     }
 
@@ -60,19 +66,19 @@ class JavaBigIntegerFromByteArray {
         if (numDigits < PARALLEL_THRESHOLD) {
             result = parseDigitsRecursive(str, from, to, powersOfTen);
         } else {
-            result = new ParseDigitsTask(from, to, str, powersOfTen).compute();
+            result = new ParseDigitsTask(str, from, to, powersOfTen).compute();
         }
         return isNegative ? result.negate() : result;
     }
 
-    private static Map<Integer, BigInteger> fillPowersOfTen(int from, int to) {
+    private Map<Integer, BigInteger> fillPowersOfTen(int from, int to) {
         Map<Integer, BigInteger> powersOfTen = new HashMap<>();
         powersOfTen.put(16, TEN_POW_16);
         fillPowersOfTenRecursive(powersOfTen, from, to);
         return powersOfTen;
     }
 
-    private static void fillPowersOfTenRecursive(Map<Integer, BigInteger> powersOfTen, int from, int to) {
+    private void fillPowersOfTenRecursive(Map<Integer, BigInteger> powersOfTen, int from, int to) {
         int numDigits = to - from;
         // base case:
         if (numDigits <= 18) {
@@ -98,7 +104,6 @@ class JavaBigIntegerFromByteArray {
             }
             powersOfTen.put(raise, pow);
         }
-
     }
 
     private static BigInteger parseDigitsRecursive(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
@@ -113,41 +118,29 @@ class JavaBigIntegerFromByteArray {
         BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
 
-        high = raiseByPowerOfTen(high, to - mid, powersOfTen);
+        high = high.multiply(powersOfTen.get(to - mid));
         return low.add(high);
     }
 
-    private static BigInteger raiseByPowerOfTen(BigInteger high, int raise, Map<Integer, BigInteger> powersOfTen) {
-        BigInteger powerOfTen = powersOfTen.get(raise);
-        high = high.multiply(powerOfTen);
-        return high;
-    }
 
-    private static BigInteger parallelRaiseByPowerOfTen(BigInteger high, int raise, Map<Integer, BigInteger> powersOfTen) {
-        BigInteger powerOfTen = powersOfTen.get(raise);
-        high = high.parallelMultiply(powerOfTen);
-        return high;
-    }
-
-
-    static BigInteger parseDigitsUpTo18(byte[] str, int from, int to) {
+    private static BigInteger parseDigitsUpTo18(byte[] str, int from, int to) {
         int numDigits = to - from;
-        int significand = 0;
-        int prerollLimit = from + (numDigits & 7);
-        for (; from < prerollLimit; from++) {
-            significand = 10 * (significand) + str[from] - '0';
+        int preroll = from + (numDigits & 7);
+        long significand = FastDoubleSwar.parseUpTo7DigitsUtf8(str, from, preroll);
+        for (from = preroll; from < to; from += 8) {
+            int result = FastDoubleSwar.tryToParseEightDigitsUtf8(str, from);
+            if (result < 0) {
+                throw new NumberFormatException("Illegal decimal digit");
+            }
+            significand = significand * 100_000_000L + result;
         }
-        long significandL = significand;
-        for (; from < to; from += 8) {
-            significandL = significandL * 100_000_000L + FastDoubleSwar.parseEightDigitsUtf8(str, from);
-        }
-        return BigInteger.valueOf(significandL);
+        return BigInteger.valueOf(significand);
     }
 
     private BigInteger parseHexBigIntegerLiteral(byte[] str, int from, int to, boolean isNegative) {
         int numDigits = to - from;
         if (numDigits == 0) {
-            return null;
+            throw new NumberFormatException("No hex digits");
         }
         byte[] bytes = new byte[((numDigits + 1) >> 1) + 1];
         int index = 1;
@@ -158,7 +151,7 @@ class JavaBigIntegerFromByteArray {
             if (valueLow >= 0) {
                 bytes[index++] = (byte) valueLow;
             } else {
-                return null;
+                throw new NumberFormatException("Illegal hex digit");
             }
         }
         int prerollLimit = from + ((to - from) & 7);
@@ -170,7 +163,7 @@ class JavaBigIntegerFromByteArray {
             if (valueHigh >= 0 && valueLow >= 0) {
                 bytes[index++] = (byte) (valueHigh << 4 | valueLow);
             } else {
-                return null;
+                throw new NumberFormatException("Illegal hex digit");
             }
         }
         for (; from < to; from += 8, index += 4) {
@@ -178,7 +171,7 @@ class JavaBigIntegerFromByteArray {
             if (value >= 0) {
                 FastDoubleSwar.readIntBE.set(bytes, index, (int) value);
             } else {
-                return null;
+                throw new NumberFormatException("Illegal hex digit");
             }
         }
 
@@ -190,7 +183,7 @@ class JavaBigIntegerFromByteArray {
     }
 
     /**
-     * Parses digits using a multi-threaded recursive algorithm in O(n)
+     * Parses digits using a multi-threaded recursive algorithm in O(n^1.5)
      * with a large constant overhead if there are less than about 1000
      * digits.
      */
@@ -199,7 +192,7 @@ class JavaBigIntegerFromByteArray {
         private final byte[] str;
         private final Map<Integer, BigInteger> powersOfTen;
 
-        ParseDigitsTask(int from, int to, byte[] str, Map<Integer, BigInteger> powersOfTen) {
+        ParseDigitsTask(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
             this.from = from;
             this.to = to;
             this.str = str;
@@ -215,15 +208,13 @@ class JavaBigIntegerFromByteArray {
 
             // Recursion case:
             int mid = split(from, to);
-            ParseDigitsTask high = new ParseDigitsTask(from, mid, str, powersOfTen);
-            ParseDigitsTask low = new ParseDigitsTask(mid, to, str, powersOfTen);
+            ParseDigitsTask high = new ParseDigitsTask(str, from, mid, powersOfTen);
+            ParseDigitsTask low = new ParseDigitsTask(str, mid, to, powersOfTen);
             // perform about half the work locally
-            high.fork();
-            BigInteger lowValue = low.compute();
-            BigInteger highValue = parallelRaiseByPowerOfTen(high.join(), to - mid, powersOfTen);
-            return lowValue.add(highValue);
+            low.fork();
+            BigInteger highValue = high.compute().parallelMultiply(powersOfTen.get(to - mid));
+            return low.join().add(highValue);
         }
-
     }
 
     private static int split(int from, int to) {
@@ -231,5 +222,4 @@ class JavaBigIntegerFromByteArray {
         mid = to - (((to - mid + 15) >> 4) << 4);// make numDigits of low a multiple of 16
         return mid;
     }
-
 }

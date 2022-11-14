@@ -20,7 +20,7 @@ class BigSignificand {
         if (numBits <= 0 || numBits >= Integer.MAX_VALUE) {
             throw new IllegalArgumentException("numBits=" + numBits);
         }
-        int numLongs = (int) (numBits + 63) >>> 6;
+        int numLongs = (int) ((numBits + 63) >>> 6) + 1;
         numInts = numLongs << 1;
         int numBytes = numInts << 2;
         x = new byte[numBytes];

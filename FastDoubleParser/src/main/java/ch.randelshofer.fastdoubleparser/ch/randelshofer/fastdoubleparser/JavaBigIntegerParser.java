@@ -47,6 +47,10 @@ public class JavaBigIntegerParser {
     }
 
     public static BigInteger parseBigIntegerOrNull(byte[] str, int offset, int length) {
-        return new JavaBigIntegerFromByteArray().parseBigIntegerLiteral(str, offset, length);
+        try {
+            return new JavaBigIntegerFromByteArray().parseBigIntegerLiteral(str, offset, length);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

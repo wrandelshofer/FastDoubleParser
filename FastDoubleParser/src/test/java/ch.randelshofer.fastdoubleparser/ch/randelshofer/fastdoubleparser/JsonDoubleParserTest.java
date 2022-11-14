@@ -42,14 +42,14 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().getBytes(StandardCharsets.UTF_8)))));
+                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8)))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
@@ -58,14 +58,14 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toCharArray()))));
+                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().toCharArray()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
@@ -79,17 +79,17 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleBitsByteArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> testBits(t, u -> JsonDoubleParser.parseDoubleBits(u.input().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> testBits(t, u -> JsonDoubleParser.parseDoubleBits(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleBitsCharArrayIntInt() {
         return createAllTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> testBits(t, u -> JsonDoubleParser.parseDoubleBits(u.input().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> testBits(t, u -> JsonDoubleParser.parseDoubleBits(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
     }
 
-    private void test(TestData d, ToDoubleFunction<TestData> f) {
+    private void test(FloatTestData d, ToDoubleFunction<FloatTestData> f) {
         if (!d.valid()) {
             try {
                 assertEquals(-1L, f.applyAsDouble(d));
@@ -102,7 +102,7 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
         }
     }
 
-    private void testBits(TestData d, ToLongFunction<TestData> f) {
+    private void testBits(FloatTestData d, ToLongFunction<FloatTestData> f) {
         if (!d.valid()) {
             assertEquals(-1L, f.applyAsLong(d));
         } else {
