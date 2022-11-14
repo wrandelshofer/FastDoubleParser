@@ -222,7 +222,7 @@ class FastDoubleSwar {
                 + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
     }
 
-    public static boolean isEightDigits(long first, long second) {
+    public static boolean isEightDigitsUtf16(long first, long second) {
         long fval = first - 0x0030_0030_0030_0030L;
         long sval = second - 0x0030_0030_0030_0030L;
 
@@ -284,7 +284,7 @@ class FastDoubleSwar {
         long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
         long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
 
-        return isEightDigits(first, second);
+        return isEightDigitsUtf16(first, second);
     }
 
     public static boolean isEightDigits(CharSequence a, int offset) {
