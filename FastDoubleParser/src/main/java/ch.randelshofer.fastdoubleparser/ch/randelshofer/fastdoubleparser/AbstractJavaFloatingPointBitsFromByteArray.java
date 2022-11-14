@@ -80,7 +80,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 for (; index < endIndex - 4; index += 4) {
-                    int digits = FastDoubleSwar.tryToParseFourDigitsUtf8(str, index + 1);
+                    int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
                         break;
                     }

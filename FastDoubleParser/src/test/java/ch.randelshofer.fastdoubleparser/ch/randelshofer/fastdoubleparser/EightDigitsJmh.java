@@ -180,7 +180,7 @@ public class EightDigitsJmh {
 
     @Benchmark
     public int m12CharArrayDecSwar() {
-        return FastDoubleSwar.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
+        return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharArray, 0);
     }
 
     @Benchmark
@@ -190,12 +190,12 @@ public class EightDigitsJmh {
 
     @Benchmark
     public long m14ByteArrayHexSwar() {
-        return FastDoubleSwar.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
+        return FastDoubleSwar.tryToParseEightHexDigits(eightDigitsByteArray, 0);
     }
 
     @Benchmark
     public long m15CharArrayHexSwar() {
-        return FastDoubleSwar.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
+        return FastDoubleSwar.tryToParseEightHexDigits(eightDigitsCharArray, 0);
     }
 
 

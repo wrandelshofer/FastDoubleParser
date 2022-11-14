@@ -61,34 +61,34 @@ On my Mac mini (2018) I get the results shown below. The speedup factor with res
     Measuring: Trying to reach a confidence level of 99.8 % which only deviates by 1 % from the average measured duration.
     [...]
     Measurement results:
-    java.lang.Double            :    82.60 MB/s (+/- 4.6 % stdv)    4.74 Mfloat/s   210.91 ns/f
-    java.lang.Float             :    84.90 MB/s (+/- 4.5 % stdv)    4.87 Mfloat/s   205.21 ns/f
-    java.math.BigDecimal        :   158.67 MB/s (+/- 8.7 % stdv)    9.11 Mfloat/s   109.80 ns/f
-    JavaDoubleParser String     :   294.92 MB/s (+/-20.9 % stdv)   16.93 Mfloat/s    59.07 ns/f
-    JavaDoubleParser char[]     :   379.93 MB/s (+/-27.7 % stdv)   21.81 Mfloat/s    45.86 ns/f
-    JavaDoubleParser byte[]     :   476.85 MB/s (+/-23.9 % stdv)   27.37 Mfloat/s    36.54 ns/f
-    JsonDoubleParser String     :   304.97 MB/s (+/-19.5 % stdv)   17.50 Mfloat/s    57.13 ns/f
-    JsonDoubleParser char[]     :   404.24 MB/s (+/-24.1 % stdv)   23.20 Mfloat/s    43.10 ns/f
-    JsonDoubleParser byte[]     :   496.36 MB/s (+/-22.3 % stdv)   28.49 Mfloat/s    35.10 ns/f
-    JavaFloatParser  String     :   427.63 MB/s (+/-28.8 % stdv)   24.55 Mfloat/s    40.74 ns/f
-    JavaFloatParser  char[]     :   563.85 MB/s (+/-15.8 % stdv)   32.36 Mfloat/s    30.90 ns/f
-    JavaFloatParser  byte[]     :   634.47 MB/s (+/-14.4 % stdv)   36.42 Mfloat/s    27.46 ns/f
-    JavaBigDecimalParser String :   533.53 MB/s (+/-23.4 % stdv)   30.62 Mfloat/s    32.65 ns/f
-    JavaBigDecimalParser char[] :   607.49 MB/s (+/-19.1 % stdv)   34.87 Mfloat/s    28.68 ns/f
-    JavaBigDecimalParser byte[] :   692.01 MB/s (+/-16.5 % stdv)   39.72 Mfloat/s    25.18 ns/f
+    java.lang.Double            :    78.57 MB/s (+/- 5.8 % stdv) (+/- 1.0 % conf,    352 trials)     4.51 Mfloat/s   221.79 ns/f
+    java.lang.Float             :    80.56 MB/s (+/- 6.3 % stdv) (+/- 1.0 % conf,    384 trials)     4.62 Mfloat/s   216.32 ns/f
+    java.math.BigDecimal        :   129.26 MB/s (+/- 9.3 % stdv) (+/- 1.0 % conf,    832 trials)     7.42 Mfloat/s   134.81 ns/f
+    JavaDoubleParser String     :   283.19 MB/s (+/-23.0 % stdv) (+/- 1.0 % conf,   5088 trials)    16.25 Mfloat/s    61.54 ns/f
+    JavaDoubleParser char[]     :   366.22 MB/s (+/-22.2 % stdv) (+/- 1.0 % conf,   4704 trials)    21.02 Mfloat/s    47.58 ns/f
+    JavaDoubleParser byte[]     :   447.26 MB/s (+/-23.9 % stdv) (+/- 1.0 % conf,   5504 trials)    25.67 Mfloat/s    38.96 ns/f
+    JsonDoubleParser String     :   294.86 MB/s (+/-17.7 % stdv) (+/- 1.0 % conf,   3008 trials)    16.92 Mfloat/s    59.10 ns/f
+    JsonDoubleParser char[]     :   406.97 MB/s (+/-30.7 % stdv) (+/- 1.0 % conf,   8992 trials)    23.35 Mfloat/s    42.82 ns/f
+    JsonDoubleParser byte[]     :   475.31 MB/s (+/-29.4 % stdv) (+/- 1.0 % conf,   8288 trials)    27.28 Mfloat/s    36.66 ns/f
+    JavaFloatParser  String     :   291.13 MB/s (+/-18.7 % stdv) (+/- 1.0 % conf,   3360 trials)    16.71 Mfloat/s    59.86 ns/f
+    JavaFloatParser  char[]     :   391.76 MB/s (+/-22.2 % stdv) (+/- 1.0 % conf,   4704 trials)    22.48 Mfloat/s    44.48 ns/f
+    JavaFloatParser  byte[]     :   482.32 MB/s (+/-23.5 % stdv) (+/- 1.0 % conf,   5312 trials)    27.68 Mfloat/s    36.13 ns/f
+    JavaBigDecimalParser String :   314.97 MB/s (+/-18.0 % stdv) (+/- 1.0 % conf,   3104 trials)    18.07 Mfloat/s    55.33 ns/f
+    JavaBigDecimalParser char[] :   397.52 MB/s (+/-20.7 % stdv) (+/- 1.0 % conf,   4096 trials)    22.81 Mfloat/s    43.84 ns/f
+    JavaBigDecimalParser byte[] :   478.19 MB/s (+/-29.9 % stdv) (+/- 1.0 % conf,   8544 trials)    27.44 Mfloat/s    36.44 ns/f
     
-    Speedup JavaDoubleParser String     vs java.lang.Double    : 3.57
-    Speedup JavaDoubleParser char[]     vs java.lang.Double    : 4.60
-    Speedup JavaDoubleParser byte[]     vs java.lang.Double    : 5.77
-    Speedup JsonDoubleParser String     vs java.lang.Double    : 3.69
-    Speedup JsonDoubleParser char[]     vs java.lang.Double    : 4.89
-    Speedup JsonDoubleParser byte[]     vs java.lang.Double    : 6.01
-    Speedup JavaFloatParser  String     vs java.lang.Float     : 5.04
-    Speedup JavaFloatParser  char[]     vs java.lang.Float     : 6.64
-    Speedup JavaFloatParser  byte[]     vs java.lang.Float     : 7.47
-    Speedup JavaBigDecimalParser String vs java.math.BigDecimal: 3.36
-    Speedup JavaBigDecimalParser char[] vs java.math.BigDecimal: 3.83
-    Speedup JavaBigDecimalParser byte[] vs java.math.BigDecimal: 4.36
+    Speedup JavaDoubleParser String     vs java.lang.Double    : 3.60
+    Speedup JavaDoubleParser char[]     vs java.lang.Double    : 4.66
+    Speedup JavaDoubleParser byte[]     vs java.lang.Double    : 5.69
+    Speedup JsonDoubleParser String     vs java.lang.Double    : 3.75
+    Speedup JsonDoubleParser char[]     vs java.lang.Double    : 5.18
+    Speedup JsonDoubleParser byte[]     vs java.lang.Double    : 6.05
+    Speedup JavaFloatParser  String     vs java.lang.Float     : 3.61
+    Speedup JavaFloatParser  char[]     vs java.lang.Float     : 4.86
+    Speedup JavaFloatParser  byte[]     vs java.lang.Float     : 5.99
+    Speedup JavaBigDecimalParser String vs java.math.BigDecimal: 2.44
+    Speedup JavaBigDecimalParser char[] vs java.math.BigDecimal: 3.08
+    Speedup JavaBigDecimalParser byte[] vs java.math.BigDecimal: 3.70
 
 '
 
@@ -96,34 +96,34 @@ On my Mac mini (2018) I get the results shown below. The speedup factor with res
     read 111126 lines
     [...]
     Measurement results:
-    java.lang.Double            :    84.00 MB/s (+/- 4.2 % stdv)     4.83 Mfloat/s   207.16 ns/f
-    java.lang.Float             :    99.87 MB/s (+/- 4.1 % stdv)     5.74 Mfloat/s   174.25 ns/f
-    java.math.BigDecimal        :   326.23 MB/s (+/- 7.2 % stdv)    18.75 Mfloat/s    53.34 ns/f
-    JavaDoubleParser String     :   386.04 MB/s (+/- 8.2 % stdv)    22.18 Mfloat/s    45.08 ns/f
-    JavaDoubleParser char[]     :   589.66 MB/s (+/- 8.3 % stdv)    33.89 Mfloat/s    29.51 ns/f
-    JavaDoubleParser byte[]     :   597.73 MB/s (+/- 7.2 % stdv)    34.35 Mfloat/s    29.11 ns/f
-    JsonDoubleParser String     :   425.87 MB/s (+/- 8.9 % stdv)    24.47 Mfloat/s    40.86 ns/f
-    JsonDoubleParser char[]     :   540.56 MB/s (+/- 8.5 % stdv)    31.06 Mfloat/s    32.19 ns/f
-    JsonDoubleParser byte[]     :   574.45 MB/s (+/- 7.0 % stdv)    33.01 Mfloat/s    30.29 ns/f
-    JavaFloatParser  String     :   403.66 MB/s (+/- 8.3 % stdv)    23.20 Mfloat/s    43.11 ns/f
-    JavaFloatParser  char[]     :   595.18 MB/s (+/- 8.7 % stdv)    34.20 Mfloat/s    29.24 ns/f
-    JavaFloatParser  byte[]     :   625.74 MB/s (+/- 8.0 % stdv)    35.96 Mfloat/s    27.81 ns/f
-    JavaBigDecimalParser String :   461.89 MB/s (+/- 9.8 % stdv)    26.54 Mfloat/s    37.67 ns/f
-    JavaBigDecimalParser char[] :   642.84 MB/s (+/-10.6 % stdv)    36.94 Mfloat/s    27.07 ns/f
-    JavaBigDecimalParser byte[] :   702.46 MB/s (+/- 8.4 % stdv)    40.37 Mfloat/s    24.77 ns/f
+    java.lang.Double            :    70.34 MB/s (+/- 4.5 % stdv) (+/- 0.9 % conf,    224 trials)     4.04 Mfloat/s   247.39 ns/f
+    java.lang.Float             :    82.24 MB/s (+/- 5.7 % stdv) (+/- 1.0 % conf,    320 trials)     4.73 Mfloat/s   211.60 ns/f
+    java.math.BigDecimal        :   216.65 MB/s (+/-12.3 % stdv) (+/- 1.0 % conf,   1472 trials)    12.45 Mfloat/s    80.32 ns/f
+    JavaDoubleParser String     :   269.83 MB/s (+/-15.3 % stdv) (+/- 1.0 % conf,   2240 trials)    15.51 Mfloat/s    64.49 ns/f
+    JavaDoubleParser char[]     :   391.23 MB/s (+/-21.7 % stdv) (+/- 1.0 % conf,   4512 trials)    22.48 Mfloat/s    44.48 ns/f
+    JavaDoubleParser byte[]     :   443.07 MB/s (+/-19.8 % stdv) (+/- 1.0 % conf,   3776 trials)    25.46 Mfloat/s    39.27 ns/f
+    JsonDoubleParser String     :   293.59 MB/s (+/-14.0 % stdv) (+/- 1.0 % conf,   1888 trials)    16.87 Mfloat/s    59.27 ns/f
+    JsonDoubleParser char[]     :   407.72 MB/s (+/-20.9 % stdv) (+/- 1.0 % conf,   4160 trials)    23.43 Mfloat/s    42.68 ns/f
+    JsonDoubleParser byte[]     :   603.88 MB/s (+/- 7.8 % stdv) (+/- 1.0 % conf,    640 trials)    34.70 Mfloat/s    28.82 ns/f
+    JavaFloatParser  String     :   373.58 MB/s (+/-10.7 % stdv) (+/- 1.0 % conf,   1088 trials)    21.47 Mfloat/s    46.58 ns/f
+    JavaFloatParser  char[]     :   597.63 MB/s (+/-11.1 % stdv) (+/- 1.0 % conf,   1184 trials)    34.34 Mfloat/s    29.12 ns/f
+    JavaFloatParser  byte[]     :   604.22 MB/s (+/- 8.7 % stdv) (+/- 1.0 % conf,    736 trials)    34.72 Mfloat/s    28.80 ns/f
+    JavaBigDecimalParser String :   384.43 MB/s (+/-19.4 % stdv) (+/- 1.0 % conf,   3616 trials)    22.09 Mfloat/s    45.27 ns/f
+    JavaBigDecimalParser char[] :   626.32 MB/s (+/-11.7 % stdv) (+/- 1.0 % conf,   1344 trials)    35.99 Mfloat/s    27.78 ns/f
+    JavaBigDecimalParser byte[] :   686.69 MB/s (+/-10.3 % stdv) (+/- 1.0 % conf,   1024 trials)    39.46 Mfloat/s    25.34 ns/f
     
-    Speedup JavaDoubleParser String     vs java.lang.Double    : 4.60
-    Speedup JavaDoubleParser char[]     vs java.lang.Double    : 7.02
-    Speedup JavaDoubleParser byte[]     vs java.lang.Double    : 7.12
-    Speedup JsonDoubleParser String     vs java.lang.Double    : 5.07
-    Speedup JsonDoubleParser char[]     vs java.lang.Double    : 6.44
-    Speedup JsonDoubleParser byte[]     vs java.lang.Double    : 6.84
-    Speedup JavaFloatParser  String     vs java.lang.Float     : 4.04
-    Speedup JavaFloatParser  char[]     vs java.lang.Float     : 5.96
-    Speedup JavaFloatParser  byte[]     vs java.lang.Float     : 6.27
-    Speedup JavaBigDecimalParser String vs java.math.BigDecimal: 1.42
-    Speedup JavaBigDecimalParser char[] vs java.math.BigDecimal: 1.97
-    Speedup JavaBigDecimalParser byte[] vs java.math.BigDecimal: 2.15
+    Speedup JavaDoubleParser String     vs java.lang.Double    : 3.84
+    Speedup JavaDoubleParser char[]     vs java.lang.Double    : 5.56
+    Speedup JavaDoubleParser byte[]     vs java.lang.Double    : 6.30
+    Speedup JsonDoubleParser String     vs java.lang.Double    : 4.17
+    Speedup JsonDoubleParser char[]     vs java.lang.Double    : 5.80
+    Speedup JsonDoubleParser byte[]     vs java.lang.Double    : 8.59
+    Speedup JavaFloatParser  String     vs java.lang.Float     : 4.54
+    Speedup JavaFloatParser  char[]     vs java.lang.Float     : 7.27
+    Speedup JavaFloatParser  byte[]     vs java.lang.Float     : 7.35
+    Speedup JavaBigDecimalParser String vs java.math.BigDecimal: 1.77
+    Speedup JavaBigDecimalParser char[] vs java.math.BigDecimal: 2.89
+    Speedup JavaBigDecimalParser byte[] vs java.math.BigDecimal: 3.17
 
 FastDoubleParser also speeds up parsing of hexadecimal float literals:
 

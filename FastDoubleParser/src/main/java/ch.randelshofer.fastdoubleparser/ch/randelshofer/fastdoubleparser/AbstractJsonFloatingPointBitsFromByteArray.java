@@ -86,7 +86,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
                     significand = 100_000_000L * significand + digits;
                 }*/
                 for (; index < endIndex - 4; index += 4) {
-                    int digits = FastDoubleSwar.tryToParseFourDigitsUtf8(str, index + 1);
+                    int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
                         break;
                     }

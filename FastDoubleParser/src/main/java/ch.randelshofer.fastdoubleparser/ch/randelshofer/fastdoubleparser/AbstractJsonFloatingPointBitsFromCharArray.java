@@ -160,7 +160,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
     }
 
     private int tryToParseEightDigits(char[] str, int offset) {
-        return FastDoubleSwar.tryToParseEightDigitsUtf16(str, offset);
+        return FastDoubleSwar.tryToParseEightDigits(str, offset);
     }
 
     /**
