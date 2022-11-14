@@ -19,31 +19,48 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.28
- * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 19+36-2238
+ * # JMH version: 1.35
+ * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+22-1594
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *    (digits)  Mode  Cnt       _   _  Score   Error  Units
- * m    _   _100  avgt    2       _   _756.939          ns/op
- * m    _  1_000  avgt    2       _  9_989.409          ns/op
- * m    _ 10_000  avgt    2       _265_456.893          ns/op
- * m    _100_000  avgt    2      9_130_925.801          ns/op
- * m   1_000_000  avgt    2    303_638_502.013          ns/op
- * m  10_000_000  avgt    2 10_162_931_172.500          ns/op
+ *      (digits)  Mode  Cnt              Score   Error  Units
+ * f    _   _ 10  avgt    2   _   _   _ 18.488          ns/op
+ * f    _   _100  avgt    2   _   _   _254.483          ns/op
+ * f    _  1_000  avgt    2   _   _  5_485.980          ns/op
+ * f    _ 10_000  avgt    2   _   _139_287.776          ns/op
+ * f    _100_000  avgt    2   _  2_620_321.357          ns/op
+ * f   1_000_000  avgt    2   _ 69_274_168.383          ns/op
+ * f  10_000_000  avgt    2  1_952_061_947.250          ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.35
+ * # VM version: JDK 1.8.0_281, Java HotSpot(TM) 64-Bit Server VM, 25.281-b09
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * Java 8 does not have method {@link BigInteger#parallelMultiply}.
+ *
+ *      (digits)  Mode  Cnt      _   _  Score   Error  Units
+ * f    _   _ 10  avgt    2      _   _ 32.109          ns/op
+ * f    _   _100  avgt    2      _   _431.013          ns/op
+ * f    _  1_000  avgt    2      _  6_552.813          ns/op
+ * f    _ 10_000  avgt    2      _166_715.977          ns/op
+ * f    _100_000  avgt    2     4_821_497.950          ns/op
+ * f   1_000_000  avgt    2   143_244_763.043          ns/op
  * </pre>
  */
 
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
-        , "-XX:+UnlockDiagnosticVMOptions"
+        //, "-XX:+UnlockDiagnosticVMOptions"
         // "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/*.*"
-        , "-XX:-PrintInlining"
+        //, "-XX:-PrintInlining"
 
 })
 @Measurement(iterations = 2)
@@ -55,27 +72,40 @@ public class JavaBigDecimalFromCharSequenceScalabilityJmh {
 
 
     @Param({
-            // "1",
-            // "10",
-            // "100",
-            // "1000",
-            // "10000",
-            // "100000",
-            // "1000000",
-            "10000000"
+            //"1"
+            "10"
+            , "100"
+            , "1000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            // "100000000"
+            //  ,"1000000000"
+            //  "1292782621"
     })
     public int digits;
-    private String str;
+    private String integerPart;
+    private String fractionalPart;
 
     @Setup(Level.Trial)
     public void setUp() {
-        str = "9806543217".repeat((digits + 9) / 10).substring(0, digits);
+        String str = "9806543217".repeat((digits + 9) / 10).substring(0, digits);
+        integerPart = str;
+        fractionalPart = ("." + str);
     }
 
+
+    //   @Benchmark
+    //   public BigDecimal i() {
+    //       return JavaBigDecimalParser.parseBigDecimal(integerPart);
+    //   }
+
     @Benchmark
-    public BigDecimal m() {
-        return JavaBigDecimalParser.parseBigDecimal(str);
+    public BigDecimal f() {
+        return JavaBigDecimalParser.parseBigDecimal(fractionalPart);
     }
+
 }
 
 
