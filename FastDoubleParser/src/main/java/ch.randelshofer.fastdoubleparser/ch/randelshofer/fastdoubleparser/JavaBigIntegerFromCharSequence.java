@@ -93,11 +93,11 @@ class JavaBigIntegerFromCharSequence {
             BigInteger pow;
             BigInteger prev = powersOfTen.get(raise - 16);
             if (prev != null) {
-                pow = prev.parallelMultiply(TEN_POW_16);
+                pow = prev.multiply(TEN_POW_16);
             } else {
                 BigInteger half = powersOfTen.get(raise >> 1);
                 if (half != null) {
-                    pow = half.parallelMultiply(half);
+                    pow = half.multiply(half);
                 } else {
                     pow = TEN_POW_16.pow(raise >> 4);
                 }
@@ -212,7 +212,7 @@ class JavaBigIntegerFromCharSequence {
             ParseDigitsTask low = new ParseDigitsTask(str, mid, to, powersOfTen);
             // perform about half the work locally
             low.fork();
-            BigInteger highValue = high.compute().parallelMultiply(powersOfTen.get(to - mid));
+            BigInteger highValue = high.compute().multiply(powersOfTen.get(to - mid));
             return low.join().add(highValue);
         }
     }

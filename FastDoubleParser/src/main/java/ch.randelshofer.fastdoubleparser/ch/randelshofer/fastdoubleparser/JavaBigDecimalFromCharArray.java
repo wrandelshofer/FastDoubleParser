@@ -194,7 +194,7 @@ final class JavaBigDecimalFromCharArray {
         if (remainder == 0) {
             pow = p;
         } else {
-            pow = p.parallelMultiply(SMALL_POWERS_OF_TEN.get(remainder));
+            pow = p.multiply(SMALL_POWERS_OF_TEN.get(remainder));
         }
         return pow;
     }
@@ -216,7 +216,7 @@ final class JavaBigDecimalFromCharArray {
             diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff);
             powersOfTen.put(diff, diffValue);
         }
-        return floorValue.parallelMultiply(diffValue);
+        return floorValue.multiply(diffValue);
     }
 
     /**
@@ -498,7 +498,7 @@ final class JavaBigDecimalFromCharArray {
                 significand = fractionalPart;
             } else {
                 BigInteger integerPower = computePowerOfTen(powersOfTen, exponentIndicatorIndex - decimalPointIndex - 1);
-                significand = integerPart.parallelMultiply(integerPower).add(fractionalPart);
+                significand = integerPart.multiply(integerPower).add(fractionalPart);
             }
         } else {
             significand = integerPart;
@@ -538,7 +538,7 @@ final class JavaBigDecimalFromCharArray {
             JavaBigIntegerFromCharArray.ParseDigitsTask low = new JavaBigIntegerFromCharArray.ParseDigitsTask(str, mid, to, powersOfTen);
             // perform about half the work locally
             low.fork();
-            BigInteger highValue = high.compute().parallelMultiply(powersOfTen.get(to - mid));
+            BigInteger highValue = high.compute().multiply(powersOfTen.get(to - mid));
             return low.join().add(highValue);
         }
     }
