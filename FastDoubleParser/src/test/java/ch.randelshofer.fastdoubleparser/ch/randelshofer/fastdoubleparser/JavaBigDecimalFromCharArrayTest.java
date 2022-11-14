@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class JavaBigDecimalFromCharSequenceTest extends AbstractBigDecimalParserTest {
+public class JavaBigDecimalFromCharArrayTest extends AbstractBigDecimalParserTest {
 
 
     private void test(BigDecimalTestData d, Function<BigDecimalTestData, BigDecimal> f) {
-        BigDecimal actual = f.apply(d);
         BigDecimal expectedValue = d.expectedValue().get();
+        BigDecimal actual = f.apply(d);
         if (expectedValue != null) {
             assertEquals(0, expectedValue.compareTo(actual),
                     "expected:" + expectedValue + " <> actual:" + actual);
@@ -27,12 +27,12 @@ public class JavaBigDecimalFromCharSequenceTest extends AbstractBigDecimalParser
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsParseBigDecimalFromCharSequence() {
+    public Stream<DynamicTest> dynamicTestsParseBigDecimalFromCharArray() {
         return createRegularTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimalOrNull(u.input(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimalOrNull(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
 
     }
 

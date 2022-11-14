@@ -25,27 +25,55 @@ import java.util.concurrent.TimeUnit;
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.28
- * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 19+36-2238
+ * # JMH version: 1.35
+ * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 20-ea+22-1594
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *    (digits)  Mode  Cnt          Score   Error  Units
- * i         1  avgt    2     _   _  7.703          ns/op
- * i        10  avgt    2     _   _ 13.072          ns/op
- * i       100  avgt    2     _   _512.098          ns/op
- * i      1000  avgt    2     _  6_691.866          ns/op
- * i     10000  avgt    2     _216_947.857          ns/op
- * i    100000  avgt    2    7_660_540.711          ns/op
- * i   1000000  avgt    2  255_927_837.600          ns/op
+ * parallel threshold 1024, recursion threshold 128
+ *     (digits)  Mode  Cnt             Score   Error  Units
+ * f          1  avgt    2            13.596          ns/op
+ * f         10  avgt    2            20.311          ns/op
+ * f        100  avgt    2           219.335          ns/op
+ * f       1000  avgt    2          5785.488          ns/op
+ * f      10000  avgt    2        182105.412          ns/op
+ * f     100000  avgt    2       4737761.989          ns/op
+ * f    1000000  avgt    2     119902014.787          ns/op
+ * f   10000000  avgt    2    3020700620.625          ns/op
+ * f  100000000  avgt    2  108569300854.000          ns/op
+ * i          1  avgt    2            12.968          ns/op
+ * i         10  avgt    2            17.797          ns/op
+ * i        100  avgt    2           226.355          ns/op
+ * i       1000  avgt    2          5549.707          ns/op
+ * i      10000  avgt    2        182570.960          ns/op
+ * i     100000  avgt    2       4831606.773          ns/op
+ * i    1000000  avgt    2     119433669.881          ns/op
+ * i   10000000  avgt    2    3675417445.833          ns/op
+ * i  100000000  avgt    2   95698142681.500          ns/op
  *
- *    (digits)  Mode  Cnt          Score   Error  Units     Factor
- * f         1  avgt    2     _   _ 12.077          ns/op    1
- * f        10  avgt    2     _   _ 17.682          ns/op    1.5
- * f       100  avgt    2     _   _475.559          ns/op   25.9
- * f      1000  avgt    2     _  6_353.706          ns/op   13.3
- * f     10000  avgt    2     _211_366.945          ns/op   33.3
- * f    100000  avgt    2    7_470_872.529          ns/op   35.3
- * f   1000000  avgt    2  251_240_461.688          ns/op   33.6
+ * parse only:
+ *      (digits)  Mode  Cnt          Score   Error  Units
+ * f           1  avgt    2         10.046          ns/op
+ * f          10  avgt    2         14.924          ns/op
+ * f         100  avgt    2         21.201          ns/op
+ * f        1000  avgt    2         75.387          ns/op
+ * f       10000  avgt    2        629.977          ns/op
+ * f      100000  avgt    2       7197.921          ns/op
+ * f     1000000  avgt    2      93134.505          ns/op
+ * f    10000000  avgt    2    1324385.898          ns/op
+ * f   100000000  avgt    2   13841659.306          ns/op
+ * f  1000000000  avgt    2  139549257.979          ns/op
+ * f  1292782621  avgt    2  183389538.331          ns/op
+ * i           1  avgt    2          7.095          ns/op
+ * i          10  avgt    2         12.980          ns/op
+ * i         100  avgt    2         18.822          ns/op
+ * i        1000  avgt    2         81.936          ns/op
+ * i       10000  avgt    2        712.674          ns/op
+ * i      100000  avgt    2       6844.904          ns/op
+ * i     1000000  avgt    2      86105.059          ns/op
+ * i    10000000  avgt    2    1241240.895          ns/op
+ * i   100000000  avgt    2   12981130.860          ns/op
+ * i  1000000000  avgt    2  133794721.567          ns/op
+ * i  1292782621  avgt    2  170464284.271          ns/op
  * </pre>
  */
 
@@ -57,7 +85,7 @@ import java.util.concurrent.TimeUnit;
 
 })
 @Measurement(iterations = 2)
-@Warmup(iterations = 3)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -72,6 +100,10 @@ public class JavaBigDecimalFromByteArrayScalabilityJmh {
             , "10000"
             , "100000"
             , "1000000"
+            , "10000000"
+            , "100000000"
+            //  ,"1000000000"
+            //  "1292782621"
     })
     public int digits;
     private byte[] integerPart;
@@ -81,19 +113,21 @@ public class JavaBigDecimalFromByteArrayScalabilityJmh {
     public void setUp() {
         String str = "9806543217".repeat((digits + 9) / 10).substring(0, digits);
         integerPart = str.getBytes(StandardCharsets.ISO_8859_1);
-        fractionalPart = ("0." + str).getBytes(StandardCharsets.ISO_8859_1);
+        fractionalPart = ("." + str).getBytes(StandardCharsets.ISO_8859_1);
     }
 
-    /*
-        @Benchmark
-        public BigDecimal i() {
-            return JavaBigDecimalParser.parseBigDecimal(integerPart);
-        }
-    */
+
+    @Benchmark
+    public BigDecimal i() {
+        return JavaBigDecimalParser.parseBigDecimal(integerPart);
+    }
+
     @Benchmark
     public BigDecimal f() {
         return JavaBigDecimalParser.parseBigDecimal(fractionalPart);
     }
+
+
 }
 
 
