@@ -78,20 +78,20 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
                 virtualIndexOfPoint = index;
                 /*
                 for (; index < endIndex - 8; index += 8) {
-                    int eightDigits = tryToParseEightDigits(str, index + 1);
-                    if (eightDigits < 0) {
+                    int digits = tryToParseEightDigits(str, index + 1);
+                    if (digits < 0) {
                         break;
                     }
                     // This might overflow, we deal with it later.
-                    significand = 100_000_000L * significand + eightDigits;
+                    significand = 100_000_000L * significand + digits;
                 }*/
                 for (; index < endIndex - 4; index += 4) {
-                    int eightDigits = FastDoubleSwar.tryToParseFourDigitsUtf8(str, index + 1);
-                    if (eightDigits < 0) {
+                    int digits = FastDoubleSwar.tryToParseFourDigitsUtf8(str, index + 1);
+                    if (digits < 0) {
                         break;
                     }
                     // This might overflow, we deal with it later.
-                    significand = 10_000L * significand + eightDigits;
+                    significand = 10_000L * significand + digits;
                 }
             } else {
                 break;

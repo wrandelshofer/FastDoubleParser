@@ -18,48 +18,45 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.28
- * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 19+36-2238
+ * # JMH version: 1.35
+ * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 20-ea+22-1594
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * Benchmark    Mode     Cnt                 Score   Error   Units   per digit
- * m         1  avgt       2       _   _   _ 13.139          ns/op
- * m        10  avgt       2       _   _   _ 24.150          ns/op
- * m       100  avgt       2       _   _   _496.133          ns/op
- * m      1000  avgt       2       _   _ 14_948.645          ns/op
- * m     10000  avgt       2       _  1_186_259.863          ns/op
- * m    100000  avgt       2       _116_006_218.534          ns/op     1160.06
- * m   1000000  avgt       2     11_915_720_193.000          ns/op    11915.72
- * m  10000000  avgt       1  1_322_734_437_937.000          ns/op   132273.44
+ *    (digits)  Mode  Cnt    _   _   _  Score   Error  Units
+ * m    _   _  1  avgt    2    _   _   _ 23.866          ns/op
+ * m    _   _ 10  avgt    2    _   _   _ 64.853          ns/op
+ * m    _   _100  avgt    2    _   _   _505.986          ns/op
+ * m    _  1_000  avgt    2    _   _ 15_322.876          ns/op
+ * m    _ 10_000  avgt    2    _  1_211_620.965          ns/op
+ * m    _100_000  avgt    2    _117_030_135.430          ns/op
+ * m   1_000_000  avgt    2  11_883_795_509.500          ns/op
  * </pre>
  */
 
 @Fork(value = 1)
-@Measurement(iterations = 1)
-@Warmup(iterations = 0)
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class BigDecimalScalabilityJmh {
+public class BigIntegerScalabilityJmh {
 
 
     @Param({
-            // "1",
-            // "10",
-            // "100",
+            "1",
+            "10",
+            "100",
             "1000",
             "10000",
             "100000",
-            "1000000",
-            "10000000",
-            //"100000000",
-            //"536870919"
+            "1000000"
+            //"1292782621"
     })
     public int digits;
     private String str;
@@ -70,8 +67,8 @@ public class BigDecimalScalabilityJmh {
     }
 
     @Benchmark
-    public BigDecimal m() {
-        return new BigDecimal(str);
+    public BigInteger m() {
+        return new BigInteger(str);
     }
 }
 

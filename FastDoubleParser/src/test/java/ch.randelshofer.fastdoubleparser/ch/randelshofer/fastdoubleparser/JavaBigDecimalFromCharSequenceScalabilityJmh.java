@@ -28,30 +28,24 @@ import java.util.concurrent.TimeUnit;
  * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 19+36-2238
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * Benchmark    Mode  Cnt    _   _   _  Score   Error  Units
- *
- * Recursive Algo with recursion base at 18 digits
- *    (digits)  Mode  Cnt    _   _   _  Score   Error  Units
- * m         1  avgt    2    _   _   _  9.229  WRONG           ns/op
- * m        10  avgt    2    _   _   _ 15.465  WRONG       ns/op
- * m       100  avgt    2    _   _   _569.899  WRONG       ns/op
- * m      1000  avgt    2    _   _  7_972.836  WRONG       ns/op
- * m     10000  avgt    2    _   _224_364.423  WRONG       ns/op
- * m    100000  avgt    2    _  7_684_976.688  WRONG       ns/op
- * m   1000000  avgt    2    _255_832_902.938  WRONG       ns/op
- * ___
- * Linear Algo___
- * m         1  avgt    2    _   _   _ 10.219          ns/op
- * m        10  avgt    2    _   _   _ 16.585          ns/op
- * m       100  avgt    2    _   _   _347.669          ns/op  *21
- * m      1000  avgt    2    _   _  7_029.623          ns/op  *20
- * m     10000  avgt    2    _   _537_926.302          ns/op  *76
- * m    100000  avgt    2    _ 47_848_870.339          ns/op  *88
- * m   1000000  avgt    2   4_943_568_603.167          ns/op *103
+ *    (digits)  Mode  Cnt       _   _  Score   Error  Units
+ * m    _   _100  avgt    2       _   _756.939          ns/op
+ * m    _  1_000  avgt    2       _  9_989.409          ns/op
+ * m    _ 10_000  avgt    2       _265_456.893          ns/op
+ * m    _100_000  avgt    2      9_130_925.801          ns/op
+ * m   1_000_000  avgt    2    303_638_502.013          ns/op
+ * m  10_000_000  avgt    2 10_162_931_172.500          ns/op
  * </pre>
  */
 
-@Fork(value = 1)
+@Fork(value = 1, jvmArgsAppend = {
+        "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
+        , "--enable-preview"
+        , "-XX:+UnlockDiagnosticVMOptions"
+        // "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/*.*"
+        , "-XX:-PrintInlining"
+
+})
 @Measurement(iterations = 2)
 @Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -63,11 +57,12 @@ public class JavaBigDecimalFromCharSequenceScalabilityJmh {
     @Param({
             // "1",
             // "10",
-            "100",
-            "1000",
-            "10000",
-            "100000",
-            "1000000"
+            // "100",
+            // "1000",
+            // "10000",
+            // "100000",
+            // "1000000",
+            "10000000"
     })
     public int digits;
     private String str;

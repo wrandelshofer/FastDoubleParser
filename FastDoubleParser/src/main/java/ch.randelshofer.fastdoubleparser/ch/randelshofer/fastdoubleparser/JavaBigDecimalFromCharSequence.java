@@ -11,7 +11,11 @@ import java.math.BigDecimal;
  * Parses a {@code double} from a {@link CharSequence}.
  */
 final class JavaBigDecimalFromCharSequence {
-    final static int MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
+    /**
+     * See {@link JavaBigDecimalParser}.
+     */
+    private final static int MAX_DIGIT_COUNT = 536_870_919;
+    private final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
 
 
     /**
@@ -29,11 +33,7 @@ final class JavaBigDecimalFromCharSequence {
         return FastDoubleSwar.tryToParseEightDigits(str, offset);
     }
 
-    private int parseEightDigits(CharSequence str, int offset) {
-        return FastDoubleSwar.parseEightDigits(str, offset);
-    }
-
-    public BigDecimal parseFloatingPointLiteral(CharSequence str, int offset, int length) {
+    public BigDecimal parseBigDecimalString(CharSequence str, int offset, int length) {
         long significand = 0L;
         final int integerPartIndex;
         int decimalPointIndex = -1;
@@ -41,7 +41,7 @@ final class JavaBigDecimalFromCharSequence {
 
         final int endIndex = offset + length;
         int index = offset;
-        char ch = str.charAt(index);
+        char ch = index < endIndex ? str.charAt(index) : 0;
         boolean illegal = false;
 
 
@@ -66,12 +66,12 @@ final class JavaBigDecimalFromCharSequence {
                 illegal |= decimalPointIndex >= 0;
                 decimalPointIndex = index;
                 for (; index < endIndex - 4; index += 4) {
-                    int eightDigits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
-                    if (eightDigits < 0) {
+                    int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
+                    if (digits < 0) {
                         break;
                     }
                     // This might overflow, we deal with it later.
-                    significand = 10_000L * significand + eightDigits;
+                    significand = 10_000L * significand + digits;
                 }
             } else {
                 break;
@@ -92,7 +92,7 @@ final class JavaBigDecimalFromCharSequence {
 
         // Parse exponent number
         // ---------------------
-        int expNumber = 0;
+        long expNumber = 0;
         if (ch == 'e' || ch == 'E') {
             exponentIndicatorIndex = index;
             ch = ++index < endIndex ? str.charAt(index) : 0;
@@ -104,7 +104,7 @@ final class JavaBigDecimalFromCharSequence {
             do {
                 // Guard against overflow
                 if (expNumber < MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * (expNumber) + ch - '0';
+                    expNumber = 10 * expNumber + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (isDigit(ch));
@@ -117,28 +117,24 @@ final class JavaBigDecimalFromCharSequence {
         }
         if (illegal || index < endIndex
                 || digitCount == 0
-                || Math.abs(exponent) > MAX_EXPONENT_NUMBER) {
+                || exponent < Integer.MIN_VALUE
+                || exponent > Integer.MAX_VALUE
+                || digitCount > MAX_DIGIT_COUNT) {
             return null;
         }
 
         if (digitCount <= 18) {
             return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
         }
-        return parseDecFloatLiteral(str, integerPartIndex, decimalPointIndex, exponentIndicatorIndex, isNegative, (int) exponent);
-    }
-
-    private BigDecimal parseDecFloatLiteral(CharSequence str, int integerPartIndex, int pointIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
-        boolean hasIntegerPart = pointIndex - integerPartIndex > 0;
-        boolean hasFractionalPart = exponentIndicatorIndex - pointIndex > 1;
-        BigDecimal integerPart = hasIntegerPart
-                ? parseDigits(str, integerPartIndex, pointIndex, exponent + exponentIndicatorIndex - pointIndex - (hasFractionalPart ? 1 : 0))
-                : BigDecimal.ZERO;
-        BigDecimal fractionalPart = hasFractionalPart
-                ? parseDigits(str, pointIndex + 1, exponentIndicatorIndex, exponent)
-                : BigDecimal.ZERO;
-
-        BigDecimal result = integerPart.add(fractionalPart);
-        return isNegative ? result.negate() : result;
+        boolean hasFractionalPart = exponentIndicatorIndex - decimalPointIndex > 1;
+        BigDecimal significand1;
+        if (hasFractionalPart) {
+            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex - 1)
+                    .add(parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, (int) exponent));
+        } else {
+            significand1 = parseDigits(str, integerPartIndex, decimalPointIndex, (int) exponent + exponentIndicatorIndex - decimalPointIndex);
+        }
+        return isNegative ? significand1.negate() : significand1;
     }
 
     private BigDecimal parseDigits(CharSequence str, int index, int endIndex, int exponent) {
@@ -153,7 +149,7 @@ final class JavaBigDecimalFromCharSequence {
             }
             long significandL = significand;
             for (; index < endIndex; index += 8) {
-                significandL = significandL * 100_000_000L + parseEightDigits(str, index);
+                significandL = significandL * 100_000_000L + FastDoubleSwar.parseEightDigits(str, index);
             }
             return BigDecimal.valueOf(significandL, -exponent);
         }

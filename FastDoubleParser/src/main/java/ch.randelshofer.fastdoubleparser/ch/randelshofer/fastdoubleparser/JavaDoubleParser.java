@@ -101,6 +101,12 @@ package ch.randelshofer.fastdoubleparser;
  * </dl>
  *
  * <dl>
+ * <dt><i>Digit:</i>
+ * <dd><i>(one of)</i>
+ * <dd>{@code 0 1 2 3 4 5 6 7 8 9}
+ * </dl>
+ *
+ * <dl>
  * <dt><i>HexNumeral:</i>
  * <dd>{@code 0} {@code x} <i>HexDigits</i>
  * <dd>{@code 0} {@code X} <i>HexDigits</i>
