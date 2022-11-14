@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.RecursiveTask;
 
-class JavaBigIntegerFromByteArray {
+class JavaBigIntegerFromCharArray {
     private final static BigInteger TEN_POW_16 = BigInteger.valueOf(10000000000000000L);
     /**
      * Threshold for single-threaded algorithm vs. multi-threaded algorithm.
@@ -28,7 +28,7 @@ class JavaBigIntegerFromByteArray {
      * @return result (always non-null)
      * @throws NumberFormatException if parsing fails
      */
-    public BigInteger parseBigIntegerLiteral(byte[] str, int offset, int length)
+    public BigInteger parseBigIntegerLiteral(char[] str, int offset, int length)
             throws NumberFormatException {
         final int endIndex = offset + length;
         if (offset < 0 || endIndex > str.length) {
@@ -37,7 +37,7 @@ class JavaBigIntegerFromByteArray {
         // Parse optional sign
         // -------------------
         int index = offset;
-        byte ch = str[index];
+        char ch = str[index];
         final boolean isNegative = ch == '-';
         if (isNegative || ch == '+') {
             ch = ++index < endIndex ? str[index] : 0;
@@ -59,7 +59,7 @@ class JavaBigIntegerFromByteArray {
         return parseDecBigIntegerLiteral(str, index, endIndex, isNegative);
     }
 
-    private BigInteger parseDecBigIntegerLiteral(byte[] str, int from, int to, boolean isNegative) {
+    private BigInteger parseDecBigIntegerLiteral(char[] str, int from, int to, boolean isNegative) {
         Map<Integer, BigInteger> powersOfTen = fillPowersOfTen(from, to);
         int numDigits = to - from;
         BigInteger result;
@@ -93,11 +93,11 @@ class JavaBigIntegerFromByteArray {
             BigInteger pow;
             BigInteger prev = powersOfTen.get(raise - 16);
             if (prev != null) {
-                pow = prev.multiply(TEN_POW_16);
+                pow = prev.parallelMultiply(TEN_POW_16);
             } else {
                 BigInteger half = powersOfTen.get(raise >> 1);
                 if (half != null) {
-                    pow = half.multiply(half);
+                    pow = half.parallelMultiply(half);
                 } else {
                     pow = TEN_POW_16.pow(raise >> 4);
                 }
@@ -106,7 +106,7 @@ class JavaBigIntegerFromByteArray {
         }
     }
 
-    private static BigInteger parseDigitsRecursive(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
+    private static BigInteger parseDigitsRecursive(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
         // Base case: All sequences of 18 or fewer digits fit into a long.
         int numDigits = to - from;
         if (numDigits <= 18) {
@@ -123,12 +123,12 @@ class JavaBigIntegerFromByteArray {
     }
 
 
-    private static BigInteger parseDigitsUpTo18(byte[] str, int from, int to) {
+    private static BigInteger parseDigitsUpTo18(char[] str, int from, int to) {
         int numDigits = to - from;
         int preroll = from + (numDigits & 7);
         long significand = FastDoubleSwar.parseUpTo7Digits(str, from, preroll);
         for (from = preroll; from < to; from += 8) {
-            int result = FastDoubleSwar.tryToParseEightDigitsUtf8(str, from);
+            int result = FastDoubleSwar.tryToParseEightDigits(str, from);
             if (result < 0) {
                 throw new NumberFormatException("Illegal decimal digit");
             }
@@ -137,7 +137,7 @@ class JavaBigIntegerFromByteArray {
         return BigInteger.valueOf(significand);
     }
 
-    private BigInteger parseHexBigIntegerLiteral(byte[] str, int from, int to, boolean isNegative) {
+    private BigInteger parseHexBigIntegerLiteral(char[] str, int from, int to, boolean isNegative) {
         int numDigits = to - from;
         if (numDigits == 0) {
             throw new NumberFormatException("No hex digits");
@@ -146,7 +146,7 @@ class JavaBigIntegerFromByteArray {
         int index = 1;
 
         if ((numDigits & 1) != 0) {
-            byte chLow = str[from++];
+            char chLow = str[from++];
             int valueLow = chLow < 0 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[chLow];
             if (valueLow >= 0) {
                 bytes[index++] = (byte) valueLow;
@@ -156,10 +156,10 @@ class JavaBigIntegerFromByteArray {
         }
         int prerollLimit = from + ((to - from) & 7);
         for (; from < prerollLimit; from += 2) {
-            byte chHigh = str[from];
-            byte chLow = str[from + 1];
-            int valueHigh = chHigh < 0 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[chHigh];
-            int valueLow = chLow < 0 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[chLow];
+            char chHigh = str[from];
+            char chLow = str[from + 1];
+            int valueHigh = chHigh >= 128 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[chHigh];
+            int valueLow = chLow >= 128 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[chLow];
             if (valueHigh >= 0 && valueLow >= 0) {
                 bytes[index++] = (byte) (valueHigh << 4 | valueLow);
             } else {
@@ -189,10 +189,10 @@ class JavaBigIntegerFromByteArray {
      */
     static class ParseDigitsTask extends RecursiveTask<BigInteger> {
         private final int from, to;
-        private final byte[] str;
+        private final char[] str;
         private final Map<Integer, BigInteger> powersOfTen;
 
-        ParseDigitsTask(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
+        ParseDigitsTask(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
             this.from = from;
             this.to = to;
             this.str = str;
@@ -212,7 +212,7 @@ class JavaBigIntegerFromByteArray {
             ParseDigitsTask low = new ParseDigitsTask(str, mid, to, powersOfTen);
             // perform about half the work locally
             low.fork();
-            BigInteger highValue = high.compute().multiply(powersOfTen.get(to - mid));
+            BigInteger highValue = high.compute().parallelMultiply(powersOfTen.get(to - mid));
             return low.join().add(highValue);
         }
     }

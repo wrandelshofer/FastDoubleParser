@@ -55,7 +55,7 @@ class FastDoubleSwar {
      */
 
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
-    public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
+    public static int tryToParseEightDigits(char[] a, int offset) {
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
         /*
         MemorySegment seg = MemorySegment.ofArray(a);
@@ -74,7 +74,7 @@ class FastDoubleSwar {
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
-    public static int tryToParseFourDigitsUtf16(char[] a, int offset) {
+    public static int tryToParseFourDigits(char[] a, int offset) {
         /*
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
         MemorySegment seg = MemorySegment.ofArray(a);
@@ -88,7 +88,7 @@ class FastDoubleSwar {
         return FastDoubleSwar.tryToParseFourDigitsUtf16(first);
     }
 
-    public static int parseEightDigitsUtf16(char[] a, int offset) {
+    public static int parseEightDigits(char[] a, int offset) {
         /*
         // Note: Performance of MemorySegment is awful unless it gets compiled by C2.
         MemorySegment seg = MemorySegment.ofArray(a);
@@ -216,6 +216,19 @@ class FastDoubleSwar {
                 + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
     }
 
+    public static boolean isEightDigitsUtf16(long first, long second) {
+        long fval = first - 0x0030_0030_0030_0030L;
+        long sval = second - 0x0030_0030_0030_0030L;
+
+        // Create a predicate for all bytes which are smaller than '0' (0x0030)
+        // or greater than '9' (0x0039).
+        // We have 0x007f - 0x0039 = 0x0046.
+        // The predicate is true if the hsb of a byte is set: (predicate & 0xff80) != 0.
+        long fpre = first + 0x0046_0046_0046_0046L | fval;
+        long spre = second + 0x0046_0046_0046_0046L | sval;
+        return ((fpre | spre) & 0xff80_ff80_ff80_ff80L) == 0L;
+    }
+
     public static int tryToParseFourDigitsUtf16(long first) {
         long fval = first - 0x0030_0030_0030_0030L;
 
@@ -256,19 +269,41 @@ class FastDoubleSwar {
         return countUpToEightDigitsUtf8((long) readLongLE.get(a, offset));
     }
 
-    public static boolean isEightDigitsUtf8(byte[] a, int offset) {
+    public static boolean isEightDigits(byte[] a, int offset) {
         return isEightDigitsUtf8((long) readLongLE.get(a, offset));
     }
 
-    public static int tryToParseFourDigitsUtf8(byte[] a, int offset) {
+    public static boolean isEightDigits(char[] a, int offset) {
+        long first = a[offset]
+                | (long) a[offset + 1] << 16
+                | (long) a[offset + 2] << 32
+                | (long) a[offset + 3] << 48;
+        long second = a[offset + 4]
+                | (long) a[offset + 5] << 16
+                | (long) a[offset + 6] << 32
+                | (long) a[offset + 7] << 48;
+
+        return isEightDigitsUtf16(first, second);
+    }
+
+    public static boolean isEightDigits(CharSequence a, int offset) {
+        boolean success = true;
+        for (int i = 0; i < 8; i++) {
+            char ch = a.charAt(i + offset);
+            success &= '0' <= ch && ch <= '9';
+        }
+        return success;
+    }
+
+    public static int tryToParseFourDigits(byte[] a, int offset) {
         return tryToParseFourDigitsUtf8((int) readIntLE.get(a, offset));
     }
 
-    public static int parseEightDigitsUtf8(byte[] a, int offset) {
+    public static int parseEightDigits(byte[] a, int offset) {
         return parseEightDigitsUtf8((long) readLongLE.get(a, offset));
     }
 
-    public static int parseUpTo7DigitsUtf8(byte[] str, int from, int to) {
+    public static int parseUpTo7Digits(byte[] str, int from, int to) {
         int result = 0;
         for (; from < to; from++) {
             result = 10 * (result) + str[from] - '0';
@@ -276,7 +311,23 @@ class FastDoubleSwar {
         return result;
     }
 
-    public static int parseFourDigitsUtf8(byte[] a, int offset) {
+    public static int parseUpTo7Digits(char[] str, int from, int to) {
+        int result = 0;
+        for (; from < to; from++) {
+            result = 10 * (result) + str[from] - '0';
+        }
+        return result;
+    }
+
+    public static int parseUpTo7Digits(CharSequence str, int from, int to) {
+        int result = 0;
+        for (; from < to; from++) {
+            result = 10 * (result) + str.charAt(from) - '0';
+        }
+        return result;
+    }
+
+    public static int parseFourDigits(byte[] a, int offset) {
         return parseFourDigitsUtf8((int) readIntLE.get(a, offset));
     }
 
@@ -375,7 +426,7 @@ class FastDoubleSwar {
      * @return the parsed number,
      * returns a negative value if {@code value} does not contain 8 hex digits
      */
-    public static long tryToParseEightHexDigitsUtf16(char[] chars, int offset) {
+    public static long tryToParseEightHexDigits(char[] chars, int offset) {
         // Performance: We extract the chars in two steps so that we
         //              can benefit from out of order execution in the CPU.
         long first = (long) chars[offset] << 48
@@ -476,7 +527,7 @@ class FastDoubleSwar {
      * @param offset the offset of the first character in {@code a}
      *               returns a negative value if {@code value} does not contain 8 digits
      */
-    public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
+    public static long tryToParseEightHexDigits(byte[] a, int offset) {
         return tryToParseEightHexDigitsUtf8((long) readLongBE.get(a, offset));
     }
 

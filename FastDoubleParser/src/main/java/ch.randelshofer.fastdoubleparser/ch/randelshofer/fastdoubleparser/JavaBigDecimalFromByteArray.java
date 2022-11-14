@@ -117,9 +117,9 @@ final class JavaBigDecimalFromByteArray {
         int numDigits = to - from;
         BigSignificand bigSignificand = new BigSignificand(BigSignificand.estimateNumBits(numDigits));
         int preroll = from + (numDigits & 7);
-        bigSignificand.add(FastDoubleSwar.parseUpTo7DigitsUtf8(str, from, preroll));
+        bigSignificand.add(FastDoubleSwar.parseUpTo7Digits(str, from, preroll));
         for (from = preroll; from < to; from += 8) {
-            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigitsUtf8(str, from));
+            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigits(str, from));
         }
 
         return bigSignificand.toBigInteger();
@@ -164,9 +164,9 @@ final class JavaBigDecimalFromByteArray {
     private static BigInteger parseDigitsUpTo18(byte[] str, int from, int to) {
         int numDigits = to - from;
         int preroll = from + (numDigits & 7);
-        long significand = FastDoubleSwar.parseUpTo7DigitsUtf8(str, from, preroll);
+        long significand = FastDoubleSwar.parseUpTo7Digits(str, from, preroll);
         for (from = preroll; from < to; from += 8) {
-            significand = significand * 100_000_000L + FastDoubleSwar.parseEightDigitsUtf8(str, from);
+            significand = significand * 100_000_000L + FastDoubleSwar.parseEightDigits(str, from);
         }
         return BigInteger.valueOf(significand);
     }
@@ -298,7 +298,7 @@ final class JavaBigDecimalFromByteArray {
                 illegal |= decimalPointIndex >= 0;
                 decimalPointIndex = index;
                 for (; index < endIndex - 4; index += 4) {
-                    int digits = FastDoubleSwar.tryToParseFourDigitsUtf8(str, index + 1);
+                    int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
                         break;
                     }
@@ -388,7 +388,7 @@ final class JavaBigDecimalFromByteArray {
         // -----------------
         // Count digits of integer part
         integerPartIndex = index;
-        while (index < endIndex - 8 && FastDoubleSwar.isEightDigitsUtf8(str, index)) {
+        while (index < endIndex - 8 && FastDoubleSwar.isEightDigits(str, index)) {
             index += 8;
         }
         while (index < endIndex && isDigit(ch = str[index])) {
@@ -397,7 +397,7 @@ final class JavaBigDecimalFromByteArray {
         if (ch == '.') {
             decimalPointIndex = index++;
             // Count digits of fraction part
-            while (index < endIndex - 8 && FastDoubleSwar.isEightDigitsUtf8(str, index)) {
+            while (index < endIndex - 8 && FastDoubleSwar.isEightDigits(str, index)) {
                 index += 8;
             }
             while (index < endIndex && isDigit(ch = str[index])) {
