@@ -1,5 +1,14 @@
-/FastDoubleParser/target/
-/FastDoubleParserDemo/target/
 /out/
 /target/
+/FastDoubleParser/target/
+/FastDoubleParser-Java8/target/
+/FastDoubleParser-Java17/target/
+/FastDoubleParser-Java11/target/
+/FastDoubleParser-Java19/target/
+/FastDoubleParser-JavaEarlyAccess/target/
 /FastDoubleParserDemo/target/
+/FastDoubleParserDemo-Java8/target/
+/FastDoubleParserDemo-Java11/target/
+/FastDoubleParserDemo-Java17/target/
+/FastDoubleParserDemo-Java19/target/
+/FastDoubleParserDemo-JavaEarlyAccess/target/

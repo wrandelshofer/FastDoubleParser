@@ -11,12 +11,25 @@
   <name>Parent project for FastDoubleParser</name>
 
   <modules>
+    <module>FastDoubleParser-Java8</module>
+    <module>FastDoubleParser-Java11</module>
+    <module>FastDoubleParser-Java17</module>
+    <module>FastDoubleParser-Java19</module>
+    <module>FastDoubleParser-JavaEarlyAccess</module>
     <module>FastDoubleParser</module>
+    <module>FastDoubleParserDemo-Java8</module>
+    <module>FastDoubleParserDemo-Java11</module>
+    <module>FastDoubleParserDemo-Java17</module>
+    <module>FastDoubleParserDemo-Java19</module>
+    <module>FastDoubleParserDemo-JavaEarlyAccess</module>
     <module>FastDoubleParserDemo</module>
   </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javaVersion>20</javaVersion>
+    <maven.compiler.source>${javaVersion}</maven.compiler.source>
+    <maven.compiler.target>${javaVersion}</maven.compiler.target>
   </properties>
 
   <build>
@@ -27,7 +40,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.9.1</version>
+          <version>3.11.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -36,14 +49,21 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.3.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.1</version>
           <configuration>
-            <source>20</source>
-            <target>20</target>
             <compilerArgs>
               <arg>-Xlint:all</arg>
-              <arg>--enable-preview</arg>
             </compilerArgs>
           </configuration>
         </plugin>
@@ -51,7 +71,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0-M5</version>
           <configuration>
-            <argLine>-Xmx16g --enable-preview</argLine>
+            <argLine>-Xmx16g</argLine>
           </configuration>
         </plugin>
       </plugins>
@@ -105,6 +125,21 @@
           </archive>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -113,7 +148,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
         <reportSets>
           <reportSet>
             <id>aggregate</id>
@@ -130,7 +165,7 @@
           </reportSet>
         </reportSets>
         <configuration>
-          <additionalOptions>-source 19 --enable-preview -Xdoclint:all</additionalOptions>
+          <additionalOptions>-Xdoclint:all</additionalOptions>
         </configuration>
       </plugin>
     </plugins>

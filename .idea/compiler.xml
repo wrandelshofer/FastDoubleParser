@@ -6,15 +6,35 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="FastDoubleParserDemo-Java19" />
+        <module name="FastDoubleParser-Java8" />
+        <module name="FastDoubleParserDemo-JavaEarlyAccess" />
+        <module name="FastDoubleParser-Java19" />
         <module name="FastDoubleParserDemo" />
+        <module name="FastDoubleParser-Java17" />
+        <module name="FastDoubleParser-JavaEarlyAccess" />
+        <module name="FastDoubleParserDemo-Java11" />
         <module name="FastDoubleParser (1)" />
+        <module name="FastDoubleParser-Java11" />
+        <module name="FastDoubleParserDemo-Java8" />
+        <module name="FastDoubleParserDemo-Java17" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FastDoubleParser (1)" options="-Xlint:all --enable-preview" />
-      <module name="FastDoubleParserDemo" options="-Xlint:all --enable-preview" />
+      <module name="FastDoubleParser (1)" options="-Xlint:all" />
+      <module name="FastDoubleParser-Java11" options="-Xlint:all" />
+      <module name="FastDoubleParser-Java17" options="-Xlint:all" />
+      <module name="FastDoubleParser-Java19" options="-Xlint:all" />
+      <module name="FastDoubleParser-Java8" options="-Xlint:all" />
+      <module name="FastDoubleParser-JavaEarlyAccess" options="-Xlint:all --enable-preview" />
+      <module name="FastDoubleParserDemo" options="-Xlint:all" />
+      <module name="FastDoubleParserDemo-Java11" options="-Xlint:all" />
+      <module name="FastDoubleParserDemo-Java17" options="-Xlint:all" />
+      <module name="FastDoubleParserDemo-Java19" options="-Xlint:all" />
+      <module name="FastDoubleParserDemo-Java8" options="-Xlint:all" />
+      <module name="FastDoubleParserDemo-JavaEarlyAccess" options="-Xlint:all" />
     </option>
   </component>
 </project>
