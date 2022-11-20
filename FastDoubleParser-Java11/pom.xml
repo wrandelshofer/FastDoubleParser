@@ -56,56 +56,6 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-sources-from-FastDoubleParser-Java17</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/../FastDoubleParser-Java17/src/main/java/ch.randelshofer.fastdoubleparser
-                  </directory>
-                  <includes>
-                    <include>**/FastIntegerMath.java</include>
-                  </includes>
-                  <excludes></excludes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-sources-from-FastDoubleParser-Java19</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/../FastDoubleParser-Java19/src/main/java/ch.randelshofer.fastdoubleparser
-                  </directory>
-                  <includes>
-                    <include>**/module-info.java</include>
-                  </includes>
-                  <excludes></excludes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
             <id>copy-test-sources-from-FastDoubleParser-JavaEarlyAccess</id>
             <phase>generate-test-sources</phase>
             <goals>

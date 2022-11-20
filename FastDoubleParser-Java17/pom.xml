@@ -80,34 +80,6 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-sources-from-FastDoubleParser-Java19</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/../FastDoubleParser-Java19/src/main/java/ch.randelshofer.fastdoubleparser
-                  </directory>
-                  <includes>
-                    <include>**/*.java</include>
-                  </includes>
-                  <excludes>
-                    <exclude>**/FastIntegerMath.java</exclude>
-                    <exclude>**/FastDoubleSwar.java</exclude>
-                  </excludes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>

@@ -28,9 +28,9 @@ class MyMain {
   public static void main(String... args) {
     double d = JavaDoubleParser.parseDouble("1.2345e135");
     float f = JavaFloatParser.parseFloat("1.2345f");
-    BigDecimal bd = JavaBigDecimalParser.parseBigDecimal("1.2345");
-    BigInteger bi = JavaBigIntegerParser.parseBigInteger("12345");
-    double jsonD = JsonDoubleParser.parseDouble("1.2345e85");
+      BigDecimal bd = JavaBigDecimalParser.parseBigDecimal("1.2345");
+      BigInteger bi = JavaBigIntegerParser.parseBigInteger("12345");
+      double jsonD = JsonDoubleParser.parseDouble("1.2345e85");
   }
 }
 ```
@@ -39,59 +39,38 @@ The `parse...()`-methods take a `CharacterSequence`. a `char`-array or a `byte`-
 parse from a `StringBuffer` or an array without having to convert your input to a `String`. Parsing from an array is
 faster. because the parser can process multiple characters at once using SIMD instructions.
 
-# Building and running the code
-
-When you clone the code repository from github. you can choose from the following branches:
-
-- `main` Aims to contain only working code.
-- `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
-  that are included in Java 20.
-
-Command sequence with Java SE 20 on macOS:
-
-```shell
-git clone https://github.com/wrandelshofer/FastDoubleParser.git
-cd FastDoubleParser 
-javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path FastDoubleParser-JavaEarlyAccess/src/main/java --module ch.randelshofer.fastdoubleparser    
-javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo-JavaEarlyAccess/src/main/java --module ch.randelshofer.fastdoubleparserdemo
-java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
-java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
-```
-
-Command sequence with Java SE 8, 11, 17, 19 and 20 and Maven 3.8.6 on macOS:
-
-```shell
-git clone https://github.com/wrandelshofer/FastDoubleParser.git
-cd FastDoubleParser
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
-mvn clean
-mvn package
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home 
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home 
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.8.jdk/Contents/Home
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_281.jdk/Contents/Home
-java -cp "FastDoubleParser/target/*:FastDoubleParserDemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -cp "FastDoubleParser/target/*:FastDoubleParserDemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-```
-
 ## Performance
+
+### `float` and `double` parsers
+
+On common input data, the fast `double` and `float` parsers are about 4 times faster than
+`java.lang.Double.valueOf(String)` and `java.lang.Float.valueOf(String)`.
+
+For less common inputs, the fast parsers can be slower than their `java.lang` counterparts.
+
+A `double` value can always be specified exactly with up to 17 digits in the significand.
+A `float` only needs up to 8 digits.
+Therefore, inputs with more than 18 digits in the significand are considered less common.
+Such inputs are expected to occur if the input data was created with more precision, and needs to be narrowed down
+to the precision of a `double` or a `float`.
+
+### `BigDecimal` and `BigInteger` parsers
+
+On common input data, the fast `BigDecimal` and `BigInteger` parsers are about as fast as
+`java.math.BigDecimal(String)` and `java.math.BigInteger(String)`.
+
+For less common inputs with many digits, the fast parsers can be a lot faster than their `java.lang` counterparts.
+
+The asymptotic time complexity of the fast parsing algorithms is in O(e^N), where N is the number of decimal digits.
+The asymptotic time complexity of the fast algorithms is the same as their `java.lang` counterparts.
+
+The running time of the algorithms can be characterised with a trend line in the form of
+`time = a * exp(b * N)`. Where `a` and `b` are constant factors.
+The trend lines of the fast algorithms have lower constant factors `a` and `b` than their `java.lang` counterparts.
+
+If your input data contains inputs with many thousands of digits, consider using the `parallelParse` methods
+of the fast algorithms. They have even lower constant time factors than the regular fast `parse` methods - they use
+more CPU and memory resources though.
 
 On my Mac mini (2018) I get the results shown below.
 
@@ -223,4 +202,108 @@ on the same computer:
     JavaDoubleParser String                 :   415.63 MB/s (+/-10.1 %)    23.88 Mfloat/s      41.87 ns/f
     JavaDoubleParser char[]                 :   584.31 MB/s (+/- 9.7 %)    33.58 Mfloat/s      29.78 ns/f
     JavaDoubleParser byte[]                 :   609.54 MB/s (+/- 7.4 %)    35.03 Mfloat/s      28.55 ns/f
+
+# Building and running the code
+
+When you clone the code repository from github. you can choose from the following branches:
+
+- `main` Aims to contain only working code.
+- `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
+  that are included in Java 20.
+
+### Command sequence with Java SE 20 on macOS:
+
+```shell
+git clone https://github.com/wrandelshofer/FastDoubleParser.git
+cd FastDoubleParser 
+javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path FastDoubleParser-JavaEarlyAccess/src/main/java --module ch.randelshofer.fastdoubleparser    
+javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo-JavaEarlyAccess/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
+java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+```
+
+### Command sequence with Java SE 8, 11, 17, 19 and 20 and Maven 3.8.6 on macOS:
+
+```shell
+git clone https://github.com/wrandelshofer/FastDoubleParser.git
+cd FastDoubleParser
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
+mvn clean
+mvn package
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home 
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home 
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.8.jdk/Contents/Home
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p FastDoubleParser/target:FastDoubleParserDemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_281.jdk/Contents/Home
+java -cp "FastDoubleParser/target/*:FastDoubleParserDemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -cp "FastDoubleParser/target/*:FastDoubleParserDemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+```
+
+### IntelliJ IDEA with Java SE 8, 11, 17, 19 and 20 on macOS
+
+Prerequisites:
+
+1. Install the following Java SDKs: 8, 11, 17, 19 and 20.
+   _If you do not need to edit the code, you only need to install the Java 20 SDK._
+2. Install IntelliJ IDEA
+
+Steps:
+
+1. Start IntelliJ IDEA
+2. From the main menu, choose **Git > Clone...**
+3. In the dialog that opens, enter the URL https://github.com/wrandelshofer/FastDoubleParser.git,
+   specify the directory in which you want to save the project and click **Clone**.
+4. Intellij IDEA will now clone the repository and open a new project window.
+   However, the project modules are not yet configured correctly.
+5. From the main menu of the new project window, choose **View > Tool Windows > Maven**
+6. In the Maven tool window, run the Maven build **Parent project for FastDoubleParser > Lifecycle > compile**
+7. In the toolbar of the Maven tool window, click **Reload All Maven Projects**
+8. Intellij IDEA knows now for each module, where the **source**,
+   **generated source**,  **test source**, and **generated test source** folders are.
+   However, the project modules have still incorrect JDK dependencies.
+9. _You can skip this step, if you do not want to edit the code._
+   From the main menu, choose **File > Project Structure...**
+10. _You can skip this step, if you do not want to edit the code._
+    In the dialog that opens, select in the navigation bar **Project Settings > Modules**
+11. _You can skip this step, if you do not want to edit the code._
+    For each module in the right pane of the dialog, select the **Dependencies** tab.
+    Specify the corresponding **Module SDK** for modules which have a name that ends in
+    **-Java8**, **-Java11**, **-Java17**, **-Java19**.
+    Do not change modules with other name endings - they must stay on the Java 20 SDK.
+
+12. From the main menu, choose **Build > Build Project**
+    Intellij IDEA will now properly build the project.
+
+# Editing the code
+
+The majority of the code is located in the module named **FastDoubleParser-JavaEarlyAccess**,
+and **FastDoubleParserDemo-JavaEarlyAccess**.
+The code in these modules uses early access features of the Java 20 SDK.
+
+Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java19**
+contain deltas of the **-JavaEarlyAccess** modules.
+
+The delta code is located in the **source** and **test** folders of the module.
+Code from the **-JavaEarlyAccess** module is located in the **generated source** and
+**generated test source** folders.
+
+The Maven POM of a module contains **maven-resources-plugin** elements that copy code
+from the **-JavaEarlyAccess** module to the delta modules.
+
 
