@@ -50,7 +50,7 @@ For less common inputs, the fast parsers can be slower than their `java.lang` co
 
 A `double` value can always be specified exactly with up to 17 digits in the significand.
 A `float` only needs up to 8 digits.
-Therefore, inputs with more than 18 digits in the significand are considered less common.
+Therefore, inputs with more than 19 digits in the significand are considered less common.
 Such inputs are expected to occur if the input data was created with more precision, and needs to be narrowed down
 to the precision of a `double` or a `float`.
 

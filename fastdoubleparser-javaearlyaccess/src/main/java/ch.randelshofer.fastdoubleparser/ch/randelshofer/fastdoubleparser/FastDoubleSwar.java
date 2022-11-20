@@ -409,22 +409,26 @@ class FastDoubleSwar {
      * }</pre>
      *
      * @param chunk contains 8 ascii characters in little endian order
-     * @return the parsed number,
-     * returns ~(number of leading digits) if not all characters are digits.
+     * @return the parsed number, or a value &lt; 0 if not all characters are
+     * digits.
      */
     public static int tryToParseEightDigitsUtf8(long chunk) {
+        // Subtract the character '0' from all characters.
+        long val = chunk - 0x3030303030303030L;
+
         // Create a predicate for all bytes which are greater than '0' (0x30).
         // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
-        long val = chunk - 0x3030303030303030L;
         long predicate = ((chunk + 0x4646464646464646L) | val) & 0x8080808080808080L;
         if (predicate != 0L) {
-            return -1;//~(Long.numberOfTrailingZeros(predicate)>>3);
+            return -1;
         }
 
         // The last 2 multiplications are independent of each other.
-        val = val * (1 + (10 << 8)) >>> 8;
-        val = (val & 0xff_000000ffL) * (100 + (100_0000L << 32))
-                + (val >>> 16 & 0xff_000000ffL) * (1 + (1_0000L << 32)) >>> 32;
+        long mask = 0xff_000000ffL;
+        long mul1 = 100 + (100_0000L << 32);
+        long mul2 = 1 + (1_0000L << 32);
+        val = val * 10 + (val >>> 8);// same as: val = val * (1 + (10 << 8)) >>> 8;
+        val = (val & mask) * mul1 + (val >>> 16 & mask) * mul2 >>> 32;
         return (int) val;
     }
 
@@ -460,14 +464,15 @@ class FastDoubleSwar {
     }
 
     public static int parseEightDigitsUtf8(long chunk) {
-        // Create a predicate for all bytes which are greater than '0' (0x30).
-        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        // Subtract the character '0' from all characters.
         long val = chunk - 0x3030303030303030L;
 
         // The last 2 multiplications are independent of each other.
-        val = val * (1 + (10 << 8)) >>> 8;
-        val = (val & 0xff_000000ffL) * (100 + (100_0000L << 32))
-                + (val >>> 16 & 0xff_000000ffL) * (1 + (1_0000L << 32)) >>> 32;
+        long mask = 0xff_000000ffL;
+        long mul1 = 100 + (100_0000L << 32);
+        long mul2 = 1 + (1_0000L << 32);
+        val = val * 10 + (val >>> 8);// same as: val = val * (1 + (10 << 8)) >>> 8;
+        val = (val & mask) * mul1 + (val >>> 16 & mask) * mul2 >>> 32;
         return (int) val;
     }
 

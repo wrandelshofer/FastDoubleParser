@@ -72,7 +72,7 @@ import java.util.concurrent.TimeUnit;
         , "--enable-preview"
         , "-XX:+UnlockDiagnosticVMOptions"
         // "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/*.*"
-        , "-XX:+PrintInlining"
+        //, "-XX:+PrintInlining"
 
 })
 @Measurement(iterations = 5)

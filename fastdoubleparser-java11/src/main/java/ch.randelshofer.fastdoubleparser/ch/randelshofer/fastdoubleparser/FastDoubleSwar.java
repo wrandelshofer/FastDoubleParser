@@ -212,14 +212,15 @@ class FastDoubleSwar {
     }
 
     public static int parseEightDigitsUtf8(long chunk) {
-        // Create a predicate for all bytes which are greater than '0' (0x30).
-        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        // Subtract the character '0' from all characters.
         long val = chunk - 0x3030303030303030L;
 
         // The last 2 multiplications are independent of each other.
-        val = val * (1 + (10 << 8)) >>> 8;
-        val = (val & 0xff_000000ffL) * (100 + (100_0000L << 32))
-                + (val >>> 16 & 0xff_000000ffL) * (1 + (1_0000L << 32)) >>> 32;
+        long mask = 0xff_000000ffL;
+        long mul1 = 100 + (100_0000L << 32);
+        long mul2 = 1 + (1_0000L << 32);
+        val = val * 10 + (val >>> 8);// same as: val = val * (1 + (10 << 8)) >>> 8;
+        val = (val & mask) * mul1 + (val >>> 16 & mask) * mul2 >>> 32;
         return (int) val;
     }
 
