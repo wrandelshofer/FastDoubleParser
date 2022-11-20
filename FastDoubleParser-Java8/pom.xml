@@ -5,7 +5,7 @@
   <parent>
     <groupId>ch.randelshofer</groupId>
     <artifactId>FastDoubleParser-ParentProject</artifactId>
-    <version>1.0</version>
+    <version>0.5-ea+1</version>
   </parent>
   <artifactId>FastDoubleParser-Java8</artifactId>
   <packaging>jar</packaging>
@@ -112,8 +112,11 @@
         <version>3.2.0</version>
         <configuration>
           <archive>
+            <manifest>
+              <addDefaultEntries>false</addDefaultEntries>
+            </manifest>
             <manifestEntries>
-              <SCM-Revision>${git.build.time}_${git.commit.id.abbrev}</SCM-Revision>
+              <SCM-Revision>${git.commit.time}_${git.commit.id.abbrev}</SCM-Revision>
               <Automatic-Module-Name>ch.randelshofer.fastdoubleparser</Automatic-Module-Name>
             </manifestEntries>
           </archive>

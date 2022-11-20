@@ -5,12 +5,12 @@
   <parent>
     <groupId>ch.randelshofer</groupId>
     <artifactId>FastDoubleParser-ParentProject</artifactId>
-    <version>1.0</version>
+    <version>0.5-ea+1</version>
   </parent>
   <groupId>ch.randelshofer</groupId>
   <artifactId>FastDoubleParser</artifactId>
-  <version>1.0</version>
   <name>FastDoubleParser multi-release jar</name>
+  <packaging>jar</packaging>
 
   <properties>
     <maven.install.skip>false</maven.install.skip>
@@ -19,6 +19,61 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <skipMain>true</skipMain>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-sources-from-FastDoubleParser-JavaEarlyAccess</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>
+                    ${basedir}/../FastDoubleParser-JavaEarlyAccess/src/main/java/ch.randelshofer.fastdoubleparser
+                  </directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
@@ -29,6 +84,7 @@
           <archive>
             <manifestEntries>
               <Multi-Release>true</Multi-Release>
+              <Automatic-Module-Name>ch.randelshofer.fastdoubleparser</Automatic-Module-Name>
             </manifestEntries>
           </archive>
         </configuration>

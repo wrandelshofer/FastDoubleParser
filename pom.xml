@@ -5,7 +5,16 @@
 
   <groupId>ch.randelshofer</groupId>
   <artifactId>FastDoubleParser-ParentProject</artifactId>
-  <version>1.0</version>
+  <version>0.5-ea+1</version>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/wrandelshofer/FastDoubleParser.git</url>
+  </scm>
 
   <packaging>pom</packaging>
   <name>Parent project for FastDoubleParser</name>
@@ -33,7 +42,6 @@
   </properties>
 
   <build>
-    <finalName>${project.artifactId}-${git.build.time}_${git.commit.id.abbrev}</finalName>
 
     <pluginManagement>
       <plugins>
@@ -51,6 +59,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <groupId>io.github.git-commit-id</groupId>
+          <artifactId>git-commit-id-maven-plugin</artifactId>
+          <version>5.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -74,6 +87,10 @@
             <argLine>-Xmx16g</argLine>
           </configuration>
         </plugin>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.5.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -81,14 +98,13 @@
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
-        <version>5.0.0</version>
         <executions>
           <execution>
             <id>get-the-git-infos</id>
             <goals>
               <goal>revision</goal>
             </goals>
-            <phase>validate</phase>
+            <phase>initialize</phase>
           </execution>
           <execution>
             <id>validate-the-git-infos</id>
@@ -99,13 +115,14 @@
           </execution>
         </executions>
         <configuration>
-          <generateGitPropertiesFile>true</generateGitPropertiesFile>
+          <generateGitPropertiesFile>false</generateGitPropertiesFile>
           <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
           </generateGitPropertiesFilename>
           <dateFormat>yyyy-MM-dd</dateFormat>
           <includeOnlyProperties>
-            <includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+            <includeOnlyProperty>^git.commit.(time|version)$</includeOnlyProperty>
             <includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
+            <includeOnlyProperty>^git.tags$</includeOnlyProperty>
           </includeOnlyProperties>
           <commitIdGenerationMode>full</commitIdGenerationMode>
           <skipPoms>false</skipPoms>
@@ -119,9 +136,14 @@
         <version>3.2.0</version>
         <configuration>
           <archive>
+            <manifest>
+              <addDefaultEntries>false</addDefaultEntries>
+            </manifest>
             <manifestEntries>
-              <SCM-Revision>${git.build.time}_${git.commit.id.abbrev}</SCM-Revision>
+              <SCM-URL>${project.scm.url}</SCM-URL>
+              <SCM-Revision>${git.commit.time}_${git.commit.id.abbrev}</SCM-Revision>
             </manifestEntries>
+            <addMavenDescriptor>false</addMavenDescriptor>
           </archive>
         </configuration>
       </plugin>
@@ -130,10 +152,22 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>3.2.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultEntries>false</addDefaultEntries>
+            </manifest>
+            <manifestEntries>
+              <SCM-URL>${project.scm.url}</SCM-URL>
+              <SCM-Revision>${git.commit.time}_${git.commit.id.abbrev}</SCM-Revision>
+            </manifestEntries>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
         <executions>
           <execution>
             <id>attach-sources</id>
-            <phase>verify</phase>
+            <phase>package</phase>
             <goals>
               <goal>jar-no-fork</goal>
             </goals>

@@ -5,11 +5,10 @@
   <parent>
     <groupId>ch.randelshofer</groupId>
     <artifactId>FastDoubleParser-ParentProject</artifactId>
-    <version>1.0</version>
+    <version>0.5-ea+1</version>
   </parent>
   <groupId>ch.randelshofer</groupId>
   <artifactId>FastDoubleParserDemo</artifactId>
-  <version>1.0</version>
   <name>FastDoubleParserDemo multi-release jar</name>
 
   <properties>

@@ -5,7 +5,7 @@
   <parent>
     <groupId>ch.randelshofer</groupId>
     <artifactId>FastDoubleParser-ParentProject</artifactId>
-    <version>1.0</version>
+    <version>0.5-ea+1</version>
   </parent>
   <artifactId>FastDoubleParserDemo-EarlyAccess</artifactId>
   <packaging>jar</packaging>
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>ch.randelshofer</groupId>
       <artifactId>FastDoubleParser-JavaEarlyAccess</artifactId>
-      <version>1.0</version>
+      <version>0.5-ea+1</version>
     </dependency>
   </dependencies>
 </project>
