@@ -14,7 +14,7 @@ import java.nio.ByteOrder;
  */
 class BigSignificand {
     private final byte[] x;
-    private int firstNonZeroWord;
+    private int firstNonZeroInt;
     private static final long LONG_MASK = 0xffffffffL;
     private final int numInts;
     private final static VarHandle readIntBE =
@@ -28,7 +28,7 @@ class BigSignificand {
         numInts = numLongs << 1;
         int numBytes = numInts << 2;
         x = new byte[numBytes];
-        firstNonZeroWord = numInts;
+        firstNonZeroInt = numInts;
     }
 
     /**
@@ -41,14 +41,14 @@ class BigSignificand {
         long factor = value & LONG_MASK;
         long carry = 0;
         int i = numInts - 1;
-        for (; i >= firstNonZeroWord; i--) {
+        for (; i >= firstNonZeroInt; i--) {
             long product = factor * (x(i) & LONG_MASK) + carry;
             x(i, (int) product);
             carry = product >>> 32;
         }
         if (carry != 0) {
             x(i, (int) carry);
-            firstNonZeroWord = i;
+            firstNonZeroInt = i;
         }
     }
 
@@ -64,26 +64,15 @@ class BigSignificand {
         long factorL = factor & LONG_MASK;
         long carry = addend;
         int i = numInts - 1;
-        for (; i >= firstNonZeroWord; i--) {
+        for (; i >= firstNonZeroInt; i--) {
             long product = factorL * (x(i) & LONG_MASK) + carry;
             x(i, (int) product);
             carry = product >>> 32;
         }
         if (carry != 0) {
             x(i, (int) carry);
-            firstNonZeroWord = i;
+            firstNonZeroInt = i;
         }
-    }
-
-    /**
-     * Adds the specified value {@code addend * 10^addendExponent}
-     * to this value.
-     *
-     * @param addend         the addend
-     * @param addendExponent the exponent of the addend
-     */
-    public void add(int addend, int addendExponent) {
-        throw new UnsupportedOperationException();
     }
 
     private int x(int i) {
@@ -112,7 +101,7 @@ class BigSignificand {
             x(i, (int) sum);
             carry = sum >>> 32;
         }
-        firstNonZeroWord = Math.min(firstNonZeroWord, i + 1);
+        firstNonZeroInt = Math.min(firstNonZeroInt, i + 1);
     }
 
     @Override

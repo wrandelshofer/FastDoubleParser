@@ -13,7 +13,7 @@ import java.nio.IntBuffer;
  */
 class BigSignificand {
     private final int[] x;
-    private int firstNonZeroWord;
+    private int firstNonZeroInt;
     private static final long LONG_MASK = 0xffffffffL;
     private final int numInts;
 
@@ -24,7 +24,7 @@ class BigSignificand {
         int numLongs = (int) ((numBits + 63) >>> 6) + 1;
         numInts = numLongs << 1;
         x = new int[numInts];
-        firstNonZeroWord = numInts;
+        firstNonZeroInt = numInts;
     }
 
     /**
@@ -37,14 +37,14 @@ class BigSignificand {
         long factor = value & LONG_MASK;
         long carry = 0;
         int i = numInts - 1;
-        for (; i >= firstNonZeroWord; i--) {
+        for (; i >= firstNonZeroInt; i--) {
             long product = factor * (x(i) & LONG_MASK) + carry;
             x(i, (int) product);
             carry = product >>> 32;
         }
         if (carry != 0) {
             x(i, (int) carry);
-            firstNonZeroWord = i;
+            firstNonZeroInt = i;
         }
     }
 
@@ -60,14 +60,14 @@ class BigSignificand {
         long factorL = factor & LONG_MASK;
         long carry = addend;
         int i = numInts - 1;
-        for (; i >= firstNonZeroWord; i--) {
+        for (; i >= firstNonZeroInt; i--) {
             long product = factorL * (x(i) & LONG_MASK) + carry;
             x(i, (int) product);
             carry = product >>> 32;
         }
         if (carry != 0) {
             x(i, (int) carry);
-            firstNonZeroWord = i;
+            firstNonZeroInt = i;
         }
     }
 
@@ -108,7 +108,7 @@ class BigSignificand {
             x(i, (int) sum);
             carry = sum >>> 32;
         }
-        firstNonZeroWord = Math.min(firstNonZeroWord, i + 1);
+        firstNonZeroInt = Math.min(firstNonZeroInt, i + 1);
     }
 
     @Override
