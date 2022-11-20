@@ -9,6 +9,22 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 class JavaBigIntegerFromByteArray extends AbstractNumberParser {
     /**
+     * Threshold on the number of digits for selecting the
+     * recursive algorithm instead of the iterative algorithm.
+     * <p>
+     * Set this to {@link Integer#MAX_VALUE} if you only want to use the
+     * iterative algorithm.
+     * <p>
+     * Set this to {@code 0} if you only want to use the recursive algorithm.
+     * <p>
+     * Rationale for choosing a specific threshold value:
+     * The iterative algorithm has a smaller constant overhead than the
+     * recursive algorithm. We speculate that we break even somewhere at twice
+     * the threshold value.
+     */
+    public static final int RECURSION_THRESHOLD = 128;
+
+    /**
      * Threshold for single-threaded algorithm vs. multi-threaded algorithm.
      * <p>
      * Set this to {@link Integer#MAX_VALUE} if you only want to use
@@ -28,6 +44,59 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
      * The decimal representation of {@code 2^31 - 1} has 646,456,993 digits.
      */
     private static final int MAX_DECIMAL_DIGITS = 646_456_993;
+
+    /**
+     * Parses digits in exponential time O(e^n).
+     */
+    static BigInteger parseDigitsIterative(byte[] str, int from, int to) {
+        int numDigits = to - from;
+        BigSignificand bigSignificand = new BigSignificand(FastIntegerMath.estimateNumBits(numDigits));
+        int preroll = from + (numDigits & 7);
+        bigSignificand.add(FastDoubleSwar.parseUpTo7Digits(str, from, preroll));
+        for (from = preroll; from < to; from += 8) {
+            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigits(str, from));
+        }
+        return bigSignificand.toBigInteger();
+    }
+
+    /**
+     * Parses digits in exponential time O(e^n).
+     */
+    private static BigInteger parseDigitsRecursive(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
+        // Base case: All sequences of 18 or fewer digits fit into a long.
+        int numDigits = to - from;
+        if (numDigits <= 18) {
+            return parseDigitsUpTo18(str, from, to);
+        }
+        if (numDigits <= RECURSION_THRESHOLD) {
+            return parseDigitsIterative(str, from, to);
+        }
+
+        // Recursion case: Sequences of more than 18 digits do not fit into a long.
+        int mid = splitFloor16(from, to);
+        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
+        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
+
+        high = high.multiply(powersOfTen.get(to - mid));
+        return low.add(high);
+    }
+
+    /**
+     * Parses up to 18 digits in exponential time O(e^n).
+     */
+    private static BigInteger parseDigitsUpTo18(byte[] str, int from, int to) {
+        int numDigits = to - from;
+        int preroll = from + (numDigits & 7);
+        long significand = FastDoubleSwar.parseUpTo7Digits(str, from, preroll);
+        for (from = preroll; from < to; from += 8) {
+            int result = FastDoubleSwar.tryToParseEightDigitsUtf8(str, from);
+            if (result < 0) {
+                throw new NumberFormatException(SYNTAX_ERROR);
+            }
+            significand = significand * 100_000_000L + result;
+        }
+        return BigInteger.valueOf(significand);
+    }
 
     /**
      * Parses a {@code BigIntegerLiteral} as specified in {@link JavaBigIntegerParser}.
@@ -87,42 +156,6 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
         return isNegative ? result.negate() : result;
     }
 
-    private int skipZeroes(byte[] str, int from, int to) {
-        while (from < to && str[from] == '0') from++;
-        return from;
-    }
-
-    private static BigInteger parseDigitsRecursive(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
-        // Base case: All sequences of 18 or fewer digits fit into a long.
-        int numDigits = to - from;
-        if (numDigits <= 18) {
-            return parseDigitsUpTo18(str, from, to);
-        }
-
-        // Recursion case: Sequences of more than 18 digits do not fit into a long.
-        int mid = splitFloor16(from, to);
-        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
-        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
-
-        high = high.multiply(powersOfTen.get(to - mid));
-        return low.add(high);
-    }
-
-
-    private static BigInteger parseDigitsUpTo18(byte[] str, int from, int to) {
-        int numDigits = to - from;
-        int preroll = from + (numDigits & 7);
-        long significand = FastDoubleSwar.parseUpTo7Digits(str, from, preroll);
-        for (from = preroll; from < to; from += 8) {
-            int result = FastDoubleSwar.tryToParseEightDigitsUtf8(str, from);
-            if (result < 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
-            }
-            significand = significand * 100_000_000L + result;
-        }
-        return BigInteger.valueOf(significand);
-    }
-
     private BigInteger parseHexBigIntegerLiteral(byte[] str, int from, int to, boolean isNegative) {
         if (to - from == 0) {
             throw new NumberFormatException(SYNTAX_ERROR);
@@ -163,10 +196,13 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
         return isNegative ? result.negate() : result;
     }
 
+    private int skipZeroes(byte[] str, int from, int to) {
+        while (from < to && str[from] == '0') from++;
+        return from;
+    }
+
     /**
-     * Parses digits using a multi-threaded recursive algorithm in O(n^1.5)
-     * with a large constant overhead if there are less than about 1000
-     * digits.
+     * Parses digits in exponential time O(e^n).
      */
     static class ParseDigitsTask extends RecursiveTask<BigInteger> {
         private final int from, to;

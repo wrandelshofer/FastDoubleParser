@@ -18,15 +18,23 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmarks for selected integer strings.
+ * <pre>
+ * # JMH version: 1.35
+ * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+24-1795
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * With additional iterative step, recursion threshold 128
+ *
+ *      (digits)  Mode  Cnt     Score   Error  Units
+ * dec       100  avgt    2   332.517          ns/op
+ * dec      1000  avgt    2  4724.631          ns/op
+ * </pre>
  * <pre>
  * # JMH version: 1.35
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+22-1594
@@ -66,15 +74,15 @@ import java.util.concurrent.TimeUnit;
  * dec  10_000_000  avgt    2       6_317_343_012.000          ns/op * 631
  * </pre>
  */
-@Fork(value = 4, jvmArgsAppend = {
+@Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
 
         //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
 
 })
-@Measurement(iterations = 4)
-@Warmup(iterations = 4)
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -82,33 +90,23 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
 
     @Param({
-            //  "1"
-            //  , "10"
-            //  , "100"
-            //  , "1000"
+            //"1"
+            //, "10"
+            "100"
+            , "1000"
             //  , "10000"
             //  , "100000"
             //  , "1000000"
             //  , "10000000"
             //  , "100000000"
-            "646391315"
+            //"646391315"
 
     })
     public int digits;
     private byte[] hexLiteral;
     private byte[] decLiteral;
 
-    private static String maxValue;
 
-    static {
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(
-                JmhJavaBigIntegerFromByteArrayScalability.class.getResourceAsStream("BigInteger_MAX_VALUE.txt")
-                , StandardCharsets.ISO_8859_1))) {
-            maxValue = r.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Setup(Level.Trial)
     public void setUp() {
@@ -120,16 +118,12 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
     /*
         @Benchmark
         public BigInteger hex() {
-            return JavaBigIntegerParser.parseBigIntegerOrNull(hexLiteral);
+            return JavaBigIntegerParser.parseBigInteger(hexLiteral);
         }
-
+*/
     @Benchmark
     public BigInteger dec() {
-        return JavaBigIntegerParser.parseBigIntegerOrNull(decLiteral);
-    }*/
-    @Benchmark
-    public BigInteger decMaxValue() {
-        return JavaBigIntegerParser.parallelParseBigInteger(maxValue);
+        return JavaBigIntegerParser.parseBigInteger(decLiteral);
     }
 }
 

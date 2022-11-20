@@ -29,27 +29,57 @@ import java.util.concurrent.TimeUnit;
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+24-1795
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *     (digits)  Mode  Cnt            Score   Error  Units
- * fp          1  avgt    2           11.440          ns/op
- * fp         10  avgt    2           16.926          ns/op
- * fp        100  avgt    2          551.558          ns/op
- * fp       1000  avgt    2         6278.705          ns/op
- * fp      10000  avgt    2       198469.186          ns/op
- * fp     100000  avgt    2      3970291.505          ns/op
- * fp    1000000  avgt    2     94821977.307          ns/op
- * fp   10000000  avgt    2   2518137052.625          ns/op
- * fp  100000000  avgt    2  82159761598.000          ns/op
+ *      (digits)  Mode  Cnt             Score   Error  Units
+ * f           1  avgt    2            14.505          ns/op
+ * f          10  avgt    2            19.631          ns/op
+ * f         100  avgt    2           599.830          ns/op
+ * f        1000  avgt    2          6864.292          ns/op
+ * f       10000  avgt    2        291812.634          ns/op
+ * f      100000  avgt    2       9894570.057          ns/op
+ * f     1000000  avgt    2     314264045.875          ns/op
+ * f    10000000  avgt    2    9647730488.750          ns/op
+ * f   100000000  avgt    2  219840186170.000          ns/op
+ * fp          1  avgt    2            11.359          ns/op
+ * fp         10  avgt    2            16.575          ns/op
+ * fp        100  avgt    2           570.128          ns/op
+ * fp       1000  avgt    2          6877.465          ns/op
+ * fp      10000  avgt    2        240066.359          ns/op
+ * fp     100000  avgt    2       4884974.972          ns/op
+ * fp    1000000  avgt    2      80530354.594          ns/op
+ * fp   10000000  avgt    2    2335475538.100          ns/op
+ * fp  100000000  avgt    2   72359890033.500          ns/op
+ * ip          1  avgt    2             8.193          ns/op
+ * ip         10  avgt    2            14.488          ns/op
+ * ip        100  avgt    2           205.538          ns/op
+ * ip       1000  avgt    2          5098.756          ns/op
+ * ip      10000  avgt    2        123802.196          ns/op
+ * ip     100000  avgt    2       2578333.298          ns/op
+ * ip    1000000  avgt    2      69012871.814          ns/op
+ * ip   10000000  avgt    2    1954652082.500          ns/op
+ * ip  100000000  avgt    2   61191469918.500          ns/op
+ * </pre>
+ * <pre>
+ * recursive only (recursion threshold=0)
+ *    (digits)  Mode  Cnt           Score   Error  Units
+ * ir         1  avgt    2          11.857          ns/op
+ * ir        10  avgt    2          15.118          ns/op
+ * ir       100  avgt    2         545.510          ns/op
+ * ir      1000  avgt    2        6251.473          ns/op
+ * ir     10000  avgt    2      196700.757          ns/op
+ * ir    100000  avgt    2     6627368.179          ns/op
+ * ir   1000000  avgt    2   209404227.114          ns/op
+ * ir  10000000  avgt    2  6137410866.000          ns/op
  *
- *     (digits)  Mode  Cnt             Score   Error  Units
- * f          1  avgt    2            15.866          ns/op
- * f         10  avgt    2            19.659          ns/op
- * f        100  avgt    2           699.238          ns/op
- * f       1000  avgt    2          7076.743          ns/op
- * f      10000  avgt    2        308201.856          ns/op
- * f     100000  avgt    2      10185539.382          ns/op
- * f    1000000  avgt    2     324529829.494          ns/op
- * f   10000000  avgt    2    7606351418.750          ns/op
- * f  100000000  avgt    2  220240847843.500          ns/op
+ * iterative only (recursion threshold=Integer.MAX_VALUE)
+ *    (digits)  Mode  Cnt             Score   Error  Units
+ * ii         1  avgt    2            12.875          ns/op
+ * ii        10  avgt    2            18.067          ns/op
+ * ii       100  avgt    2           218.580          ns/op
+ * ii      1000  avgt    2          6205.464          ns/op
+ * ii     10000  avgt    2        560241.743          ns/op
+ * ii    100000  avgt    2      61370640.207          ns/op
+ * ii   1000000  avgt    2    5376094842.000          ns/op
+ * ii  10000000  avgt    2  507520375437.000          ns/op
  * </pre>
  *
  * <pre>
@@ -107,7 +137,7 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
             , "100000"
             , "1000000"
             , "10000000"
-            , "100000000"
+            // , "100000000"
             // "1000000000"
             //  "1292782621"
             //"646391314"
@@ -123,12 +153,18 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
         fractionalPart = ("1." + str).getBytes(StandardCharsets.ISO_8859_1);
     }
 
+    /*
+      @Benchmark
+      public BigDecimal ip() {
+          return JavaBigDecimalParser.parallelParseBigDecimal(integerPart);
+      }
+      */
+    @Benchmark
+    public BigDecimal i() {
+        return JavaBigDecimalParser.parseBigDecimal(integerPart);
+    }
+  /*
 
-    //  @Benchmark
-    //  public BigDecimal i() {
-    //      return JavaBigDecimalParser.parseBigDecimal(integerPart);
-    //  }
-//
     @Benchmark
     public BigDecimal fp() {
         return JavaBigDecimalParser.parallelParseBigDecimal(fractionalPart);
@@ -138,8 +174,7 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
     public BigDecimal f() {
         return JavaBigDecimalParser.parseBigDecimal(fractionalPart);
     }
-
-
+*/
 }
 
 
