@@ -69,7 +69,9 @@ public class JavaBigIntegerParser {
     /**
      * Convenience method for calling {@link #parseBigInteger(byte[], int, int)}.
      *
-     * @param str the string to be parsed
+     * @param str    the string to be parsed
+     * @param offset The index of the first character to parse
+     * @param length The number of characters to parse
      * @return the parsed value
      * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if offset or length are illegal
@@ -157,6 +159,8 @@ public class JavaBigIntegerParser {
      * Convenience method for calling {@link #parallelParseBigInteger(byte[], int, int)}.
      *
      * @param str the string to be parsed
+     * @param offset The index of the first character to parse
+     * @param length The number of characters to parse
      * @return the parsed value
      * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if offset or length are illegal
