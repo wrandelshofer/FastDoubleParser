@@ -76,7 +76,7 @@ more CPU and memory resources though.
 
 On my Mac mini (2018) I get the results shown below.
 
-#### Random double numbers in the range from 0 to 1
+### Random double numbers in the range from 0 to 1
 
 Most numbers look like this: `0.4011441469603171`.
 
@@ -213,7 +213,7 @@ When you clone the code repository from github. you can choose from the followin
 - `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
   that are included in Java 20.
 
-### Command sequence with Java SE 20 on macOS:
+## Command sequence with Java SE 20 on macOS:
 
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
@@ -224,7 +224,7 @@ java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelsh
 java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
 ```
 
-### Command sequence with Java SE 8, 11, 17, 19 and 20 and Maven 3.8.6 on macOS:
+## Command sequence with Java SE 8, 11, 17, 19 and 20 and Maven 3.8.6 on macOS:
 
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
@@ -257,7 +257,7 @@ java -cp "FastDoubleParser/target/*:FastDoubleParserDemo/target/*" ch.randelshof
 java -cp "FastDoubleParser/target/*:FastDoubleParserDemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
 ```
 
-### IntelliJ IDEA with Java SE 8, 11, 17, 19 and 20 on macOS
+## IntelliJ IDEA with Java SE 8, 11, 17, 19 and 20 on macOS
 
 Prerequisites:
 
@@ -292,7 +292,7 @@ Steps:
 12. From the main menu, choose **Build > Build Project**
     Intellij IDEA will now properly build the project.
 
-# Editing the code
+## Editing the code
 
 The majority of the code is located in the module named **FastDoubleParser-JavaEarlyAccess**,
 and **FastDoubleParserDemo-JavaEarlyAccess**.
@@ -307,5 +307,3 @@ Code from the **-JavaEarlyAccess** module is located in the **generated source**
 
 The Maven POM of a module contains **maven-resources-plugin** elements that copy code
 from the **-JavaEarlyAccess** module to the delta modules.
-
-
