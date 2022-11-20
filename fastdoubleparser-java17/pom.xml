@@ -5,7 +5,7 @@
   <parent>
     <groupId>ch.randelshofer</groupId>
     <artifactId>fastdoubleparser-parentproject</artifactId>
-    <version>0.5-ea+1</version>
+    <version>0.5.0</version>
   </parent>
   <artifactId>fastdoubleparser-java17</artifactId>
   <packaging>jar</packaging>
