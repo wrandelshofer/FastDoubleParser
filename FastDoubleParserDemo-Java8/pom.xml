@@ -13,6 +13,7 @@
     <javaVersion>8</javaVersion>
     <maven.install.skip>true</maven.install.skip>
     <maven.javadoc.skip>true</maven.javadoc.skip>
+    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
   <name>FastDoubleParserDemo-Java8</name>
