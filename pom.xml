@@ -26,13 +26,13 @@
     <module>fastdoubleparser-java11</module>
     <module>fastdoubleparser-java17</module>
     <module>fastdoubleparser-java19</module>
-    <module>fastdoubleparser-javaEarlyAccess</module>
+    <module>fastdoubleparser-dev</module>
     <module>fastdoubleparser</module>
     <module>fastdoubleparserdemo-Java8</module>
     <module>fastdoubleparserdemo-Java11</module>
     <module>fastdoubleparserdemo-Java17</module>
     <module>fastdoubleparserdemo-Java19</module>
-    <module>fastdoubleparserdemo-JavaEarlyAccess</module>
+    <module>fastdoubleparserdemo-dev</module>
     <module>fastdoubleparserdemo</module>
   </modules>
 

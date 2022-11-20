@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main-JavaEarlyAccess [0,1)" type="Application" factoryName="Application">
+  <configuration default="false" name="Main-Dev [0,1)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
-    <module name="FastDoubleParserDemo-JavaEarlyAccess" />
+    <module name="fastdoubleparserdemo-dev" />
     <option name="PROGRAM_PARAMETERS" value="--markdown" />
     <option name="VM_PARAMETERS" value="--enable-preview" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />

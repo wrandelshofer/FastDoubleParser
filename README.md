@@ -218,8 +218,8 @@ When you clone the code repository from github. you can choose from the followin
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
 cd FastDoubleParser 
-javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path fastdoubleparser-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparser    
-javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path fastdoubleparser-dev/src/main/java --module ch.randelshofer.fastdoubleparser    
+javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-dev/src/main/java --module ch.randelshofer.fastdoubleparserdemo
 java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
 java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main FastDoubleParserDemo/data/canada.txt   
 ```
@@ -294,16 +294,16 @@ Steps:
 
 ## Editing the code
 
-The majority of the code is located in the module named **fastdoubleparser-javaearlyaccess**,
-and **fastdoubleparserdemo-javaearlyaccess**.
+The majority of the code is located in the module named **fastdoubleparser-dev**,
+and **fastdoubleparserdemo-dev**.
 The code in these modules uses early access features of the Java 20 SDK.
 
 Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java19**
-contain deltas of the **-JavaEarlyAccess** modules.
+contain deltas of the **-dev** modules.
 
 The delta code is located in the **source** and **test** folders of the module.
-Code from the **-JavaEarlyAccess** module is located in the **generated source** and
+Code from the **-dev** module is located in the **generated source** and
 **generated test source** folders.
 
 The Maven POM of a module contains **maven-resources-plugin** elements that copy code
-from the **-JavaEarlyAccess** module to the delta modules.
+from the **-dev** module to the delta modules.

@@ -24,7 +24,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-sources-from-fastdoubleparserdemo-javaearlyaccess</id>
+            <id>copy-sources-from-fastdoubleparserdemo-dev</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -34,7 +34,7 @@
               <resources>
                 <resource>
                   <directory>
-                    ${basedir}/../fastdoubleparserdemo-javaearlyaccess/src/main/java/ch.randelshofer.fastdoubleparserdemo
+                    ${basedir}/../fastdoubleparserdemo-dev/src/main/java/ch.randelshofer.fastdoubleparserdemo
                   </directory>
                   <includes>
                     <include>**/*.java</include>

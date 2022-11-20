@@ -24,9 +24,9 @@ jobs:
           distribution: ${{ matrix.dist }}
 
       - name: Compile FastDoubleParser
-        run: javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path fastdoubleparser-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparser
+        run: javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path fastdoubleparser-dev/src/main/java --module ch.randelshofer.fastdoubleparser
       - name: Compile FastDoubleParserDemo
-        run: javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+        run: javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-dev/src/main/java --module ch.randelshofer.fastdoubleparserdemo
       - name: Run Test 1
         run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main
       - name: Run Test 2

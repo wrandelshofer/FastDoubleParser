@@ -25,7 +25,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-sources-from-fastdoubleparser-javaearlyaccess</id>
+            <id>copy-sources-from-fastdoubleparser-dev</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -35,7 +35,7 @@
               <resources>
                 <resource>
                   <directory>
-                    ${basedir}/../fastdoubleparser-javaearlyaccess/src/main/java/ch.randelshofer.fastdoubleparser
+                    ${basedir}/../fastdoubleparser-dev/src/main/java/ch.randelshofer.fastdoubleparser
                   </directory>
                   <includes>
                     <include>**/*.java</include>
@@ -53,7 +53,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-test-sources-from-fastdoubleparser-javaearlyaccess</id>
+            <id>copy-test-sources-from-fastdoubleparser-dev</id>
             <phase>generate-test-sources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -62,7 +62,7 @@
               <outputDirectory>${project.build.directory}/generated-test-sources/java</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/../fastdoubleparser-javaearlyaccess/src/test/java</directory>
+                  <directory>${basedir}/../fastdoubleparser-dev/src/test/java</directory>
                   <includes>
                     <include>**/*.java</include>
                   </includes>
