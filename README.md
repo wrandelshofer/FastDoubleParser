@@ -221,7 +221,7 @@ cd FastDoubleParser
 javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path FastDoubleParser-JavaEarlyAccess/src/main/java --module ch.randelshofer.fastdoubleparser    
 javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo-JavaEarlyAccess/src/main/java --module ch.randelshofer.fastdoubleparserdemo
 java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
-java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main FastDoubleParserDemo/data/canada.txt   
 ```
 
 ## Command sequence with Java SE 8, 11, 17, 19 and 20 and Maven 3.8.6 on macOS:
