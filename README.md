@@ -1,166 +1,166 @@
 # FastDoubleParser
 
-This is a Java port of Daniel Lemire's fast_float.
+This is a Java port of Daniel Lemire's [fast_float](https://github.com/fastfloat/fast_float) project.
 
-https://github.com/fastfloat/fast_float
+This project provides parsers for `double`, `float`, `BigDecimal` and `BigInteger` values.
+The parsers are optimised for speed for the most common inputs.
+
+The code in this project contains optimised versions for Java SE 1.8, 11, 17, 19 and 20-ea.
+The code is released in a single multi-release jar, which contains the code for all these versions
+except 20-ea.
 
 Usage:
 
-    import ch.randelshofer.fastdoubleparser.FastDoubleParser;
-    import ch.randelshofer.fastdoubleparser.FastFloatParser;
+```java
+module MyModule {
+  requires ch.randelshofer.fastdoubleparser;
+}
+```
 
-    double d = FastDoubleParser.parseDouble("1.2345");
-    float f = FastFloatParser.parseFloat("1.2345");
+```java
+import ch.randelshofer.fastdoubleparser.JavaDoubleParser;
+import ch.randelshofer.fastdoubleparser.JavaFloatParser;
+import ch.randelshofer.fastdoubleparser.JavaBigDecimalParser;
+import ch.randelshofer.fastdoubleparser.JavaBigIntegerParser;
+import ch.randelshofer.fastdoubleparser.JsonDoubleParser;
 
-Method `parseDouble()` takes a `CharacterSequence`. a `char`-array or a `byte`-array as argument. This way. you can
+class MyMain {
+  public static void main(String... args) {
+    double d = JavaDoubleParser.parseDouble("1.2345e135");
+    float f = JavaFloatParser.parseFloat("1.2345f");
+      BigDecimal bd = JavaBigDecimalParser.parseBigDecimal("1.2345");
+      BigInteger bi = JavaBigIntegerParser.parseBigInteger("12345");
+      double jsonD = JsonDoubleParser.parseDouble("1.2345e85");
+  }
+}
+```
+
+The `parse...()`-methods take a `CharacterSequence`. a `char`-array or a `byte`-array as argument. This way. you can
 parse from a `StringBuffer` or an array without having to convert your input to a `String`. Parsing from an array is
 faster. because the parser can process multiple characters at once using SIMD instructions.
 
-When you clone the code repository from github. you can choose from the following branches:
+## Performance Characteristics
 
-- `main` The code in this branch requires Java 17.
-- `java8` The code in this branch requires Java 8.
-- `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
-  that are included in Java 19.
+### `float` and `double` parsers
 
-How to run the performance tests on a Mac:
+On common input data, the fast `double` and `float` parsers are about 4 times faster than
+`java.lang.Double.valueOf(String)` and `java.lang.Float.valueOf(String)`.
 
-1. Install Java JDK 8 or higher. for example [OpenJDK Java 18](https://jdk.java.net/18/)
-2. Install the XCode command line tools from Apple.
-3. Open the Terminal and execute the following commands:
+For less common inputs, the fast parsers can be slower than their `java.lang` counterparts.
 
-Command sequence for Java 18 or higher:
+A `double` value can always be specified exactly with up to 17 digits in the significand.
+A `float` only needs up to 8 digits.
+Therefore, inputs with more than 18 digits in the significand are considered less common.
+Such inputs are expected to occur if the input data was created with more precision, and needs to be narrowed down
+to the precision of a `double` or a `float`.
 
-     git clone https://github.com/wrandelshofer/FastDoubleParser.git
-     cd FastDoubleParser 
-     javac --enable-preview -source 18 -d out -encoding utf8 --module-source-path src/main/java --module ch.randelshofer.fastdoubleparser    
-     javac --enable-preview -source 18 -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
-     java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
-     java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+### `BigDecimal` and `BigInteger` parsers
 
-Command sequence for Java 8 or higher:
+On common input data, the fast `BigDecimal` and `BigInteger` parsers are about as fast as
+`java.math.BigDecimal(String)` and `java.math.BigInteger(String)`.
 
-     git clone https://github.com/wrandelshofer/FastDoubleParser.git
-     cd FastDoubleParser 
-     git checkout java8
-     mkdir out
-     javac -d out -encoding utf8 -sourcepath src/main/java/ch.randelshofer.fastdoubleparser src/main/java/ch.randelshofer.fastdoubleparser/**/*.java    
-     javac -d out -encoding utf8 -cp out -sourcepath FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo FastDoubleParserDemo/src/main/java/ch.randelshofer.fastdoubleparserdemo/**/*.java
-     java -cp out ch.randelshofer.fastdoubleparserdemo.Main  
-     java -cp out ch.randelshofer.fastdoubleparserdemo.Main data/canada.txt   
+For less common inputs with many digits, the fast parsers can be a lot faster than their `java.lang` counterparts.
 
-On my Mac mini (2018) I get the results shown below. The speedup factor with respect to `Double.parseDouble` ranges from
-0.5 to 6 depending on the shape of the input data. You can expect a speedup factor of 4 for common input data shapes.
+The asymptotic time complexity of the fast parsing algorithms is in O(e^N), where N is the number of decimal digits.
+The asymptotic time complexity of the fast algorithms is the same as their `java.lang` counterparts.
 
-    Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-    x86_64, Mac OS X, 12.5.1, 12
-    OpenJDK 64-Bit Server VM, Oracle Corporation, 17+35-2724
-    -XX:+UnlockDiagnosticVMOptions, -XX:CompileCommand=inline,java/lang/String.charAt
-    Parsing random doubles in the range [0,1).
-    [...]
-    Measuring: Trying to reach a confidence level of 99.8 % which only deviates by 1 % from the average measured duration.
-    [...]
-    Measurement results:
-    java.lang.Double            :    87.56 MB/s (+/- 6.7 %)     5.03 Mfloat/s     198.97 ns/f
-    java.lang.Float             :    92.64 MB/s (+/- 5.7 %)     5.32 Mfloat/s     188.07 ns/f
-    java.math.BigDecimal        :   168.11 MB/s (+/- 6.9 %)     9.65 Mfloat/s     103.64 ns/f
-    JavaDoubleParser String     :   388.09 MB/s (+/-11.3 %)    22.28 Mfloat/s      44.89 ns/f
-    JavaDoubleParser char[]     :   454.38 MB/s (+/-11.1 %)    26.08 Mfloat/s      38.34 ns/f
-    JavaDoubleParser byte[]     :   515.40 MB/s (+/-10.9 %)    29.58 Mfloat/s      33.80 ns/f
-    JsonDoubleParser String     :   449.16 MB/s (+/-18.2 %)    25.78 Mfloat/s      38.79 ns/f
-    JsonDoubleParser char[]     :   393.95 MB/s (+/-22.0 %)    22.61 Mfloat/s      44.22 ns/f
-    JsonDoubleParser byte[]     :   525.83 MB/s (+/-18.6 %)    30.18 Mfloat/s      33.13 ns/f
-    JavaFloatParser  String     :   437.85 MB/s (+/-16.8 %)    25.13 Mfloat/s      39.79 ns/f
-    JavaFloatParser  char[]     :   469.22 MB/s (+/-11.8 %)    26.93 Mfloat/s      37.13 ns/f
-    JavaFloatParser  byte[]     :   535.85 MB/s (+/-10.0 %)    30.76 Mfloat/s      32.51 ns/f
-    JavaBigDecimalParser String :   481.87 MB/s (+/-19.9 %)    27.66 Mfloat/s      36.16 ns/f
-    JavaBigDecimalParser char[] :   573.29 MB/s (+/-18.0 %)    32.91 Mfloat/s      30.39 ns/f
-    JavaBigDecimalParser byte[] :   628.67 MB/s (+/-16.1 %)    36.08 Mfloat/s      27.71 ns/f
-    
-    Speedup JavaDoubleParser String     vs java.lang.Double    : 4.43
-    Speedup JavaDoubleParser char[]     vs java.lang.Double    : 5.19
-    Speedup JavaDoubleParser byte[]     vs java.lang.Double    : 5.89
-    Speedup JsonDoubleParser String     vs java.lang.Double    : 5.13
-    Speedup JsonDoubleParser char[]     vs java.lang.Double    : 4.50
-    Speedup JsonDoubleParser byte[]     vs java.lang.Double    : 6.01
-    Speedup JavaFloatParser  String     vs java.lang.Float     : 4.73
-    Speedup JavaFloatParser  char[]     vs java.lang.Float     : 5.07
-    Speedup JavaFloatParser  byte[]     vs java.lang.Float     : 5.78
-    Speedup JavaBigDecimalParser String vs java.math.BigDecimal: 2.87
-    Speedup JavaBigDecimalParser char[] vs java.math.BigDecimal: 3.41
-    Speedup JavaBigDecimalParser byte[] vs java.math.BigDecimal: 3.74
+The running time of the algorithms can be characterised with a trend line in the form of
+`time = a * exp(b * N)`. Where `a` and `b` are constant factors.
+The trend lines of the fast algorithms have lower constant factors `a` and `b` than their `java.lang` counterparts.
 
-'
+If your input data contains inputs with many thousands of digits, consider using the `parallelParse` methods
+of the fast algorithms. They have even lower constant time factors than the regular fast `parse` methods - they use
+more CPU and memory resources though.
 
-    parsing numbers in file /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/data/canada.txt
-    read 111126 lines
-    [...]
-    Measurement results:
-    java.lang.Double            :    80.77 MB/s (+/- 5.2 %)     4.64 Mfloat/s     215.44 ns/f
-    java.lang.Float             :    96.83 MB/s (+/- 4.3 %)     5.56 Mfloat/s     179.70 ns/f
-    java.math.BigDecimal        :   276.40 MB/s (+/- 9.5 %)    15.88 Mfloat/s      62.96 ns/f
-    JavaDoubleParser String     :   343.75 MB/s (+/-12.1 %)    19.75 Mfloat/s      50.62 ns/f
-    JavaDoubleParser char[]     :   440.38 MB/s (+/-11.7 %)    25.31 Mfloat/s      39.51 ns/f
-    JavaDoubleParser byte[]     :   489.21 MB/s (+/-10.2 %)    28.11 Mfloat/s      35.57 ns/f
-    JsonDoubleParser String     :   366.76 MB/s (+/-12.2 %)    21.08 Mfloat/s      47.45 ns/f
-    JsonDoubleParser char[]     :   436.74 MB/s (+/-11.2 %)    25.10 Mfloat/s      39.84 ns/f
-    JsonDoubleParser byte[]     :   512.64 MB/s (+/-10.0 %)    29.46 Mfloat/s      33.94 ns/f
-    JavaFloatParser  String     :   350.00 MB/s (+/-11.3 %)    20.11 Mfloat/s      49.72 ns/f
-    JavaFloatParser  char[]     :   476.71 MB/s (+/-13.4 %)    27.40 Mfloat/s      36.50 ns/f
-    JavaFloatParser  byte[]     :   518.69 MB/s (+/-11.3 %)    29.81 Mfloat/s      33.55 ns/f
-    JavaBigDecimalParser String :   386.73 MB/s (+/-14.3 %)    22.22 Mfloat/s      45.00 ns/f
-    JavaBigDecimalParser char[] :   569.71 MB/s (+/-16.3 %)    32.74 Mfloat/s      30.54 ns/f
-    JavaBigDecimalParser byte[] :   648.12 MB/s (+/-14.2 %)    37.25 Mfloat/s      26.85 ns/f
-    
-    Speedup JavaDoubleParser String     vs java.lang.Double    : 4.26
-    Speedup JavaDoubleParser char[]     vs java.lang.Double    : 5.45
-    Speedup JavaDoubleParser byte[]     vs java.lang.Double    : 6.06
-    Speedup JsonDoubleParser String     vs java.lang.Double    : 4.54
-    Speedup JsonDoubleParser char[]     vs java.lang.Double    : 5.41
-    Speedup JsonDoubleParser byte[]     vs java.lang.Double    : 6.35
-    Speedup JavaFloatParser  String     vs java.lang.Float     : 3.61
-    Speedup JavaFloatParser  char[]     vs java.lang.Float     : 4.92
-    Speedup JavaFloatParser  byte[]     vs java.lang.Float     : 5.36
-    Speedup JavaBigDecimalParser String vs java.math.BigDecimal: 1.40
-    Speedup JavaBigDecimalParser char[] vs java.math.BigDecimal: 2.06
-    Speedup JavaBigDecimalParser byte[] vs java.math.BigDecimal: 2.34
+## Performance measurements
 
-FastDoubleParser also speeds up parsing of hexadecimal float literals:
+On my Mac mini (2018) I get the results shown below.
 
-    parsing numbers in file /Users/Shared/Developer/Java/FastDoubleParser/github/FastDoubleParser/data/canada_hex.txt
-    read 111126 lines
-    [...]
-    Measurement results:
-    java.lang.Double            :    38.45 MB/s (+/- 5.1 %)     2.11 Mfloat/s     474.29 ns/f
-    java.lang.Float             :    39.15 MB/s (+/- 4.2 %)     2.15 Mfloat/s     465.82 ns/f
-    JavaDoubleParser String     :   407.92 MB/s (+/- 8.1 %)    22.37 Mfloat/s      44.71 ns/f
-    JavaDoubleParser char[]     :   605.77 MB/s (+/- 9.0 %)    33.21 Mfloat/s      30.11 ns/f
-    JavaDoubleParser byte[]     :   640.55 MB/s (+/- 7.7 %)    35.12 Mfloat/s      28.47 ns/f
-    JavaFloatParser  String     :   389.53 MB/s (+/- 7.0 %)    21.36 Mfloat/s      46.82 ns/f
-    JavaFloatParser  char[]     :   606.53 MB/s (+/- 7.5 %)    33.26 Mfloat/s      30.07 ns/f
-    JavaFloatParser  byte[]     :   636.46 MB/s (+/- 7.1 %)    34.90 Mfloat/s      28.66 ns/f
-    
-    Speedup JavaDoubleParser String     vs java.lang.Double    : 10.61
-    Speedup JavaDoubleParser char[]     vs java.lang.Double    : 15.75
-    Speedup JavaDoubleParser byte[]     vs java.lang.Double    : 16.66
-    Speedup JavaFloatParser  String     vs java.lang.Float     : 9.95
-    Speedup JavaFloatParser  char[]     vs java.lang.Float     : 15.49
-    Speedup JavaFloatParser  byte[]     vs java.lang.Float     : 16.26
+### Random double numbers in the range from 0 to 1
 
-## Comparison of JDK versions
+Most numbers look like this: `0.4011441469603171`.
 
-The Y-axis shows Mfloat/s.
+|Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
+|---------------------------|------:|-----:|------:|--------:|--------:|--------|
+|java.lang.Double           |  91.07| 3.8 %|   5.23|   191.31|     1.00|20-ea   |
+|java.lang.Float            |  96.15| 7.3 %|   5.52|   181.20|     1.00|20-ea   |
+|java.math.BigDecimal       | 192.26| 8.0 %|  11.03|    90.62|     1.00|20-ea   |
+|JavaDoubleParser String    | 400.80|14.9 %|  23.00|    43.47|     4.40|20-ea   |
+|JavaDoubleParser char[]    | 520.21|14.2 %|  29.86|    33.49|     5.71|20-ea   |
+|JavaDoubleParser byte[]    | 593.21|21.2 %|  34.05|    29.37|     6.51|20-ea   |
+|JsonDoubleParser String    | 411.79|13.6 %|  23.64|    42.31|     4.52|20-ea   |
+|JsonDoubleParser char[]    | 562.95|14.9 %|  32.31|    30.95|     6.18|20-ea   |
+|JsonDoubleParser byte[]    | 613.03|14.0 %|  35.19|    28.42|     6.73|20-ea   |
+|JavaFloatParser  String    | 367.07|12.2 %|  21.07|    47.46|     3.82|20-ea   |
+|JavaFloatParser  char[]    | 518.64|11.4 %|  29.77|    33.59|     5.39|20-ea   |
+|JavaFloatParser  byte[]    | 613.75| 9.3 %|  35.23|    28.39|     6.38|20-ea   |
+|JavaBigDecimalParser String| 398.83|14.1 %|  22.89|    43.68|     2.07|20-ea   |
+|JavaBigDecimalParser char[]| 557.90|14.3 %|  32.02|    31.23|     2.90|20-ea   |
+|JavaBigDecimalParser byte[]| 652.20|16.6 %|  37.43|    26.71|     3.39|20-ea   |
 
-![ComparisonOfJvmVersions.png](ComparisonOfJvmVersions.png)
+### The data file `canada.txt`
 
-| Method              | 1.8.0_281  | 11.0.8 | 18.0.1.1 | 19-ea | 20-ea | 17.0.3graalvm |
-|---------------------|------------|--------|----------|-------|-------|---------------|
-| Double              | 4.86       | 5.34   | 5.09     | 5.28  | 4.81  | 6.96          |
-| FastDouble String   | 20.30      | 27.83  | 31.18    | 32.59 | 26.15 | 32.74         |
-| FastDouble char[]   | 30.60      | 30.68  | 33.58    | 37.20 | 29.95 | 34.32         |
-| FastDouble byte[]   | 31.29      | 35.61  | 38.24    | 39.67 | 34.23 | 40.21         |
+This file contains numbers in the range from -128 to +128.
+Most numbers look like this: `52.038048000000117`.
 
-## Comparison with C version
+|Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
+|---------------------------|------:|-----:|------:|--------:|--------:|--------|
+|java.lang.Double           |  71.28| 9.7 %|   4.10|   244.12|     1.00|20-ea   |
+|java.lang.Float            |  87.45| 7.1 %|   5.03|   198.98|     1.00|20-ea   |
+|java.math.BigDecimal       | 244.03|10.9 %|  14.02|    71.31|     1.00|20-ea   |
+|JavaDoubleParser String    | 294.45|13.1 %|  16.92|    59.10|     4.13|20-ea   |
+|JavaDoubleParser char[]    | 419.26|13.0 %|  24.09|    41.51|     5.88|20-ea   |
+|JavaDoubleParser byte[]    | 461.00|20.0 %|  26.49|    37.75|     6.47|20-ea   |
+|JsonDoubleParser String    | 312.11|16.1 %|  17.94|    55.75|     4.38|20-ea   |
+|JsonDoubleParser char[]    | 381.20|22.6 %|  21.91|    45.65|     5.35|20-ea   |
+|JsonDoubleParser byte[]    | 463.28|20.2 %|  26.62|    37.56|     6.50|20-ea   |
+|JavaFloatParser  String    | 285.14|13.0 %|  16.39|    61.03|     3.26|20-ea   |
+|JavaFloatParser  char[]    | 411.34|20.3 %|  23.64|    42.30|     4.70|20-ea   |
+|JavaFloatParser  byte[]    | 526.98|16.9 %|  30.28|    33.02|     6.03|20-ea   |
+|JavaBigDecimalParser String| 288.74|23.5 %|  16.59|    60.27|     1.18|20-ea   |
+|JavaBigDecimalParser char[]| 442.03|14.5 %|  25.40|    39.37|     1.81|20-ea   |
+|JavaBigDecimalParser byte[]| 457.09|21.1 %|  26.27|    38.07|     1.87|20-ea   |
+
+### The data file `mesh.txt`
+
+This file contains integer numbers like `1749`, and floating point numbers like
+`0.539081215858`.
+
+|Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
+|---------------------------|------:|-----:|------:|--------:|--------:|--------|
+|java.lang.Double           | 167.28|22.7 %|  22.79|    43.88|     1.00|20-ea   |
+|java.lang.Float            |  94.41|11.0 %|  12.86|    77.75|     1.00|20-ea   |
+|java.math.BigDecimal       | 181.11|24.2 %|  24.67|    40.53|     1.00|20-ea   |
+|JavaDoubleParser String    | 230.94|22.0 %|  31.46|    31.79|     1.38|20-ea   |
+|JavaDoubleParser char[]    | 330.35|23.2 %|  45.00|    22.22|     1.97|20-ea   |
+|JavaDoubleParser byte[]    | 353.26|20.2 %|  48.12|    20.78|     2.11|20-ea   |
+|JsonDoubleParser String    | 230.26|19.0 %|  31.37|    31.88|     1.38|20-ea   |
+|JsonDoubleParser char[]    | 321.63|23.1 %|  43.81|    22.82|     1.92|20-ea   |
+|JsonDoubleParser byte[]    | 374.07|24.2 %|  50.96|    19.62|     2.24|20-ea   |
+|JavaFloatParser  String    | 199.30|22.5 %|  27.15|    36.83|     2.11|20-ea   |
+|JavaFloatParser  char[]    | 245.89|33.6 %|  33.50|    29.85|     2.60|20-ea   |
+|JavaFloatParser  byte[]    | 287.94|33.6 %|  39.22|    25.49|     3.05|20-ea   |
+|JavaBigDecimalParser String| 211.58|36.2 %|  28.82|    34.70|     1.17|20-ea   |
+|JavaBigDecimalParser char[]| 319.68|39.6 %|  43.55|    22.96|     1.77|20-ea   |
+|JavaBigDecimalParser byte[]| 337.29|36.4 %|  45.95|    21.76|     1.86|20-ea   |
+
+### The data file `canada_hex.txt`
+
+This file contains numbers in the range from -128 to +128 in hexadecimal notation.
+Most numbers look like this: `-0x1.09219008205fcp6`.
+
+|Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
+|---------------------------|------:|-----:|------:|--------:|--------:|--------|
+|java.lang.Double           |  37.32| 4.5 %|   2.05|   488.70|     1.00|20-ea   |
+|java.lang.Float            |  37.71| 2.9 %|   2.07|   483.68|     1.00|20-ea   |
+|JavaDoubleParser String    | 329.93|10.5 %|  18.09|    55.28|     8.84|20-ea   |
+|JavaDoubleParser char[]    | 473.75|14.9 %|  25.98|    38.50|    12.69|20-ea   |
+|JavaDoubleParser byte[]    | 525.24|13.3 %|  28.80|    34.72|    14.07|20-ea   |
+|JavaFloatParser  String    | 311.42| 9.9 %|  17.08|    58.56|     8.26|20-ea   |
+|JavaFloatParser  char[]    | 440.50|13.0 %|  24.15|    41.40|    11.68|20-ea   |
+|JavaFloatParser  byte[]    | 529.19|12.0 %|  29.02|    34.46|    14.03|20-ea   |
+
+### Comparison with C version
 
 For comparison. here are the test results
 of [simple_fastfloat_benchmark](https://github.com/lemire/simple_fastfloat_benchmark)  
@@ -205,3 +205,105 @@ on the same computer:
     JavaDoubleParser char[]                 :   584.31 MB/s (+/- 9.7 %)    33.58 Mfloat/s      29.78 ns/f
     JavaDoubleParser byte[]                 :   609.54 MB/s (+/- 7.4 %)    35.03 Mfloat/s      28.55 ns/f
 
+# Building and running the code
+
+When you clone the code repository from github. you can choose from the following branches:
+
+- `main` Aims to contain only working code.
+- `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
+  that are included in Java 20.
+
+## Command sequence with Java SE 20 on macOS:
+
+```shell
+git clone https://github.com/wrandelshofer/FastDoubleParser.git
+cd FastDoubleParser 
+javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path fastdoubleparser-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparser    
+javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main  
+java --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main FastDoubleParserDemo/data/canada.txt   
+```
+
+## Command sequence with Java SE 8, 11, 17, 19 and 20 and Maven 3.8.6 on macOS:
+
+```shell
+git clone https://github.com/wrandelshofer/FastDoubleParser.git
+cd FastDoubleParser
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
+mvn clean
+mvn package
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home 
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home 
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.8.jdk/Contents/Home
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_281.jdk/Contents/Home
+java -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+```
+
+## IntelliJ IDEA with Java SE 8, 11, 17, 19 and 20 on macOS
+
+Prerequisites:
+
+1. Install the following Java SDKs: 8, 11, 17, 19 and 20.
+   _If you do not need to edit the code, you only need to install the Java 20 SDK._
+2. Install IntelliJ IDEA
+
+Steps:
+
+1. Start IntelliJ IDEA
+2. From the main menu, choose **Git > Clone...**
+3. In the dialog that opens, enter the URL https://github.com/wrandelshofer/FastDoubleParser.git,
+   specify the directory in which you want to save the project and click **Clone**.
+4. Intellij IDEA will now clone the repository and open a new project window.
+   However, the project modules are not yet configured correctly.
+5. From the main menu of the new project window, choose **View > Tool Windows > Maven**
+6. In the Maven tool window, run the Maven build **Parent project for FastDoubleParser > Lifecycle > compile**
+7. In the toolbar of the Maven tool window, click **Reload All Maven Projects**
+8. Intellij IDEA knows now for each module, where the **source**,
+   **generated source**,  **test source**, and **generated test source** folders are.
+   However, the project modules have still incorrect JDK dependencies.
+9. _You can skip this step, if you do not want to edit the code._
+   From the main menu, choose **File > Project Structure...**
+10. _You can skip this step, if you do not want to edit the code._
+    In the dialog that opens, select in the navigation bar **Project Settings > Modules**
+11. _You can skip this step, if you do not want to edit the code._
+    For each module in the right pane of the dialog, select the **Dependencies** tab.
+    Specify the corresponding **Module SDK** for modules which have a name that ends in
+    **-Java8**, **-Java11**, **-Java17**, **-Java19**.
+    Do not change modules with other name endings - they must stay on the Java 20 SDK.
+
+12. From the main menu, choose **Build > Build Project**
+    Intellij IDEA will now properly build the project.
+
+## Editing the code
+
+The majority of the code is located in the module named **fastdoubleparser-javaearlyaccess**,
+and **fastdoubleparserdemo-javaearlyaccess**.
+The code in these modules uses early access features of the Java 20 SDK.
+
+Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java19**
+contain deltas of the **-JavaEarlyAccess** modules.
+
+The delta code is located in the **source** and **test** folders of the module.
+Code from the **-JavaEarlyAccess** module is located in the **generated source** and
+**generated test source** folders.
+
+The Maven POM of a module contains **maven-resources-plugin** elements that copy code
+from the **-JavaEarlyAccess** module to the delta modules.

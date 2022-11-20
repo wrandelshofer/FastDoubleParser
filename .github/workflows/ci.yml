@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        java: [ 17 ]
+        java: [ 20-ea ]
         arch: [ x64 ]
         dist: [ zulu ]
       fail-fast: false
@@ -24,11 +24,11 @@ jobs:
           distribution: ${{ matrix.dist }}
 
       - name: Compile FastDoubleParser
-        run: javac -d out -encoding utf8 --module-source-path FastDoubleParser/src/main/java --module ch.randelshofer.fastdoubleparser
+        run: javac --enable-preview -source 20 -d out -encoding utf8 --module-source-path fastdoubleparser-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparser
       - name: Compile FastDoubleParserDemo
-        run: javac -d out -encoding utf8 -p out --module-source-path FastDoubleParserDemo/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+        run: javac --enable-preview -source 20 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-javaearlyaccess/src/main/java --module ch.randelshofer.fastdoubleparserdemo
       - name: Run Test 1
-        run: java --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --print-confidence
+        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main
       - name: Run Test 2
-        run: java --module-path out --module ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --print-confidence FastDoubleParserDemo/data/canada.txt
+        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main FastDoubleParserDemo/data/canada.txt
 ...

@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="@(#)&amp;#36;file.fileName&#10;Copyright © &amp;#36;{today.year} Werner Randelshofer, Switzerland. MIT License." />
+    <option name="myName" value="MIT License" />
+  </copyright>
+</component>
