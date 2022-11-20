@@ -39,7 +39,7 @@ The `parse...()`-methods take a `CharacterSequence`. a `char`-array or a `byte`-
 parse from a `StringBuffer` or an array without having to convert your input to a `String`. Parsing from an array is
 faster. because the parser can process multiple characters at once using SIMD instructions.
 
-## Performance
+## Performance Characteristics
 
 ### `float` and `double` parsers
 
@@ -71,6 +71,8 @@ The trend lines of the fast algorithms have lower constant factors `a` and `b` t
 If your input data contains inputs with many thousands of digits, consider using the `parallelParse` methods
 of the fast algorithms. They have even lower constant time factors than the regular fast `parse` methods - they use
 more CPU and memory resources though.
+
+## Performance measurements
 
 On my Mac mini (2018) I get the results shown below.
 
@@ -158,7 +160,7 @@ Most numbers look like this: `-0x1.09219008205fcp6`.
 |JavaFloatParser  char[]    | 440.50|13.0 %|  24.15|    41.40|    11.68|20-ea   |
 |JavaFloatParser  byte[]    | 529.19|12.0 %|  29.02|    34.46|    14.03|20-ea   |
 
-## Comparison with C version
+### Comparison with C version
 
 For comparison. here are the test results
 of [simple_fastfloat_benchmark](https://github.com/lemire/simple_fastfloat_benchmark)  
