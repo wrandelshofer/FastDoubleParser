@@ -4,35 +4,37 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ch.randelshofer</groupId>
-  <artifactId>fastdoubleparser-ParentProject</artifactId>
+  <artifactId>fastdoubleparser-parentproject</artifactId>
   <version>0.5-ea+1</version>
   <licenses>
     <license>
       <name>MIT License</name>
       <url>https://opensource.org/licenses/MIT</url>
     </license>
-  </licen
-  <connection>scm:git:git://github.com/wrandelshofer/fastdoubleparser.git</connection>
-  <developerConnection>scm:git:ssh://github.com/wrandelshofer/fastdoubleparser.git</developerConnection>
-  <url>https://github.com/wrandelshofer/fastdoubleparser/tree/master</url>
-</scm>
+  </licenses>
+  <scm>
+    <connection>scm:git:git://github.com/wrandelshofer/fastdoubleparser.git</connection>
+    <developerConnection>scm:git:ssh://github.com/wrandelshofer/fastdoubleparser.git</developerConnection>
+    <url>https://github.com/wrandelshofer/fastdoubleparser/tree/master</url>
+  </scm>
 
-<packaging>pom</packaging><name>Parent project for fastdoubleparser</name>
+  <packaging>pom</packaging>
+  <name>Parent project for fastdoubleparser</name>
 
-<modules>
-<module>fastdoubleparser-java8</module>
-<module>fastdoubleparser-java11</module>
-<module>fastdoubleparser-java17</module>
-<module>fastdoubleparser-java19</module>
-<module>fastdoubleparser-javaearlyaccess</module>
-<module>fastdoubleparser</module>
-<module>fastdoubleparserdemo-Java8</module>
-<module>fastdoubleparserdemo-Java11</module>
-<module>fastdoubleparserdemo-Java17</module>
-<module>fastdoubleparserdemo-Java19</module>
-<module>fastdoubleparserdemo-javaearlyaccess</module>
-<module>fastdoubleparserdemo</module>
-</modules>
+  <modules>
+    <module>fastdoubleparser-java8</module>
+    <module>fastdoubleparser-java11</module>
+    <module>fastdoubleparser-java17</module>
+    <module>fastdoubleparser-java19</module>
+    <module>fastdoubleparser-javaEarlyAccess</module>
+    <module>fastdoubleparser</module>
+    <module>fastdoubleparserdemo-Java8</module>
+    <module>fastdoubleparserdemo-Java11</module>
+    <module>fastdoubleparserdemo-Java17</module>
+    <module>fastdoubleparserdemo-Java19</module>
+    <module>fastdoubleparserdemo-JavaEarlyAccess</module>
+    <module>fastdoubleparserdemo</module>
+  </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

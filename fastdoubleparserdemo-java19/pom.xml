@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>ch.randelshofer</groupId>
-    <artifactId>fastdoubleparser-ParentProject</artifactId>
+    <artifactId>fastdoubleparser-parentproject</artifactId>
     <version>0.5-ea+1</version>
   </parent>
   <artifactId>fastdoubleparserdemo-Java19</artifactId>
