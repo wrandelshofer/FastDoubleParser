@@ -13,7 +13,9 @@
     </license>
   </licenses>
   <scm>
-    <url>https://github.com/wrandelshofer/FastDoubleParser.git</url>
+    <connection>scm:git:git://github.com/wrandelshofer/FastDoubleParser.git</connection>
+    <developerConnection>scm:git:ssh://github.com/wrandelshofer/FastDoubleParser.git</developerConnection>
+    <url>https://github.com/wrandelshofer/FastDoubleParser/tree/master</url>
   </scm>
 
   <packaging>pom</packaging>
@@ -174,6 +176,23 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <windowtitle>FastDoubleParser ${version}</windowtitle>
+          <header>FastDoubleParser ${version}</header>
+          <bottom>Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.</bottom>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -199,6 +218,9 @@
           </reportSet>
         </reportSets>
         <configuration>
+          <windowtitle>FastDoubleParser ${version}</windowtitle>
+          <header>FastDoubleParser ${version}</header>
+          <bottom>Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.</bottom>
           <additionalOptions>-Xdoclint:all</additionalOptions>
         </configuration>
       </plugin>
@@ -209,7 +231,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.8.2</version>
+      <version>5.9.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

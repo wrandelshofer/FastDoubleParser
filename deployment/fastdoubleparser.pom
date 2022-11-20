@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ch.randelshofer</groupId>
+  <artifactId>fastdoubleparser</artifactId>
+  <version>0.5-ea+1</version>
+  <packaging>jar</packaging>
+
+  <name>ch.randelshofer:fastdoubleparser</name>
+  <description>A Java port of Daniel Lemire's fast_float project.</description>
+  <url>https://github.com/wrandelshofer/FastDoubleParser</url>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Werner Randelshofer</name>
+      <email>werner.randelshofer@bluewin.ch</email>
+      <organization>ch.randelshofer</organization>
+      <organizationUrl>http://www.randelshofer.ch</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/wrandelshofer/FastDoubleParser.git</connection>
+    <developerConnection>scm:git:ssh://github.com/wrandelshofer/FastDoubleParser.git</developerConnection>
+    <url>https://github.com/wrandelshofer/FastDoubleParser/tree/master</url>
+  </scm>
+
+  <dependencies/>
+</project>

@@ -4,7 +4,7 @@
  */
 
 /**
- * Provides parsers for Java {@code FloatingPointLiteral}s,
+ * Provides fast parsers for Java {@code FloatingPointLiteral}s,
  * and JSON {@code number}s.
  * <p>
  * References:
