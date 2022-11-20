@@ -1,6 +1,6 @@
 /*
  * @(#)package-info.java
- * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
  */
 
 /**

@@ -1,8 +1,7 @@
 /*
  * @(#)FastDoubleMath.java
- * Copyright © 2021. Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
  */
-
 package ch.randelshofer.fastdoubleparser;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fullMultiplication;

@@ -1,3 +1,7 @@
+/*
+ * @(#)JavaBigDecimalFromByteArrayTest.java
+ * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
+ */
 package ch.randelshofer.fastdoubleparser;
 
 import org.junit.jupiter.api.DynamicTest;

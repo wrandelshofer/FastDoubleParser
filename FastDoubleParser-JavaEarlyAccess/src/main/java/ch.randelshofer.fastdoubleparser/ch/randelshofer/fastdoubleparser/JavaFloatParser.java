@@ -1,8 +1,7 @@
 /*
- * @(#)FastFloatParser2.java
- * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
+ * @(#)JavaFloatParser.java
+ * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
  */
-
 package ch.randelshofer.fastdoubleparser;
 
 /**

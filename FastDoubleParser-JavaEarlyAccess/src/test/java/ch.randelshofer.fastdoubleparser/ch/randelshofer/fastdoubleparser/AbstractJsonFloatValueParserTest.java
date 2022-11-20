@@ -1,8 +1,7 @@
 /*
- * @(#)AbstractFastXParserTest.java
- * Copyright © 2022. Werner Randelshofer, Switzerland. MIT License.
+ * @(#)AbstractJsonFloatValueParserTest.java
+ * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
  */
-
 package ch.randelshofer.fastdoubleparser;
 
 import java.util.ArrayList;
