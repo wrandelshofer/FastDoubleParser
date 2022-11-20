@@ -20,6 +20,9 @@
         <module name="FastDoubleParserDemo-Java17" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="FastDoubleParserDemo" target="20" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
