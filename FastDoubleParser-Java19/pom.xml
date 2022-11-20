@@ -32,7 +32,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
         <executions>
           <execution>
             <id>copy-sources-from-FastDoubleParser-JavaEarlyAccess</id>
@@ -60,12 +59,6 @@
               </resources>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
-        <executions>
           <execution>
             <id>copy-test-sources-from-FastDoubleParser-JavaEarlyAccess</id>
             <phase>generate-test-sources</phase>
@@ -105,13 +98,6 @@
               </sources>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.3.0</version>
-        <executions>
           <execution>
             <id>add-test-source</id>
             <phase>generate-test-sources</phase>
