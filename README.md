@@ -66,7 +66,7 @@ The asymptotic time complexity of the fast algorithms is the same as their `java
 
 The running time of the algorithms can be characterised with a trend line in the form of
 `time = a * exp(b * N)`. Where `a` and `b` are constant factors.
-The trend lines of the fast algorithms have lower constant factors `a` and `b` than their `java.lang` counterparts.
+The trend lines of the fast algorithms have a lower constant factors `b` than their `java.lang` counterparts.
 
 If your input data contains inputs with many thousands of digits, consider using the `parallelParse` methods
 of the fast algorithms. They have even lower constant time factors than the regular fast `parse` methods - they use
