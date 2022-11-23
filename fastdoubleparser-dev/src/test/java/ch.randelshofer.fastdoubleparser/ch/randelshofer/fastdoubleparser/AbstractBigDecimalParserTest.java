@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static ch.randelshofer.fastdoubleparser.AbstractJavaFloatValueParserTest.RUN_SLOW_TESTS;
+import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 public abstract class AbstractBigDecimalParserTest {
     protected List<NumberTestData> createDataForBadStrings() {
@@ -130,7 +131,7 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("000000000", new BigDecimal("000000000")),
                 new NumberTestData("0000.0000", new BigDecimal("0000.0000")),
 
-                new NumberTestData("8." + ("9".repeat(19)) + "e68", new BigDecimal("8." + ("9".repeat(19)) + "e68")),
+                new NumberTestData("8." + (repeat("9", 19)) + "e68", new BigDecimal("8." + (repeat("9", 19)) + "e68")),
                 new NumberTestData("103203303403503603703803903.122232425262728292", new BigDecimal("103203303403503603703803903.122232425262728292")),
                 new NumberTestData("122232425262728292.103203303403503603703803903", new BigDecimal("122232425262728292.103203303403503603703803903")),
                 new NumberTestData("-103203303403503603703803903.122232425262728292e6789", new BigDecimal("-103203303403503603703803903.122232425262728292e6789")),
@@ -166,8 +167,8 @@ public abstract class AbstractBigDecimalParserTest {
      */
     protected List<NumberTestData> createTestDataForInputClassesInMethodParseBigDecimalString() {
         return Arrays.asList(
-                new NumberTestData("many digits threshold", " ".repeat(32), AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("not many digits threshold", " ".repeat(31), AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("many digits threshold", repeat(" ", 32), AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("not many digits threshold", repeat(" ", 31), AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("illegal empty string", "", AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("illegal character", "§", AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("illegal only negative sign", "-", AbstractNumberParser.SYNTAX_ERROR),
@@ -228,16 +229,16 @@ public abstract class AbstractBigDecimalParserTest {
      */
     protected List<NumberTestData> createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits() {
         return Arrays.asList(
-                new NumberTestData("illegal only negative sign", "-" + "\000".repeat(32), AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal only positive sign", "+" + "\000".repeat(32), AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("illegal only negative sign", "-" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("illegal only positive sign", "+" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR),
 
 
-                new NumberTestData("significand with 40 zeroes in integer part", "0".repeat(40), BigDecimal::new),
-                new NumberTestData("significand with 40 zeroes in fraction part", "." + "0".repeat(40), BigDecimal::new),
+                new NumberTestData("significand with 40 zeroes in integer part", repeat("0", 40), BigDecimal::new),
+                new NumberTestData("significand with 40 zeroes in fraction part", "." + repeat("0", 40), BigDecimal::new),
 
-                new NumberTestData("significand with 10 leading zeros and 30 digits in integer part", "0".repeat(10) + "9".repeat(30), BigDecimal::new),
-                new NumberTestData("significand with 10 leading zeros and 30 digits in fraction part", "." + "0".repeat(10) + "9".repeat(30), BigDecimal::new),
-                new NumberTestData("significand with 10 leading zeros and 30 digits in integer part and in fraction part", "0".repeat(10) + "9".repeat(30) + "." + "0".repeat(10) + "9".repeat(30), BigDecimal::new),
+                new NumberTestData("significand with 10 leading zeros and 30 digits in integer part", repeat("0", 10) + repeat("9", 30), BigDecimal::new),
+                new NumberTestData("significand with 10 leading zeros and 30 digits in fraction part", "." + repeat("0", 10) + repeat("9", 30), BigDecimal::new),
+                new NumberTestData("significand with 10 leading zeros and 30 digits in integer part and in fraction part", repeat("0", 10) + repeat("9", 30) + "." + repeat("0", 10) + repeat("9", 30), BigDecimal::new),
 
                 new NumberTestData("significand with 40 digits in integer part and exponent", "-1234567890123456789012345678901234567890e887799", BigDecimal::new),
                 new NumberTestData("no significand but exponent 40 digits", "-e12345678901234567890123456789012345678901234567890", AbstractNumberParser.SYNTAX_ERROR),

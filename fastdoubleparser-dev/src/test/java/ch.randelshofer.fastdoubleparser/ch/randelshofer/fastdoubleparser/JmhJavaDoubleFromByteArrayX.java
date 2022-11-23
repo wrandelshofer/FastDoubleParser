@@ -23,7 +23,14 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.35
- * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 20-ea+22-1594
+ # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+24-1795
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * m  0x123.456789abcdep123  avgt    5  28.449 ± 0.581  ns/op
+ * </pre>
+ * <pre>
+ * # JMH version: 1.35
+ * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+22-1594
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  *                       (str)  Mode  Cnt   Score   Error  Units
@@ -80,16 +87,16 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaDoubleFromByteArray {
+public class JmhJavaDoubleFromByteArrayX {
     @Param({
             // "0",
             // "365",
             // "10.1",
-            "123.45678901234567e123"
+            //"123.45678901234567e123"
             //  "123.4567890123456789",
             //  "123.4567890123456789e123",
             //  "-0.29235596393453456",
-            //  "0x123.456789abcdep123"
+            "0x123.456789abcdep123"
     })
     public String str;
     private byte[] byteArray;

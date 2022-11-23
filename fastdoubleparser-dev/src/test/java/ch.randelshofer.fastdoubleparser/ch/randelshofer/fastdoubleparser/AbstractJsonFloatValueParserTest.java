@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.randelshofer.fastdoubleparser.Strings.repeat;
+
 public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValueParserTest {
 
     protected List<NumberTestData> createDataForBadStrings() {
@@ -126,7 +128,7 @@ public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValu
                 new NumberTestData("parseNumber(): Significand with trailing whitespace", "3   ", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseNumber(): Empty String", "", 0, 0, 0, 0, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseNumber(): Blank String", "   ", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseNumber(): Very long non-blank String", "a".repeat(66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseNumber(): Very long non-blank String", repeat("a", 66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseNumber(): Plus Sign", "+", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseNumber(): Negative Sign", "-", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseNumber(): Infinity", "Infinity", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR),

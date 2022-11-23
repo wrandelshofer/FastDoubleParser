@@ -21,6 +21,8 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
+import static ch.randelshofer.fastdoubleparser.Strings.repeat;
+
 /**
  * Benchmarks for selected integer strings.
  * <pre>
@@ -109,7 +111,7 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
     @Setup(Level.Trial)
     public void setUp() {
-        String str = "9806543217".repeat((digits + 9) / 10).substring(0, digits);
+        String str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
         decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
         hexLiteral = ("0x" + str).getBytes(StandardCharsets.ISO_8859_1);
     }

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.randelshofer.fastdoubleparser.Strings.repeat;
+
 public abstract class AbstractBigIntegerParserTest {
     protected List<NumberTestData> createDataForLegalHexStrings() {
         return Arrays.asList(
@@ -41,7 +43,7 @@ public abstract class AbstractBigIntegerParserTest {
 
     protected List<NumberTestData> createDataForIllegalDecStrings() {
         return Arrays.asList(
-                new NumberTestData("'0' ** 1292782622", "0".repeat(1292782621 + 1), new BigInteger("0".repeat(1292782621 + 1)))
+                new NumberTestData("'0' ** 1292782622", repeat("0", 1292782621 + 1), new BigInteger(repeat("0", 1292782621 + 1)))
         );
     }
 
@@ -75,14 +77,14 @@ public abstract class AbstractBigIntegerParserTest {
                 new NumberTestData("-255", new BigInteger("-255", 10)),
                 new NumberTestData("-12345678", new BigInteger("-12345678", 10)),
 
-                new NumberTestData("9806543217".repeat(1_000), new BigInteger("9806543217".repeat(1_000), 10))
+                new NumberTestData(repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10))
         );
     }
 
     protected List<NumberTestData> createDataForVeryLongDecStrings() {
         return Arrays.asList(
-                new NumberTestData("max input length: '0' ** 1292782621", "0".repeat(1292782621), BigInteger.ZERO),
-                new NumberTestData("max input length: '0' ** 1292782620, '7'", "0".repeat(1292782621 - 1) + "7", BigInteger.valueOf(7))
+                new NumberTestData("max input length: '0' ** 1292782621", repeat("0", 1292782621), BigInteger.ZERO),
+                new NumberTestData("max input length: '0' ** 1292782620, '7'", repeat("0", 1292782621 - 1) + "7", BigInteger.valueOf(7))
         );
     }
 

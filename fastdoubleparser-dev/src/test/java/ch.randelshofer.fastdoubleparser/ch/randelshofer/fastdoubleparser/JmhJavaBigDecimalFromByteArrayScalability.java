@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
+import static ch.randelshofer.fastdoubleparser.Strings.repeat;
+
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
@@ -147,7 +149,7 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
 
     @Setup(Level.Trial)
     public void setUp() {
-        String str = "9806543217".repeat((digits + 9) / 10).substring(0, digits);
+        String str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
         integerPart = str.getBytes(StandardCharsets.ISO_8859_1);
         fractionalPart = ("1." + str).getBytes(StandardCharsets.ISO_8859_1);
     }

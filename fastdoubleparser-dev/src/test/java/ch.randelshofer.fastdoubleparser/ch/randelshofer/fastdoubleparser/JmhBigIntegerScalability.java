@@ -20,6 +20,8 @@ import org.openjdk.jmh.annotations.Warmup;
 import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 
+import static ch.randelshofer.fastdoubleparser.Strings.repeat;
+
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
@@ -62,7 +64,7 @@ public class JmhBigIntegerScalability {
 
     @Setup(Level.Trial)
     public void setUp() {
-        str = "8808065258".repeat((digits + 9) / 10).substring(0, digits);
+        str = repeat("8808065258", (digits + 9) / 10).substring(0, digits);
     }
 
     @Benchmark

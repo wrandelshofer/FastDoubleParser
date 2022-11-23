@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ch.randelshofer.fastdoubleparser.Strings.repeat;
+
 public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValueParserTest {
     public static final boolean RUN_SLOW_TESTS = false;
 
@@ -172,7 +174,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
                 new NumberTestData("parseFloatValue(): Significand with trailing whitespace", "3   ", 0, 4, 0, 4, 3d),
                 new NumberTestData("parseFloatValue(): Empty String", "", 0, 0, 0, 0, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseFloatValue(): Blank String", "   ", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseFloatValue(): Very long non-blank String", "a".repeat(66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseFloatValue(): Very long non-blank String", repeat("a", 66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseFloatValue(): Plus Sign", "+", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseFloatValue(): Negative Sign", "-", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR),
                 new NumberTestData("parseFloatValue(): Infinity", "Infinity", 0, 8, 0, 8, Double.POSITIVE_INFINITY),
@@ -247,24 +249,24 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
     protected List<NumberTestData> createDataForVeryLongStrings() {
         return Arrays.asList(
                 // This should be Float.POSITIVE_INFINITY instead of -1f
-                new NumberTestData("9 repeated MAX_VALUE", "9".repeat(Integer.MAX_VALUE - 8), Double.POSITIVE_INFINITY)
+                new NumberTestData("9 repeated MAX_VALUE", repeat("9", Integer.MAX_VALUE - 8), Double.POSITIVE_INFINITY)
         );
     }
 
     List<NumberTestData> createAllDoubleTestData() {
         List<NumberTestData> list = new ArrayList<>();
-        // list.addAll(createTestDataForInfinity());
-        // list.addAll(createTestDataForNaN());
-        // list.addAll(createDataForDoubleDecimalLimits());
-        // list.addAll(createDataForDoubleHexadecimalLimits());
-        // list.addAll(createDataForBadStrings());
-        // list.addAll(createDataForLegalDecStrings());
-        // list.addAll(createDataForLegalHexStrings());
+        list.addAll(createTestDataForInfinity());
+        list.addAll(createTestDataForNaN());
+        list.addAll(createDataForDoubleDecimalLimits());
+        list.addAll(createDataForDoubleHexadecimalLimits());
+        list.addAll(createDataForBadStrings());
+        list.addAll(createDataForLegalDecStrings());
+        list.addAll(createDataForLegalHexStrings());
         list.addAll(createDataForDoubleDecimalClingerInputClasses());
         list.addAll(createDataForDoubleHexadecimalClingerInputClasses());
-        // list.addAll(createDataForLegalCroppedStrings());
-        // list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
-        //  list.addAll(createDataForSignificandDigitsInputClasses());
+        list.addAll(createDataForLegalCroppedStrings());
+        list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
+        list.addAll(createDataForSignificandDigitsInputClasses());
         if (RUN_SLOW_TESTS) {
             list.addAll(createDataWithVeryLongInputStrings());
         }
