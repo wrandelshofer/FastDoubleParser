@@ -310,27 +310,37 @@ class FastFloatMath {
      * @return the float value,
      */
     static float tryHexToFloatWithFastAlgorithm(boolean isNegative, long significand, int power) {
-        // We mimic the fast path described by Clinger WD for decimal
+        if (significand == 0 || power < Float.MIN_EXPONENT - 54) {
+            return isNegative ? -0.0f : 0.0f;
+        }
+        if (power > Float.MAX_EXPONENT) {
+            return isNegative ? Float.NEGATIVE_INFINITY : Float.POSITIVE_INFINITY;
+        }
+
+        // we start with a fast path
+        // We try to mimic the fast described by Clinger WD for decimal
         // float number literals. How to read floating point numbers accurately.
         // ACM SIGPLAN Notices. 1990
-
-        // convert the integer into a float. This is lossless if
-        // 0 <= digits <= 2^24 - 1. However, we do it even if we lose bits.
-        float d = (float) significand;
-        //
-        // The general idea is as follows.
-        // If 0 <= s < 2^24  then
-        // 1) Both s and p can be represented exactly as 32-bit floating-point
-        // values (binary32).
-        // 2) Because s and p can be represented exactly as floating-point values,
-        // then s * p will produce correctly rounded values.
-        //
-        d = d * Math.scalb(1f, power);
-        if (isNegative) {
-            d = -d;
+        if (Long.compareUnsigned(significand, 0x1fffffffffffffL) <= 0) {
+            // convert the integer into a double. This is lossless since
+            // 0 <= i <= 2^53 - 1.
+            float d = (float) significand;
+            //
+            // The general idea is as follows.
+            // If 0 <= s < 2^53  then
+            // 1) Both s and p can be represented exactly as 64-bit floating-point
+            // values (binary64).
+            // 2) Because s and p can be represented exactly as floating-point values,
+            // then s * p will produce correctly rounded values.
+            //
+            d = d * Math.scalb(1f, power);
+            if (isNegative) {
+                d = -d;
+            }
+            return d;
         }
-        return d;
+
+        // The fast path has failed
+        return Float.NaN;
     }
-
-
 }

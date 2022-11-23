@@ -999,25 +999,32 @@ class FastDoubleMath {
      * @return the double value,
      */
     static double tryHexFloatToDoubleWithFastAlgorithm(boolean isNegative, long significand, int power) {
-        // We mimic the fast path described by Clinger WD for decimal
+
+        // we start with a fast path
+        // We try to mimic the fast described by Clinger WD for decimal
         // float number literals. How to read floating point numbers accurately.
         // ACM SIGPLAN Notices. 1990
-        // convert the integer into a double. This is lossless if
-        // 0 <= i <= 2^53 - 1. However, we do it even if we lose bits.
-        double d = (double) significand;
-        //
-        // The general idea is as follows.
-        // If 0 <= s < 2^53  then
-        // 1) Both s and p can be represented exactly as 64-bit floating-point
-        // values (binary64).
-        // 2) Because s and p can be represented exactly as floating-point values,
-        // then s * p will produce correctly rounded values.
-        //
-        d = d * Math.scalb(1d, power);
-        if (isNegative) {
-            d = -d;
+        if (Long.compareUnsigned(significand, 0x1fffffffffffffL) <= 0) {
+            // convert the integer into a double. This is lossless since
+            // 0 <= i <= 2^53 - 1.
+            double d = (double) significand;
+            //
+            // The general idea is as follows.
+            // If 0 <= s < 2^53  then
+            // 1) Both s and p can be represented exactly as 64-bit floating-point
+            // values (binary64).
+            // 2) Because s and p can be represented exactly as floating-point values,
+            // then s * p will produce correctly rounded values.
+            //
+            d = d * Math.scalb(1d, power);
+            if (isNegative) {
+                d = -d;
+            }
+            return d;
         }
-        return d;
+
+        // The fast path has failed
+        return Double.NaN;
     }
 
     /**
