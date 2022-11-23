@@ -570,14 +570,16 @@ class FastDoubleSwar {
         // The following code is based on the technique presented in the paper
         // by Leslie Lamport.
 
-
+        // We can convert upper case characters to lower case by setting the 0x20 bit.
+        // (This does not have an impact on decimal digits, which is very handy!).
         // Subtract character '0' (0x30) from each of the eight characters
-        long vec = chunk - 0x30_30_30_30_30_30_30_30L;
+        long vec = (chunk | 0x20_20_20_20_20_20_20_20L) - 0x30_30_30_30_30_30_30_30L;
 
         // Create a predicate for all bytes which are greater than '9'-'0' (0x09).
         // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
         long gt_09 = vec + (0x09_09_09_09_09_09_09_09L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
         gt_09 &= 0x80_80_80_80_80_80_80_80L;
+
         // Create a predicate for all bytes which are greater or equal 'a'-'0' (0x30).
         // The predicate is true if the hsb of a byte is set.
         long ge_30 = vec + (0x30303030_30303030L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
