@@ -119,6 +119,11 @@
           </descriptors>
           <archive>
             <manifestEntries>
+              <Archiver-Version>-</Archiver-Version>
+              <Created-By>-</Created-By>
+              <Built-By>-</Built-By>
+              <SCM-URL>${project.scm.url}</SCM-URL>
+              <SCM-Revision>${git.commit.time}_${git.commit.id.abbrev}</SCM-Revision>
               <Multi-Release>true</Multi-Release>
               <Automatic-Module-Name>ch.randelshofer.fastdoubleparser</Automatic-Module-Name>
             </manifestEntries>
