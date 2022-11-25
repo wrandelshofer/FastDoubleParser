@@ -8,7 +8,7 @@
     <moduleSet>
       <useAllReactorProjects>true</useAllReactorProjects>
       <includes>
-        <include>ch.randelshofer:fastdoubleparserdemo-Java8</include>
+        <include>ch.randelshofer:fastdoubleparserdemo-java8</include>
       </includes>
       <binaries>
         <unpack>true</unpack>
@@ -18,7 +18,7 @@
     <moduleSet>
       <useAllReactorProjects>true</useAllReactorProjects>
       <includes>
-        <include>ch.randelshofer:fastdoubleparserdemo-Java11</include>
+        <include>ch.randelshofer:fastdoubleparserdemo-java11</include>
       </includes>
       <binaries>
         <outputDirectory>META-INF/versions/11</outputDirectory>
@@ -34,7 +34,7 @@
     <moduleSet>
       <useAllReactorProjects>true</useAllReactorProjects>
       <includes>
-        <include>ch.randelshofer:fastdoubleparserdemo-Java17</include>
+        <include>ch.randelshofer:fastdoubleparserdemo-java17</include>
       </includes>
       <binaries>
         <outputDirectory>META-INF/versions/17</outputDirectory>
@@ -50,7 +50,7 @@
     <moduleSet>
       <useAllReactorProjects>true</useAllReactorProjects>
       <includes>
-        <include>ch.randelshofer:fastdoubleparserdemo-Java19</include>
+        <include>ch.randelshofer:fastdoubleparserdemo-java19</include>
       </includes>
       <binaries>
         <outputDirectory>META-INF/versions/19</outputDirectory>
