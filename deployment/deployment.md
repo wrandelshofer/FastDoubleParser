@@ -1,7 +1,14 @@
-# How to deploy on the nexus repository manager
+# How to deploy to the nexus repository manager
 
 The nexus repository manager only accepts lower case character in the module name and in the version
 number.
+
+We deploy the following files:
+
+- fastdoubleparser/target/fastdoubleparser-x.y.z.jar
+- fastdoubleparser/target/fastdoubleparser-x.y.z-sources.jar
+- fastdoubleparser-java9/target/fastdoubleparser-java19-x.y.z-sources.jar
+
 
 All files must be signed with GPG.
 
