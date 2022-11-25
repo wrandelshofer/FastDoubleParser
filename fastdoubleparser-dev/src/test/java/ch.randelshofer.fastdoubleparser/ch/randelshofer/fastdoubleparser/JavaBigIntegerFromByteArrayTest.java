@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
@@ -43,6 +44,7 @@ public class JavaBigIntegerFromByteArrayTest extends AbstractBigIntegerParserTes
     }
 
     @TestFactory
+    @Disabled
     public Stream<DynamicTest> dynamicTestsVeryLongStrings() {
         return createDataForVeryLongDecStrings().stream()
                 .filter(t -> t.charLength() == t.input().length()
