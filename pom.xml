@@ -28,10 +28,10 @@
     <module>fastdoubleparser-java19</module>
     <module>fastdoubleparser-dev</module>
     <module>fastdoubleparser</module>
-    <module>fastdoubleparserdemo-Java8</module>
-    <module>fastdoubleparserdemo-Java11</module>
-    <module>fastdoubleparserdemo-Java17</module>
-    <module>fastdoubleparserdemo-Java19</module>
+    <module>fastdoubleparserdemo-java8</module>
+    <module>fastdoubleparserdemo-java11</module>
+    <module>fastdoubleparserdemo-java17</module>
+    <module>fastdoubleparserdemo-java19</module>
     <module>fastdoubleparserdemo-dev</module>
     <module>fastdoubleparserdemo</module>
   </modules>
