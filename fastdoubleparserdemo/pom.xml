@@ -7,7 +7,6 @@
     <artifactId>fastdoubleparser-parentproject</artifactId>
     <version>0.5.0</version>
   </parent>
-  <groupId>ch.randelshofer</groupId>
   <artifactId>fastdoubleparserdemo</artifactId>
   <name>fastdoubleparserdemo multi-release jar</name>
 
