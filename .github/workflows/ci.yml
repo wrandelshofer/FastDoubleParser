@@ -30,5 +30,5 @@ jobs:
       - name: Performance Test 1
         run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main
       - name: Performance Test 2
-        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main FastDoubleParserDemo/data/canada.txt
+        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main fastdoubleparserdemo/data/canada.txt
 ...
