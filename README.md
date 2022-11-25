@@ -1,3 +1,5 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.randelshofer/fastdoubleparser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.randelshofer/fastdoubleparser)
+
 # FastDoubleParser
 
 This is a Java port of Daniel Lemire's [fast_float](https://github.com/fastfloat/fast_float) project.
