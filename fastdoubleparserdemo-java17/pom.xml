@@ -7,7 +7,7 @@
     <artifactId>fastdoubleparser-parentproject</artifactId>
     <version>0.5.0</version>
   </parent>
-  <artifactId>fastdoubleparserdemo-Java17</artifactId>
+  <artifactId>fastdoubleparserdemo-java17</artifactId>
   <packaging>jar</packaging>
   <properties>
     <javaVersion>17</javaVersion>
