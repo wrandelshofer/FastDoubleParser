@@ -5,7 +5,7 @@
 
   <groupId>ch.randelshofer</groupId>
   <artifactId>fastdoubleparser-parentproject</artifactId>
-  <version>0.5.0</version>
+  <version>0.5.1</version>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -26,13 +26,13 @@
     <module>fastdoubleparser-java11</module>
     <module>fastdoubleparser-java17</module>
     <module>fastdoubleparser-java19</module>
-    <module>fastdoubleparser-javaEarlyAccess</module>
+    <module>fastdoubleparser-dev</module>
     <module>fastdoubleparser</module>
-    <module>fastdoubleparserdemo-Java8</module>
-    <module>fastdoubleparserdemo-Java11</module>
-    <module>fastdoubleparserdemo-Java17</module>
-    <module>fastdoubleparserdemo-Java19</module>
-    <module>fastdoubleparserdemo-JavaEarlyAccess</module>
+    <module>fastdoubleparserdemo-java8</module>
+    <module>fastdoubleparserdemo-java11</module>
+    <module>fastdoubleparserdemo-java17</module>
+    <module>fastdoubleparserdemo-java19</module>
+    <module>fastdoubleparserdemo-dev</module>
     <module>fastdoubleparserdemo</module>
   </modules>
 
@@ -70,6 +70,11 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>3.3.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.4.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -179,8 +184,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <windowtitle>fastdoubleparser ${version}</windowtitle>
-          <header>fastdoubleparser ${version}</header>
+          <windowtitle>fastdoubleparser ${project.version}</windowtitle>
+          <header>fastdoubleparser ${project.version}</header>
           <bottom>Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.</bottom>
         </configuration>
         <executions>
@@ -217,8 +222,8 @@
           </reportSet>
         </reportSets>
         <configuration>
-          <windowtitle>fastdoubleparser ${version}</windowtitle>
-          <header>fastdoubleparser ${version}</header>
+          <windowtitle>fastdoubleparser ${project.version}</windowtitle>
+          <header>fastdoubleparser ${project.version}</header>
           <bottom>Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.</bottom>
           <additionalOptions>-Xdoclint:all</additionalOptions>
         </configuration>
