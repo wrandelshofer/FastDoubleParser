@@ -180,7 +180,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // -------------------
         int index = skipWhitespace(str, offset, endIndex);
         if (index == endIndex) {
-            throw new IllegalArgumentException(SYNTAX_ERROR);
+            throw new NumberFormatException(SYNTAX_ERROR);
         }
         char ch = str.charAt(index);
 
