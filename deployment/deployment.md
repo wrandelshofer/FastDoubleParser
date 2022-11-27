@@ -15,6 +15,7 @@ All files must be signed with GPG.
 ```shell
 rm *.asc
 for f in *.jar; do gpg -ab "$f"; done
+for f in *.pom; do gpg -ab "$f"; done
 ```
 
 ```shell
