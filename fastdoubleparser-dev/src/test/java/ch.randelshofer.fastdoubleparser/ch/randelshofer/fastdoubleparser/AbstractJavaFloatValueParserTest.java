@@ -42,9 +42,12 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         );
     }
 
+    /**
+     * ALl these strings must throw a {@link java.lang.NumberFormatException}.
+     */
     protected List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
-                new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("+"),
                 new NumberTestData("-"),
                 new NumberTestData("+e"),
@@ -166,71 +169,71 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
 
     protected List<NumberTestData> createFloatTestDataForInputClassesInMethodParseFloatValue() {
         return Arrays.asList(
-                new NumberTestData("parseFloatValue(): charOffset too small", "3.14", -1, 4, -1, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH),
-                new NumberTestData("parseFloatValue(): charOffset too big", "3.14", 8, 4, 8, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH),
-                new NumberTestData("parseFloatValue(): charLength too small", "3.14", 0, -4, 0, -4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH),
-                new NumberTestData("parseFloatValue(): charLength too big", "3.14", 0, 8, 0, 8, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH),
+                new NumberTestData("parseFloatValue(): charOffset too small", "3.14", -1, 4, -1, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
+                new NumberTestData("parseFloatValue(): charOffset too big", "3.14", 8, 4, 8, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
+                new NumberTestData("parseFloatValue(): charLength too small", "3.14", 0, -4, 0, -4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
+                new NumberTestData("parseFloatValue(): charLength too big", "3.14", 0, 8, 0, 8, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("parseFloatValue(): Significand with leading whitespace", "   3", 0, 4, 0, 4, 3d),
                 new NumberTestData("parseFloatValue(): Significand with trailing whitespace", "3   ", 0, 4, 0, 4, 3d),
-                new NumberTestData("parseFloatValue(): Empty String", "", 0, 0, 0, 0, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseFloatValue(): Blank String", "   ", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseFloatValue(): Very long non-blank String", repeat("a", 66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseFloatValue(): Plus Sign", "+", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseFloatValue(): Negative Sign", "-", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseFloatValue(): Empty String", "", 0, 0, 0, 0, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseFloatValue(): Blank String", "   ", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseFloatValue(): Very long non-blank String", repeat("a", 66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseFloatValue(): Plus Sign", "+", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseFloatValue(): Negative Sign", "-", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseFloatValue(): Infinity", "Infinity", 0, 8, 0, 8, Double.POSITIVE_INFINITY),
                 new NumberTestData("parseFloatValue(): NaN", "NaN", 0, 3, 0, 3, Double.NaN),
-                new NumberTestData("parseInfinity(): Infinit (missing last char)", "Infinit", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseInfinity(): InfinitY (bad last char)", "InfinitY", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseNaN(): Na (missing last char)", "Na", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseNaN(): Nan (bad last char)", "Nan", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseInfinity(): Infinit (missing last char)", "Infinit", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseInfinity(): InfinitY (bad last char)", "InfinitY", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNaN(): Na (missing last char)", "Na", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNaN(): Nan (bad last char)", "Nan", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseFloatValue(): Leading zero", "03", 0, 2, 0, 2, 3d),
                 new NumberTestData("parseFloatValue(): Leading zeroes", "003", 0, 3, 0, 3, 3d),
-                new NumberTestData("parseFloatValue(): Leading zero x", "0x3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseFloatValue(): Leading zero X", "0X3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseFloatValue(): Leading zero x", "0x3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseFloatValue(): Leading zero X", "0X3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
 
-                new NumberTestData("parseDecFloatLiteral(): Decimal point only", ".", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseDecFloatLiteral(): Decimal point only", ".", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseDecFloatLiteral(): With decimal point", "3.", 0, 2, 0, 2, 3d),
                 new NumberTestData("parseDecFloatLiteral(): Without decimal point", "3", 0, 1, 0, 1, 3d),
                 new NumberTestData("parseDecFloatLiteral(): 7 digits after decimal point", "3.1234567", 0, 9, 0, 9, 3.1234567),
                 new NumberTestData("parseDecFloatLiteral(): 8 digits after decimal point", "3.12345678", 0, 10, 0, 10, 3.12345678),
                 new NumberTestData("parseDecFloatLiteral(): 9 digits after decimal point", "3.123456789", 0, 11, 0, 11, 3.123456789),
-                new NumberTestData("parseDecFloatLiteral(): 1 digit + 7 chars after decimal point", "3.1abcdefg", 0, 10, 0, 10, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseDecFloatLiteral(): With 'e' at end", "3e", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseDecFloatLiteral(): With 'E' at end", "3E", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseDecFloatLiteral(): With 'e' + whitespace at end", "3e   ", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseDecFloatLiteral(): With 'E' + whitespace  at end", "3E   ", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseDecFloatLiteral(): With 'e+' at end", "3e+", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseDecFloatLiteral(): With 'E-' at end", "3E-", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseDecFloatLiteral(): 1 digit + 7 chars after decimal point", "3.1abcdefg", 0, 10, 0, 10, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseDecFloatLiteral(): With 'e' at end", "3e", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseDecFloatLiteral(): With 'E' at end", "3E", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseDecFloatLiteral(): With 'e' + whitespace at end", "3e   ", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseDecFloatLiteral(): With 'E' + whitespace  at end", "3E   ", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseDecFloatLiteral(): With 'e+' at end", "3e+", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseDecFloatLiteral(): With 'E-' at end", "3E-", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseDecFloatLiteral(): With 'e+9' at end", "3e+9", 0, 4, 0, 4, 3e+9),
                 new NumberTestData("parseDecFloatLiteral(): With 20 significand digits", "12345678901234567890", 0, 20, 0, 20, 12345678901234567890d),
-                new NumberTestData("parseDecFloatLiteral(): With 20 significand digits + non-ascii char", "12345678901234567890￡", 0, 21, 0, 21, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseDecFloatLiteral(): With 20 significand digits + non-ascii char", "12345678901234567890￡", 0, 21, 0, 21, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseDecFloatLiteral(): With 20 significand digits with decimal point", "1234567890.1234567890", 0, 21, 0, 21, 1234567890.1234567890),
-                new NumberTestData("parseDecFloatLiteral(): With illegal FloatTypeSuffix 'z': 1.2e3z", "1.2e3z", 0, 6, 0, 6, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseDecFloatLiteral(): With illegal FloatTypeSuffix 'z': 1.2e3z", "1.2e3z", 0, 6, 0, 6, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'd': 1.2e3d", "1.2e3d", 0, 6, 0, 6, 1.2e3),
                 new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'd' + whitespace: 1.2e3d ", "1.2e3d ", 0, 7, 0, 7, 1.2e3),
                 new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'D': 1.2D", "1.2D", 0, 4, 0, 4, 1.2),
                 new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'f': 1f", "1f", 0, 2, 0, 2, 1d),
                 new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'F': -1.2e-3F", "-1.2e-3F", 0, 8, 0, 8, -1.2e-3),
-                new NumberTestData("parseDecFloatLiteral(): No digits+whitespace+'z'", ". z", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseDecFloatLiteral(): No digits+whitespace+'z'", ". z", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
 
-                new NumberTestData("parseHexFloatLiteral(): With decimal point", "0x3.", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): No digits with decimal point", "0x.", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): Without decimal point", "0X3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): 7 digits after decimal point", "0x3.1234567", 0, 11, 0, 11, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): 8 digits after decimal point", "0X3.12345678", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): 9 digits after decimal point", "0x3.123456789", 0, 13, 0, 13, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): 1 digit + 7 chars after decimal point", "0X3.1abcdefg", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): With 'p' at end", "0X3p", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): With 'P' at end", "0x3P", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): With 'p' + whitespace at end", "0X3p   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): With 'P' + whitespace  at end", "0x3P   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): With 'p+' at end", "0X3p+", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("parseHexFloatLiteral(): With 'P-' at end", "0x3P-", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseHexFloatLiteral(): With decimal point", "0x3.", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): No digits with decimal point", "0x.", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): Without decimal point", "0X3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 7 digits after decimal point", "0x3.1234567", 0, 11, 0, 11, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 8 digits after decimal point", "0X3.12345678", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 9 digits after decimal point", "0x3.123456789", 0, 13, 0, 13, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 1 digit + 7 chars after decimal point", "0X3.1abcdefg", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'p' at end", "0X3p", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'P' at end", "0x3P", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'p' + whitespace at end", "0X3p   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'P' + whitespace  at end", "0x3P   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'p+' at end", "0X3p+", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'P-' at end", "0x3P-", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseHexFloatLiteral(): With 'p+9' at end", "0X3p+9", 0, 6, 0, 6, 0X3p+9),
                 new NumberTestData("parseHexFloatLiteral(): With 20 significand digits", "0x12345678901234567890p0", 0, 24, 0, 24, 0x12345678901234567890p0),
-                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits + non-ascii char", "0x12345678901234567890￡p0", 0, 25, 0, 25, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits + non-ascii char", "0x12345678901234567890￡p0", 0, 25, 0, 25, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseHexFloatLiteral(): With 20 significand digits with decimal point", "0x1234567890.1234567890P0", 0, 25, 0, 25, 0x1234567890.1234567890P0),
-                new NumberTestData("parseHexFloatLiteral(): With illegal FloatTypeSuffix 'z': 0x1.2p3z", "0x1.2p3z", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("parseHexFloatLiteral(): With illegal FloatTypeSuffix 'z': 0x1.2p3z", "0x1.2p3z", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'd': 0x1.2p3d", "0x1.2p3d", 0, 8, 0, 8, 0x1.2p3d),
                 new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'd' + whitespace: 0x1.2p3d ", "0x1.2p3d ", 0, 9, 0, 9, 0x1.2p3d),
                 new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'D': 0x1.2p3D", "0x1.2p3D", 0, 8, 0, 8, 0x1.2p3d),
@@ -275,18 +278,18 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
 
     List<NumberTestData> createAllFloatTestData() {
         List<NumberTestData> list = new ArrayList<>();
-        //  list.addAll(createTestDataForInfinity());
-        //  list.addAll(createTestDataForNaN());
-        //  list.addAll(createDataForFloatDecimalLimits());
-        //  list.addAll(createDataForFloatHexadecimalLimits());
-        //  list.addAll(createDataForBadStrings());
-        //  list.addAll(createDataForLegalDecStrings());
-        //  list.addAll(createDataForLegalHexStrings());
+        list.addAll(createTestDataForInfinity());
+        list.addAll(createTestDataForNaN());
+        list.addAll(createDataForFloatDecimalLimits());
+        list.addAll(createDataForFloatHexadecimalLimits());
+        list.addAll(createDataForBadStrings());
+        list.addAll(createDataForLegalDecStrings());
+        list.addAll(createDataForLegalHexStrings());
         list.addAll(createDataForFloatDecimalClingerInputClasses());
         list.addAll(createDataForFloatHexadecimalClingerInputClasses());
-        //    list.addAll(createDataForLegalCroppedStrings());
-        //    list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
-        //    list.addAll(createDataForSignificandDigitsInputClasses());
+        list.addAll(createDataForLegalCroppedStrings());
+        list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
+        list.addAll(createDataForSignificandDigitsInputClasses());
         if (RUN_SLOW_TESTS) {
             list.addAll(createDataWithVeryLongInputStrings());
         }

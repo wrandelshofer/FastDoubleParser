@@ -23,12 +23,12 @@ public class JavaBigDecimalFromCharSequenceTest extends AbstractBigDecimalParser
         BigDecimal actual = null;
         try {
             actual = f.apply(d);
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
                 e.printStackTrace();
                 assertEquals(d.expectedErrorMessage(), e.getMessage());
             }
-            ;
+            assertEquals(d.expectedThrowableClass(), e.getClass());
         }
         BigDecimal expectedValue = (BigDecimal) d.expectedValue();
         if (expectedValue != null) {

@@ -35,13 +35,13 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("+-InfinityD"),
                 new NumberTestData("+InfinityNaN"),
                 new NumberTestData("infinity"),
-                new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("+", "+", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("-", "-", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("+e", "+e", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("-e", "-e", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("+e123", "-e123", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("-e456", "-e456", AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("+", "+", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("-", "-", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("+e", "+e", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("-e", "-e", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("+e123", "-e123", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("-e456", "-e456", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("78 e9"),
                 new NumberTestData("-01 e23"),
                 new NumberTestData("- 1"),
@@ -60,11 +60,11 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("0x123pa"),
                 new NumberTestData("0x1.2e7"),
                 new NumberTestData("0xp89"),
-                new NumberTestData("FloatTypeSuffix", "1d", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2d", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3d", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3d", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3d", AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("FloatTypeSuffix", "1d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
 
                 new NumberTestData(" 1.2e3"),
                 new NumberTestData("1.2e3 "),
@@ -73,21 +73,21 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("1.2e3  "),
                 new NumberTestData("   1.2e3   "),
 
-                new NumberTestData("FloatTypeSuffix", "1D", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2D", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3D", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3D", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3D", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1f", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2f", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3f", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3f", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3f", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1F", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2F", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3F", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3F", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3F", AbstractNumberParser.SYNTAX_ERROR)
+                new NumberTestData("FloatTypeSuffix", "1D", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2D", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3D", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3D", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3D", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1f", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2f", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3f", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3f", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3f", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1F", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2F", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3F", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3F", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3F", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
 
         );
     }
@@ -160,20 +160,20 @@ public abstract class AbstractBigDecimalParserTest {
     /**
      * White-box tests for the following methods:
      * <ul>
-     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalString(byte[], int, int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalString(byte[], int, int, boolean)}</li>
      *     <li>{@link JavaBigDecimalFromCharArray#parseBigDecimalString(char[], int, int, boolean)}</li>
      *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalString(CharSequence, int, int, boolean)}</li>
      * </ul>
      */
     protected List<NumberTestData> createTestDataForInputClassesInMethodParseBigDecimalString() {
         return Arrays.asList(
-                new NumberTestData("many digits threshold", repeat(" ", 32), AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("not many digits threshold", repeat(" ", 31), AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal empty string", "", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal character", "§", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal only negative sign", "-", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal only positive sign", "+", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal only point", ".", AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("many digits threshold", repeat(" ", 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("not many digits threshold", repeat(" ", 31), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal empty string", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal character", "§", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal only negative sign", "-", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal only positive sign", "+", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal only point", ".", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("integer significand", "1", BigDecimal.ONE),
                 new NumberTestData("fractional significand", "0.1", BigDecimal::new),
                 new NumberTestData("point before significand", ".1", BigDecimal::new),
@@ -189,27 +189,27 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("significand with 40 digits in integer part", "1234567890123456789012345678901234567890", BigDecimal::new),
                 new NumberTestData("significand with 40 digits in fraction part", ".1234567890123456789012345678901234567890", BigDecimal::new),
                 new NumberTestData("significand with 40 digits in integer and fraction part together", "1234567890.123456789012345678901234567890", BigDecimal::new),
-                new NumberTestData("illegal digit in significand with 18 digits in integer part", "123456789012345u78", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 18 digits in fraction part", ".1234567890123u5678", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 18 digits in integer and fraction part together", "123456789u.12345678", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 19 digits in integer part", "12345678901234567u9", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 19 digits in fraction part", ".12345678901234567u9", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 19 digits in integer and fraction part together", "1234567890.12345u789", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 40 digits in integer part", "1234567890123456789012345678901234567u9", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 40 digits in fraction part", ".1234567890123456789012345678901234567u9", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal digit in significand with 40 digits in integer and fraction part together", "123456789012345678901234567890.12345u789", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal only exponent indicator e", "e", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal only exponent indicator E", "E", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal exponent without number", "1e", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal exponent without number +", "1e+", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal exponent without number -", "1e-", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal exponent without number §", "1e§", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal duplicate point", "1.2.3e4", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal duplicate sign", "--1.2e4", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal duplicate sign after point", "-1.-2e5", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal duplicate sign inside significand", "-1-2e5", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal duplicate sign inside exponent", "-12e5-6", AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal duplicate  exponent", "-12e5e6", AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("illegal digit in significand with 18 digits in integer part", "123456789012345u78", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 18 digits in fraction part", ".1234567890123u5678", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 18 digits in integer and fraction part together", "123456789u.12345678", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 19 digits in integer part", "12345678901234567u9", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 19 digits in fraction part", ".12345678901234567u9", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 19 digits in integer and fraction part together", "1234567890.12345u789", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 40 digits in integer part", "1234567890123456789012345678901234567u9", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 40 digits in fraction part", ".1234567890123456789012345678901234567u9", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal digit in significand with 40 digits in integer and fraction part together", "123456789012345678901234567890.12345u789", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal only exponent indicator e", "e", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal only exponent indicator E", "E", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal exponent without number", "1e", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal exponent without number +", "1e+", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal exponent without number -", "1e-", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal exponent without number §", "1e§", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal duplicate point", "1.2.3e4", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal duplicate sign", "--1.2e4", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal duplicate sign after point", "-1.-2e5", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal duplicate sign inside significand", "-1-2e5", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal duplicate sign inside exponent", "-12e5-6", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal duplicate  exponent", "-12e5e6", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("significand with 18 digits in integer part and exponent", "123456789012345678e-887799", BigDecimal::new),
                 new NumberTestData("significand with 18 digits in fraction part and exponent", "-.123456789012345678e887799", BigDecimal::new),
                 new NumberTestData("significand with 18 digits in integer and fraction part together and exponent", "1234567890.12345678e-887799", BigDecimal::new),
@@ -222,15 +222,15 @@ public abstract class AbstractBigDecimalParserTest {
     /**
      * White-box tests for the following methods:
      * <ul>
-     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalStringWithManyDigits(byte[], int, int)} (byte[], int, int)}</li>
-     *     <li>{@link JavaBigDecimalFromCharArray#parseBigDecimalStringWithManyDigits(char[], int, int)}</li>
-     *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalStringWithManyDigits(CharSequence, int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalStringWithManyDigits(byte[], int, int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharArray#parseBigDecimalStringWithManyDigits(char[], int, int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalStringWithManyDigits(CharSequence, int, int, int)}</li>
      * </ul>
      */
     protected List<NumberTestData> createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits() {
         return Arrays.asList(
-                new NumberTestData("illegal only negative sign", "-" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("illegal only positive sign", "+" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("illegal only negative sign", "-" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("illegal only positive sign", "+" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
 
 
                 new NumberTestData("significand with 40 zeroes in integer part", repeat("0", 40), BigDecimal::new),
@@ -241,7 +241,7 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("significand with 10 leading zeros and 30 digits in integer part and in fraction part", repeat("0", 10) + repeat("9", 30) + "." + repeat("0", 10) + repeat("9", 30), BigDecimal::new),
 
                 new NumberTestData("significand with 40 digits in integer part and exponent", "-1234567890123456789012345678901234567890e887799", BigDecimal::new),
-                new NumberTestData("no significand but exponent 40 digits", "-e12345678901234567890123456789012345678901234567890", AbstractNumberParser.SYNTAX_ERROR),
+                new NumberTestData("no significand but exponent 40 digits", "-e12345678901234567890123456789012345678901234567890", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("significand with 40 digits in fraction part and exponent", "-.1234567890123456789012345678901234567890e-887799", BigDecimal::new),
                 new NumberTestData("significand with 40 digits in integer and fraction part together and exponent", "-123456789012345678901234567890.1234567890e887799", BigDecimal::new),
 
@@ -260,8 +260,8 @@ public abstract class AbstractBigDecimalParserTest {
 
     protected List<NumberTestData> createDataWithVeryLongInputStrings() {
         return Arrays.asList(
-                new NumberTestData("significand too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 3), AbstractNumberParser.SYNTAX_ERROR),
-                new NumberTestData("significand too many non-zero digits", new VirtualCharSequence('1', 1_292_782_621 + 1), AbstractNumberParser.VALUE_EXCEEDS_LIMITS),
+                new NumberTestData("significand too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 3), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("significand too many non-zero digits", new VirtualCharSequence('1', 1_292_782_621 + 1), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class),
                 new NumberTestData("significand with maximal number of zero digits in integer part", new VirtualCharSequence('0', Integer.MAX_VALUE - 4), BigDecimal.ZERO),
                 new NumberTestData("significand with maximal number of zero digits in fraction part", new VirtualCharSequence(".", '0', Integer.MAX_VALUE - 4), new BigDecimal("0E-2147483642")),
                 new NumberTestData("significand with maximal number of zero digits in significand", new VirtualCharSequence("", 1024, ".", "", '0', Integer.MAX_VALUE - 4), new BigDecimal("0E-2147482618"))

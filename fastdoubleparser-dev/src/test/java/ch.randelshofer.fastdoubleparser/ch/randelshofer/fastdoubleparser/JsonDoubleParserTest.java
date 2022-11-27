@@ -75,11 +75,12 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
         if (d.expectedErrorMessage() != null) {
             try {
                 f.applyAsDouble(d);
-            } catch (Exception e) {
-                if (!Objects.equals(e.getMessage(), d.expectedErrorMessage())) {
+            } catch (IllegalArgumentException e) {
+                if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
                     e.printStackTrace();
+                    assertEquals(d.expectedErrorMessage(), e.getMessage());
                 }
-                assertEquals(d.expectedErrorMessage(), e.getMessage());
+                assertEquals(d.expectedThrowableClass(), e.getClass());
             }
         } else {
             double actual = f.applyAsDouble(d);

@@ -25,12 +25,12 @@ public class JavaBigDecimalFromByteArrayTest extends AbstractBigDecimalParserTes
         BigDecimal actual = null;
         try {
             actual = f.apply(d);
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
                 e.printStackTrace();
                 assertEquals(d.expectedErrorMessage(), e.getMessage());
             }
-            ;
+            assertEquals(d.expectedThrowableClass(), e.getClass());
         }
         if (expectedValue != null) {
             assertEquals(0, expectedValue.compareTo(actual),

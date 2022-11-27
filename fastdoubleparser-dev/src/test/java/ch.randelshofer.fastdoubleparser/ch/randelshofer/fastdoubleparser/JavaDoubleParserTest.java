@@ -5,7 +5,6 @@
 package ch.randelshofer.fastdoubleparser;
 
 import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import java.nio.charset.StandardCharsets;
@@ -14,7 +13,6 @@ import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
@@ -71,38 +69,16 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
                         () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
     }
 
-    @Test
-    public void emptyCharSequenceThrowsNumberFormatException() {
-        assertThrows(NumberFormatException.class, () -> {
-            // to make explicit we are calling JavaDoubleParser.parseDouble(CharSequence)
-            final CharSequence cs = "";
-            JavaDoubleParser.parseDouble(cs);
-        });
-    }
-
-    @Test
-    public void emptyByteArrayThrowsNumberFormatException() {
-        assertThrows(NumberFormatException.class, () -> {
-            JavaDoubleParser.parseDouble(new byte[0]);
-        });
-    }
-
-    @Test
-    public void emptyCharArrayThrowsNumberFormatException() {
-        assertThrows(NumberFormatException.class, () -> {
-            JavaDoubleParser.parseDouble(new char[0]);
-        });
-    }
-
     private void test(NumberTestData d, ToDoubleFunction<NumberTestData> f) {
         if (d.expectedErrorMessage() != null) {
             try {
                 f.applyAsDouble(d);
-            } catch (Exception e) {
-                if (!Objects.equals(e.getMessage(), d.expectedErrorMessage())) {
+            } catch (IllegalArgumentException e) {
+                if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
                     e.printStackTrace();
+                    assertEquals(d.expectedErrorMessage(), e.getMessage());
                 }
-                assertEquals(e.getMessage(), d.expectedErrorMessage());
+                assertEquals(d.expectedThrowableClass(), e.getClass());
             }
         } else {
             double actual = f.applyAsDouble(d);
