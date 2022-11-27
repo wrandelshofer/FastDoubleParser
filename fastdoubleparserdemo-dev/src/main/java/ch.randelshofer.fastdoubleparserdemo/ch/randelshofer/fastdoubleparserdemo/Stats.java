@@ -49,29 +49,6 @@ public class Stats {
         return z1[1][col];
     }
 
-    /**
-     * Same as Arrays.binarySearch but with double[][] type.
-     */
-    private static int binarySearch(double[][] a,
-                                    double key) {
-        int low = 0;
-        int high = a.length - 1;
-
-        while (low <= high) {
-            int mid = (low + high) >>> 1;
-            double[] midVal = a[mid];
-            int cmp = Double.compare(midVal[0], key);
-            if (cmp < 0) {
-                low = mid + 1;
-            } else if (cmp > 0) {
-                high = mid - 1;
-            } else {
-                return mid; // key found
-            }
-        }
-        return -(low + 1);  // key not found.
-    }
-
 
     /**
      * Returns the confidence value for a population mean using a

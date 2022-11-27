@@ -70,7 +70,7 @@ public class Main {
     /**
      * Desired confidence interval width in percent of the average value.
      */
-    private static final double MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH = 0.01;
+    private static final double MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH = 0.02;
 
     /**
      * Desired confidence interval width in percent of the average value.
@@ -80,7 +80,7 @@ public class Main {
     /**
      * One minus desired confidence level in percent.
      */
-    private static final double MEASUREMENT_CONFIDENCE_LEVEL = 0.998;
+    private static final double MEASUREMENT_CONFIDENCE_LEVEL = 0.99;
 
     /**
      * One minus desired confidence level in percent.
