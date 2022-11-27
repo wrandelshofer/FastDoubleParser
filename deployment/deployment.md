@@ -14,10 +14,7 @@ All files must be signed with GPG.
 
 ```shell
 rm *.asc
-gpg -ab *javadoc.jar
-gpg -ab *sources.jar
-gpg -ab *.jar
-gpg -ab *.pom
+for f in *.jar; do gpg -ab "$f"; done
 ```
 
 ```shell
