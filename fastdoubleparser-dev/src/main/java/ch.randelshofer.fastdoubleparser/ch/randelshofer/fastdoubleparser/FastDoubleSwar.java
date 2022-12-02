@@ -372,6 +372,39 @@ class FastDoubleSwar {
         return result;
     }
 
+    public static int tryToParseUpTo7Digits(byte[] str, int from, int to) {
+        int result = 0;
+        boolean success = true;
+        for (; from < to; from++) {
+            byte ch = str[from];
+            success &= '0' <= ch && ch <= '9';
+            result = 10 * (result) + ch - '0';
+        }
+        return success ? result : -1;
+    }
+
+    public static int tryToParseUpTo7Digits(char[] str, int from, int to) {
+        int result = 0;
+        boolean success = true;
+        for (; from < to; from++) {
+            char ch = str[from];
+            success &= '0' <= ch && ch <= '9';
+            result = 10 * (result) + ch - '0';
+        }
+        return success ? result : -1;
+    }
+
+    public static int tryToParseUpTo7Digits(CharSequence str, int from, int to) {
+        int result = 0;
+        boolean success = true;
+        for (; from < to; from++) {
+            char ch = str.charAt(from);
+            success &= '0' <= ch && ch <= '9';
+            result = 10 * (result) + ch - '0';
+        }
+        return success ? result : -1;
+    }
+
     public static int parseUpTo7Digits(char[] str, int from, int to) {
         int result = 0;
         for (; from < to; from++) {

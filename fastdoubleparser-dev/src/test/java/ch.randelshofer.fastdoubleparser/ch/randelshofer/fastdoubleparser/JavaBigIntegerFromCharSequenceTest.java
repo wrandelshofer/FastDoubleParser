@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class JavaBigIntegerFromByteArrayTest extends AbstractBigIntegerParserTest {
+public class JavaBigIntegerFromCharSequenceTest extends AbstractBigIntegerParserTest {
 
 
     private void test(NumberTestData d, Function<NumberTestData, BigInteger> f) {
@@ -43,25 +42,25 @@ public class JavaBigIntegerFromByteArrayTest extends AbstractBigIntegerParserTes
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsParseBigIntegerFromByteArray() {
+    public Stream<DynamicTest> dynamicTestsParseBigIntegerFromCharSequence() {
         return createRegularTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1),
-                                u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input(),
+                                u.charOffset(), u.charLength()))));
 
     }
 
     @TestFactory
     @Disabled
     public Stream<DynamicTest> dynamicTestsVeryLongStrings() {
-        return createVeryLongTestData().stream()
+        return createDataForVeryLongDecStrings().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1),
-                                u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input(),
+                                u.charOffset(), u.charLength()))));
 
     }
 }

@@ -43,7 +43,7 @@ public abstract class AbstractBigIntegerParserTest {
 
     protected List<NumberTestData> createDataForIllegalDecStrings() {
         return Arrays.asList(
-                new NumberTestData("'0' ** 1292782622", repeat("0", 1292782621 + 1), new BigInteger(repeat("0", 1292782621 + 1)))
+                new NumberTestData("AAAA", "AAAA", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
         );
     }
 
@@ -75,24 +75,38 @@ public abstract class AbstractBigIntegerParserTest {
                 new NumberTestData("-10", BigInteger.TEN.negate()),
                 new NumberTestData("255", new BigInteger("255", 10)),
                 new NumberTestData("-255", new BigInteger("-255", 10)),
-                new NumberTestData("-12345678", new BigInteger("-12345678", 10)),
+                new NumberTestData("-12345678", new BigInteger("-12345678", 10))
 
-                new NumberTestData(repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10))
         );
     }
 
     protected List<NumberTestData> createDataForVeryLongDecStrings() {
         return Arrays.asList(
+                new NumberTestData("'0' ** 1292782622", repeat("0", 1292782621 + 1), BigInteger.ZERO),
                 new NumberTestData("max input length: '0' ** 1292782621", repeat("0", 1292782621), BigInteger.ZERO),
-                new NumberTestData("max input length: '0' ** 1292782620, '7'", repeat("0", 1292782621 - 1) + "7", BigInteger.valueOf(7))
+                new NumberTestData("max input length: '0' ** 1292782620, '7'", repeat("0", 1292782621 - 1) + "7", BigInteger.valueOf(7)),
+                new NumberTestData(repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10))
+        );
+    }
+
+    protected List<NumberTestData> createDataForVeryLongHexStrings() {
+        return Arrays.asList(
         );
     }
 
 
     List<NumberTestData> createRegularTestData() {
         List<NumberTestData> list = new ArrayList<>();
+        list.addAll(createDataForIllegalDecStrings());
         list.addAll(createDataForLegalDecStrings());
         list.addAll(createDataForLegalHexStrings());
+        return list;
+    }
+
+    List<NumberTestData> createVeryLongTestData() {
+        List<NumberTestData> list = new ArrayList<>();
+        list.addAll(createDataForVeryLongDecStrings());
+        list.addAll(createDataForVeryLongHexStrings());
         return list;
     }
 

@@ -15,7 +15,6 @@
         <module name="FastDoubleParserDemo-Java11" />
         <module name="fastdoubleparserdemo-Java8" />
         <module name="FastDoubleParser (1)" />
-        <module name="FastDoubleParser" />
         <module name="FastDoubleParserDemo-Java17" />
         <module name="fastdoubleparserdemo-Java11" />
         <module name="fastdoubleparser-java17" />
@@ -39,7 +38,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FastDoubleParser" options="-Xlint:all" />
+      <module name="FastDoubleParser" options="" />
       <module name="FastDoubleParser (1)" options="-Xlint:all" />
       <module name="FastDoubleParser-Java11" options="-Xlint:all" />
       <module name="FastDoubleParser-Java17" options="-Xlint:all" />

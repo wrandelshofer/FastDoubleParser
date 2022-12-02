@@ -86,13 +86,15 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
     private static BigInteger parseDigitsUpTo18(char[] str, int from, int to) {
         int numDigits = to - from;
         int preroll = from + (numDigits & 7);
-        long significand = FastDoubleSwar.parseUpTo7Digits(str, from, preroll);
+        long significand = FastDoubleSwar.tryToParseUpTo7Digits(str, from, preroll);
+        boolean success = significand >= 0;
         for (from = preroll; from < to; from += 8) {
             int result = FastDoubleSwar.tryToParseEightDigits(str, from);
-            if (result < 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
-            }
+            success &= result >= 0;
             significand = significand * 100_000_000L + result;
+        }
+        if (!success) {
+            throw new NumberFormatException(SYNTAX_ERROR);
         }
         return BigInteger.valueOf(significand);
     }
