@@ -5,7 +5,7 @@
 
   <groupId>ch.randelshofer</groupId>
   <artifactId>fastdoubleparser-parentproject</artifactId>
-  <version>0.5.3</version>
+  <version>0.5.4</version>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -41,6 +41,7 @@
     <javaVersion>20</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
+    <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
   </properties>
 
   <build>
@@ -124,7 +125,8 @@
           <generateGitPropertiesFile>false</generateGitPropertiesFile>
           <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
           </generateGitPropertiesFilename>
-          <dateFormat>yyyy-MM-dd</dateFormat>
+          <dateFormatTimeZone>UTC</dateFormatTimeZone>
+          <dateFormat>yyyy-MM-dd'T'HH:mm:ss'Z'</dateFormat>
           <includeOnlyProperties>
             <includeOnlyProperty>^git.commit.(time|version)$</includeOnlyProperty>
             <includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
@@ -139,7 +141,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
         <configuration>
           <archive>
             <manifest>
@@ -147,7 +149,8 @@
             </manifest>
             <manifestEntries>
               <SCM-URL>${project.scm.url}</SCM-URL>
-              <SCM-Revision>${git.commit.time}_${git.commit.id.abbrev}</SCM-Revision>
+              <Git-Commit-Time>${git.commit.time}</Git-Commit-Time>
+              <Git-Commit-Id>${git.commit.id.full}</Git-Commit-Id>
             </manifestEntries>
             <addMavenDescriptor>false</addMavenDescriptor>
           </archive>
@@ -165,7 +168,8 @@
             </manifest>
             <manifestEntries>
               <SCM-URL>${project.scm.url}</SCM-URL>
-              <SCM-Revision>${git.commit.time}_${git.commit.id.abbrev}</SCM-Revision>
+              <Git-Commit-Time>${git.commit.time}</Git-Commit-Time>
+              <Git-Commit-Id>${git.commit.id.full}</Git-Commit-Id>
             </manifestEntries>
             <addMavenDescriptor>false</addMavenDescriptor>
           </archive>

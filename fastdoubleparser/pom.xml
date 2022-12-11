@@ -5,7 +5,7 @@
   <parent>
     <groupId>ch.randelshofer</groupId>
     <artifactId>fastdoubleparser-parentproject</artifactId>
-    <version>0.5.3</version>
+    <version>0.5.4</version>
   </parent>
   <artifactId>fastdoubleparser</artifactId>
   <name>fastdoubleparser multi-release jar</name>
@@ -123,7 +123,8 @@
               <Created-By>-</Created-By>
               <Built-By>-</Built-By>
               <SCM-URL>${project.scm.url}</SCM-URL>
-              <SCM-Revision>${git.commit.time}_${git.commit.id.abbrev}</SCM-Revision>
+              <Git-Commit-Time>${git.commit.time}</Git-Commit-Time>
+              <Git-Commit-Id>${git.commit.id.full}</Git-Commit-Id>
               <Multi-Release>true</Multi-Release>
               <Automatic-Module-Name>ch.randelshofer.fastdoubleparser</Automatic-Module-Name>
             </manifestEntries>
