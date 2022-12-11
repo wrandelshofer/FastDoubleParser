@@ -43,7 +43,8 @@ public abstract class AbstractBigIntegerParserTest {
 
     protected List<NumberTestData> createDataForIllegalDecStrings() {
         return Arrays.asList(
-                new NumberTestData("AAAA", "AAAA", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
+                new NumberTestData("AAAA", "AAAA", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("A**1500", repeat("A", 1500), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
         );
     }
 

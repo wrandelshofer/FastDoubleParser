@@ -50,11 +50,17 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
         int numDigits = to - from;
         BigSignificand bigSignificand = new BigSignificand(FastIntegerMath.estimateNumBits(numDigits));
         int preroll = from + (numDigits & 7);
-        bigSignificand.add(FastDoubleSwar.parseUpTo7Digits(str, from, preroll));
+        int value = FastDoubleSwar.tryToParseUpTo7Digits(str, from, preroll);
+        boolean success = value >= 0;
+        bigSignificand.add(value);
         for (from = preroll; from < to; from += 8) {
-            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigits(str, from));
+            int addend = FastDoubleSwar.tryToParseEightDigits(str, from);
+            success &= addend >= 0;
+            bigSignificand.fma(100_000_000, addend);
         }
-
+        if (!success) {
+            throw new NumberFormatException(SYNTAX_ERROR);
+        }
         return bigSignificand.toBigInteger();
     }
 
