@@ -157,6 +157,11 @@ package ch.randelshofer.fastdoubleparser;
  */
 public class JavaDoubleParser {
 
+    private static final JavaDoubleBitsFromByteArray BYTE_ARRAY_PARSER = new JavaDoubleBitsFromByteArray();
+
+    private static final JavaDoubleBitsFromCharArray CHAR_ARRAY_PARSER = new JavaDoubleBitsFromCharArray();
+
+    private static final JavaDoubleBitsFromCharSequence CHARSEQUENCE_PARSER = new JavaDoubleBitsFromCharSequence();
 
     /**
      * Don't let anyone instantiate this class.
@@ -190,7 +195,7 @@ public class JavaDoubleParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JavaDoubleBitsFromCharSequence().parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = CHARSEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -222,7 +227,7 @@ public class JavaDoubleParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static double parseDouble(byte[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JavaDoubleBitsFromByteArray().parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = BYTE_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -254,7 +259,7 @@ public class JavaDoubleParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static double parseDouble(char[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JavaDoubleBitsFromCharArray().parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = CHAR_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 }

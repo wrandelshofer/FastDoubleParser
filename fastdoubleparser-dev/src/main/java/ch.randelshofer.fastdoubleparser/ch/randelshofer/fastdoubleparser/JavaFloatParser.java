@@ -12,6 +12,12 @@ package ch.randelshofer.fastdoubleparser;
  */
 public class JavaFloatParser {
 
+    private static final JavaFloatBitsFromByteArray BYTE_ARRAY_PARSER = new JavaFloatBitsFromByteArray();
+
+    private static final JavaFloatBitsFromCharArray CHAR_ARRAY_PARSER = new JavaFloatBitsFromCharArray();
+
+    private static final JavaFloatBitsFromCharSequence CHARSEQUENCE_PARSER = new JavaFloatBitsFromCharSequence();
+
     /**
      * Don't let anyone instantiate this class.
      */
@@ -44,7 +50,7 @@ public class JavaFloatParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static float parseFloat(CharSequence str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JavaFloatBitsFromCharSequence().parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = CHARSEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Float.intBitsToFloat((int) bitPattern);
     }
 
@@ -75,7 +81,7 @@ public class JavaFloatParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static float parseFloat(byte[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JavaFloatBitsFromByteArray().parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = BYTE_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Float.intBitsToFloat((int) bitPattern);
     }
 
@@ -106,7 +112,7 @@ public class JavaFloatParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static float parseFloat(char[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JavaFloatBitsFromCharArray().parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = CHAR_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Float.intBitsToFloat((int) bitPattern);
     }
 }
