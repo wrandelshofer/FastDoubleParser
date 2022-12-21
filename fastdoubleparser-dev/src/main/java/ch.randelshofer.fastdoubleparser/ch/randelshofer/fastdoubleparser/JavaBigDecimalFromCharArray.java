@@ -81,7 +81,6 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
      */
     private final static int MAX_DIGIT_COUNT = 1_292_782_621;
     private final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
-    private final static BigInteger TEN_POW_16 = BigInteger.valueOf(10_000_000_000_000_000L);
 
     /**
      * Creates a new instance.
