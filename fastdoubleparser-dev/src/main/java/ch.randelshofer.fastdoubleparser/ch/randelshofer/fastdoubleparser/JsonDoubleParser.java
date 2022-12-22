@@ -45,7 +45,7 @@ public class JsonDoubleParser {
 
     private static final JsonDoubleBitsFromCharArray CHAR_ARRAY_PARSER = new JsonDoubleBitsFromCharArray();
 
-    private static final JsonDoubleBitsFromCharSequence CHARSEQUENCE_PARSER = new JsonDoubleBitsFromCharSequence();
+    private static final JsonDoubleBitsFromCharSequence CHAR_SEQUENCE_PARSER = new JsonDoubleBitsFromCharSequence();
 
     /**
      * Don't let anyone instantiate this class.
@@ -79,7 +79,7 @@ public class JsonDoubleParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
-        long bitPattern = CHARSEQUENCE_PARSER.parseNumber(str, offset, length);
+        long bitPattern = CHAR_SEQUENCE_PARSER.parseNumber(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 

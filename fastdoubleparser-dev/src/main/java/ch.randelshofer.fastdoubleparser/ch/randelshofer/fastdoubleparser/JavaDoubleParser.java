@@ -156,7 +156,7 @@ public class JavaDoubleParser {
 
     private static final JavaDoubleBitsFromCharArray CHAR_ARRAY_PARSER = new JavaDoubleBitsFromCharArray();
 
-    private static final JavaDoubleBitsFromCharSequence CHARSEQUENCE_PARSER = new JavaDoubleBitsFromCharSequence();
+    private static final JavaDoubleBitsFromCharSequence CHAR_SEQUENCE_PARSER = new JavaDoubleBitsFromCharSequence();
 
     /**
      * Don't let anyone instantiate this class.
@@ -190,7 +190,7 @@ public class JavaDoubleParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
-        long bitPattern = CHARSEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = CHAR_SEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 

@@ -31,7 +31,7 @@ public class JavaFloatParser {
 
     private static final JavaFloatBitsFromCharArray CHAR_ARRAY_PARSER = new JavaFloatBitsFromCharArray();
 
-    private static final JavaFloatBitsFromCharSequence CHARSEQUENCE_PARSER = new JavaFloatBitsFromCharSequence();
+    private static final JavaFloatBitsFromCharSequence CHAR_SEQUENCE_PARSER = new JavaFloatBitsFromCharSequence();
 
     /**
      * Don't let anyone instantiate this class.
@@ -65,7 +65,7 @@ public class JavaFloatParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static float parseFloat(CharSequence str, int offset, int length) throws NumberFormatException {
-        long bitPattern = CHARSEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
+        long bitPattern = CHAR_SEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Float.intBitsToFloat((int) bitPattern);
     }
 
