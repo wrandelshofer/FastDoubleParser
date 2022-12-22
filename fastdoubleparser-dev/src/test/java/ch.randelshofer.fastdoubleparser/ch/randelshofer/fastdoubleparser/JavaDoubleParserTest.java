@@ -39,7 +39,7 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArray() {
         return createAllDoubleTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.charLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.charLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
                         && t.byteOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8)))));
@@ -56,7 +56,7 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArray() {
         return createAllDoubleTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.charLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().toCharArray()))));

@@ -13,6 +13,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.parallelMultiply;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
+    public final static int MAX_INPUT_LENGTH = 1_292_782_622;
     /**
      * Threshold on the number of digits for selecting the
      * recursive algorithm instead of the iterative algorithm.

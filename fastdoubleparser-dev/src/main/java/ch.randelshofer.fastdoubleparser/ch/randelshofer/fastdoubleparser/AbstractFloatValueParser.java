@@ -27,6 +27,7 @@ package ch.randelshofer.fastdoubleparser;
  * </dl>
  */
 abstract class AbstractFloatValueParser extends AbstractNumberParser {
+    public final static int MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
     final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000_00000_00000_00000L;
     /**
      * The decimal exponent of a double has a range of -324 to +308.

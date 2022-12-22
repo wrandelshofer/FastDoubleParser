@@ -48,4 +48,9 @@ final class JavaDoubleBitsFromCharArray extends AbstractJavaFloatingPointBitsFro
                 exponentOfTruncatedSignificand);
         return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex)) : d);
     }
+
+    long blub(char[] str, int offset, int length) {
+        return str.length + offset + length;
+    }
+
 }

@@ -88,8 +88,13 @@ import java.math.BigInteger;
  *     with more digits would yield to a {@link BigDecimal#scale()} that
  *     does not fit into a {@code int}-value.</li>
  *
- *     <li>{@code BigDecimalString}: 1 to 536_870_919+4+10=536_870_933 characters,
- *     e.g. "-1.234567890....12345E-2147483647"</li>
+ *     <li>{@code BigDecimalString}: 1 to 1,292,782,621+4+10=1,292,782,635
+ *     characters,
+ *     e.g. "-1.234567890....12345E-2147483647".</li>
+ * </ul>
+ * Maximal input length supported by this parser:
+ * <ul>
+ *     <li>{@code BigDecimalString}: 1,292,782,635 characters.</li>
  * </ul>
  * <p>
  * References:

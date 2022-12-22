@@ -63,13 +63,6 @@ On common input data, the fast `BigDecimal` and `BigInteger` parsers are about a
 
 For less common inputs with many digits, the fast parsers can be a lot faster than their `java.lang` counterparts.
 
-The asymptotic time complexity of the fast parsing algorithms is in O(e^N), where N is the number of decimal digits.
-The asymptotic time complexity of the fast algorithms is the same as their `java.lang` counterparts.
-
-The running time of the algorithms can be characterised with a trend line in the form of
-`time = a * exp(b * N)`. Where `a` and `b` are constant factors.
-The trend lines of the fast algorithms have a lower constant factors `b` than their `java.lang` counterparts.
-
 If your input data contains inputs with many thousands of digits, consider using the `parallelParse` methods
 of the fast algorithms. They have even lower constant time factors than the regular fast `parse` methods - they use
 more CPU and memory resources though.

@@ -11,6 +11,7 @@ import java.util.List;
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValueParserTest {
+    protected final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
     public static final boolean RUN_SLOW_TESTS = false;
 
     protected List<NumberTestData> createTestDataForNaN() {

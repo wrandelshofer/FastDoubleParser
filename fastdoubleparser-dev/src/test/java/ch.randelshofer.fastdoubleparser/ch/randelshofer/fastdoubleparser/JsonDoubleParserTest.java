@@ -19,11 +19,12 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * Tests class {@link JsonDoubleParser}
  */
 public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
+
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharSequence() {
         return createAllTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.charLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JsonDoubleParser.parseDouble(u.input()))));
@@ -40,7 +41,7 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArray() {
         return createAllTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.byteLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.byteLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8)))));
@@ -57,7 +58,7 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArray() {
         return createAllTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.byteLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.byteLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().toCharArray()))));

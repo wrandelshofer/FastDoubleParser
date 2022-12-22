@@ -27,6 +27,11 @@ package ch.randelshofer.fastdoubleparser;
  * zero          = %x30                 ; 0
  * </pre>
  * <p>
+ * Supported maximal input length:
+ * <ul>
+ *     <li>{@code number} without white space around it:
+ *     {@link Integer#MAX_VALUE} - 4 = 2,147,483,643 characters.</li>
+ * </ul>
  * References:
  * <dl>
  *     <dt>IETF RFC 8259. The JavaScript Object Notation (JSON) Data Interchange

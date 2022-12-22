@@ -50,6 +50,10 @@ import java.math.BigInteger;
  *     digits - the remaining digits must be leading zeroes.
  *     </li>
  * </ul>
+ * Maximal input length supported by this parser:
+ * <ul>
+ *     <li>{@code BigIntegerLiteral}: 1,292,782,621 + 1 = 1,292,782,622 characters.</li>
+ * </ul>
  */
 public class JavaBigIntegerParser {
 

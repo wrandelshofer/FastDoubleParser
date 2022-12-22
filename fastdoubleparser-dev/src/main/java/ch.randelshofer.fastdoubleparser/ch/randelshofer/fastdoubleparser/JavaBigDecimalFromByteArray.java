@@ -21,6 +21,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
  * Parses a {@code double} from a {@code byte} array.
  */
 final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
+    public final static int MAX_INPUT_LENGTH = 1_292_782_635;
     /**
      * Threshold on the number of digits for selecting the
      * recursive algorithm instead of the iterative algorithm.

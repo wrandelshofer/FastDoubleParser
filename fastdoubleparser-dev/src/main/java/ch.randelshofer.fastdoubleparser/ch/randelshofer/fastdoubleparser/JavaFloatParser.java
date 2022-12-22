@@ -9,6 +9,21 @@ package ch.randelshofer.fastdoubleparser;
  * {@link Float#valueOf(String)}.
  * <p>
  * See {@link JavaDoubleParser} for a description of the supported grammar.
+ * <p>
+ * Expected character lengths for values produced by {@link Float#toString}:
+ * <ul>
+ *     <li>{@code DecSignificand} ({@code IntegerPart} + {@code FractionPart}):
+ *     1 to 8 digits</li>
+ *     <li>{@code IntegerPart}: 1 to 7 digits</li>
+ *     <li>{@code FractionPart}: 1 to 7 digits</li>
+ *     <li>{@code SignedInteger} in exponent: 1 to 2 digits</li>
+ *     <li>{@code FloatingPointLiteral}: 1 to 14 characters, e.g. "-1.2345678E-38"</li>
+ * </ul>
+ * Maximal input length supported by this parser:
+ * <ul>
+ *     <li>{@code FloatingPointLiteral} with or without white space around it:
+ *     {@link Integer#MAX_VALUE} - 4 = 2,147,483,643 characters.</li>
+ * </ul>
  */
 public class JavaFloatParser {
 

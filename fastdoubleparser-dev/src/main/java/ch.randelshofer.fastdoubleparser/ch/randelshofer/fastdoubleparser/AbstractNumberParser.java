@@ -20,8 +20,4 @@ abstract class AbstractNumberParser {
      * when there are too many input digits.
      */
     public static final String VALUE_EXCEEDS_LIMITS = "value exceeds limits";
-    /**
-     * See {@link JavaBigDecimalParser}.
-     */
-    public final static int MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 }

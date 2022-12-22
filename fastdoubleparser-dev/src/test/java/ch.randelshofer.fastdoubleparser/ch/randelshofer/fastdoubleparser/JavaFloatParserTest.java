@@ -22,7 +22,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleCharSequence() {
         return createAllFloatTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.charLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.charLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaFloatParser.parseFloat(u.input()))));
@@ -39,7 +39,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArray() {
         return createAllFloatTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.byteLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.byteLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t,
@@ -58,7 +58,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArray() {
         return createAllFloatTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.charLength() <= AbstractNumberParser.MAX_INPUT_LENGTH
+                        && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().toCharArray()))));

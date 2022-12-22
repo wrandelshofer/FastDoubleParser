@@ -25,25 +25,31 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.28
- * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 19+36-2238
+ * # JMH version: 1.35
+ * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+27-2213
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * Benchmark    Mode     Cnt                 Score   Error   Units   per digit
- * m           1  avgt       2             13.139          ns/op
- * m          10  avgt       2             24.150          ns/op
- * m         100  avgt       2            496.133          ns/op
- * m       1_000  avgt       2          14948.645          ns/op
- * m      10_000  avgt       2        1186259.863          ns/op
- * m     100_000  avgt       2      116006218.534          ns/op     1160.06
- * m   1_000_000  avgt       2    11915720193.000          ns/op    11915.72
- * m  10_000_000  avgt       1  1322734437937.000          ns/op   132273.44
+ * Benchmark    Mode     Cnt             Score   Error   Units
+ * m         24  avgt       2            116.786          ns/op
+ * m          1  avgt       2             12.473          ns/op
+ * m         10  avgt       2             20.776          ns/op
+ * m        100  avgt       2            480.817          ns/op
+ * m       1000  avgt       2          14832.646          ns/op
+ * m      10000  avgt       2        1200632.862          ns/op
+ * m     100000  avgt       2      117587913.424          ns/op
+ * m    1000000  avgt       2    12027995151.000          ns/op
+ * m   10000000  avgt       1  1281686999490.000          ns/op
+ * m  100000000  avgt       ?
+ * m 1000000000  avgt       ?
+ * m 1292782621  avgt       ?
  * </pre>
  */
 
-@Fork(value = 1)
-@Measurement(iterations = 1)
-@Warmup(iterations = 0)
+@Fork(value = 1, jvmArgsAppend = {
+        "-Xmx16g"
+})
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -51,23 +57,26 @@ public class JmhBigDecimalScalability {
 
 
     @Param({
-            // "1",
-            // "10",
-            // "100",
-            "1000",
-            "10000",
-            "100000",
-            "1000000",
-            "10000000",
-            //"100000000",
-            //"536870919"
+            "24"
+            , "1"
+            , "10"
+            , "100"
+            , "1000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            , "100000000"
+            , "1000000000"
+            , "1292782621"// The maximal number of supported digits in the significand
+
     })
     public int digits;
     private String str;
 
     @Setup(Level.Trial)
     public void setUp() {
-        str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
+        str = repeat("7", digits);
     }
 
     @Benchmark

@@ -27,7 +27,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.35
- * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+24-1795
+ * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+27-2213
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  *      (digits)  Mode  Cnt             Score   Error  Units
@@ -117,6 +117,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
+        , "-Xmx16g"
 
         //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
 
@@ -127,10 +128,9 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
 public class JmhJavaBigDecimalFromByteArrayScalability {
-
-
     @Param({
-            "1"
+            "24"
+            , "1"
             , "10"
             , "100"
             , "1000"
@@ -138,45 +138,30 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
             , "100000"
             , "1000000"
             , "10000000"
-            // , "100000000"
-            // "1000000000"
-            //  "1292782621"
-            //"646391314"
+            , "100000000"
+            , "1000000000"
+            , "1292782621"// The maximal number of supported digits in the significand
+
     })
     public int digits;
-    private byte[] integerPart;
-    private byte[] fractionalPart;
+    private byte[] str;
 
     @Setup(Level.Trial)
     public void setUp() {
-        String str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
-        integerPart = str.getBytes(StandardCharsets.ISO_8859_1);
-        fractionalPart = ("1." + str).getBytes(StandardCharsets.ISO_8859_1);
-    }
-
-    /*
-      @Benchmark
-      public BigDecimal ip() {
-          return JavaBigDecimalParser.parallelParseBigDecimal(integerPart);
-      }
-      */
-    @Benchmark
-    public BigDecimal i() {
-        return JavaBigDecimalParser.parseBigDecimal(integerPart);
-    }
-  /*
-
-    @Benchmark
-    public BigDecimal fp() {
-        return JavaBigDecimalParser.parallelParseBigDecimal(fractionalPart);
+        str = repeat("7", digits).getBytes(StandardCharsets.UTF_8);
     }
 
     @Benchmark
-    public BigDecimal f() {
-        return JavaBigDecimalParser.parseBigDecimal(fractionalPart);
+    public BigDecimal m() {
+        return JavaBigDecimalParser.parseBigDecimal(str);
     }
-*/
 }
+
+
+
+
+
+
 
 
 

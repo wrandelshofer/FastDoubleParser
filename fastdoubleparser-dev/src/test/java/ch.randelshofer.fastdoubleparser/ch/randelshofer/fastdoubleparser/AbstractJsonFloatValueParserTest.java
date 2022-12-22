@@ -11,6 +11,7 @@ import java.util.List;
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValueParserTest {
+    public final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
     protected List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
