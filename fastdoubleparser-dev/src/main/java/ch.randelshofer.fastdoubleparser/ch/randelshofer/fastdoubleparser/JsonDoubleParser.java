@@ -36,6 +36,11 @@ package ch.randelshofer.fastdoubleparser;
  */
 public class JsonDoubleParser {
 
+    private static final JsonDoubleBitsFromByteArray BYTE_ARRAY_PARSER = new JsonDoubleBitsFromByteArray();
+
+    private static final JsonDoubleBitsFromCharArray CHAR_ARRAY_PARSER = new JsonDoubleBitsFromCharArray();
+
+    private static final JsonDoubleBitsFromCharSequence CHARSEQUENCE_PARSER = new JsonDoubleBitsFromCharSequence();
 
     /**
      * Don't let anyone instantiate this class.
@@ -69,7 +74,7 @@ public class JsonDoubleParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JsonDoubleBitsFromCharSequence().parseNumber(str, offset, length);
+        long bitPattern = CHARSEQUENCE_PARSER.parseNumber(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -101,7 +106,7 @@ public class JsonDoubleParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static double parseDouble(byte[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JsonDoubleBitsFromByteArray().parseNumber(str, offset, length);
+        long bitPattern = BYTE_ARRAY_PARSER.parseNumber(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -132,7 +137,7 @@ public class JsonDoubleParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static double parseDouble(char[] str, int offset, int length) throws NumberFormatException {
-        long bitPattern = new JsonDoubleBitsFromCharArray().parseNumber(str, offset, length);
+        long bitPattern = CHAR_ARRAY_PARSER.parseNumber(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 }

@@ -100,6 +100,11 @@ import java.math.BigInteger;
  */
 public class JavaBigDecimalParser {
 
+    private static final JavaBigDecimalFromByteArray BYTE_ARRAY_PARSER = new JavaBigDecimalFromByteArray();
+
+    private static final JavaBigDecimalFromCharArray CHAR_ARRAY_PARSER = new JavaBigDecimalFromCharArray();
+
+    private static final JavaBigDecimalFromCharSequence CHARSEQUENCE_PARSER = new JavaBigDecimalFromCharSequence();
 
     /**
      * Don't let anyone instantiate this class.
@@ -133,7 +138,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigDecimal parseBigDecimal(CharSequence str, int offset, int length) throws NumberFormatException {
-        return new JavaBigDecimalFromCharSequence().parseBigDecimalString(str, offset, length, false);
+        return CHARSEQUENCE_PARSER.parseBigDecimalString(str, offset, length, false);
     }
 
     /**
@@ -163,7 +168,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigDecimal parseBigDecimal(byte[] str, int offset, int length) throws NumberFormatException {
-        return new JavaBigDecimalFromByteArray().parseBigDecimalString(str, offset, length, false);
+        return BYTE_ARRAY_PARSER.parseBigDecimalString(str, offset, length, false);
     }
 
     /**
@@ -194,7 +199,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigDecimal parseBigDecimal(char[] str, int offset, int length) throws NumberFormatException {
-        return new JavaBigDecimalFromCharArray().parseBigDecimalString(str, offset, length, false);
+        return CHAR_ARRAY_PARSER.parseBigDecimalString(str, offset, length, false);
     }
 
     /**
@@ -222,7 +227,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigDecimal parallelParseBigDecimal(CharSequence str, int offset, int length) throws NumberFormatException {
-        return new JavaBigDecimalFromCharSequence().parseBigDecimalString(str, offset, length, false);
+        return CHARSEQUENCE_PARSER.parseBigDecimalString(str, offset, length, false);
     }
 
     /**
@@ -252,7 +257,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigDecimal parallelParseBigDecimal(byte[] str, int offset, int length) throws NumberFormatException {
-        return new JavaBigDecimalFromByteArray().parseBigDecimalString(str, offset, length, true);
+        return BYTE_ARRAY_PARSER.parseBigDecimalString(str, offset, length, true);
     }
 
     /**
@@ -283,6 +288,6 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigDecimal parallelParseBigDecimal(char[] str, int offset, int length) throws NumberFormatException {
-        return new JavaBigDecimalFromCharArray().parseBigDecimalString(str, offset, length, true);
+        return CHAR_ARRAY_PARSER.parseBigDecimalString(str, offset, length, true);
     }
 }

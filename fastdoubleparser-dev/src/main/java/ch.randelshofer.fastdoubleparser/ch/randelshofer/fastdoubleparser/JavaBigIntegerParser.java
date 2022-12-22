@@ -52,6 +52,13 @@ import java.math.BigInteger;
  * </ul>
  */
 public class JavaBigIntegerParser {
+
+    private static final JavaBigIntegerFromByteArray BYTE_ARRAY_PARSER = new JavaBigIntegerFromByteArray();
+
+    private static final JavaBigIntegerFromCharArray CHAR_ARRAY_PARSER = new JavaBigIntegerFromCharArray();
+
+    private static final JavaBigIntegerFromCharSequence CHARSEQUENCE_PARSER = new JavaBigIntegerFromCharSequence();
+
     /**
      * Don't let anyone instantiate this class.
      */
@@ -82,7 +89,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str, int offset, int length) {
-        return new JavaBigIntegerFromCharSequence().parseBigIntegerLiteral(str, offset, length, false);
+        return CHARSEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, false);
     }
 
     /**
@@ -113,7 +120,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str, int offset, int length) {
-        return new JavaBigIntegerFromByteArray().parseBigIntegerLiteral(str, offset, length, false);
+        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, false);
     }
 
     /**
@@ -144,7 +151,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str, int offset, int length) {
-        return new JavaBigIntegerFromCharArray().parseBigIntegerLiteral(str, offset, length, false);
+        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, false);
     }
 
     /**
@@ -171,7 +178,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parallelParseBigInteger(CharSequence str, int offset, int length) {
-        return new JavaBigIntegerFromCharSequence().parseBigIntegerLiteral(str, offset, length, true);
+        return CHARSEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, true);
     }
 
     /**
@@ -202,7 +209,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parallelParseBigInteger(byte[] str, int offset, int length) {
-        return new JavaBigIntegerFromByteArray().parseBigIntegerLiteral(str, offset, length, true);
+        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, true);
     }
 
     /**
@@ -233,6 +240,6 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parallelParseBigInteger(char[] str, int offset, int length) {
-        return new JavaBigIntegerFromCharArray().parseBigIntegerLiteral(str, offset, length, true);
+        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, true);
     }
 }
