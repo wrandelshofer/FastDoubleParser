@@ -27,6 +27,16 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * Benchmarks for selected integer strings.
  * <pre>
  * # JMH version: 1.35
+ * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ *      (digits)  Mode  Cnt     Score   Error  Units
+ * dec       100  avgt    2   346.818          ns/op
+ * dec      1000  avgt    2  5267.234          ns/op
+ * </pre>
+ *
+ * <pre>
+ * # JMH version: 1.35
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+24-1795
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *

@@ -36,7 +36,7 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
      * recursive algorithm. We speculate that we break even somewhere at twice
      * the threshold value.
      */
-    public static final int RECURSION_THRESHOLD = 0;
+    public static final int RECURSION_THRESHOLD = 128;
     /**
      * Threshold on the number of digits for selecting the multi-threaded
      * algorithm instead of the single-thread algorithm.
