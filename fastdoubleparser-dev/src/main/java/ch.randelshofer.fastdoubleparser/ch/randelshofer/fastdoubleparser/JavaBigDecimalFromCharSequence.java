@@ -182,7 +182,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
         integerPartIndex = index;
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
-            if (isDigit(ch)) {
+            if (FastDoubleSwar.isDigit(ch)) {
                 // This might overflow, we deal with it later.
                 significand = 10 * (significand) + ch - '0';
             } else if (ch == '.') {
@@ -223,14 +223,14 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            illegal |= !isDigit(ch);
+            illegal |= !FastDoubleSwar.isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * (expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
-            } while (isDigit(ch));
+            } while (FastDoubleSwar.isDigit(ch));
             if (isExponentNegative) {
                 expNumber = -expNumber;
             }
@@ -295,7 +295,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
         while (index < endIndex - 8 && FastDoubleSwar.isEightDigits(str, index)) {
             index += 8;
         }
-        while (index < endIndex && isDigit(ch = str.charAt(index))) {
+        while (index < endIndex && FastDoubleSwar.isDigit(ch = str.charAt(index))) {
             index++;
         }
         if (ch == '.') {
@@ -312,7 +312,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
             while (index < endIndex - 8 && FastDoubleSwar.isEightDigits(str, index)) {
                 index += 8;
             }
-            while (index < endIndex && isDigit(ch = str.charAt(index))) {
+            while (index < endIndex && FastDoubleSwar.isDigit(ch = str.charAt(index))) {
                 index++;
             }
         }
@@ -342,14 +342,14 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            illegal = !isDigit(ch);
+            illegal = !FastDoubleSwar.isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * (expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
-            } while (isDigit(ch));
+            } while (FastDoubleSwar.isDigit(ch));
             if (isExponentNegative) {
                 expNumber = -expNumber;
             }

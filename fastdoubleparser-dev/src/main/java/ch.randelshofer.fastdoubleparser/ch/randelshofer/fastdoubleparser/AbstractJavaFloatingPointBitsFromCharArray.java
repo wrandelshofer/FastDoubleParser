@@ -69,7 +69,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         int swarLimit = Math.min(endIndex - 4, 1 << 30);
         for (; index < endIndex; index++) {
             ch = str[index];
-            if (isDigit(ch)) {
+            if (FastDoubleSwar.isDigit(ch)) {
                 // This might overflow, we deal with it later.
                 significand = 10 * (significand) + ch - '0';
             } else if (ch == '.') {
@@ -108,14 +108,14 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str[index] : 0;
             }
-            illegal |= !isDigit(ch);
+            illegal |= !FastDoubleSwar.isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * (expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
-            } while (isDigit(ch));
+            } while (FastDoubleSwar.isDigit(ch));
             if (isExponentNegative) {
                 expNumber = -expNumber;
             }
@@ -337,14 +337,14 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str[index] : 0;
             }
-            illegal |= !isDigit(ch);
+            illegal |= !FastDoubleSwar.isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * (expNumber) + ch - '0';
                 }
                 ch = ++index < endIndex ? str[index] : 0;
-            } while (isDigit(ch));
+            } while (FastDoubleSwar.isDigit(ch));
             if (isExponentNegative) {
                 expNumber = -expNumber;
             }

@@ -43,6 +43,31 @@ class FastDoubleSwar {
     private final static VarHandle readLongBE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
 
+    /**
+     * Checks if '0' <= c && c <= '9'.
+     *
+     * @param c a character
+     * @return true if c is a digit
+     */
+    protected static boolean isDigit(char c) {
+        // We take advantage of the fact that char is an unsigned numeric type:
+        // subtracted values wrap around.
+        return (char) (c - '0') <= (char) ('9' - '0');
+    }
+
+    /**
+     * Checks if '0' <= c && c <= '9'.
+     *
+     * @param c a character
+     * @return true if c is a digit
+     */
+    protected static boolean isDigit(byte c) {
+        // We check if '0' <= c && c <= '9'.
+        // We take advantage of the fact that char is an unsigned numeric type:
+        // subtracted values wrap around.
+        return (char) (c - '0') <= (char) ('9' - '0');
+    }
+
     public static boolean isEightDigits(byte[] a, int offset) {
         return isEightDigitsUtf8((long) readLongLE.get(a, offset));
     }
@@ -72,7 +97,7 @@ class FastDoubleSwar {
         boolean success = true;
         for (int i = 0; i < 8; i++) {
             char ch = a.charAt(i + offset);
-            success &= '0' <= ch && ch <= '9';
+            success &= isDigit(ch);
         }
         return success;
     }
@@ -244,7 +269,6 @@ class FastDoubleSwar {
                 | (long) a[offset + 7] << 48;
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
-
 
     public static int tryToParseEightDigits(byte[] a, int offset) {
         return FastDoubleSwar.tryToParseEightDigitsUtf8((long) readLongLE.get(a, offset));
@@ -602,7 +626,7 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             byte ch = str[from];
-            success &= '0' <= ch && ch <= '9';
+            success &= isDigit(ch);
             result = 10 * (result) + ch - '0';
         }
         return success ? result : -1;
@@ -613,7 +637,7 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             char ch = str[from];
-            success &= '0' <= ch && ch <= '9';
+            success &= isDigit(ch);
             result = 10 * (result) + ch - '0';
         }
         return success ? result : -1;
@@ -624,7 +648,7 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             char ch = str.charAt(from);
-            success &= '0' <= ch && ch <= '9';
+            success &= isDigit(ch);
             result = 10 * (result) + ch - '0';
         }
         return success ? result : -1;
