@@ -20,4 +20,29 @@ abstract class AbstractNumberParser {
      * when there are too many input digits.
      */
     public static final String VALUE_EXCEEDS_LIMITS = "value exceeds limits";
+
+    /**
+     * Checks if '0' <= c && c <= '9'.
+     *
+     * @param c a character
+     * @return true if c is a digit
+     */
+    protected static boolean isDigit(char c) {
+        // We take advantage of the fact that char is an unsigned numeric type:
+        // subtracted values wrap around.
+        return (char) (c - '0') <= (char) ('9' - '0');
+    }
+
+    /**
+     * Checks if '0' <= c && c <= '9'.
+     *
+     * @param c a character
+     * @return true if c is a digit
+     */
+    protected static boolean isDigit(byte c) {
+        // We check if '0' <= c && c <= '9'.
+        // We take advantage of the fact that char is an unsigned numeric type:
+        // subtracted values wrap around.
+        return (char) (c - '0') <= (char) ('9' - '0');
+    }
 }

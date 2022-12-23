@@ -72,7 +72,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaBigDecimalFromCharSequence {
+public class JmhJavaBigDecimalFromCharSequenceEmpirical {
 
 
     @Param({

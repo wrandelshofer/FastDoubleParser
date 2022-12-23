@@ -15,13 +15,7 @@ import java.math.BigInteger;
  * <p>
  * Parses a {@code BigDecimalString} that is compatible with
  * the grammar specified in {@link BigDecimal#BigDecimal(String)}.
- * The range of the input values is limited as follows:
- * <ol>
- *     <li>The significand is limited to 536,870,919 digits.
- *     <li>The exponent is limited to the range from
- *     {@link Integer#MIN_VALUE} (exclusive) to
- *     {@link Integer#MAX_VALUE} (inclusive)</li>
- * </ol>
+ * <p>
  * Formal specification of the grammar:
  * <blockquote>
  * <dl>

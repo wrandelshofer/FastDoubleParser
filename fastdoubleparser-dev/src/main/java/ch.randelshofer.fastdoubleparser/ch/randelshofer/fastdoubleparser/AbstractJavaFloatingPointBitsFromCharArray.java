@@ -18,9 +18,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
 
     private static final boolean CONDITIONAL_COMPILATION_PARSE_EIGHT_HEX_DIGITS = true;
 
-    private static boolean isDigit(char c) {
-        return '0' <= c && c <= '9';
-    }
 
     /**
      * Skips optional white space in the provided string
@@ -31,10 +28,8 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
      * @return index after the optional white space
      */
     private static int skipWhitespace(char[] str, int index, int endIndex) {
-        for (; index < endIndex; index++) {
-            if ((str[index] & 0xff) > ' ') {
-                break;
-            }
+        while (index < endIndex && str[index] <= ' ') {
+            index++;
         }
         return index;
     }

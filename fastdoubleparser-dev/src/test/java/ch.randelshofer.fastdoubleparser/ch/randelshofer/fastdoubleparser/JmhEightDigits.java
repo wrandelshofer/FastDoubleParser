@@ -231,7 +231,10 @@ public class JmhEightDigits {
     }
 
     private static boolean isDigit(char c) {
-        return '0' <= c && c <= '9';
+        // We check if '0' <= c && c <= '9'.
+        // We take advantage of the fact that char is an unsigned value:
+        // subtracted values wrap around.
+        return (char) (c - '0') <= (char) ('9' - '0');
     }
 
     /**

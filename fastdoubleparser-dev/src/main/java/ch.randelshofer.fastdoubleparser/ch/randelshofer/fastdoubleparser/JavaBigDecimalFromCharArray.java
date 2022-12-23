@@ -140,10 +140,6 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
         return BigInteger.valueOf(significand);
     }
 
-    private boolean isDigit(char c) {
-        return '0' <= c && c <= '9';
-    }
-
     /**
      * Parses a {@code BigDecimalString} as specified in {@link JavaBigDecimalParser}.
      *

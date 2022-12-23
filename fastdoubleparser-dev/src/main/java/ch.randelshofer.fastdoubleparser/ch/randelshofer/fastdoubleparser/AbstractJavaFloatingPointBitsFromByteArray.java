@@ -16,10 +16,6 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatValueParser {
 
-    private static boolean isDigit(byte c) {
-        return '0' <= c && c <= '9';
-    }
-
     /**
      * Skips optional white space in the provided string
      *
@@ -29,10 +25,8 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
      * @return index after the optional white space
      */
     private static int skipWhitespace(byte[] str, int index, int endIndex) {
-        for (; index < endIndex; index++) {
-            if ((str[index] & 0xff) > ' ') {
-                break;
-            }
+        while (index < endIndex && (str[index] & 0xff) <= ' ') {
+            index++;
         }
         return index;
     }

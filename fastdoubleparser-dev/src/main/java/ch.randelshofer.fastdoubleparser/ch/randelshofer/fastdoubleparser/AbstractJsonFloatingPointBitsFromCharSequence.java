@@ -16,10 +16,6 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
-    private static boolean isDigit(char c) {
-        return '0' <= c && c <= '9';
-    }
-
     /**
      * Parses a {@code number} production.
      * <p>

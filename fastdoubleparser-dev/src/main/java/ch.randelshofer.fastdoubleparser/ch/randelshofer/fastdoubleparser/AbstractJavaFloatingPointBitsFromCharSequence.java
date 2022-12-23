@@ -16,10 +16,6 @@ package ch.randelshofer.fastdoubleparser;
  */
 abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
-    private static boolean isDigit(char c) {
-        return '0' <= c && c <= '9';
-    }
-
     /**
      * Parses a {@code DecimalFloatingPointLiteral} production with optional
      * trailing white space until the end of the text.
@@ -390,10 +386,8 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * @return index after the optional white space
      */
     private static int skipWhitespace(CharSequence str, int index, int endIndex) {
-        for (; index < endIndex; index++) {
-            if (str.charAt(index) > ' ') {
-                break;
-            }
+        while (index < endIndex && str.charAt(index) <= ' ') {
+            index++;
         }
         return index;
     }

@@ -140,11 +140,6 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
         return BigInteger.valueOf(significand);
     }
 
-
-    private boolean isDigit(byte c) {
-        return (byte) '0' <= c && c <= (byte) '9';
-    }
-
     /**
      * Parses a {@code BigDecimalString} as specified in {@link JavaBigDecimalParser}.
      *
