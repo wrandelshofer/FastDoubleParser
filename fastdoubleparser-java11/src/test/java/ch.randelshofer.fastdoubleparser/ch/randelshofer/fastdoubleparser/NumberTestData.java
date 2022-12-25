@@ -15,6 +15,7 @@ public final class NumberTestData {
     private final int charLength;
     private final int byteOffset;
     private final int byteLength;
+    private final int radix;
     private final Number expectedValue;
     private final String expectedErrorMessage;
     private final Class<? extends Throwable> expectedThrowableClass;
@@ -23,7 +24,7 @@ public final class NumberTestData {
                           CharSequence input,
                           int charOffset, int charLength,
                           int byteOffset, int byteLength,
-                          Number expectedValue,
+                          int radix, Number expectedValue,
                           String expectedErrorMessage,
                           Class<? extends Throwable> expectedThrowableClass) {
         this.title = title;
@@ -32,6 +33,7 @@ public final class NumberTestData {
         this.charLength = charLength;
         this.byteOffset = byteOffset;
         this.byteLength = byteLength;
+        this.radix = radix;
         this.expectedValue = expectedValue;
         this.expectedErrorMessage = expectedErrorMessage;
         this.expectedThrowableClass = expectedThrowableClass;
@@ -39,18 +41,36 @@ public final class NumberTestData {
 
     public NumberTestData(CharSequence input, Number expectedValue) {
         this(input.toString(), input, 0, input.length(), 0, input.length(),
-                expectedValue, null,
+                10, expectedValue, null,
+                null);
+    }
+
+    public NumberTestData(CharSequence input, int radix, Number expectedValue) {
+        this(input.toString(), input, 0, input.length(), 0, input.length(),
+                radix, expectedValue, null,
+                null);
+    }
+
+    public NumberTestData(String title, CharSequence input, int radix, Number expectedValue) {
+        this(title, input, 0, input.length(), 0, input.length(),
+                radix, expectedValue, null,
                 null);
     }
 
     public NumberTestData(CharSequence input, Number expectedValue, int offset, int length) {
         this(input.toString(), input, offset, length, offset, length,
-                expectedValue, null, null);
+                10, expectedValue, null, null);
+    }
+
+    public NumberTestData(String title, CharSequence input, int radix, String expectedErrorMessage, Class<? extends Throwable> expectedThrowableClass) {
+        this(title, input, 0, input.length(), 0, input.length(),
+                radix, null, expectedErrorMessage,
+                expectedThrowableClass);
     }
 
     public NumberTestData(CharSequence input, Number expectedValue, int offset, int length, String expectedErrorMessage, Class<? extends Throwable> expectedThrowableClass) {
         this(input.toString(), input, offset, length, offset, length,
-                expectedValue, expectedErrorMessage,
+                10, expectedValue, expectedErrorMessage,
                 expectedThrowableClass);
     }
 
@@ -58,20 +78,20 @@ public final class NumberTestData {
     public NumberTestData(String title, CharSequence input, int offset, int length, int bOffset, int bLength, String expectedErrorMessage,
                           Class<? extends Throwable> expectedThrowableClass) {
         this(title, input, offset, length, bOffset, bLength,
-                null, expectedErrorMessage,
+                10, null, expectedErrorMessage,
                 expectedThrowableClass);
     }
 
     public NumberTestData(String title, CharSequence input, int offset, int length, int bOffset, int bLength, Number expectedValue) {
         this(title, input, offset, length, bOffset, bLength,
-                expectedValue, null,
+                10, expectedValue, null,
                 null);
     }
 
     public NumberTestData(String title, CharSequence input, Number expectedValue) {
         this(title,
                 input, 0, input.length(), 0, input.length(),
-                expectedValue, null,
+                10, expectedValue, null,
                 null);
     }
 
@@ -89,7 +109,7 @@ public final class NumberTestData {
     public NumberTestData(String title, CharSequence input, String expectedErrorMessage, Class<? extends Throwable> expectedThrowableClass) {
         this(title,
                 input, 0, input.length(), 0, input.length(),
-                null, expectedErrorMessage,
+                10, null, expectedErrorMessage,
                 expectedThrowableClass);
     }
 
@@ -117,6 +137,10 @@ public final class NumberTestData {
         return byteLength;
     }
 
+    public int radix() {
+        return radix;
+    }
+
     public Number expectedValue() {
         return expectedValue;
     }
@@ -137,13 +161,14 @@ public final class NumberTestData {
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-        NumberTestData that = (NumberTestData) obj;
+        var that = (NumberTestData) obj;
         return Objects.equals(this.title, that.title) &&
                 Objects.equals(this.input, that.input) &&
                 this.charOffset == that.charOffset &&
                 this.charLength == that.charLength &&
                 this.byteOffset == that.byteOffset &&
                 this.byteLength == that.byteLength &&
+                this.radix == that.radix &&
                 Objects.equals(this.expectedValue, that.expectedValue) &&
                 Objects.equals(this.expectedErrorMessage, that.expectedErrorMessage) &&
                 Objects.equals(this.expectedThrowableClass, that.expectedThrowableClass);
@@ -151,7 +176,7 @@ public final class NumberTestData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, input, charOffset, charLength, byteOffset, byteLength, expectedValue, expectedErrorMessage, expectedThrowableClass);
+        return Objects.hash(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, expectedErrorMessage, expectedThrowableClass);
     }
 
     @Override
@@ -163,6 +188,7 @@ public final class NumberTestData {
                 "charLength=" + charLength + ", " +
                 "byteOffset=" + byteOffset + ", " +
                 "byteLength=" + byteLength + ", " +
+                "radix=" + radix + ", " +
                 "expectedValue=" + expectedValue + ", " +
                 "expectedErrorMessage=" + expectedErrorMessage + ", " +
                 "expectedThrowableClass=" + expectedThrowableClass + ']';

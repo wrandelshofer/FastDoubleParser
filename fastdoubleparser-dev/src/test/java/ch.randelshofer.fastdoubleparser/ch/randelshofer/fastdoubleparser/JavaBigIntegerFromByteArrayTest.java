@@ -4,64 +4,91 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class JavaBigIntegerFromByteArrayTest extends AbstractBigIntegerParserTest {
-
-
-    private void test(NumberTestData d, Function<NumberTestData, BigInteger> f) {
-        BigInteger expectedValue = (BigInteger) d.expectedValue();
-        BigInteger actual = null;
-        try {
-            actual = f.apply(d);
-        } catch (IllegalArgumentException e) {
-            if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
-                e.printStackTrace();
-                assertEquals(d.expectedErrorMessage(), e.getMessage());
-            }
-            assertEquals(d.expectedThrowableClass(), e.getClass());
-        }
-        if (expectedValue != null) {
-            assertEquals(0, actual == null ? -1 : expectedValue.compareTo(actual),
-                    "expected:" + expectedValue.bitLength() + " <> actual:" + actual.bitLength());
-            assertEquals(expectedValue, actual);
-        } else {
-            assertNull(actual);
-        }
-    }
-
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsParseBigIntegerFromByteArray() {
-        return createRegularTestData().stream()
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_charArray() {
+        return createTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
+                        && t.charOffset() == 0
+                        && t.radix() == 10)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1),
-                                u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1)))));
 
     }
 
     @TestFactory
-    @Disabled
-    public Stream<DynamicTest> dynamicTestsVeryLongStrings() {
-        return createVeryLongTestData().stream()
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_charArray_int() {
+        return createTestData().stream()
+                .filter(t -> t.charLength() == t.input().length()
+                        && t.charOffset() == 0)
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1),
+                                u.radix()))));
+
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_charArray_int_int() {
+        return createTestData().stream()
+                .filter(t -> t.radix() == 10)
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1), u.charOffset(), u.charLength()))));
+
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_charArray_int_int_int() {
+        return createTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1), u.charOffset(), u.charLength(), u.radix()))));
+
+    }
+
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_charArray() {
+        return createTestData().stream()
+                .filter(t -> t.charLength() == t.input().length()
+                        && t.charOffset() == 0
+                        && t.radix() == 10)
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1)))));
+
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_charArray_int() {
+        return createTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1),
-                                u.byteOffset(), u.byteLength()))));
+                                u.radix()))));
+
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_charArray_int_int() {
+        return createTestData().stream()
+                .filter(t -> t.radix() == 10)
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1), u.charOffset(), u.charLength()))));
+
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_charArray_int_int_int() {
+        return createTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input().toString().getBytes(StandardCharsets.ISO_8859_1), u.charOffset(), u.charLength(), u.radix()))));
 
     }
 }

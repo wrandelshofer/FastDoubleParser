@@ -12,7 +12,6 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValueParserTest {
     protected final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
-    public static final boolean RUN_SLOW_TESTS = false;
 
     protected List<NumberTestData> createTestDataForNaN() {
         return Arrays.asList(
@@ -257,7 +256,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         );
     }
 
-    List<NumberTestData> createAllDoubleTestData() {
+    List<NumberTestData> createAllDoubleTestData(boolean runSlowTests) {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());
@@ -271,13 +270,13 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
-        if (RUN_SLOW_TESTS) {
+        if (runSlowTests) {
             list.addAll(createDataWithVeryLongInputStrings());
         }
         return list;
     }
 
-    List<NumberTestData> createAllFloatTestData() {
+    List<NumberTestData> createAllFloatTestData(boolean runSlowTests) {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());
@@ -291,7 +290,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
-        if (RUN_SLOW_TESTS) {
+        if (runSlowTests) {
             list.addAll(createDataWithVeryLongInputStrings());
         }
         return list;

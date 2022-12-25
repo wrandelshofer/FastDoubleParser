@@ -156,12 +156,12 @@ public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValu
                 new NumberTestData("parseNumber(): With 20 significand digits", "12345678901234567890", 0, 20, 0, 20, 12345678901234567890d),
                 new NumberTestData("parseNumber(): With 20 significand digits + non-ascii char", "12345678901234567890￡", 0, 21, 0, 21, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): With 20 significand digits with decimal point", "1234567890.1234567890", 0, 21, 0, 21, 1234567890.1234567890),
-                new NumberTestData("parseNumber(): With illegal FloatTypeSuffix 'z': 1.2e3z", "1.2e3z", 0, 6, 0, 6, 1.2e3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseNumber(): With FloatTypeSuffix 'd': 1.2e3d", "1.2e3d", 0, 6, 0, 6, 1.2e3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseNumber(): With FloatTypeSuffix 'd' + whitespace: 1.2e3d ", "1.2e3d ", 0, 7, 0, 7, 1.2e3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseNumber(): With FloatTypeSuffix 'D': 1.2D", "1.2D", 0, 4, 0, 4, 1.2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNumber(): With illegal FloatTypeSuffix 'z': 1.2e3z", "1.2e3z", 0, 6, 0, 6, 10, 1.2e3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNumber(): With FloatTypeSuffix 'd': 1.2e3d", "1.2e3d", 0, 6, 0, 6, 10, 1.2e3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNumber(): With FloatTypeSuffix 'd' + whitespace: 1.2e3d ", "1.2e3d ", 0, 7, 0, 7, 10, 1.2e3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNumber(): With FloatTypeSuffix 'D': 1.2D", "1.2D", 0, 4, 0, 4, 10, 1.2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): With FloatTypeSuffix 'f': 1f", "1f", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseNumber(): With FloatTypeSuffix 'F': -1.2e-3F", "-1.2e-3F", 0, 8, 0, 8, -1.2e-3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNumber(): With FloatTypeSuffix 'F': -1.2e-3F", "-1.2e-3F", 0, 8, 0, 8, 10, -1.2e-3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): No digits+whitespace+'z'", ". z", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
 
         );

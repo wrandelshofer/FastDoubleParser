@@ -112,7 +112,7 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
      * @return result (always non-null)
      * @throws NumberFormatException if parsing fails
      */
-    public BigInteger parseBigIntegerLiteral(CharSequence str, int offset, int length, boolean parallel)
+    public BigInteger parseBigIntegerLiteral(CharSequence str, int offset, int length, int radix, boolean parallel)
             throws NumberFormatException {
         int parallelThreshold = parallel ? DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
         final int endIndex = offset + length;
@@ -131,20 +131,18 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
             }
         }
 
-        // Parse '0x' | '0X' character sequence
-        // ---------------------------
-        final boolean hasLeadingZero = ch == '0';
-        if (hasLeadingZero) {
-            ch = index + 1 < endIndex ? str.charAt(index + 1) : 0;
-            if (ch == 'x' || ch == 'X') {
-                return parseHexBigIntegerLiteral(str, index + 2, endIndex, isNegative);
-            }
+        switch (radix) {
+        case 10:
+            return parseDecDigits(str, index, endIndex, isNegative, parallelThreshold);
+        case 16:
+            return parseHexDigits(str, index, endIndex, isNegative);
+        default:
+            return new BigInteger(str.subSequence(offset, length).toString(), radix);
         }
 
-        return parseDecBigIntegerLiteral(str, index, endIndex, isNegative, parallelThreshold);
     }
 
-    private BigInteger parseDecBigIntegerLiteral(CharSequence str, int from, int to, boolean isNegative, int parallelThreshold) {
+    private BigInteger parseDecDigits(CharSequence str, int from, int to, boolean isNegative, int parallelThreshold) {
         Map<Integer, BigInteger> powersOfTen = fillPowersOfTenFloor16(from, to, parallelThreshold < Integer.MAX_VALUE);
         int numDigits = to - from;
         BigInteger result;
@@ -156,7 +154,7 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
         return isNegative ? result.negate() : result;
     }
 
-    private BigInteger parseHexBigIntegerLiteral(CharSequence str, int from, int to, boolean isNegative) {
+    private BigInteger parseHexDigits(CharSequence str, int from, int to, boolean isNegative) {
         int numDigits = to - from;
         if (numDigits == 0) {
             throw new NumberFormatException(SYNTAX_ERROR);

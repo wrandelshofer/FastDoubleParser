@@ -5,6 +5,7 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.RecursiveTask;
 
@@ -119,11 +120,12 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
      * @param str      the input string
      * @param offset   the start of the string
      * @param length   the length of the string
+     * @param radix
      * @param parallel true if parsing of many digits may be parallelized
      * @return the parsed value (always non-null)
      * @throws NumberFormatException if parsing fails
      */
-    public BigInteger parseBigIntegerLiteral(byte[] str, int offset, int length, boolean parallel)
+    public BigInteger parseBigIntegerLiteral(byte[] str, int offset, int length, int radix, boolean parallel)
             throws NumberFormatException {
         int parallelThreshold = parallel ? DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
         final int endIndex = offset + length;
@@ -142,20 +144,17 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
             }
         }
 
-        // Parse '0x' | '0X' character sequence
-        // ---------------------------
-        final boolean hasLeadingZero = ch == '0';
-        if (hasLeadingZero) {
-            ch = index + 1 < endIndex ? str[index + 1] : 0;
-            if (ch == 'x' || ch == 'X') {
-                return parseHexBigIntegerLiteral(str, index + 2, endIndex, isNegative);
-            }
+        switch (radix) {
+        case 10:
+            return parseDecDigits(str, index, endIndex, isNegative, parallelThreshold);
+        case 16:
+            return parseHexDigits(str, index, endIndex, isNegative);
+        default:
+            return new BigInteger(new String(str, offset, length, StandardCharsets.ISO_8859_1), radix);
         }
-
-        return parseDecBigIntegerLiteral(str, index, endIndex, isNegative, parallelThreshold);
     }
 
-    private BigInteger parseDecBigIntegerLiteral(byte[] str, int from, int to, boolean isNegative, int parallelThreshold) {
+    private BigInteger parseDecDigits(byte[] str, int from, int to, boolean isNegative, int parallelThreshold) {
         from = skipZeroes(str, from, to);
         Map<Integer, BigInteger> powersOfTen = fillPowersOfTenFloor16(from, to, parallelThreshold < Integer.MAX_VALUE);
         int numDigits = to - from;
@@ -171,7 +170,7 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
         return isNegative ? result.negate() : result;
     }
 
-    private BigInteger parseHexBigIntegerLiteral(byte[] str, int from, int to, boolean isNegative) {
+    private BigInteger parseHexDigits(byte[] str, int from, int to, boolean isNegative) {
         if (to - from == 0) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
