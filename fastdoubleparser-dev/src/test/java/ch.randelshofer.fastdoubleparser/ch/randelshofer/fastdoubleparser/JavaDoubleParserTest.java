@@ -19,11 +19,10 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * Tests class {@link JavaDoubleParser}
  */
 public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
-    private boolean runSlowTests = "true".equals(System.getProperty("run-slow-tests"));
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharSequence() {
-        return createAllDoubleTestData(runSlowTests).stream()
+        return createAllDoubleTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
@@ -32,14 +31,14 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharSequenceIntInt() {
-        return createAllDoubleTestData(runSlowTests).stream()
+        return createAllDoubleTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaDoubleParser.parseDouble(u.input(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArray() {
-        return createAllDoubleTestData(runSlowTests).stream()
+        return createAllDoubleTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
                         && t.byteOffset() == 0)
@@ -49,14 +48,14 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArrayIntInt() {
-        return createAllDoubleTestData(runSlowTests).stream()
+        return createAllDoubleTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArray() {
-        return createAllDoubleTestData(runSlowTests).stream()
+        return createAllDoubleTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
@@ -66,7 +65,7 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArrayIntInt() {
-        return createAllDoubleTestData(runSlowTests).stream()
+        return createAllDoubleTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
     }

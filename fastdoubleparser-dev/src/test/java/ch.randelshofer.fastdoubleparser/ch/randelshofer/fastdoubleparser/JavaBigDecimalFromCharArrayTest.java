@@ -20,7 +20,7 @@ public class JavaBigDecimalFromCharArrayTest extends AbstractBigDecimalParserTes
                 .filter(t -> t.charOffset() == 0 && t.charLength() == t.input().length())
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
-                                u.input().toString()
+                                u.input().toString().toCharArray()
                         ))));
 
     }

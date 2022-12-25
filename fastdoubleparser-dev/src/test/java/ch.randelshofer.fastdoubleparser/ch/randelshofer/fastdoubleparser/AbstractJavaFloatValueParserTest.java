@@ -11,6 +11,7 @@ import java.util.List;
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValueParserTest {
+    protected boolean runSlowTests = "true".equals(System.getProperty("run.slow.tests"));
     protected final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
     protected List<NumberTestData> createTestDataForNaN() {
@@ -249,14 +250,8 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         );
     }
 
-    protected List<NumberTestData> createDataForVeryLongStrings() {
-        return Arrays.asList(
-                // This should be Float.POSITIVE_INFINITY instead of -1f
-                new NumberTestData("9 repeated MAX_VALUE", repeat("9", Integer.MAX_VALUE - 8), Double.POSITIVE_INFINITY)
-        );
-    }
 
-    List<NumberTestData> createAllDoubleTestData(boolean runSlowTests) {
+    List<NumberTestData> createAllDoubleTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());
@@ -276,7 +271,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         return list;
     }
 
-    List<NumberTestData> createAllFloatTestData(boolean runSlowTests) {
+    List<NumberTestData> createAllFloatTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());

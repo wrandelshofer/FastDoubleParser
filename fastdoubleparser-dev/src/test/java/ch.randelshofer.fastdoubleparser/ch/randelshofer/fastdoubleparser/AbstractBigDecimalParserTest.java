@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public abstract class AbstractBigDecimalParserTest {
-    private boolean runSlowTests = "true".equals(System.getProperty("run-slow-tests"));
+    private boolean runSlowTests = "true".equals(System.getProperty("run.slow.tests"));
 
 
     protected List<NumberTestData> createDataForIllegalStrings() {

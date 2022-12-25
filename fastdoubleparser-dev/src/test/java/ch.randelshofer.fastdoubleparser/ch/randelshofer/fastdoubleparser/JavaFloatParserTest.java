@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * Tests class {@link JavaDoubleParser}
  */
 public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
-    private boolean runSlowTests = "true".equals(System.getProperty("run-slow-tests"));
+    private boolean runSlowTests = "true".equals(System.getProperty("run.slow.tests"));
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharSequence() {
-        return createAllFloatTestData(runSlowTests).stream()
+    public Stream<DynamicNode> dynamicTests_JavaFloatParser_parseFloat_CharSequence() {
+        return createAllFloatTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
@@ -31,34 +31,35 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharSequenceIntInt() {
-        return createAllFloatTestData(runSlowTests).stream()
+    public Stream<DynamicNode> dynamicTests_JavaFloatParser_parseFloat_CharSequence_Int_Int() {
+        return createAllFloatTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaFloatParser.parseFloat(u.input(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleByteArray() {
-        return createAllFloatTestData(runSlowTests).stream()
+    public Stream<DynamicNode> dynamicTests_JavaFloatParser_parseFloat_ByteArray() {
+        return createAllFloatTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.byteLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t,
-                                u -> JavaFloatParser.parseFloat(u.input().toString().getBytes(StandardCharsets.UTF_8),
-                                        u.byteOffset(), u.byteLength()))));
+                                u -> JavaFloatParser.parseFloat(u.input().toString().getBytes(StandardCharsets.UTF_8)
+                                ))));
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleByteArrayIntInt() {
-        return createAllFloatTestData(runSlowTests).stream()
+    public Stream<DynamicNode> dynamicTests_JavaFloatParser_parseFloat_ByteArray_int_int() {
+        return createAllFloatTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().getBytes(StandardCharsets.UTF_8),
+                                u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharArray() {
-        return createAllFloatTestData(runSlowTests).stream()
+    public Stream<DynamicNode> dynamicTests_JavaFloatParser_parseFloat_CharArray() {
+        return createAllFloatTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
@@ -67,14 +68,15 @@ public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharArrayIntInt() {
-        return createAllFloatTestData(runSlowTests).stream()
+    public Stream<DynamicNode> dynamicTests_JavaFloatParser_parseFloat_CharArray_int_int() {
+        return createAllFloatTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input().toString().toCharArray(),
+                                u.charOffset(), u.charLength()))));
     }
 
 
-    private void test(NumberTestData d, ToFloatFunction<NumberTestData> f) {
+    protected void test(NumberTestData d, ToFloatFunction<NumberTestData> f) {
         if (d.expectedErrorMessage() != null) {
             try {
                 f.applyAsFloat(d);

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public abstract class AbstractBigIntegerParserTest {
-    private boolean runSlowTests = "true".equals(System.getProperty("run-slow-tests"));
+    private boolean runSlowTests = "true".equals(System.getProperty("run.slow.tests"));
 
     protected void test(NumberTestData d, Function<NumberTestData, BigInteger> f) {
         BigInteger expectedValue = (BigInteger) d.expectedValue();
