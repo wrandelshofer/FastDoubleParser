@@ -18,9 +18,11 @@ import java.math.BigInteger;
  * <dt><i>BigIntegerLiteral:</i></dt>
  * <dd><i>[Sign] Digits</i></dd>
  * </dl>
+ * <dl>
  * <dt><i>Sign:</i>
  * <dd><i>(one of)</i>
- * <dd>{@code + -}
+ * <br>{@code + -}
+ * </dd>
  * </dl>
  * <dl>
  * <dt><i>Digits:</i>
@@ -29,9 +31,10 @@ import java.math.BigInteger;
  * <dl>
  * <dt><i>Digit:</i>
  * <dd><i>(one of)</i>
- * <dd>{@code 0 1 2 3 4 5 6 7 8 9}
- *     <br>{@code a b c d e f g h i j k l m n o p q r s t u v w x y z}
- *      <br>{@code A B C D E F G H I J K L M N O P Q R S T U V W X Y Z}
+ * <br>{@code 0 1 2 3 4 5 6 7 8 9}
+ * <br>{@code a b c d e f g h i j k l m n o p q r s t u v w x y z}
+ * <br>{@code A B C D E F G H I J K L M N O P Q R S T U V W X Y Z}
+ * </dd>
  * </dl>
  * </blockquote>
  * <p>
