@@ -210,7 +210,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigDecimal parallelParseBigDecimal(CharSequence str) throws NumberFormatException {
-        return parallelParseBigDecimal(str, 0, str.length());
+        return CHAR_SEQUENCE_PARSER.parseBigDecimalString(str, 0, str.length(), true);
     }
 
     /**
@@ -226,7 +226,7 @@ public class JavaBigDecimalParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigDecimal parallelParseBigDecimal(CharSequence str, int offset, int length) throws NumberFormatException {
-        return CHAR_SEQUENCE_PARSER.parseBigDecimalString(str, offset, length, false);
+        return CHAR_SEQUENCE_PARSER.parseBigDecimalString(str, offset, length, true);
     }
 
     /**
