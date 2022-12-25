@@ -15,7 +15,7 @@ All files must be signed with GPG.
 ```shell
 cp ../fastdoubleparser/target/*.jar .
 cp ../fastdoubleparser-java19/target/*javadoc.jar .
-mv fastdoubleparser-java19-0.5.4-javadoc.jar fastdoubleparser-0.5.4-javadoc.jar 
+mv fastdoubleparser-java19-0.6.0-javadoc.jar fastdoubleparser-0.6.0-javadoc.jar 
 rm *.asc
 for f in *.jar; do gpg -ab "$f"; done
 for f in *.pom; do gpg -ab "$f"; done
