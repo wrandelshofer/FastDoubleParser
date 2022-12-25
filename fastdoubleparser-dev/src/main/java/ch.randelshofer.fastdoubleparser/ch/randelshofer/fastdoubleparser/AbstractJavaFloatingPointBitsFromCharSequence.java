@@ -17,6 +17,32 @@ package ch.randelshofer.fastdoubleparser;
 abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
 
     /**
+     * Skips optional white space in the provided string
+     *
+     * @param str      a string
+     * @param index    start index (inclusive) of the optional white space
+     * @param endIndex end index (exclusive) of the optional white space
+     * @return index after the optional white space
+     */
+    private static int skipWhitespace(CharSequence str, int index, int endIndex) {
+        while (index < endIndex && str.charAt(index) <= ' ') {
+            index++;
+        }
+        return index;
+    }
+
+    /**
+     * @return a NaN constant in the specialized type wrapped in a {@code long}
+     */
+    abstract long nan();
+
+    /**
+     * @return a negative infinity constant in the specialized type wrapped in a
+     * {@code long}
+     */
+    abstract long negativeInfinity();
+
+    /**
      * Parses a {@code DecimalFloatingPointLiteral} production with optional
      * trailing white space until the end of the text.
      * Given that we have already consumed the optional leading zero of
@@ -90,7 +116,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            illegal |= !(FastDoubleSwar.isDigit(ch));
+            illegal |= !FastDoubleSwar.isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
@@ -138,7 +164,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                     }
                 }
             }
-            isSignificandTruncated = (index < significandEndIndex);
+            isSignificandTruncated = index < significandEndIndex;
             exponentOfTruncatedSignificand = virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber;
         } else {
             isSignificandTruncated = false;
@@ -209,38 +235,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
     }
 
-    private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
-        if (str.charAt(index) == 'N') {
-            if (index + 2 < endIndex
-                    // && str.charAt(index) == 'N'
-                    && str.charAt(index + 1) == 'a'
-                    && str.charAt(index + 2) == 'N') {
-
-                index = skipWhitespace(str, index + 3, endIndex);
-                if (index == endIndex) {
-                    return nan();
-                }
-            }
-        } else {
-            if (index + 7 < endIndex
-                    && str.charAt(index) == 'I'
-                    && str.charAt(index + 1) == 'n'
-                    && str.charAt(index + 2) == 'f'
-                    && str.charAt(index + 3) == 'i'
-                    && str.charAt(index + 4) == 'n'
-                    && str.charAt(index + 5) == 'i'
-                    && str.charAt(index + 6) == 't'
-                    && str.charAt(index + 7) == 'y'
-            ) {
-                index = skipWhitespace(str, index + 8, endIndex);
-                if (index == endIndex) {
-                    return isNegative ? negativeInfinity() : positiveInfinity();
-                }
-            }
-        }
-        throw new NumberFormatException(SYNTAX_ERROR);
-    }
-
     /**
      * Parses the following rules
      * (more rules are defined in {@link AbstractFloatValueParser}):
@@ -281,7 +275,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             // Table look up is faster than a sequence of if-else-branches.
             int hexValue = ch > 127 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
             if (hexValue >= 0) {
-                significand = (significand << 4) | hexValue;// This might overflow, we deal with it later.
+                significand = significand << 4 | hexValue;// This might overflow, we deal with it later.
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
@@ -311,18 +305,18 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // Parse exponent
         // --------------
         int expNumber = 0;
-        final boolean hasExponent = (ch == 'p') || (ch == 'P');
+        final boolean hasExponent = ch == 'p' || ch == 'P';
         if (hasExponent) {
             ch = ++index < endIndex ? str.charAt(index) : 0;
             boolean isExponentNegative = ch == '-';
             if (isExponentNegative || ch == '+') {
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             }
-            illegal |= !(FastDoubleSwar.isDigit(ch));
+            illegal |= !FastDoubleSwar.isDigit(ch);
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * (expNumber) + ch - '0';
+                    expNumber = 10 * expNumber + ch - '0';
                 }
                 ch = ++index < endIndex ? str.charAt(index) : 0;
             } while (FastDoubleSwar.isDigit(ch));
@@ -360,7 +354,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                 int hexValue = ch > 127 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
                 if (hexValue >= 0) {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = (significand << 4) | hexValue;
+                        significand = significand << 4 | hexValue;
                     } else {
                         break;
                     }
@@ -368,7 +362,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                     skipCountInTruncatedDigits++;
                 }
             }
-            isSignificandTruncated = (index < significandEndIndex);
+            isSignificandTruncated = index < significandEndIndex;
         } else {
             isSignificandTruncated = false;
         }
@@ -377,31 +371,37 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                 virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber);
     }
 
-    /**
-     * Skips optional white space in the provided string
-     *
-     * @param str      a string
-     * @param index    start index (inclusive) of the optional white space
-     * @param endIndex end index (exclusive) of the optional white space
-     * @return index after the optional white space
-     */
-    private static int skipWhitespace(CharSequence str, int index, int endIndex) {
-        while (index < endIndex && str.charAt(index) <= ' ') {
-            index++;
+    private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
+        if (str.charAt(index) == 'N') {
+            if (index + 2 < endIndex
+                    // && str.charAt(index) == 'N'
+                    && str.charAt(index + 1) == 'a'
+                    && str.charAt(index + 2) == 'N') {
+
+                index = skipWhitespace(str, index + 3, endIndex);
+                if (index == endIndex) {
+                    return nan();
+                }
+            }
+        } else {
+            if (index + 7 < endIndex
+                    && str.charAt(index) == 'I'
+                    && str.charAt(index + 1) == 'n'
+                    && str.charAt(index + 2) == 'f'
+                    && str.charAt(index + 3) == 'i'
+                    && str.charAt(index + 4) == 'n'
+                    && str.charAt(index + 5) == 'i'
+                    && str.charAt(index + 6) == 't'
+                    && str.charAt(index + 7) == 'y'
+            ) {
+                index = skipWhitespace(str, index + 8, endIndex);
+                if (index == endIndex) {
+                    return isNegative ? negativeInfinity() : positiveInfinity();
+                }
+            }
         }
-        return index;
+        throw new NumberFormatException(SYNTAX_ERROR);
     }
-
-    /**
-     * @return a NaN constant in the specialized type wrapped in a {@code long}
-     */
-    abstract long nan();
-
-    /**
-     * @return a negative infinity constant in the specialized type wrapped in a
-     * {@code long}
-     */
-    abstract long negativeInfinity();
 
     /**
      * @return a positive infinity constant in the specialized type wrapped in a

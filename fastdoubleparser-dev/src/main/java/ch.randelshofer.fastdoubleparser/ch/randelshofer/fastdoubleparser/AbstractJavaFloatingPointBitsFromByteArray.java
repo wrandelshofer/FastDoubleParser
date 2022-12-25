@@ -238,17 +238,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             }
         } else {
             if (index + 7 < endIndex
-                    && (long) FastDoubleSwar.readLongLE(str, index) == 0x7974696e69666e49L//Infinity
-                    /*
-                    && str[index1] == 'I'
-                    && str[index1 + 1] == 'n'
-                    && str[index1 + 2] == 'f'
-                    && str[index1 + 3] == 'i'
-                    && str[index1 + 4] == 'n'
-                    && str[index1 + 5] == 'i'
-                    && str[index1 + 6] == 't'
-                    && str[index1 + 7] == 'y'
-                     */
+                    && FastDoubleSwar.readLongLE(str, index) == 0x7974696e69666e49L//Infinity
             ) {
                 index = skipWhitespace(str, index + 8, endIndex);
                 if (index == endIndex) {

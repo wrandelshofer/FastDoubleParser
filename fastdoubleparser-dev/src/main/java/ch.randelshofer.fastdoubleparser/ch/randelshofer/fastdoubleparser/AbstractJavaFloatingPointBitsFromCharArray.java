@@ -35,6 +35,17 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
     }
 
     /**
+     * @return a NaN constant in the specialized type wrapped in a {@code long}
+     */
+    abstract long nan();
+
+    /**
+     * @return a negative infinity constant in the specialized type wrapped in a
+     * {@code long}
+     */
+    abstract long negativeInfinity();
+
+    /**
      * Parses a {@code DecimalFloatingPointLiteral} production with optional
      * trailing white space until the end of the text.
      * Given that we have already consumed the optional leading zero of
@@ -49,7 +60,8 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
      * {@code DecimalFloatingPointLiteral} and {@code DecSignificand}.
      *
      * @param str            a string
-     * @param index          start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
+     * @param index          the current index
+     * @param startIndex     start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
      * @param endIndex       end index (exclusive)
      * @param isNegative     true if the float value is negative
      * @param hasLeadingZero true if we have consumed the optional leading zero
@@ -91,12 +103,12 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         final int significandEndIndex = index;
         int exponent;
         if (virtualIndexOfPoint < 0) {
-            digitCount = index - significandStartIndex;
-            virtualIndexOfPoint = index;
+            digitCount = significandEndIndex - significandStartIndex;
+            virtualIndexOfPoint = significandEndIndex;
             exponent = 0;
         } else {
-            digitCount = index - significandStartIndex - 1;
-            exponent = virtualIndexOfPoint - index + 1;
+            digitCount = significandEndIndex - significandStartIndex - 1;
+            exponent = virtualIndexOfPoint - significandEndIndex + 1;
         }
 
         // Parse exponent number
@@ -150,7 +162,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
                     skipCountInTruncatedDigits++;
                 } else {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = 10 * (significand) + ch - '0';
+                        significand = 10 * significand + ch - '0';
                     } else {
                         break;
                     }
@@ -225,38 +237,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         }
 
         return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
-    }
-
-    private long parseNaNOrInfinity(char[] str, int index, int endIndex, boolean isNegative) {
-        if (str[index] == 'N') {
-            if (index + 2 < endIndex
-                    // && str[index] == 'N'
-                    && str[index + 1] == 'a'
-                    && str[index + 2] == 'N') {
-
-                index = skipWhitespace(str, index + 3, endIndex);
-                if (index == endIndex) {
-                    return nan();
-                }
-            }
-        } else {
-            if (index + 7 < endIndex
-                    && str[index] == 'I'
-                    && str[index + 1] == 'n'
-                    && str[index + 2] == 'f'
-                    && str[index + 3] == 'i'
-                    && str[index + 4] == 'n'
-                    && str[index + 5] == 'i'
-                    && str[index + 6] == 't'
-                    && str[index + 7] == 'y'
-            ) {
-                index = skipWhitespace(str, index + 8, endIndex);
-                if (index == endIndex) {
-                    return isNegative ? negativeInfinity() : positiveInfinity();
-                }
-            }
-        }
-        throw new NumberFormatException(SYNTAX_ERROR);
     }
 
     /**
@@ -352,7 +332,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         }
 
         // Skip optional FloatTypeSuffix
-        // ------------------------
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
         if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
@@ -397,26 +376,47 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
                 virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber);
     }
 
-    private long tryToParseEightHexDigits(char[] str, int offset) {
-        return FastDoubleSwar.tryToParseEightHexDigits(str, offset);
+    private long parseNaNOrInfinity(char[] str, int index, int endIndex, boolean isNegative) {
+        if (str[index] == 'N') {
+            if (index + 2 < endIndex
+                    // && str[index] == 'N'
+                    && str[index + 1] == 'a'
+                    && str[index + 2] == 'N') {
+
+                index = skipWhitespace(str, index + 3, endIndex);
+                if (index == endIndex) {
+                    return nan();
+                }
+            }
+        } else {
+            if (index + 7 < endIndex
+                    && str[index] == 'I'
+                    && str[index + 1] == 'n'
+                    && str[index + 2] == 'f'
+                    && str[index + 3] == 'i'
+                    && str[index + 4] == 'n'
+                    && str[index + 5] == 'i'
+                    && str[index + 6] == 't'
+                    && str[index + 7] == 'y'
+            ) {
+                index = skipWhitespace(str, index + 8, endIndex);
+                if (index == endIndex) {
+                    return isNegative ? negativeInfinity() : positiveInfinity();
+                }
+            }
+        }
+        throw new NumberFormatException(SYNTAX_ERROR);
     }
-
-    /**
-     * @return a NaN constant in the specialized type wrapped in a {@code long}
-     */
-    abstract long nan();
-
-    /**
-     * @return a negative infinity constant in the specialized type wrapped in a
-     * {@code long}
-     */
-    abstract long negativeInfinity();
 
     /**
      * @return a positive infinity constant in the specialized type wrapped in a
      * {@code long}
      */
     abstract long positiveInfinity();
+
+    private long tryToParseEightHexDigits(char[] str, int offset) {
+        return FastDoubleSwar.tryToParseEightHexDigits(str, offset);
+    }
 
     /**
      * Computes a float value from the given components of a decimal float
