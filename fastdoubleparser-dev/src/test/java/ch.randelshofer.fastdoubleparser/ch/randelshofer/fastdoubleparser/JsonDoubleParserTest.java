@@ -13,6 +13,7 @@ import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
@@ -75,7 +76,8 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
     private void test(NumberTestData d, ToDoubleFunction<NumberTestData> f) {
         if (d.expectedErrorMessage() != null) {
             try {
-                f.applyAsDouble(d);
+                double actual = f.applyAsDouble(d);
+                fail("should throw an exception but returned " + actual);
             } catch (IllegalArgumentException e) {
                 if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
                     e.printStackTrace();

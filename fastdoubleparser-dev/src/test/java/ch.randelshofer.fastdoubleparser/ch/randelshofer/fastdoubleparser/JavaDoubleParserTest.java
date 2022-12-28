@@ -7,12 +7,14 @@ package ch.randelshofer.fastdoubleparser;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
+import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toCharArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
@@ -43,14 +45,14 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
                         && t.charLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
                         && t.byteOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8)))));
+                        () -> test(t, u -> JavaDoubleParser.parseDouble(toByteArray(u.input())))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleByteArrayIntInt() {
         return createAllDoubleTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+                        () -> test(t, u -> JavaDoubleParser.parseDouble(toByteArray(u.input()), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
@@ -60,20 +62,21 @@ public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
                         && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().toCharArray()))));
+                        () -> test(t, u -> JavaDoubleParser.parseDouble(toCharArray(u.input())))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTestsParseDoubleCharArrayIntInt() {
         return createAllDoubleTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaDoubleParser.parseDouble(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> JavaDoubleParser.parseDouble(toCharArray(u.input()), u.charOffset(), u.charLength()))));
     }
 
     private void test(NumberTestData d, ToDoubleFunction<NumberTestData> f) {
         if (d.expectedErrorMessage() != null) {
             try {
-                f.applyAsDouble(d);
+                double actual = f.applyAsDouble(d);
+                fail("should throw an exception but returned " + actual);
             } catch (IllegalArgumentException e) {
                 if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
                     e.printStackTrace();

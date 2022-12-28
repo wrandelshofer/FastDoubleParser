@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static ch.randelshofer.fastdoubleparser.Strings.repeat;
-
 public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValueParserTest {
     public final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
@@ -129,7 +127,7 @@ public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValu
                 new NumberTestData("parseNumber(): Significand with trailing whitespace", "3   ", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): Empty String", "", 0, 0, 0, 0, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): Blank String", "   ", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseNumber(): Very long non-blank String", repeat("a", 66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseNumber(): Very long non-blank String", new VirtualCharSequence('a', 66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): Plus Sign", "+", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): Negative Sign", "-", 0, 1, 0, 1, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseNumber(): Infinity", "Infinity", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),

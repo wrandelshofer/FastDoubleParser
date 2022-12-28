@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public abstract class AbstractBigIntegerParserTest {
-    private boolean runSlowTests = "true".equals(System.getProperty("run.slow.tests"));
+    private boolean runSlowTests = !"false".equals(System.getProperty("run.slow.tests"));
 
     protected void test(NumberTestData d, Function<NumberTestData, BigInteger> f) {
         BigInteger expectedValue = (BigInteger) d.expectedValue();
@@ -153,7 +153,7 @@ public abstract class AbstractBigIntegerParserTest {
     protected List<NumberTestData> createDataForIllegalStrings() {
         return Arrays.asList(
                 new NumberTestData("AAAA", "AAAA", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("A**1500", repeat("A", 1500), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("A**1500", new VirtualCharSequence('A', 1500), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("0x1", "0x1", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
         );
     }
@@ -196,10 +196,10 @@ public abstract class AbstractBigIntegerParserTest {
 
     protected List<NumberTestData> createDataForVeryLongDecStrings() {
         return Arrays.asList(
-                new NumberTestData("'0' ** 1292782622", repeat("0", 1292782621 + 1), BigInteger.ZERO),
-                new NumberTestData("max input length: '0' ** 1292782621", repeat("0", 1292782621), BigInteger.ZERO),
-                new NumberTestData("max input length: '0' ** 1292782620, '7'", repeat("0", 1292782621 - 1) + "7", BigInteger.valueOf(7)),
-                new NumberTestData(repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10))
+                new NumberTestData("'0' ** 1292782622", new VirtualCharSequence('0', 1292782621 + 1), BigInteger.ZERO),
+                new NumberTestData("max input length: '0' ** 1292782621", new VirtualCharSequence('0', 1292782621), BigInteger.ZERO),
+                new NumberTestData("max input length: '0' ** 1292782620, '7'", new VirtualCharSequence('0', 1292782621 - 1) + "7", BigInteger.valueOf(7)),
+                new NumberTestData("'9806543217' ** 1000", repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10))
         );
     }
 

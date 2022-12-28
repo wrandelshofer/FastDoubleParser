@@ -143,6 +143,7 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
         }
+        index = skipZeroes(str, index, endIndex);
 
         switch (radix) {
         case 10:
@@ -155,7 +156,6 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
     }
 
     private BigInteger parseDecDigits(byte[] str, int from, int to, boolean isNegative, int parallelThreshold) {
-        from = skipZeroes(str, from, to);
         Map<Integer, BigInteger> powersOfTen = fillPowersOfTenFloor16(from, to, parallelThreshold < Integer.MAX_VALUE);
         int numDigits = to - from;
         if (numDigits > MAX_DECIMAL_DIGITS) {
@@ -171,12 +171,8 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
     }
 
     private BigInteger parseHexDigits(byte[] str, int from, int to, boolean isNegative) {
-        if (to - from == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
-        }
-        from = skipZeroes(str, from, to);
         int numDigits = to - from;
-        if (numDigits == 0) {
+        if (numDigits <= 0) {
             return BigInteger.ZERO;
         }
         byte[] bytes = new byte[((numDigits + 1) >> 1) + 1];

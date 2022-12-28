@@ -4,6 +4,9 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
 public class VirtualCharSequence implements CharSequence {
     private final int length;
     private final char fill;
@@ -15,6 +18,8 @@ public class VirtualCharSequence implements CharSequence {
     private final int middleTo;
     private final int suffixFrom;
 
+    private boolean isIso;
+
     public VirtualCharSequence(String prefix, int middleFrom, String middle, String suffix, char fill, int length) {
         this.length = length;
         this.prefix = prefix.toCharArray();
@@ -25,6 +30,18 @@ public class VirtualCharSequence implements CharSequence {
         this.middleTo = middleFrom + this.middle.length;
         this.suffixFrom = length - this.suffix.length;
         this.fill = fill;
+
+        isIso = isIso8859_1(this.prefix) && isIso8859_1(this.middle)
+                && isIso8859_1(this.suffix) && isIso8859_1(new char[]{this.fill});
+    }
+
+    private boolean isIso8859_1(char[] ch) {
+        for (int i = 0; i < ch.length; i++) {
+            if (ch[i] > 0xff) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public VirtualCharSequence(char fill, int length) {
@@ -37,9 +54,25 @@ public class VirtualCharSequence implements CharSequence {
 
     public byte[] getBytes() {
         byte[] chars = new byte[length];
+        Arrays.fill(chars, (byte) fill);
+        arraycopy(prefix, 0, chars, 0, prefix.length);
+        arraycopy(middle, 0, chars, middleFrom, middle.length);
+        arraycopy(suffix, 0, chars, suffixFrom, suffix.length);
+        return chars;
+    }
+
+    private void arraycopy(char[] src, int srcPos, byte[] dest, int destPos, int length) {
         for (int i = 0; i < length; i++) {
-            chars[i] = (byte) charAt(i);
+            dest[destPos + i] = (byte) src[srcPos + i];
         }
+    }
+
+    public char[] toCharArray() {
+        char[] chars = new char[length];
+        Arrays.fill(chars, fill);
+        System.arraycopy(prefix, 0, chars, 0, prefix.length);
+        System.arraycopy(middle, 0, chars, middleFrom, middle.length);
+        System.arraycopy(suffix, 0, chars, suffixFrom, suffix.length);
         return chars;
     }
 
@@ -78,11 +111,11 @@ public class VirtualCharSequence implements CharSequence {
     @Override
     public String toString() {
         if (length <= Integer.MAX_VALUE - 4) {
-            char[] chars = new char[length];
-            for (int i = 0; i < length; i++) {
-                chars[i] = charAt(i);
+            if (isIso) {
+                return new String(toByteArray(this), StandardCharsets.ISO_8859_1);
+            } else {
+                return new String(toCharArray(this));
             }
-            return new String(chars);
         }
         return "VirtualCharSequence{" +
                 "length=" + length +
@@ -96,4 +129,17 @@ public class VirtualCharSequence implements CharSequence {
                 ", suffixFrom=" + suffixFrom +
                 '}';
     }
+
+    public static char[] toCharArray(CharSequence u) {
+        return u instanceof VirtualCharSequence
+                ? ((VirtualCharSequence) u).toCharArray()
+                : u.toString().toCharArray();
+    }
+
+    public static byte[] toByteArray(CharSequence u) {
+        return u instanceof VirtualCharSequence
+                ? ((VirtualCharSequence) u).getBytes()
+                : u.toString().getBytes(StandardCharsets.ISO_8859_1);
+    }
+
 }

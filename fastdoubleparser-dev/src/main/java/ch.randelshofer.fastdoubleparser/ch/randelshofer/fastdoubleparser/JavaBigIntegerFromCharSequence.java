@@ -130,6 +130,7 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
         }
+        index = skipZeroes(str, index, endIndex);
 
         switch (radix) {
         case 10:
@@ -154,10 +155,15 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
         return isNegative ? result.negate() : result;
     }
 
+    private int skipZeroes(CharSequence str, int from, int to) {
+        while (from < to && str.charAt(from) == '0') from++;
+        return from;
+    }
+
     private BigInteger parseHexDigits(CharSequence str, int from, int to, boolean isNegative) {
         int numDigits = to - from;
-        if (numDigits == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+        if (numDigits <= 0) {
+            return BigInteger.ZERO;
         }
         byte[] bytes = new byte[((numDigits + 1) >> 1) + 1];
         int index = 1;
