@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * Tests class {@link JavaDoubleParser}
  */
 public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
-    private boolean runSlowTests = !"false".equals(System.getProperty("run.slow.tests"));
+    private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_JavaFloatParser_parseFloat_CharSequence() {

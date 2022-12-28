@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValueParserTest {
-    protected boolean runSlowTests = !"false".equals(System.getProperty("run.slow.tests"));
+    protected boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
     protected final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
     protected List<NumberTestData> createTestDataForNaN() {
@@ -263,7 +263,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
-        if (runSlowTests) {
+        if (longRunningTests) {
             list.addAll(createDataWithVeryLongInputStrings());
         }
         return list;
@@ -283,7 +283,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
-        if (runSlowTests) {
+        if (longRunningTests) {
             list.addAll(createDataWithVeryLongInputStrings());
         }
         return list;

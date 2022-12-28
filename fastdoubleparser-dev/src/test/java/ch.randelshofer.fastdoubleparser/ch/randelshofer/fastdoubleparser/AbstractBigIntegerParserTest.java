@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public abstract class AbstractBigIntegerParserTest {
-    private boolean runSlowTests = !"false".equals(System.getProperty("run.slow.tests"));
+    private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
 
     protected void test(NumberTestData d, Function<NumberTestData, BigInteger> f) {
         BigInteger expectedValue = (BigInteger) d.expectedValue();
@@ -216,7 +216,7 @@ public abstract class AbstractBigIntegerParserTest {
         list.addAll(createDataForLegalHexStrings());
         list.addAll(createDataForLegalRadixStrings());
         list.addAll(createDataForIllegalRadixStrings());
-        if (runSlowTests) {
+        if (longRunningTests) {
             list.addAll(createDataForVeryLongDecStrings());
             list.addAll(createDataForVeryLongHexStrings());
         }
