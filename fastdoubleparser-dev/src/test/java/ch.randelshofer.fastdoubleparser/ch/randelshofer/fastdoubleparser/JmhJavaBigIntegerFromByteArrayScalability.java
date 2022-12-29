@@ -30,27 +30,32 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *        (digits)  Mode  Cnt              Score   Error  Units
- * pdec          1  avgt    2              3.296          ns/op
- * pdec         10  avgt    2             16.703          ns/op
- * pdec        100  avgt    2            492.084          ns/op
- * pdec       1000  avgt    2           5712.078          ns/op
- * pdec      10000  avgt    2         133442.586          ns/op
- * pdec     100000  avgt    2        2384745.139          ns/op
- * pdec    1000000  avgt    2       65651919.701          ns/op
- * pdec   10000000  avgt    2     1888062413.917          ns/op
- * pdec  100000000  avgt    2    58431764503.000          ns/op
- * pdec  646391315  avgt    2  1119163446185.000          ns/op
- * sdec          1  avgt    2              3.191          ns/op
- * sdec         10  avgt    2             13.364          ns/op
- * sdec        100  avgt    2            430.248          ns/op
- * sdec       1000  avgt    2           4929.324          ns/op
- * sdec      10000  avgt    2         160675.651          ns/op
- * sdec     100000  avgt    2        6229097.178          ns/op
- * sdec    1000000  avgt    2      202358769.620          ns/op
- * sdec   10000000  avgt    2     6000028631.500          ns/op
- * sdec  100000000  avgt    2   178840933781.500          ns/op
- * sdec  646391315  avgt    2  3014105673393.000          ns/op
+ *         (digits)  Mode  Cnt              Score   Error  Units
+ * pdec           1  avgt    2              3.296          ns/op
+ * pdec          10  avgt    2             16.703          ns/op
+ * pdec         100  avgt    2            492.084          ns/op
+ * pdec        1000  avgt    2           5712.078          ns/op
+ * pdec       10000  avgt    2         133442.586          ns/op
+ * pdec      100000  avgt    2        2384745.139          ns/op
+ * pdec     1000000  avgt    2       65651919.701          ns/op
+ * pdec    10000000  avgt    2     1888062413.917          ns/op
+ * pdec   100000000  avgt    2    58431764503.000          ns/op
+ * pdec   646391315  avgt    2  1119163446185.000          ns/op
+ * sdec           1  avgt    2              3.191          ns/op
+ * sdec          10  avgt    2             13.364          ns/op
+ * sdec         100  avgt    2            430.248          ns/op
+ * sdec        1000  avgt    2           4929.324          ns/op
+ * sdec       10000  avgt    2         160675.651          ns/op
+ * sdec      100000  avgt    2        6229097.178          ns/op
+ * sdec     1000000  avgt    2      202358769.620          ns/op
+ * sdec    10000000  avgt    2     6000028631.500          ns/op
+ * sdec   100000000  avgt    2   178840933781.500          ns/op
+ * sdec   646391315  avgt    2  3014105673393.000          ns/op
+ *
+ *          (digits)  Mode  Cnt             Score   Error  Units
+ * sssdec   10000000  avgt         4382580394.667          ns/op
+ * sssdec  100000000  avgt       135529578709.000          ns/op
+ * sssdec  646391315  avgt       581855136595.000          ns/op
  * </pre>
  *
  * <pre>
@@ -93,12 +98,13 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
+        , "--add-opens", "java.base/java.math=ALL-UNNAMED"
 
         //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
 
 })
-@Measurement(iterations = 2)
-@Warmup(iterations = 2)
+@Measurement(iterations = 1)
+@Warmup(iterations = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -106,14 +112,14 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
 
     @Param({
-            "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
+            // "1"
+            // , "10"
+            // , "100"
+            // , "1000"
+            // , "10000"
+            // , "100000"
+            // , "1000000"
+            "10000000"
             , "100000000"
             , "646391315"
 
@@ -127,21 +133,23 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
         decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
     }
 
-
+    /*
+        @Benchmark
+        public BigInteger hex() {
+            return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
+        }
+    */
     @Benchmark
-    public BigInteger hex() {
-        return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
-    }
-
-    @Benchmark
-    public BigInteger sdec() {
+    public BigInteger sssdec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);
     }
-
+/*
     @Benchmark
     public BigInteger pdec() {
         return JavaBigIntegerParser.parallelParseBigInteger(decLiteral);
     }
+
+ */
 }
 
 

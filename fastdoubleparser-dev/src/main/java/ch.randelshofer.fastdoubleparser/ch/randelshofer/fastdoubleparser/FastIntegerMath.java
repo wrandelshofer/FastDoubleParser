@@ -82,7 +82,8 @@ class FastIntegerMath {
             diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff, parallel);
             powersOfTen.put(diff, diffValue);
         }
-        return FastIntegerMath.parallelMultiply(floorValue, diffValue, parallel);
+        return SchoenhageStrassenMultiplier.multiply(floorValue, diffValue, parallel);
+        //return FastIntegerMath.parallelMultiply(floorValue, diffValue, parallel);
     }
 
     static NavigableMap<Integer, BigInteger> createPowersOfTenFloor16Map() {

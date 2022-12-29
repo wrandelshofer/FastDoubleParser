@@ -91,7 +91,8 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
         BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
 
-        high = high.multiply(powersOfTen.get(to - mid));
+        //high = high.multiply(powersOfTen.get(to - mid));
+        high = SchoenhageStrassenMultiplier.multiply(high, powersOfTen.get(to - mid), false);
         return low.add(high);
     }
 
