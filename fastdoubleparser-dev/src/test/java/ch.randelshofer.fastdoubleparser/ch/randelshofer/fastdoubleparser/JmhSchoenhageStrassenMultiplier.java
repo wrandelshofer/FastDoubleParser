@@ -68,7 +68,11 @@ import java.util.concurrent.TimeUnit;
         , "--enable-preview"
         , "--add-opens", "java.base/java.math=ALL-UNNAMED"
 
-        //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
+        // Options for analysis with https://github.com/AdoptOpenJDK/jitwatch
+        , "-XX:+UnlockDiagnosticVMOptions"
+        , "-Xlog:class+load=info"
+        , "-XX:+LogCompilation"
+        , "-XX:+PrintAssembly"
 
 })
 @Measurement(iterations = 1)
@@ -86,8 +90,8 @@ public class JmhSchoenhageStrassenMultiplier {
             //, "1000"
             //, "10000"
             //,"100000"
-            "1000000"
-            , "10000000"
+            //"1000000"
+            "10000000"
             // , "100000000"
             // , "646391315"
 

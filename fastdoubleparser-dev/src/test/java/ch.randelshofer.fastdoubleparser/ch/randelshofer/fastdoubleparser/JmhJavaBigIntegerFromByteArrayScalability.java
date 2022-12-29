@@ -57,50 +57,17 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * sssdec  100000000  avgt       135529578709.000          ns/op
  * sssdec  646391315  avgt       581855136595.000          ns/op
  * </pre>
- *
- * <pre>
- * # JMH version: 1.35
- * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+24-1795
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
- *
- * With additional iterative step, recursion threshold 128
- *
- *      (digits)  Mode  Cnt     Score   Error  Units
- * dec       100  avgt    2   332.517          ns/op
- * dec      1000  avgt    2  4724.631          ns/op
- * </pre>
- * <pre>
- * # JMH version: 1.35
- * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+22-1594
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
- *
- *        (digits)  Mode  Cnt            Score   Error  Units
- * hex         1  avgt    2           24.032          ns/op
- * hex        10  avgt    2           36.407          ns/op
- * hex       100  avgt    2          145.416          ns/op
- * hex      1000  avgt    2         1167.143          ns/op
- * hex     10000  avgt    2        11504.050          ns/op
- * hex    100000  avgt    2       109226.495          ns/op
- * hex   1000000  avgt    2      1103771.706          ns/op
- * hex  10000000  avgt    2     13125587.576          ns/op * 1.3
- * hex 100000000  avgt    2    132543755.934          ns/op * 1.3
- *
- * recursive only:
- *      (digits)  Mode  Cnt                Score   Error  Units
- * dec       100  avgt    2              505.243          ns/op
- * dec      1000  avgt    2             5914.067          ns/op
- * dec     10000  avgt    2           181069.960          ns/op * 18
- * dec    100000  avgt    2          6601322.702          ns/op * 66
- * dec   1000000  avgt    2        210673127.948          ns/op * 210
- * dec  10000000  avgt    2       6317343012.000          ns/op * 631
- * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
         , "--add-opens", "java.base/java.math=ALL-UNNAMED"
 
-        //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
+        // Options for analysis with https://github.com/AdoptOpenJDK/jitwatch
+        //,"-XX:+UnlockDiagnosticVMOptions"
+        //,"-Xlog:class+load=info"
+        //,"-XX:+LogCompilation"
+        //,"-XX:+PrintAssembly"
 
 })
 @Measurement(iterations = 1)
@@ -120,8 +87,8 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
             // , "100000"
             // , "1000000"
             "10000000"
-            , "100000000"
-            , "646391315"
+            //, "100000000"
+            //, "646391315"
 
     })
     public int digits;

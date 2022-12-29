@@ -401,19 +401,18 @@ public class SchoenhageStrassenMultiplier {
      */
     private static void subModPow2(int[] a, int[] b, int numBits) {
         int numElements = (numBits + 31) / 32;
-        boolean carry = false;
+        int carry = 0;
         int i;
         for (i = 0; i < numElements; i++) {
-            int diff = a[i] - b[i];
-            if (carry) {
-                diff--;
-            }
-            carry = ((diff >>> 31) > (a[i] >>> 31) - (b[i] >>> 31));   // carry if signBit(diff) > signBit(a)-signBit(b)
+            int diff = a[i] - b[i] - carry;
+            // carry if signBit(diff) > signBit(a)-signBit(b)
+            carry = ((a[i] >>> 31) - (b[i] >>> 31) - (diff >>> 31)) >>> 31;
             a[i] = diff;
         }
         a[i - 1] &= -1 >>> (32 - (numBits % 32));
-        for (; i < a.length; i++)
+        for (; i < a.length; i++) {
             a[i] = 0;
+        }
     }
 
     /**
@@ -426,14 +425,12 @@ public class SchoenhageStrassenMultiplier {
      */
     private static void addModPow2(int[] a, int[] b, int numBits) {
         int numElements = (numBits + 31) / 32;
-        boolean carry = false;
+        int carry = 0;
         int i;
         for (i = 0; i < numElements; i++) {
-            int sum = a[i] + b[i];
-            if (carry) {
-                sum++;
-            }
-            carry = ((sum >>> 31) < (a[i] >>> 31) + (b[i] >>> 31));   // carry if signBit(sum) < signBit(a)+signBit(b)
+            int sum = a[i] + b[i] + carry;
+            // carry if signBit(sum) < signBit(a)+signBit(b)
+            carry = ((sum >>> 31) - (a[i] >>> 31) - (b[i] >>> 31)) >>> 31;
             a[i] = sum;
         }
         a[i - 1] &= -1 >>> (32 - (numBits % 32));
@@ -567,30 +564,29 @@ public class SchoenhageStrassenMultiplier {
 
     private static void modFn(int[] a) {
         int len = a.length;
-        boolean carry = false;
+        int carry = 0;
         for (int i = 0; i < len / 2; i++) {
             int bi = a[len / 2 + i];
-            int diff = a[i] - bi;
-            if (carry) {
-                diff--;
-            }
-            carry = ((diff >>> 31) > (a[i] >>> 31) - (bi >>> 31));   // carry if signBit(diff) > signBit(a)-signBit(b)
+            int diff = a[i] - bi - carry;
+
+            // carry if signBit(diff) > signBit(a)-signBit(b)
+            carry = ((a[i] >>> 31) - (bi >>> 31) - (diff >>> 31)) >>> 31;
             a[i] = diff;
         }
-        for (int i = len / 2; i < len; i++)
+        for (int i = len / 2; i < len; i++) {
             a[i] = 0;
+        }
         // if result is negative, add Fn; since Fn ≡ 1 (mod 2^n), it suffices to add 1
-        if (carry) {
-            int j = 0;
-            do {
-                int sum = a[j] + 1;
-                a[j] = sum;
-                carry = sum == 0;
-                j++;
-                if (j >= a.length) {
-                    j = 0;
-                }
-            } while (carry);
+        boolean booleanCarry = carry != 0;
+        int j = 0;
+        while (booleanCarry) {
+            int sum = a[j] + 1;
+            a[j] = sum;
+            booleanCarry = sum == 0;
+            j++;
+            if (j >= a.length) {
+                j = 0;
+            }
         }
     }
 
@@ -601,8 +597,9 @@ public class SchoenhageStrassenMultiplier {
      * @param a int arrays whose length is a power of 2
      */
     private static void modFn(int[][] a) {
-        for (int i = 0; i < a.length; i++)
+        for (int i = 0; i < a.length; i++) {
             modFn(a[i]);
+        }
     }
 
     /**
@@ -661,7 +658,7 @@ public class SchoenhageStrassenMultiplier {
         int carry = 0;
         for (int i = 0; i < a.length; i++) {
             int sum = a[i] + b[i] + carry;
-            // if (signBit(sum) < signBit(a[i]) + signBit(b[i])) carry=1; else carry=0;
+            // carry if signBit(sum) < signBit(a[i]) + signBit(b[i])
             carry = ((sum >>> 31) - (a[i] >>> 31) - (b[i] >>> 31)) >>> 31;
             a[i] = sum;
         }
@@ -755,21 +752,20 @@ public class SchoenhageStrassenMultiplier {
      * @param numElements
      */
     private static void addShifted(int[] a, int[] b, int numElements) {
-        boolean carry = false;
+        int carry = 0;
         int i = 0;
         while (i < Math.min(b.length, a.length - numElements)) {
             int ai = a[i + numElements];
-            int sum = ai + b[i];
-            if (carry) {
-                sum++;
-            }
-            carry = ((sum >>> 31) < (ai >>> 31) + (b[i] >>> 31));   // carry if signBit(sum) < signBit(a)+signBit(b)
+            int sum = ai + b[i] + carry;
+            // carry if signBit(sum) < signBit(a)+signBit(b)
+            carry = ((sum >>> 31) - (ai >>> 31) - (b[i] >>> 31)) >>> 31;
             a[i + numElements] = sum;
             i++;
         }
-        while (carry) {
+        boolean booleanCarry = carry != 0;
+        while (booleanCarry) {
             a[i + numElements]++;
-            carry = a[i + numElements] == 0;
+            booleanCarry = a[i + numElements] == 0;
             i++;
         }
     }
