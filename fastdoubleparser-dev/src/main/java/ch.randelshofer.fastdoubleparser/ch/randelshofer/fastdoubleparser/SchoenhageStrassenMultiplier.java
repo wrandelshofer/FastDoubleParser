@@ -658,23 +658,22 @@ public class SchoenhageStrassenMultiplier {
      * @param b a number in base 2^32 starting with the lowest digit; the length must be a power of 2
      */
     private static void addModFn(int[] a, int[] b) {
-        boolean carry = false;
+        int carry = 0;
         for (int i = 0; i < a.length; i++) {
-            int sum = a[i] + b[i];
-            if (carry) {
-                sum++;
-            }
-            carry = ((sum >>> 31) < (a[i] >>> 31) + (b[i] >>> 31));   // carry if signBit(sum) < signBit(a)+signBit(b)
+            int sum = a[i] + b[i] + carry;
+            // if (signBit(sum) < signBit(a[i]) + signBit(b[i])) carry=1; else carry=0;
+            carry = ((sum >>> 31) - (a[i] >>> 31) - (b[i] >>> 31)) >>> 31;
             a[i] = sum;
         }
 
         // take a mod Fn by adding any remaining carry bit to the lowest bit;
         // since Fn ≡ 1 (mod 2^n), it suffices to add 1
         int i = 0;
-        while (carry) {
+        boolean ccarry = carry != 0;
+        while (ccarry) {
             int sum = a[i] + 1;
             a[i] = sum;
-            carry = sum == 0;
+            ccarry = sum == 0;
             i++;
             if (i >= a.length) {
                 i = 0;
