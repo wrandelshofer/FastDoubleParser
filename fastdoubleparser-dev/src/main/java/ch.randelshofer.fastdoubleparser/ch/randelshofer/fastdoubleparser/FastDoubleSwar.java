@@ -154,8 +154,8 @@ class FastDoubleSwar {
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static boolean isEightZeroes(char[] a, int offset) {
         MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
-        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
+        long first = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1));
+        long second = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1) + 8);
         return isEightZeroesUtf16(first, second);
     }
 

@@ -30,9 +30,27 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *      (digits)  Mode  Cnt     Score   Error  Units
- * dec       100  avgt    2   346.818          ns/op
- * dec      1000  avgt    2  5267.234          ns/op
+ *        (digits)  Mode  Cnt              Score   Error  Units
+ * pdec          1  avgt    2              3.296          ns/op
+ * pdec         10  avgt    2             16.703          ns/op
+ * pdec        100  avgt    2            492.084          ns/op
+ * pdec       1000  avgt    2           5712.078          ns/op
+ * pdec      10000  avgt    2         133442.586          ns/op
+ * pdec     100000  avgt    2        2384745.139          ns/op
+ * pdec    1000000  avgt    2       65651919.701          ns/op
+ * pdec   10000000  avgt    2     1888062413.917          ns/op
+ * pdec  100000000  avgt    2    58431764503.000          ns/op
+ * pdec  646391315  avgt    2  1119163446185.000          ns/op
+ * sdec          1  avgt    2              3.191          ns/op
+ * sdec         10  avgt    2             13.364          ns/op
+ * sdec        100  avgt    2            430.248          ns/op
+ * sdec       1000  avgt    2           4929.324          ns/op
+ * sdec      10000  avgt    2         160675.651          ns/op
+ * sdec     100000  avgt    2        6229097.178          ns/op
+ * sdec    1000000  avgt    2      202358769.620          ns/op
+ * sdec   10000000  avgt    2     6000028631.500          ns/op
+ * sdec  100000000  avgt    2   178840933781.500          ns/op
+ * sdec  646391315  avgt    2  3014105673393.000          ns/op
  * </pre>
  *
  * <pre>
@@ -52,37 +70,24 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  *        (digits)  Mode  Cnt            Score   Error  Units
- * hex    _   _  1  avgt    2       _   _ 24.032          ns/op
- * hex    _   _ 10  avgt    2       _   _ 36.407          ns/op
- * hex    _   _100  avgt    2       _   _145.416          ns/op
- * hex    _  1_000  avgt    2       _  1_167.143          ns/op
- * hex    _ 10_000  avgt    2       _ 11_504.050          ns/op
- * hex    _100_000  avgt    2       _109_226.495          ns/op
- * hex   1_000_000  avgt    2      1_103_771.706          ns/op
- * hex  10_000_000  avgt    2     13_125_587.576          ns/op * 1.3
- * hex 100_000_000  avgt    2    132_543_755.934          ns/op * 1.3
- *
- * decMaxValue 646391315 avgt 16 106_200_639_128.813 ± 1668854933.018  ns/op
- *
- * dec     _   _  1  avgt    2      _   _   _  8.358          ns/op
- * dec     _   _ 10  avgt    2      _   _   _ 18.853          ns/op
- * dec     _   _100  avgt    2      _   _   _511.649          ns/op
- * dec     _  1_000  avgt    2      _   _  6_145.889          ns/op
- * dec     _ 10_000  avgt    2      _   _129_424.889          ns/op
- * dec     _100_000  avgt    2      _  2_699_360.743          ns/op
- * dec    1_000_000  avgt    2      _ 75_137_833.724          ns/op
- * dec   10_000_000  avgt    2     2_111_107_223.800          ns/op
- * dec  100_000_000  avgt    2    65_650_510_183.500          ns/op
- * dec  646_391_315  avgt    2  1_127_781_166_163.500         ns/op
+ * hex         1  avgt    2           24.032          ns/op
+ * hex        10  avgt    2           36.407          ns/op
+ * hex       100  avgt    2          145.416          ns/op
+ * hex      1000  avgt    2         1167.143          ns/op
+ * hex     10000  avgt    2        11504.050          ns/op
+ * hex    100000  avgt    2       109226.495          ns/op
+ * hex   1000000  avgt    2      1103771.706          ns/op
+ * hex  10000000  avgt    2     13125587.576          ns/op * 1.3
+ * hex 100000000  avgt    2    132543755.934          ns/op * 1.3
  *
  * recursive only:
  *      (digits)  Mode  Cnt                Score   Error  Units
- * dec    _   _100  avgt    2        _   _   _505.243          ns/op
- * dec    _  1_000  avgt    2        _   _  5_914.067          ns/op
- * dec    _ 10_000  avgt    2        _   _181_069.960          ns/op * 18
- * dec    _100_000  avgt    2        _  6_601_322.702          ns/op * 66
- * dec   1_000_000  avgt    2        _210_673_127.948          ns/op * 210
- * dec  10_000_000  avgt    2       6_317_343_012.000          ns/op * 631
+ * dec       100  avgt    2              505.243          ns/op
+ * dec      1000  avgt    2             5914.067          ns/op
+ * dec     10000  avgt    2           181069.960          ns/op * 18
+ * dec    100000  avgt    2          6601322.702          ns/op * 66
+ * dec   1000000  avgt    2        210673127.948          ns/op * 210
+ * dec  10000000  avgt    2       6317343012.000          ns/op * 631
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -101,40 +106,41 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
 
     @Param({
-            //"1"
-            //, "10"
-            "100"
+            "1"
+            , "10"
+            , "100"
             , "1000"
-            //  , "10000"
-            //  , "100000"
-            //  , "1000000"
-            //  , "10000000"
-            //  , "100000000"
-            //"646391315"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            , "100000000"
+            , "646391315"
 
     })
     public int digits;
-    private byte[] hexLiteral;
     private byte[] decLiteral;
-
-
 
     @Setup(Level.Trial)
     public void setUp() {
         String str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
         decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
-        hexLiteral = ("0x" + str).getBytes(StandardCharsets.ISO_8859_1);
     }
 
-    /*
-        @Benchmark
-        public BigInteger hex() {
-            return JavaBigIntegerParser.parseBigInteger(hexLiteral);
-        }
-*/
+
     @Benchmark
-    public BigInteger dec() {
+    public BigInteger hex() {
+        return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
+    }
+
+    @Benchmark
+    public BigInteger sdec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);
+    }
+
+    @Benchmark
+    public BigInteger pdec() {
+        return JavaBigIntegerParser.parallelParseBigInteger(decLiteral);
     }
 }
 

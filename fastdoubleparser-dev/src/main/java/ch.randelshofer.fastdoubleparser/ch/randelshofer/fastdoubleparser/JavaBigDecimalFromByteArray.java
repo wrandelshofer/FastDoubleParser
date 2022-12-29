@@ -12,7 +12,7 @@ import java.util.concurrent.RecursiveTask;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfTenFloor16Recursive;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.parallelMultiply;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
@@ -394,7 +394,7 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
         if (integerDigitsCount > 0) {
             if (integerDigitsCount > RECURSION_THRESHOLD) {
                 powersOfTen = createPowersOfTenFloor16Map();
-                fillPowersOfTenFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex, parallel);
+                fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex, parallel);
                 integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, powersOfTen, parallelThreshold);
             } else {
                 integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, null, parallelThreshold);
@@ -410,7 +410,7 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
                 if (powersOfTen == null) {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
-                fillPowersOfTenFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex, parallel);
+                fillPowersOfNFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex, parallel);
                 fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen, parallelThreshold);
             } else {
                 fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, null, parallelThreshold);

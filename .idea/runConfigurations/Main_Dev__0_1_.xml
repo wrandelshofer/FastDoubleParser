@@ -7,7 +7,7 @@
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="ch.randelshofer.fastdoubleparserdemo.*" />
+        <option name="PATTERN" value="ch.randelshofer.fastdoubleparser.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

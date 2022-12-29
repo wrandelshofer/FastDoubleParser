@@ -8,12 +8,19 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.concurrent.RecursiveTask;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfTenFloor16;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOf10Floor16;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.parallelMultiply;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 class JavaBigIntegerFromCharArray extends AbstractNumberParser {
     public final static int MAX_INPUT_LENGTH = 1_292_782_622;
+
+    /**
+     * The resulting value must fit into {@code 2^31 - 1} bits.
+     * The decimal representation of {@code 2^31 - 1} has 646,456,993 digits.
+     */
+    private static final int MAX_DECIMAL_DIGITS = 646_456_993;
+
     /**
      * Threshold on the number of digits for selecting the
      * recursive algorithm instead of the iterative algorithm.
@@ -130,7 +137,6 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
         }
-        index = skipZeroes(str, index, endIndex);
 
         switch (radix) {
         case 10:
@@ -140,12 +146,34 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
         default:
             return new BigInteger(new String(str, offset, length), radix);
         }
-
     }
 
     private BigInteger parseDecDigits(char[] str, int from, int to, boolean isNegative, int parallelThreshold) {
-        Map<Integer, BigInteger> powersOfTen = fillPowersOfTenFloor16(from, to, parallelThreshold < Integer.MAX_VALUE);
         int numDigits = to - from;
+        if (numDigits > 18) {
+            return parseManyDecDigits(str, from, to, isNegative, parallelThreshold);
+        }
+        int preroll = from + (numDigits & 7);
+        long significand = FastDoubleSwar.tryToParseUpTo7Digits(str, from, preroll);
+        boolean success = significand >= 0;
+        for (from = preroll; from < to; from += 8) {
+            int addend = FastDoubleSwar.tryToParseEightDigits(str, from);
+            success &= addend >= 0;
+            significand = significand * 100_000_000L + addend;
+        }
+        if (!success) {
+            throw new NumberFormatException(SYNTAX_ERROR);
+        }
+        return BigInteger.valueOf(isNegative ? -significand : significand);
+    }
+
+    private BigInteger parseManyDecDigits(char[] str, int from, int to, boolean isNegative, int parallelThreshold) {
+        from = skipZeroes(str, from, to);
+        Map<Integer, BigInteger> powersOfTen = fillPowersOf10Floor16(from, to, parallelThreshold < Integer.MAX_VALUE);
+        int numDigits = to - from;
+        if (numDigits > MAX_DECIMAL_DIGITS) {
+            throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
+        }
         BigInteger result;
         if (numDigits < parallelThreshold) {
             result = parseDigitsRecursive(str, from, to, powersOfTen);
@@ -155,12 +183,8 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
         return isNegative ? result.negate() : result;
     }
 
-    private int skipZeroes(char[] str, int from, int to) {
-        while (from < to && str[from] == '0') from++;
-        return from;
-    }
-
     private BigInteger parseHexDigits(char[] str, int from, int to, boolean isNegative) {
+        from = skipZeroes(str, from, to);
         int numDigits = to - from;
         if (numDigits <= 0) {
             return BigInteger.ZERO;
@@ -194,6 +218,16 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
         }
         BigInteger result = new BigInteger(bytes);
         return isNegative ? result.negate() : result;
+    }
+
+    private int skipZeroes(char[] str, int from, int to) {
+        while (from < to - 8 && FastDoubleSwar.isEightZeroes(str, from)) {
+            from += 8;
+        }
+        while (from < to && str[from] == '0') {
+            from++;
+        }
+        return from;
     }
 
     /**

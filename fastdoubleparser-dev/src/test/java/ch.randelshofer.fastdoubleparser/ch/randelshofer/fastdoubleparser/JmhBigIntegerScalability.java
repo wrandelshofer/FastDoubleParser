@@ -29,14 +29,14 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 20-ea+22-1594
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *    (digits)  Mode  Cnt    _   _   _  Score   Error  Units
- * m    _   _  1  avgt    2    _   _   _ 23.866          ns/op
- * m    _   _ 10  avgt    2    _   _   _ 64.853          ns/op
- * m    _   _100  avgt    2    _   _   _505.986          ns/op
- * m    _  1_000  avgt    2    _   _ 15_322.876          ns/op
- * m    _ 10_000  avgt    2    _  1_211_620.965          ns/op
- * m    _100_000  avgt    2    _117_030_135.430          ns/op
- * m   1_000_000  avgt    2  11_883_795_509.500          ns/op
+ *    (digits)  Mode  Cnt            Score   Error  Units
+ * m         1  avgt    2           23.866          ns/op
+ * m        10  avgt    2           64.853          ns/op
+ * m       100  avgt    2          505.986          ns/op
+ * m      1000  avgt    2        15322.876          ns/op
+ * m     10000  avgt    2      1211620.965          ns/op
+ * m    100000  avgt    2    117030135.430          ns/op
+ * m   1000000  avgt    2  11883795509.500          ns/op
  * </pre>
  */
 
@@ -57,7 +57,9 @@ public class JmhBigIntegerScalability {
             "10000",
             "100000",
             "1000000",
-            "1292782621"
+            "10000000",
+            "100000000",
+            "646391315"
     })
     public int digits;
     private String str;

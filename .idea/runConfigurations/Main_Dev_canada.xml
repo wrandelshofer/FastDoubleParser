@@ -1,7 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main-Java19 [0,1)" type="Application" factoryName="Application">
+  <configuration default="false" name="Main-Dev canada" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
-    <module name="fastdoubleparserdemo-Java19" />
+    <module name="fastdoubleparserdemo-dev" />
+    <option name="PROGRAM_PARAMETERS" value="data/canada.txt" />
+    <option name="VM_PARAMETERS" value="--enable-preview" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
     <extension name="coverage">
       <pattern>

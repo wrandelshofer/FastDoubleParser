@@ -12,7 +12,7 @@ import java.util.concurrent.RecursiveTask;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfTenFloor16Recursive;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.parallelMultiply;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
@@ -392,7 +392,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
         if (integerDigitsCount > 0) {
             if (integerDigitsCount > RECURSION_THRESHOLD) {
                 powersOfTen = createPowersOfTenFloor16Map();
-                fillPowersOfTenFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex, parallel);
+                fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex, parallel);
                 integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, powersOfTen, parallelThreshold);
             } else {
                 integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, null, parallelThreshold);
@@ -408,7 +408,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
                 if (powersOfTen == null) {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
-                fillPowersOfTenFloor16Recursive(powersOfTen, decimalPointIndex + 1, exponentIndicatorIndex, parallel);
+                fillPowersOfNFloor16Recursive(powersOfTen, decimalPointIndex + 1, exponentIndicatorIndex, parallel);
                 fractionalPart = parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, powersOfTen, parallelThreshold);
             } else {
                 fractionalPart = parseDigits(str, decimalPointIndex + 1, exponentIndicatorIndex, null, parallelThreshold);

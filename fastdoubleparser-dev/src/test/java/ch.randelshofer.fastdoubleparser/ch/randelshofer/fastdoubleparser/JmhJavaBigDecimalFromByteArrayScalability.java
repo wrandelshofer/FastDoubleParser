@@ -139,8 +139,7 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
             , "1000000"
             , "10000000"
             , "100000000"
-            , "1000000000"
-            , "1292782621"// The maximal number of supported digits in the significand
+            , "646391315"// The maximal number non-zero digits in the significand
 
     })
     public int digits;

@@ -194,11 +194,11 @@ on the same computer:
     abseil                                  :   411.11 MB/s (+/- 7.3 %)    23.63 Mfloat/s      42.33 ns/f 
     fastfloat                               :   741.32 MB/s (+/- 5.3 %)    42.60 Mfloat/s      23.47 ns/f 
 
-    OpenJDK 20-ea+22-1594
-    java.lang.Double                        :    80.96 MB/s (+/- 5.4 %)     4.65 Mfloat/s     214.95 ns/f
-    JavaDoubleParser String                 :   415.63 MB/s (+/-10.1 %)    23.88 Mfloat/s      41.87 ns/f
-    JavaDoubleParser char[]                 :   584.31 MB/s (+/- 9.7 %)    33.58 Mfloat/s      29.78 ns/f
-    JavaDoubleParser byte[]                 :   609.54 MB/s (+/- 7.4 %)    35.03 Mfloat/s      28.55 ns/f
+    OpenJDK 20-ea+29-2280
+    java.lang.Double            :    77.84 MB/s (+/- 4.1 %)     4.47 Mfloat/s     223.54 ns/f     1.00 speedup
+    JavaDoubleParser String     :   329.79 MB/s (+/-13.4 %)    18.95 Mfloat/s      52.77 ns/f     4.24 speedup
+    JavaDoubleParser char[]     :   521.30 MB/s (+/-15.2 %)    29.96 Mfloat/s      33.38 ns/f     6.70 speedup
+    JavaDoubleParser byte[]     :   560.48 MB/s (+/-12.7 %)    32.21 Mfloat/s      31.05 ns/f     7.20 speedup
 
 # Building and running the code
 

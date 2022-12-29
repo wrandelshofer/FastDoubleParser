@@ -86,8 +86,7 @@ public class JmhJavaBigDecimalFromCharSequenceScalability {
             //  , "1000000"
             //  , "10000000"
             // "100000000"
-            //  ,"1000000000"
-            "1200000000"
+            // , "646391315"// The maximal number non-zero digits in the significand
     })
     public int digits;
     private String integerPart;

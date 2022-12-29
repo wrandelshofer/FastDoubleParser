@@ -5,12 +5,14 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
 class FastIntegerMath {
     final static BigInteger TEN_POW_16 = BigInteger.valueOf(10_000_000_000_000_000L);
+    final static BigInteger FIVE_POW_16 = BigInteger.valueOf(152_587_890_625L);
     public static final BigInteger FIVE = BigInteger.valueOf(5);
 
     private final static BigInteger[] SMALL_POWERS_OF_TEN = new BigInteger[]{
@@ -99,15 +101,31 @@ class FastIntegerMath {
         return (((numDecimalDigits * 3402L) >>> 10) + 1);
     }
 
-    static Map<Integer, BigInteger> fillPowersOfTenFloor16(int from, int to, boolean parallel) {
-        NavigableMap<Integer, BigInteger> powersOfTen = new TreeMap<>();
-        powersOfTen.put(0, BigInteger.TEN);
-        powersOfTen.put(16, TEN_POW_16);
-        fillPowersOfTenFloor16Recursive(powersOfTen, from, to, parallel);
-        return powersOfTen;
+    /**
+     * Fills a map with powers of 10 floor 16.
+     *
+     * @param from     the start index of the character sequence that contains the digits
+     * @param to       the end index of the character sequence that contains the digits
+     * @param parallel whether to fill the map in parallel
+     * @return the filled map
+     */
+    static NavigableMap<Integer, BigInteger> fillPowersOf10Floor16(int from, int to, boolean parallel) {
+        // We fill the map with powers of 5
+        NavigableMap<Integer, BigInteger> powers = new TreeMap<>();
+        powers.put(0, BigInteger.valueOf(5));
+        powers.put(16, FIVE_POW_16);
+        fillPowersOfNFloor16Recursive(powers, from, to, parallel);
+
+        // Shift map entries to the left to obtain powers of ten
+        for (Iterator<Map.Entry<Integer, BigInteger>> iterator = powers.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<Integer, BigInteger> e = iterator.next();
+            e.setValue(e.getValue().shiftLeft(e.getKey()));
+        }
+
+        return powers;
     }
 
-    static void fillPowersOfTenFloor16Recursive(NavigableMap<Integer, BigInteger> powersOfTen, int from, int to, boolean parallel) {
+    static void fillPowersOfNFloor16Recursive(NavigableMap<Integer, BigInteger> powersOfTen, int from, int to, boolean parallel) {
         int numDigits = to - from;
         // base case:
         if (numDigits <= 18) {
@@ -117,12 +135,12 @@ class FastIntegerMath {
         int mid = splitFloor16(from, to);
         int n = to - mid;
         if (!powersOfTen.containsKey(n)) {
-            fillPowersOfTenFloor16Recursive(powersOfTen, from, mid, parallel);
-            fillPowersOfTenFloor16Recursive(powersOfTen, mid, to, parallel);
+            fillPowersOfNFloor16Recursive(powersOfTen, from, mid, parallel);
+            fillPowersOfNFloor16Recursive(powersOfTen, mid, to, parallel);
             powersOfTen.put(n, computeTenRaisedByNFloor16Recursive(powersOfTen, n, parallel));
         }
-        return;
     }
+
 
     /**
      * Computes {@code uint128 product = (uint64)x * (uint64)y}.
