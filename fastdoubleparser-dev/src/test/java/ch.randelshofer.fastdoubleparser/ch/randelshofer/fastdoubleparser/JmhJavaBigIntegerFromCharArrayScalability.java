@@ -18,7 +18,6 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
@@ -30,36 +29,36 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *           (digits)  Mode  Cnt      _        Score   Error  Units
- * hex              1  avgt           _       21.791          ns/op
- * hex             10  avgt           _       28.969          ns/op
- * hex            100  avgt           _      132.085          ns/op
- * hex           1000  avgt           _     1136.079          ns/op
- * hex          10000  avgt           _    10960.841          ns/op
- * hex         100000  avgt           _   107655.529          ns/op
- * hex        1000000  avgt           _  1159378.097          ns/op
- * hex       10000000  avgt           _ 13527667.547          ns/op
- * hex      100000000  avgt           _136392967.149          ns/op
- * parDec           1  avgt           _        3.175          ns/op
- * parDec          10  avgt           _       13.619          ns/op
- * parDec         100  avgt           _      425.135          ns/op
- * parDec        1000  avgt           _     4834.264          ns/op
- * parDec       10000  avgt           _   113510.205          ns/op
- * parDec      100000  avgt           _  2380942.294          ns/op
- * parDec     1000000  avgt           _ 66019385.211          ns/op
- * parDec    10000000  avgt          2_264509778.400          ns/op
- * parDec   100000000  avgt         60_824222999.000          ns/op
- * parDec   646391315  avgt       1009_741485660.000          ns/op
- * seqDec           1  avgt           _        3.428          ns/op
- * seqDec          10  avgt           _       16.976          ns/op
- * seqDec         100  avgt           _      473.670          ns/op
- * seqDec        1000  avgt           _     5513.915          ns/op
- * seqDec       10000  avgt           _   194360.022          ns/op
- * seqDec      100000  avgt           _  7570295.721          ns/op
- * seqDec     1000000  avgt           _255624625.950          ns/op
- * seqDec    10000000  avgt          4_908903103.667          ns/op
- * seqDec   100000000  avgt        123_633708709.000          ns/op
- * seqDec   646391315  avgt        806_917635773.000          ns/op
+ *          (digits)  Mode  Cnt     _        Score   Error  Units
+ * hex             1  avgt          _       20.936          ns/op
+ * hex            10  avgt          _       31.734          ns/op
+ * hex           100  avgt          _      159.260          ns/op
+ * hex          1000  avgt          _     1408.135          ns/op
+ * hex         10000  avgt          _    14324.334          ns/op
+ * hex        100000  avgt          _   141958.011          ns/op
+ * hex       1000000  avgt          _  1446624.174          ns/op
+ * hex      10000000  avgt          _ 16437162.558          ns/op
+ * hex     100000000  avgt          _163623055.290          ns/op
+ * parDec          1  avgt          _        3.048          ns/op
+ * parDec         10  avgt          _       17.486          ns/op
+ * parDec        100  avgt          _      435.753          ns/op
+ * parDec       1000  avgt          _     4892.866          ns/op
+ * parDec      10000  avgt          _   111659.249          ns/op
+ * parDec     100000  avgt          _  2402003.316          ns/op
+ * parDec    1000000  avgt          _ 68541837.137          ns/op
+ * parDec   10000000  avgt         2_405123965.800          ns/op
+ * parDec  100000000  avgt        60_993703656.000          ns/op
+ * parDec  646391315  avgt       936_806558929.000          ns/op
+ * seqDec          1  avgt          _        3.065          ns/op
+ * seqDec         10  avgt          _       15.378          ns/op
+ * seqDec        100  avgt          _      448.063          ns/op
+ * seqDec       1000  avgt          _     5161.490          ns/op
+ * seqDec      10000  avgt          _   165607.185          ns/op
+ * seqDec     100000  avgt          _  6283289.137          ns/op
+ * seqDec    1000000  avgt          _205836024.143          ns/op
+ * seqDec   10000000  avgt         4_112426090.000          ns/op
+ * seqDec  100000000  avgt        97_338750044.000          ns/op
+ * seqDec  646391315  avgt       601_801982449.000          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -75,11 +74,11 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 })
 @Measurement(iterations = 1)
-@Warmup(iterations = 1)
+@Warmup(iterations = 0)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaBigIntegerFromByteArrayScalability {
+public class JmhJavaBigIntegerFromCharArrayScalability {
 
 
     @Param({
@@ -96,15 +95,14 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
     })
     public int digits;
-    private byte[] decLiteral;
+    private char[] decLiteral;
 
     @Setup(Level.Trial)
     public void setUp() {
         String str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
-        decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
+        decLiteral = str.toCharArray();
     }
 
-    /*
     @Benchmark
     public BigInteger hex() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
@@ -114,7 +112,7 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
     public BigInteger seqDec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);
     }
-*/
+
     @Benchmark
     public BigInteger parDec() {
         return JavaBigIntegerParser.parallelParseBigInteger(decLiteral);

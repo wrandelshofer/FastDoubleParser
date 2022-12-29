@@ -11,10 +11,9 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 class FastIntegerMath {
+    public static final BigInteger FIVE = BigInteger.valueOf(5);
     final static BigInteger TEN_POW_16 = BigInteger.valueOf(10_000_000_000_000_000L);
     final static BigInteger FIVE_POW_16 = BigInteger.valueOf(152_587_890_625L);
-    public static final BigInteger FIVE = BigInteger.valueOf(5);
-
     private final static BigInteger[] SMALL_POWERS_OF_TEN = new BigInteger[]{
             BigInteger.ONE,
             BigInteger.TEN,
@@ -161,6 +160,27 @@ class FastIntegerMath {
         return new UInt128(Math.unsignedMultiplyHigh(x, y), x * y);
     }
 
+    static int[] getMagnitude(BigInteger a) {
+        byte[] bytes = a.toByteArray();
+        int[] ints = new int[(bytes.length + 3) >> 2];
+        if (ints.length == 0) {
+            return ints;
+        }
+
+        int modulo = bytes.length & 3;
+        int value = 0;
+        for (int i = 0; i < modulo; i++) {
+            value = (value << 8) | (bytes[i] & 0xff);
+        }
+        ints[0] = value;
+
+        int j = modulo == 0 ? 0 : 1;
+        for (int i = modulo; i < bytes.length; i += 4) {
+            ints[j++] = FastDoubleSwar.readIntBE(bytes, i);
+        }
+        return ints;
+    }
+
     /**
      * Returns {@code a * 10}.
      * <p>
@@ -201,6 +221,14 @@ class FastIntegerMath {
         return (a + (a << 2)) << 1;
     }
 
+    static BigInteger newBigInteger(int signum, int[] magnitude) {
+        byte[] bytes = new byte[magnitude.length << 2];
+        for (int i = 0; i < magnitude.length; i++) {
+            FastDoubleSwar.writeIntBE(bytes, i << 2, magnitude[i]);
+        }
+        return new BigInteger(signum, bytes);
+    }
+
     static BigInteger parallelMultiply(BigInteger a, BigInteger b, boolean parallel) {
         return parallel ? a.parallelMultiply(b) : a.multiply(b);
     }
@@ -219,5 +247,4 @@ class FastIntegerMath {
             this.low = low;
         }
     }
-
 }

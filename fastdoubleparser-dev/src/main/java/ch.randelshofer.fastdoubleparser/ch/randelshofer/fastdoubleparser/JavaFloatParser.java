@@ -75,7 +75,7 @@ public class JavaFloatParser {
      * @param str the string to be parsed, a byte array with characters
      *            in ISO-8859-1, ASCII or UTF-8 encoding
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException  if the string is null
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static float parseFloat(byte[] str) throws NumberFormatException {
@@ -91,9 +91,9 @@ public class JavaFloatParser {
      * @param offset The index of the first byte to parse
      * @param length The number of bytes to parse
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException if the string can not be parsed successfully
+     * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static float parseFloat(byte[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = BYTE_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
@@ -106,7 +106,7 @@ public class JavaFloatParser {
      *
      * @param str the string to be parsed
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException  if the string is null
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static float parseFloat(char[] str) throws NumberFormatException {
@@ -122,9 +122,9 @@ public class JavaFloatParser {
      * @param offset The index of the first character to parse
      * @param length The number of characters to parse
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException if the string can not be parsed successfully
+     * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static float parseFloat(char[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);

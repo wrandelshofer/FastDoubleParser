@@ -226,4 +226,32 @@ public class FastIntegerMath {
         }
     }
 
+    static BigInteger newBigInteger(int signum, int[] magnitude) {
+        byte[] bytes = new byte[magnitude.length << 2];
+        for (int i = 0; i < magnitude.length; i++) {
+            FastDoubleSwar.writeIntBE(bytes, i << 2, magnitude[i]);
+        }
+        return new BigInteger(signum, bytes);
+    }
+
+    static int[] getMagnitude(BigInteger a) {
+        byte[] bytes = a.toByteArray();
+        int[] ints = new int[(bytes.length + 3) >> 2];
+        if (ints.length == 0) {
+            return ints;
+        }
+
+        int modulo = bytes.length & 3;
+        int value = 0;
+        for (int i = 0; i < modulo; i++) {
+            value = (value << 8) | (bytes[i] & 0xff);
+        }
+        ints[0] = value;
+
+        int j = modulo == 0 ? 0 : 1;
+        for (int i = modulo; i < bytes.length; i += 4) {
+            ints[j++] = FastDoubleSwar.readIntBE(bytes, i);
+        }
+        return ints;
+    }
 }

@@ -18,9 +18,18 @@ public class SchoenhageStrassenMultiplierTest {
     @TestFactory
     public List<DynamicTest> dynamicTests() {
         return List.of(
-                dynamicTest("'3' '0'**84 * '4' '0'**84", () -> test(
+                dynamicTest("'3','0'**84 * '4','0'**84", () -> test(
                         "3" + repeat("0", 84),
-                        "4" + repeat("0", 84)))
+                        "4" + repeat("0", 84))),
+                dynamicTest("'-','3','0'**84 * '4','0'**84", () -> test(
+                        "-3" + repeat("0", 84),
+                        "4" + repeat("0", 84))),
+                dynamicTest("'-','3','0'**84 * '-','4','0'**84", () -> test(
+                        "-3" + repeat("0", 84),
+                        "-4" + repeat("0", 84))),
+                dynamicTest("'3','0'**100_000 * '4','0'**100_000", () -> test(
+                        "3" + repeat("0", 100_000),
+                        "4" + repeat("0", 100_000)))
         );
 
     }

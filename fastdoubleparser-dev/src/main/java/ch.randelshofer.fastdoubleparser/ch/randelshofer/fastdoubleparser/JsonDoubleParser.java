@@ -89,9 +89,9 @@ public class JsonDoubleParser {
      * @param str the string to be parsed, a byte array with characters
      *            in ISO-8859-1, ASCII or UTF-8 encoding
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException if the string can not be parsed successfully
+     * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static double parseDouble(byte[] str) throws NumberFormatException {
         return parseDouble(str, 0, str.length);
@@ -106,9 +106,9 @@ public class JsonDoubleParser {
      * @param offset The index of the first byte to parse
      * @param length The number of bytes to parse
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException if the string can not be parsed successfully
+     * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static double parseDouble(byte[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = BYTE_ARRAY_PARSER.parseNumber(str, offset, length);
@@ -120,7 +120,7 @@ public class JsonDoubleParser {
      *
      * @param str the string to be parsed
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException  if the string is null
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static double parseDouble(char[] str) throws NumberFormatException {
@@ -138,7 +138,7 @@ public class JsonDoubleParser {
      * @param offset The index of the first character to parse
      * @param length The number of characters to parse
      * @return the parsed value
-     * @throws NullPointerException if the string is null
+     * @throws NullPointerException  if the string is null
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static double parseDouble(char[] str, int offset, int length) throws NumberFormatException {

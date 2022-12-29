@@ -46,28 +46,6 @@ class FastDoubleVector {
             new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
 
     /**
-     * Tries to parse eight decimal digits from a char array using the
-     * Java Vector API.
-     *
-     * @param a      contains 8 utf-16 characters starting at offset
-     * @param offset the offset into the array
-     * @return the parsed number,
-     * returns a negative value if {@code value} does not contain 8 hex digits
-     */
-    public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
-                .sub((short) '0');
-        // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
-            return -1;
-        }
-        return (int) vec
-                .castShape(IntVector.SPECIES_256, 0)
-                .mul(POWERS_OF_10)
-                .reduceLanesToLong(ADD);
-    }
-
-    /**
      * Tries to parse eight digits at once using the
      * Java Vector API.
      *
@@ -89,6 +67,28 @@ class FastDoubleVector {
                 | (long) str.charAt(offset + 7) << 48;
 
         return FastDoubleVector.tryToParseEightDigitsUtf16(first, second);
+    }
+
+    /**
+     * Tries to parse eight decimal digits from a char array using the
+     * Java Vector API.
+     *
+     * @param a      contains 8 utf-16 characters starting at offset
+     * @param offset the offset into the array
+     * @return the parsed number,
+     * returns a negative value if {@code value} does not contain 8 hex digits
+     */
+    public static int tryToParseEightDigitsUtf16(char[] a, int offset) {
+        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
+                .sub((short) '0');
+        // With an unsigned gt we only need to check for > 9
+        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
+            return -1;
+        }
+        return (int) vec
+                .castShape(IntVector.SPECIES_256, 0)
+                .mul(POWERS_OF_10)
+                .reduceLanesToLong(ADD);
     }
 
     /**

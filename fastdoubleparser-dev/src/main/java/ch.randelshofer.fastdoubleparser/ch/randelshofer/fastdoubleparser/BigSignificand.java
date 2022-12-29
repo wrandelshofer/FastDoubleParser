@@ -13,12 +13,12 @@ import java.nio.ByteOrder;
  * A mutable significand with a fixed number of bits.
  */
 class BigSignificand {
-    private final byte[] x;
-    private int firstNonZeroInt;
     private static final long LONG_MASK = 0xffffffffL;
-    private final int numInts;
     private final static VarHandle readIntBE =
             MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.BIG_ENDIAN);
+    private final byte[] x;
+    private final int numInts;
+    private int firstNonZeroInt;
 
     public BigSignificand(long numBits) {
         if (numBits <= 0 || numBits >= Integer.MAX_VALUE) {
@@ -32,24 +32,23 @@ class BigSignificand {
     }
 
     /**
-     * Multiplies the significand with the specified value in place.
+     * Adds the specified value to the significand in place.
      *
-     * @param value the multiplication factor, must be a non-negative value
+     * @param value the addend, must be a non-negative value
      * @throws ArrayIndexOutOfBoundsException on overflow
      */
-    public void mul(int value) {
-        long factor = value & LONG_MASK;
-        long carry = 0;
+    public void add(int value) {
+        if (value == 0) {
+            return;
+        }
+        long carry = value & LONG_MASK;
         int i = numInts - 1;
-        for (; i >= firstNonZeroInt; i--) {
-            long product = factor * (x(i) & LONG_MASK) + carry;
-            x(i, (int) product);
-            carry = product >>> 32;
+        for (; carry != 0; i--) {
+            long sum = (x(i) & LONG_MASK) + carry;
+            x(i, (int) sum);
+            carry = sum >>> 32;
         }
-        if (carry != 0) {
-            x(i, (int) carry);
-            firstNonZeroInt = i;
-        }
+        firstNonZeroInt = Math.min(firstNonZeroInt, i + 1);
     }
 
     /**
@@ -75,33 +74,29 @@ class BigSignificand {
         }
     }
 
-    private int x(int i) {
-        return (int) readIntBE.get(x, i << 2);
-    }
-
-    private void x(int i, int value) {
-        readIntBE.set(x, i << 2, value);
-    }
-
-
     /**
-     * Adds the specified value to the significand in place.
+     * Multiplies the significand with the specified value in place.
      *
-     * @param value the addend, must be a non-negative value
+     * @param value the multiplication factor, must be a non-negative value
      * @throws ArrayIndexOutOfBoundsException on overflow
      */
-    public void add(int value) {
-        if (value == 0) {
-            return;
-        }
-        long carry = value & LONG_MASK;
+    public void mul(int value) {
+        long factor = value & LONG_MASK;
+        long carry = 0;
         int i = numInts - 1;
-        for (; carry != 0; i--) {
-            long sum = (x(i) & LONG_MASK) + carry;
-            x(i, (int) sum);
-            carry = sum >>> 32;
+        for (; i >= firstNonZeroInt; i--) {
+            long product = factor * (x(i) & LONG_MASK) + carry;
+            x(i, (int) product);
+            carry = product >>> 32;
         }
-        firstNonZeroInt = Math.min(firstNonZeroInt, i + 1);
+        if (carry != 0) {
+            x(i, (int) carry);
+            firstNonZeroInt = i;
+        }
+    }
+
+    public BigInteger toBigInteger() {
+        return new BigInteger(x);
     }
 
     @Override
@@ -109,9 +104,11 @@ class BigSignificand {
         return toBigInteger().toString();
     }
 
-    public BigInteger toBigInteger() {
-        return new BigInteger(x);
+    private void x(int i, int value) {
+        readIntBE.set(x, i << 2, value);
     }
 
-
+    private int x(int i) {
+        return (int) readIntBE.get(x, i << 2);
+    }
 }

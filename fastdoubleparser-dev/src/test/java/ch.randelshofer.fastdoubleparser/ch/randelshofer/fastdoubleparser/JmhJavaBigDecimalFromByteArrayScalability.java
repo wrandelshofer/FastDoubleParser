@@ -27,60 +27,44 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.35
- * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+27-2213
+ * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *       (digits)  Mode  Cnt     _        Score   Error  Units
+ * seq         24  avgt          _       78.961          ns/op
+ * seq          1  avgt          _       10.397          ns/op
+ * seq         10  avgt          _       17.432          ns/op
+ * seq        100  avgt          _      232.310          ns/op
+ * seq       1000  avgt          _     5085.790          ns/op
+ * seq      10000  avgt          _   178608.728          ns/op
+ * seq     100000  avgt          _  6997056.928          ns/op
+ * seq    1000000  avgt          _224134358.400          ns/op
+ * seq   10000000  avgt         4_307235737.000          ns/op
+ * seq  100000000  avgt       105_586368850.000          ns/op
+ * seq  646391315  avgt       627_362411969.000          ns/op
  *
- *      (digits)  Mode  Cnt             Score   Error  Units
- * f           1  avgt    2            14.505          ns/op
- * f          10  avgt    2            19.631          ns/op
- * f         100  avgt    2           599.830          ns/op
- * f        1000  avgt    2          6864.292          ns/op
- * f       10000  avgt    2        291812.634          ns/op
- * f      100000  avgt    2       9894570.057          ns/op
- * f     1000000  avgt    2     314264045.875          ns/op
- * f    10000000  avgt    2    9647730488.750          ns/op
- * f   100000000  avgt    2  219840186170.000          ns/op
- * fp          1  avgt    2            11.359          ns/op
- * fp         10  avgt    2            16.575          ns/op
- * fp        100  avgt    2           570.128          ns/op
- * fp       1000  avgt    2          6877.465          ns/op
- * fp      10000  avgt    2        240066.359          ns/op
- * fp     100000  avgt    2       4884974.972          ns/op
- * fp    1000000  avgt    2      80530354.594          ns/op
- * fp   10000000  avgt    2    2335475538.100          ns/op
- * fp  100000000  avgt    2   72359890033.500          ns/op
- * ip          1  avgt    2             8.193          ns/op
- * ip         10  avgt    2            14.488          ns/op
- * ip        100  avgt    2           205.538          ns/op
- * ip       1000  avgt    2          5098.756          ns/op
- * ip      10000  avgt    2        123802.196          ns/op
- * ip     100000  avgt    2       2578333.298          ns/op
- * ip    1000000  avgt    2      69012871.814          ns/op
- * ip   10000000  avgt    2    1954652082.500          ns/op
- * ip  100000000  avgt    2   61191469918.500          ns/op
- * </pre>
- * <pre>
  * recursive only (recursion threshold=0)
- *    (digits)  Mode  Cnt           Score   Error  Units
- * ir         1  avgt    2          11.857          ns/op
- * ir        10  avgt    2          15.118          ns/op
- * ir       100  avgt    2         545.510          ns/op
- * ir      1000  avgt    2        6251.473          ns/op
- * ir     10000  avgt    2      196700.757          ns/op
- * ir    100000  avgt    2     6627368.179          ns/op
- * ir   1000000  avgt    2   209404227.114          ns/op
- * ir  10000000  avgt    2  6137410866.000          ns/op
+ *      (digits)  Mode  Cnt      _        Score   Error  Units
+ * rec        24  avgt           _      122.948          ns/op
+ * rec         1  avgt           _        8.775          ns/op
+ * rec        10  avgt           _       17.646          ns/op
+ * rec       100  avgt           _      703.225          ns/op
+ * rec      1000  avgt           _     8707.115          ns/op
+ * rec     10000  avgt           _   229812.381          ns/op
+ * rec    100000  avgt           _  7127677.071          ns/op
+ * rec   1000000  avgt           _229351230.159          ns/op
+ * rec  10000000  avgt          4_322373197.000          ns/op
  *
  * iterative only (recursion threshold=Integer.MAX_VALUE)
- *    (digits)  Mode  Cnt             Score   Error  Units
- * ii         1  avgt    2            12.875          ns/op
- * ii        10  avgt    2            18.067          ns/op
- * ii       100  avgt    2           218.580          ns/op
- * ii      1000  avgt    2          6205.464          ns/op
- * ii     10000  avgt    2        560241.743          ns/op
- * ii    100000  avgt    2      61370640.207          ns/op
- * ii   1000000  avgt    2    5376094842.000          ns/op
- * ii  10000000  avgt    2  507520375437.000          ns/op
+ *      (digits)  Mode  Cnt     _        Score   Error  Units
+ * itr        24  avgt          _       85.368          ns/op
+ * itr         1  avgt          _       11.053          ns/op
+ * itr        10  avgt          _       18.350          ns/op
+ * itr       100  avgt          _      233.284          ns/op
+ * itr      1000  avgt          _     6581.352          ns/op
+ * itr     10000  avgt          _   539732.484          ns/op
+ * itr    100000  avgt          _ 51324255.979          ns/op
+ * itr   1000000  avgt         5_049179432.000          ns/op
+ * itr  10000000  avgt       537_316705670.000          ns/op
  * </pre>
  *
  * <pre>
@@ -88,29 +72,29 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # VM version: OpenJDK 64-Bit Server VM, Oracle Corporation, 20-ea+22-1594
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  * parse only:
- *      (digits)  Mode  Cnt          Score   Error  Units
- * fp           1  avgt    2         10.046          ns/op
- * fp          10  avgt    2         14.924          ns/op
- * fp         100  avgt    2         21.201          ns/op
- * fp        1000  avgt    2         75.387          ns/op
- * fp       10000  avgt    2        629.977          ns/op
- * fp      100000  avgt    2       7197.921          ns/op
- * fp     1000000  avgt    2      93134.505          ns/op
- * fp    10000000  avgt    2    1324385.898          ns/op
- * fp   100000000  avgt    2   13841659.306          ns/op
- * fp  1000000000  avgt    2  139549257.979          ns/op
- * fp  1292782621  avgt    2  183389538.331          ns/op
- * ip           1  avgt    2          7.095          ns/op
- * ip          10  avgt    2         12.980          ns/op
- * ip         100  avgt    2         18.822          ns/op
- * ip        1000  avgt    2         81.936          ns/op
- * ip       10000  avgt    2        712.674          ns/op
- * ip      100000  avgt    2       6844.904          ns/op
- * ip     1000000  avgt    2      86105.059          ns/op
- * ip    10000000  avgt    2    1241240.895          ns/op
- * ip   100000000  avgt    2   12981130.860          ns/op
- * ip  1000000000  avgt    2  133794721.567          ns/op
- * ip  1292782621  avgt    2  170464284.271          ns/op
+ *         (digits)  Mode  Cnt          Score   Error  Units
+ * fprs           1  avgt    2         10.046          ns/op
+ * fprs          10  avgt    2         14.924          ns/op
+ * fprs         100  avgt    2         21.201          ns/op
+ * fprs        1000  avgt    2         75.387          ns/op
+ * fprs       10000  avgt    2        629.977          ns/op
+ * fprs      100000  avgt    2       7197.921          ns/op
+ * fprs     1000000  avgt    2      93134.505          ns/op
+ * fprs    10000000  avgt    2    1324385.898          ns/op
+ * fprs   100000000  avgt    2   13841659.306          ns/op
+ * fprs  1000000000  avgt    2  139549257.979          ns/op
+ * fprs  1292782621  avgt    2  183389538.331          ns/op
+ * iprs           1  avgt    2          7.095          ns/op
+ * iprs          10  avgt    2         12.980          ns/op
+ * iprs         100  avgt    2         18.822          ns/op
+ * iprs        1000  avgt    2         81.936          ns/op
+ * iprs       10000  avgt    2        712.674          ns/op
+ * iprs      100000  avgt    2       6844.904          ns/op
+ * iprs     1000000  avgt    2      86105.059          ns/op
+ * iprs    10000000  avgt    2    1241240.895          ns/op
+ * iprs   100000000  avgt    2   12981130.860          ns/op
+ * iprs  1000000000  avgt    2  133794721.567          ns/op
+ * iprs  1292782621  avgt    2  170464284.271          ns/op
  * </pre>
  */
 
@@ -122,8 +106,8 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
         //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
 
 })
-@Measurement(iterations = 2)
-@Warmup(iterations = 2)
+@Measurement(iterations = 1)
+@Warmup(iterations = 0)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -138,8 +122,8 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
             , "100000"
             , "1000000"
             , "10000000"
-            , "100000000"
-            , "646391315"// The maximal number non-zero digits in the significand
+            //, "100000000"
+            //, "646391315"// The maximal number non-zero digits in the significand
 
     })
     public int digits;
@@ -147,13 +131,19 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
 
     @Setup(Level.Trial)
     public void setUp() {
-        str = repeat("7", digits).getBytes(StandardCharsets.UTF_8);
+        str = repeat("9806543217", (digits + 9) / 10).substring(0, digits).getBytes(StandardCharsets.ISO_8859_1);
     }
 
     @Benchmark
-    public BigDecimal m() {
+    public BigDecimal seq() {
         return JavaBigDecimalParser.parseBigDecimal(str);
     }
+
+    /*
+    @Benchmark
+    public BigDecimal par() {
+        return JavaBigDecimalParser.parallelParseBigDecimal(str);
+    }*/
 }
 
 

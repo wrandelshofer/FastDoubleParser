@@ -756,6 +756,51 @@ class FastDoubleMath {
 
     }
 
+    /**
+     * Tries to compute {@code significand * 10^exponent} exactly using a fast
+     * algorithm; and if {@code isNegative} is true, negate the result;
+     * the significand can be truncated.
+     *
+     * @param isNegative                     true if the sign is negative
+     * @param significand                    the significand
+     * @param exponent                       the exponent number (the power)
+     * @param isSignificandTruncated         true if significand has been truncated
+     * @param exponentOfTruncatedSignificand the exponent number of the truncated significand
+     * @return the double value,
+     * or {@link Double#NaN} if the fast path failed.
+     */
+    static double tryDecFloatToDoubleTruncated(boolean isNegative, long significand, int exponent,
+                                               boolean isSignificandTruncated,
+                                               final int exponentOfTruncatedSignificand) {
+        if (significand == 0) {
+            return isNegative ? -0.0 : 0.0;
+        }
+
+        final double result;
+        if (isSignificandTruncated) {
+            // We have too many digits. We may have to round up.
+            // To know whether rounding up is needed, we may have to examine up to 768 digits.
+
+            // There are cases, in which rounding has no effect.
+            if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponentOfTruncatedSignificand
+                    && exponentOfTruncatedSignificand <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
+                double withoutRounding = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
+                double roundedUp = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
+                if (!Double.isNaN(withoutRounding) && roundedUp == withoutRounding) {
+                    return withoutRounding;
+                }
+            }
+
+            // We have to take a slow path.
+            result = Double.NaN;
+
+        } else if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponent && exponent <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
+            result = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand, exponent);
+        } else {
+            result = Double.NaN;
+        }
+        return result;
+    }
 
     /**
      * Tries to compute {@code significand * 10^power} exactly using
@@ -942,92 +987,6 @@ class FastDoubleMath {
     }
 
     /**
-     * Tries to compute {@code significand * 10^exponent} exactly using a fast
-     * algorithm; and if {@code isNegative} is true, negate the result;
-     * the significand can be truncated.
-     *
-     * @param isNegative                     true if the sign is negative
-     * @param significand                    the significand
-     * @param exponent                       the exponent number (the power)
-     * @param isSignificandTruncated         true if significand has been truncated
-     * @param exponentOfTruncatedSignificand the exponent number of the truncated significand
-     * @return the double value,
-     * or {@link Double#NaN} if the fast path failed.
-     */
-    static double tryDecFloatToDoubleTruncated(boolean isNegative, long significand, int exponent,
-                                               boolean isSignificandTruncated,
-                                               final int exponentOfTruncatedSignificand) {
-        if (significand == 0) {
-            return isNegative ? -0.0 : 0.0;
-        }
-
-        final double result;
-        if (isSignificandTruncated) {
-            // We have too many digits. We may have to round up.
-            // To know whether rounding up is needed, we may have to examine up to 768 digits.
-
-            // There are cases, in which rounding has no effect.
-            if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponentOfTruncatedSignificand
-                    && exponentOfTruncatedSignificand <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
-                double withoutRounding = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
-                double roundedUp = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
-                if (!Double.isNaN(withoutRounding) && roundedUp == withoutRounding) {
-                    return withoutRounding;
-                }
-            }
-
-            // We have to take a slow path.
-            result = Double.NaN;
-
-        } else if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponent && exponent <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
-            result = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand, exponent);
-        } else {
-            result = Double.NaN;
-        }
-        return result;
-    }
-
-    /**
-     * Tries to compute {@code significand * 2^power} exactly using a fast
-     * algorithm; and if {@code isNegative} is true, negate the result.
-     *
-     * @param isNegative  true if the sign is negative
-     * @param significand the significand, must be positive
-     * @param power       the power of the exponent, must be between
-     *                    {@link #DOUBLE_MIN_EXPONENT_POWER_OF_TWO} and
-     *                    {@link #DOUBLE_MAX_EXPONENT_POWER_OF_TWO}.
-     * @return the double value,
-     */
-    static double tryHexFloatToDoubleWithFastAlgorithm(boolean isNegative, long significand, int power) {
-
-        // we start with a fast path
-        // We try to mimic the fast described by Clinger WD for decimal
-        // float number literals. How to read floating point numbers accurately.
-        // ACM SIGPLAN Notices. 1990
-        if (Long.compareUnsigned(significand, 0x1fffffffffffffL) <= 0) {
-            // convert the integer into a double. This is lossless since
-            // 0 <= i <= 2^53 - 1.
-            double d = (double) significand;
-            //
-            // The general idea is as follows.
-            // If 0 <= s < 2^53  then
-            // 1) Both s and p can be represented exactly as 64-bit floating-point
-            // values (binary64).
-            // 2) Because s and p can be represented exactly as floating-point values,
-            // then s * p will produce correctly rounded values.
-            //
-            d = d * Math.scalb(1d, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
-        }
-
-        // The fast path has failed
-        return Double.NaN;
-    }
-
-    /**
      * Tries to compute {@code significand * 2^exponent} exactly using a fast
      * algorithm; and if {@code isNegative} is true, negate the result;
      * the significand can be truncated.
@@ -1070,5 +1029,45 @@ class FastDoubleMath {
             outDouble = Double.NaN;
         }
         return outDouble;
+    }
+
+    /**
+     * Tries to compute {@code significand * 2^power} exactly using a fast
+     * algorithm; and if {@code isNegative} is true, negate the result.
+     *
+     * @param isNegative  true if the sign is negative
+     * @param significand the significand, must be positive
+     * @param power       the power of the exponent, must be between
+     *                    {@link #DOUBLE_MIN_EXPONENT_POWER_OF_TWO} and
+     *                    {@link #DOUBLE_MAX_EXPONENT_POWER_OF_TWO}.
+     * @return the double value,
+     */
+    static double tryHexFloatToDoubleWithFastAlgorithm(boolean isNegative, long significand, int power) {
+
+        // we start with a fast path
+        // We try to mimic the fast described by Clinger WD for decimal
+        // float number literals. How to read floating point numbers accurately.
+        // ACM SIGPLAN Notices. 1990
+        if (Long.compareUnsigned(significand, 0x1fffffffffffffL) <= 0) {
+            // convert the integer into a double. This is lossless since
+            // 0 <= i <= 2^53 - 1.
+            double d = (double) significand;
+            //
+            // The general idea is as follows.
+            // If 0 <= s < 2^53  then
+            // 1) Both s and p can be represented exactly as 64-bit floating-point
+            // values (binary64).
+            // 2) Because s and p can be represented exactly as floating-point values,
+            // then s * p will produce correctly rounded values.
+            //
+            d = d * Math.scalb(1d, power);
+            if (isNegative) {
+                d = -d;
+            }
+            return d;
+        }
+
+        // The fast path has failed
+        return Double.NaN;
     }
 }

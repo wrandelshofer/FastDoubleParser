@@ -236,12 +236,12 @@ class FastDoubleSwar {
         return result;
     }
 
-    public static long readLongBE(byte[] a, int offset) {
-        return (long) readLongBE.get(a, offset);
-    }
-
     public static int readIntBE(byte[] a, int offset) {
         return (int) readIntBE.get(a, offset);
+    }
+
+    public static long readLongBE(byte[] a, int offset) {
+        return (long) readLongBE.get(a, offset);
     }
 
     public static long readLongLE(byte[] a, int offset) {
@@ -595,6 +595,10 @@ class FastDoubleSwar {
 
     public static void writeIntBE(byte[] a, int offset, int value) {
         readIntBE.set(a, offset, value);
+    }
+
+    public static void writeIntLE(byte[] a, int offset, int value) {
+        readIntLE.set(a, offset, value);
     }
 
     public static void writeLongBE(byte[] a, int offset, long value) {

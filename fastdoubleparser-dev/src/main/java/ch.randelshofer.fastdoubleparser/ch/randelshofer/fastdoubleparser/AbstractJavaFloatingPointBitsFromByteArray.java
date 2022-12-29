@@ -32,6 +32,17 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
     }
 
     /**
+     * @return a NaN constant in the specialized type wrapped in a {@code long}
+     */
+    abstract long nan();
+
+    /**
+     * @return a negative infinity constant in the specialized type wrapped in a
+     * {@code long}
+     */
+    abstract long negativeInfinity();
+
+    /**
      * Parses a {@code DecimalFloatingPointLiteral} production with optional
      * trailing white space until the end of the text.
      * Given that we have already consumed the optional leading zero of
@@ -224,31 +235,6 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
     }
 
-    private long parseNaNOrInfinity(byte[] str, int index, int endIndex, boolean isNegative) {
-        if (str[index] == 'N') {
-            if (index + 2 < endIndex
-                    // && str[index] == 'N'
-                    && str[index + 1] == 'a'
-                    && str[index + 2] == 'N') {
-
-                index = skipWhitespace(str, index + 3, endIndex);
-                if (index == endIndex) {
-                    return nan();
-                }
-            }
-        } else {
-            if (index + 7 < endIndex
-                    && FastDoubleSwar.readLongLE(str, index) == 0x7974696e69666e49L//Infinity
-            ) {
-                index = skipWhitespace(str, index + 8, endIndex);
-                if (index == endIndex) {
-                    return isNegative ? negativeInfinity() : positiveInfinity();
-                }
-            }
-        }
-        throw new NumberFormatException(SYNTAX_ERROR);
-    }
-
     /**
      * Parses the following rules
      * (more rules are defined in {@link AbstractFloatValueParser}):
@@ -386,16 +372,30 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
                 virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber);
     }
 
-    /**
-     * @return a NaN constant in the specialized type wrapped in a {@code long}
-     */
-    abstract long nan();
+    private long parseNaNOrInfinity(byte[] str, int index, int endIndex, boolean isNegative) {
+        if (str[index] == 'N') {
+            if (index + 2 < endIndex
+                    // && str[index] == 'N'
+                    && str[index + 1] == 'a'
+                    && str[index + 2] == 'N') {
 
-    /**
-     * @return a negative infinity constant in the specialized type wrapped in a
-     * {@code long}
-     */
-    abstract long negativeInfinity();
+                index = skipWhitespace(str, index + 3, endIndex);
+                if (index == endIndex) {
+                    return nan();
+                }
+            }
+        } else {
+            if (index + 7 < endIndex
+                    && FastDoubleSwar.readLongLE(str, index) == 0x7974696e69666e49L//Infinity
+            ) {
+                index = skipWhitespace(str, index + 8, endIndex);
+                if (index == endIndex) {
+                    return isNegative ? negativeInfinity() : positiveInfinity();
+                }
+            }
+        }
+        throw new NumberFormatException(SYNTAX_ERROR);
+    }
 
     /**
      * @return a positive infinity constant in the specialized type wrapped in a

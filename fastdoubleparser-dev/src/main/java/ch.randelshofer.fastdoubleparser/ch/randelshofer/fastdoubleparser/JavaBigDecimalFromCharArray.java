@@ -6,15 +6,14 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Map;
 import java.util.NavigableMap;
-import java.util.concurrent.RecursiveTask;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.parallelMultiply;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
+import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharArray.DEFAULT_PARALLEL_THRESHOLD;
+import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharArray.RECURSION_THRESHOLD;
+import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharArray.parseDigits;
 
 
 /**
@@ -22,36 +21,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
  */
 final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
     public final static int MAX_INPUT_LENGTH = 1_292_782_635;
-    /**
-     * Threshold on the number of digits for selecting the
-     * recursive algorithm instead of the iterative algorithm.
-     * <p>
-     * Set this to {@link Integer#MAX_VALUE} if you only want to use the
-     * iterative algorithm.
-     * <p>
-     * Set this to {@code 0} if you only want to use the recursive algorithm.
-     * <p>
-     * Rationale for choosing a specific threshold value:
-     * The iterative algorithm has a smaller constant overhead than the
-     * recursive algorithm. We speculate that we break even somewhere at twice
-     * the threshold value.
-     */
-    private static final int RECURSION_THRESHOLD = 128;
-    /**
-     * Threshold on the number of digits for selecting the multi-threaded
-     * algorithm instead of the single-thread algorithm.
-     * <p>
-     * Set this to {@link Integer#MAX_VALUE} if you only want to use
-     * the single-threaded algorithm.
-     * <p>
-     * Set this to {@code 0} if you only want to use the multi-threaded
-     * algorithm.
-     * <p>
-     * Rationale for choosing a specific threshold value:
-     * We speculate that we need to perform at least 10,000 CPU cycles
-     * before it is worth using multiple threads.
-     */
-    private static final int DEFAULT_PARALLEL_THRESHOLD = 1024;
+
     /**
      * Threshold on the number of input characters for selecting the
      * algorithm optimised for few digits in the significand vs. the algorithm for many
@@ -88,56 +58,6 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
      */
     public JavaBigDecimalFromCharArray() {
 
-    }
-
-    /**
-     * Parses digits in exponential time O(e^n).
-     */
-    static BigInteger parseDigitsIterative(char[] str, int from, int to) {
-        int numDigits = to - from;
-        BigSignificand bigSignificand = new BigSignificand(FastIntegerMath.estimateNumBits(numDigits));
-        int preroll = from + (numDigits & 7);
-        bigSignificand.add(FastDoubleSwar.parseUpTo7Digits(str, from, preroll));
-        for (from = preroll; from < to; from += 8) {
-            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigits(str, from));
-        }
-
-        return bigSignificand.toBigInteger();
-    }
-
-    /**
-     * Parses digits in exponential time O(e^n).
-     */
-    private static BigInteger parseDigitsRecursive(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
-        // Base case: All sequences of 18 or fewer digits fit into a long.
-        int numDigits = to - from;
-        if (numDigits <= 18) {
-            return parseDigitsUpTo18(str, from, to);
-        }
-        if (numDigits <= RECURSION_THRESHOLD) {
-            return parseDigitsIterative(str, from, to);
-        }
-
-        // Recursion case: Sequences of more than 18 digits do not fit into a long.
-        int mid = splitFloor16(from, to);
-        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
-        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
-
-        high = high.multiply(powersOfTen.get(to - mid));
-        return low.add(high);
-    }
-
-    /**
-     * Parses up to 18 digits in exponential time O(e^n).
-     */
-    private static BigInteger parseDigitsUpTo18(char[] str, int from, int to) {
-        int numDigits = to - from;
-        int preroll = from + (numDigits & 7);
-        long significand = FastDoubleSwar.parseUpTo7Digits(str, from, preroll);
-        for (from = preroll; from < to; from += 8) {
-            significand = significand * 100_000_000L + FastDoubleSwar.parseEightDigits(str, from);
-        }
-        return BigInteger.valueOf(significand);
     }
 
     /**
@@ -371,16 +291,6 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
         return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent, parallelThreshold);
     }
 
-    private BigInteger parseDigits(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, int parallelThreshold) {
-        int numDigits = to - from;
-        if (numDigits < RECURSION_THRESHOLD) {
-            return parseDigitsIterative(str, from, to);
-        } else if (numDigits < parallelThreshold) {
-            return parseDigitsRecursive(str, from, to, powersOfTen);
-        } else {
-            return new ParseDigitsTask(str, from, to, powersOfTen, parallelThreshold).compute();
-        }
-    }
 
     private BigDecimal valueOfBigDecimalString(char[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent, int parallelThreshold) {
         int integerExponent = exponentIndicatorIndex - decimalPointIndex - 1;
@@ -425,39 +335,5 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
 
         BigDecimal result = new BigDecimal(significand, -exponent);
         return isNegative ? result.negate() : result;
-    }
-
-    /**
-     * Parses digits in exponential time O(e^n).
-     */
-    static class ParseDigitsTask extends RecursiveTask<BigInteger> {
-        private final int from, to;
-        private final char[] str;
-        private final Map<Integer, BigInteger> powersOfTen;
-        private final int parallelThreshold;
-
-        ParseDigitsTask(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, int parallelThreshold) {
-            this.from = from;
-            this.to = to;
-            this.str = str;
-            this.powersOfTen = powersOfTen;
-            this.parallelThreshold = parallelThreshold;
-        }
-
-        protected BigInteger compute() {
-            int range = to - from;
-            // Base case:
-            if (range <= parallelThreshold) {
-                return parseDigitsRecursive(str, from, to, powersOfTen);
-            }
-            // Recursion case:
-            int mid = splitFloor16(from, to);
-            JavaBigIntegerFromCharArray.ParseDigitsTask high = new JavaBigIntegerFromCharArray.ParseDigitsTask(str, from, mid, powersOfTen, parallelThreshold);
-            JavaBigIntegerFromCharArray.ParseDigitsTask low = new JavaBigIntegerFromCharArray.ParseDigitsTask(str, mid, to, powersOfTen, parallelThreshold);
-            // perform about half the work locally
-            low.fork();
-            BigInteger highValue = parallelMultiply(high.compute(), powersOfTen.get(to - mid), true);
-            return low.join().add(highValue);
-        }
     }
 }
