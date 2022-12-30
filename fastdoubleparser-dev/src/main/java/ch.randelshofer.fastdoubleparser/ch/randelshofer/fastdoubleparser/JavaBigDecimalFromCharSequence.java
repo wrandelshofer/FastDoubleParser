@@ -329,7 +329,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
                 significand = fractionalPart;
             } else {
                 BigInteger integerFactor = computePowerOfTen(powersOfTen, fractionDigitsCount, parallelThreshold < Integer.MAX_VALUE);
-                significand = FastIntegerMath.parallelMultiply(integerPart, integerFactor, parallel).add(fractionalPart);
+                significand = FftMultiplier.multiply(integerPart, integerFactor, parallel).add(fractionalPart);
             }
         } else {
             significand = integerPart;

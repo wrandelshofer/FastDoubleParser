@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.RecursiveTask;
 
 import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.parallelMultiply;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 /**
@@ -109,8 +108,7 @@ class ParseDigitsTaskCharArray extends RecursiveTask<BigInteger> {
         BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
 
-        //high = high.multiply(powersOfTen.get(to - mid));
-        high = SchoenhageStrassenMultiplier_tbuktu.multiply(high, powersOfTen.get(to - mid), false);
+        high = FftMultiplier.multiply(high, powersOfTen.get(to - mid), false);
         return low.add(high);
     }
 
@@ -145,8 +143,7 @@ class ParseDigitsTaskCharArray extends RecursiveTask<BigInteger> {
         ParseDigitsTaskCharArray low = new ParseDigitsTaskCharArray(str, mid, to, powersOfTen, parallelThreshold);
         // perform about half the work locally
         low.fork();
-        BigInteger highValue = parallelMultiply(high.compute(), powersOfTen.get(to - mid), true);
-        //BigInteger highValue = SchoenhageStrassenMultiplier.multiply(high.compute(), powersOfTen.get(to - mid), true);
+        BigInteger highValue = FftMultiplier.multiply(high.compute(), powersOfTen.get(to - mid), false);
         return low.join().add(highValue);
     }
 }

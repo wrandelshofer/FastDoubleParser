@@ -45,14 +45,22 @@ import java.util.concurrent.TimeUnit;
  * bigIntParaMul      100000  avgt         _ 38690763.788          ns/op
  * bigIntParaMul     1000000  avgt        1_078235959.000          ns/op
  * bigIntParaMul    10000000  avgt       30_959947020.000          ns/op
- * fftMul                  1  avgt    2    _      313.712          ns/op
- * fftMul                 10  avgt    2    _     1744.232          ns/op
- * fftMul                100  avgt    2    _    13853.314          ns/op
- * fftMul               1000  avgt    2    _   188580.924          ns/op
- * fftMul              10000  avgt    2    _  3362984.192          ns/op
- * fftMul             100000  avgt    2    _ 38295528.431          ns/op
- * fftMul            1000000  avgt    2   1_272489768.660          ns/op
- * fftMul           10000000  avgt    2  12_947464540.000          ns/op
+ * fftMul                  1  avgt         _      309.876          ns/op
+ * fftMul                 10  avgt         _     1641.160          ns/op
+ * fftMul                100  avgt         _    16075.264          ns/op
+ * fftMul               1000  avgt         _   235251.826          ns/op
+ * fftMul              10000  avgt         _  3812066.357          ns/op
+ * fftMul             100000  avgt         _ 51504729.528          ns/op
+ * fftMul            1000000  avgt        1_867501162.500          ns/op
+ * fftMul           10000000  avgt       11_273404223.000          ns/op
+ * mul                     1  avgt         _       10.891          ns/op
+ * mul                    10  avgt         _       55.095          ns/op
+ * mul                   100  avgt         _     2034.587          ns/op
+ * mul                  1000  avgt         _   164422.189          ns/op
+ * mul                 10000  avgt         _  2581705.997          ns/op
+ * mul                100000  avgt         _ 57813125.661          ns/op
+ * mul               1000000  avgt        1_025797666.900          ns/op
+ * mul              10000000  avgt       10_895716951.000          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -67,8 +75,8 @@ import java.util.concurrent.TimeUnit;
         //, "-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 2)
-@Warmup(iterations = 2)
+@Measurement(iterations = 1)
+@Warmup(iterations = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -84,8 +92,8 @@ public class JmhFftMultiplier {
             , "100000"
             , "1000000"
             , "10000000"
-            //  "100000000"
-            // , "646391315"
+            , "100000000"
+            , "646391315"
 
     })
     public int digits;
@@ -104,7 +112,6 @@ public class JmhFftMultiplier {
 
     }
 
-/*
     @Benchmark
     public BigInteger bigIntMul() {
         return a.multiply(b);
@@ -114,12 +121,18 @@ public class JmhFftMultiplier {
     public BigInteger bigIntParaMul() {
         return a.parallelMultiply(b);
     }
-*/
 
     @Benchmark
     public BigInteger fftMul() {
         return FftMultiplier.multiplyFFT(a, b);
     }
+
+    @Benchmark
+    public BigInteger mul() {
+        return FftMultiplier.multiply(a, b, false);
+    }
+
+
 }
 
 

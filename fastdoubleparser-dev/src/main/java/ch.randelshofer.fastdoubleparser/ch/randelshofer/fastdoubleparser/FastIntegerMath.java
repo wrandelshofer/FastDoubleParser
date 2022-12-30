@@ -58,7 +58,7 @@ class FastIntegerMath {
             if (floorN == n) {
                 return floorEntry.getValue();
             } else {
-                return parallelMultiply(floorEntry.getValue(), computePowerOfTen(powersOfTen, n - floorN, parallel), parallel);
+                return FftMultiplier.multiply(floorEntry.getValue(), computePowerOfTen(powersOfTen, n - floorN, parallel), parallel);
             }
         }
         return FIVE.pow(n).shiftLeft(n);
@@ -81,7 +81,7 @@ class FastIntegerMath {
             diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff, parallel);
             powersOfTen.put(diff, diffValue);
         }
-        return SchoenhageStrassenMultiplier_tbuktu.multiply(floorValue, diffValue, parallel);
+        return FftMultiplier.multiply(floorValue, diffValue, false);
         //return FastIntegerMath.parallelMultiply(floorValue, diffValue, parallel);
     }
 

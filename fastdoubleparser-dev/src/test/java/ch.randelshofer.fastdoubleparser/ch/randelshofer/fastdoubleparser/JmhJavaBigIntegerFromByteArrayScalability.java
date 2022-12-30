@@ -40,26 +40,22 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * hex        1000000  avgt           _  1159378.097          ns/op
  * hex       10000000  avgt           _ 13527667.547          ns/op
  * hex      100000000  avgt           _136392967.149          ns/op
- * parDec           1  avgt           _        3.175          ns/op
- * parDec          10  avgt           _       13.619          ns/op
- * parDec         100  avgt           _      425.135          ns/op
- * parDec        1000  avgt           _     4834.264          ns/op
- * parDec       10000  avgt           _   113510.205          ns/op
- * parDec      100000  avgt           _  2380942.294          ns/op
- * parDec     1000000  avgt           _ 66019385.211          ns/op
- * parDec    10000000  avgt          2_264509778.400          ns/op
- * parDec   100000000  avgt         60_824222999.000          ns/op
- * parDec   646391315  avgt       1009_741485660.000          ns/op
- * seqDec           1  avgt           _        3.428          ns/op
- * seqDec          10  avgt           _       16.976          ns/op
- * seqDec         100  avgt           _      473.670          ns/op
- * seqDec        1000  avgt           _     5513.915          ns/op
- * seqDec       10000  avgt           _   194360.022          ns/op
- * seqDec      100000  avgt           _  7570295.721          ns/op
- * seqDec     1000000  avgt           _255624625.950          ns/op
- * seqDec    10000000  avgt          4_908903103.667          ns/op
- * seqDec   100000000  avgt        123_633708709.000          ns/op
- * seqDec   646391315  avgt        806_917635773.000          ns/op
+ * parDec           1  avgt           _        3.309          ns/op
+ * parDec          10  avgt           _       14.114          ns/op
+ * parDec         100  avgt           _      431.813          ns/op
+ * parDec        1000  avgt           _     4776.129          ns/op
+ * parDec       10000  avgt           _   109625.327          ns/op
+ * parDec      100000  avgt           _  4569606.572          ns/op
+ * parDec     1000000  avgt           _ 56500481.191          ns/op
+ * parDec    10000000  avgt          1_637870034.143          ns/op
+ * seqDec           1  avgt           _        3.201          ns/op
+ * seqDec          10  avgt           _       14.814          ns/op
+ * seqDec         100  avgt           _      428.145          ns/op
+ * seqDec        1000  avgt           _     4789.136          ns/op
+ * seqDec       10000  avgt           _   161220.550          ns/op
+ * seqDec      100000  avgt           _  6238443.526          ns/op
+ * seqDec     1000000  avgt           _112939439.315          ns/op
+ * seqDec    10000000  avgt          2_639500769.250          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -91,8 +87,8 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
             , "100000"
             , "1000000"
             , "10000000"
-            , "100000000"
-            , "646391315"
+            //, "100000000"
+            //, "646391315"
 
     })
     public int digits;
@@ -109,12 +105,12 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
     public BigInteger hex() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
     }
-
+*/
     @Benchmark
     public BigInteger seqDec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);
     }
-*/
+
     @Benchmark
     public BigInteger parDec() {
         return JavaBigIntegerParser.parallelParseBigInteger(decLiteral);

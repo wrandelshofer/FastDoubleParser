@@ -1,5 +1,5 @@
 /*
- * @(#)SchoenhageStrassenMultiplier_tbuktu.java
+ * @(#)FftMultiplier.java
  * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -17,13 +17,24 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.newBigInteger;
  * This code is based on {@code bigint} by Timothy Buktu.
  * <p>
  * References:
- * <dt>bigint, Copyright 2013 © Timothy Buktu, 2-Clause BSD License.
+ * <dt>bigint, Copyright 2013 Timothy Buktu, 2-Clause BSD License.
  * </dt>
  * <dd><a href="https://github.com/tbuktu/bigint/tree/floatfft">github.com</a></dd>
  * </dl>
  */
 class FftMultiplier {
-    private final static int FFT_THRESHOLD = 8700;
+    /**
+     * The threshold value for using 3-way Toom-Cook multiplication.
+     */
+    private static final int TOOM_COOK_THRESHOLD = 240 * 8;
+    /**
+     * The threshold value for using floating point FFT multiplication.
+     * If the number of bits in each mag array is greater than the
+     * Toom-Cook threshold, and the number of bits in at least one of
+     * the mag arrays is greater than this threshold, then FFT
+     * multiplication will be used.
+     */
+    private static final int FFT_THRESHOLD = 3400 * 8;
 
     /**
      * Returns a BigInteger whose value is {@code (this<sup>2</sup>)}.
@@ -47,7 +58,7 @@ class FftMultiplier {
         }
         int len = a.bitLength();
 
-        if (len < FFT_THRESHOLD) {
+        if (len >>> 3 < FFT_THRESHOLD) {
             return a.multiply(a);
         } else {
             return squareFFT(a);
@@ -144,9 +155,9 @@ class FftMultiplier {
     // parts to contain the upper half of the result.
     private static BigInteger fromFFTVector(MutableComplex[] fftVec, int signum, int bitsPerFFTPoint) {
         int fftLen = fftVec.length;
-        int magLen = 2 * (fftLen * bitsPerFFTPoint + 31) / 32;
-        int[] mag = new int[magLen];
-        int magIdx = magLen - 1;
+        long magLen = 2 * ((long) fftLen * bitsPerFFTPoint + 31) / 32;
+        int[] mag = new int[(int) Math.min(magLen, Integer.MAX_VALUE - 4)];
+        int magIdx = mag.length - 1;
         int magBitIdx = 0;
         long carry = 0;
         for (int part = 0; part <= 1; part++) {   // 0=real, 1=imaginary
@@ -737,28 +748,32 @@ class FftMultiplier {
     }
 
     /**
-     * Returns a BigInteger whose value is {@code (this * val)}.
+     * Returns a BigInteger whose value is {@code (a * b)}.
      *
-     * @param val value to be multiplied by this BigInteger.
+     * @param a        value a
+     * @param b        value b
+     * @param parallel whether to perform the computation in parallel
      * @return {@code this * val}
      * @implNote An implementation may offer better algorithmic
-     * performance when {@code val == this}.
+     * performance when {@code a == b}.
      */
-    public static BigInteger multiply(BigInteger x, BigInteger val) {
-        if (val.signum() == 0 || x.signum() == 0) {
+    public static BigInteger multiply(BigInteger a, BigInteger b, boolean parallel) {
+        if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }
-        if (val == x) {
-            return square(val);
+        if (b == a) {
+            return square(b);
         }
 
-        int xlen = x.bitLength();
-        int ylen = val.bitLength();
+        int xlen = a.bitLength();
+        int ylen = b.bitLength();
 
-        if ((xlen < FFT_THRESHOLD) || (ylen < FFT_THRESHOLD)) {
-            return x.multiply(val);
+        if (xlen > TOOM_COOK_THRESHOLD
+                && ylen > TOOM_COOK_THRESHOLD
+                && (xlen > FFT_THRESHOLD || ylen > FFT_THRESHOLD)) {
+            return multiplyFFT(a, b);
         }
-        return multiplyFFT(x, val);
+        return FastIntegerMath.parallelMultiply(a, b, parallel);
     }
 
     /**

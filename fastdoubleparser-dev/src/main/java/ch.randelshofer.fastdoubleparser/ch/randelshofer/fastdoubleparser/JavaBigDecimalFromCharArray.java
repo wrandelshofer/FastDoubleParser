@@ -327,7 +327,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
                 significand = fractionalPart;
             } else {
                 BigInteger integerFactor = computePowerOfTen(powersOfTen, integerExponent, parallel);
-                significand = FastIntegerMath.parallelMultiply(integerPart, integerFactor, parallel).add(fractionalPart);
+                significand = FftMultiplier.multiply(integerPart, integerFactor, parallel).add(fractionalPart);
             }
         } else {
             significand = integerPart;
