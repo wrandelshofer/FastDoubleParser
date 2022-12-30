@@ -110,7 +110,7 @@ class ParseDigitsTaskByteArray extends RecursiveTask<BigInteger> {
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
 
         //high = high.multiply(powersOfTen.get(to - mid));
-        high = SchoenhageStrassenMultiplier.multiply(high, powersOfTen.get(to - mid), false);
+        high = SchoenhageStrassenMultiplier_tbuktu.multiply(high, powersOfTen.get(to - mid), false);
         return low.add(high);
     }
 

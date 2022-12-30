@@ -45,28 +45,36 @@ import java.util.concurrent.TimeUnit;
  * bigIntParaMul      100000  avgt         _ 38690763.788          ns/op
  * bigIntParaMul     1000000  avgt        1_078235959.000          ns/op
  * bigIntParaMul    10000000  avgt       30_959947020.000          ns/op
- * ssMul                  10  avgt         _    22966.537          ns/op
- * ssMul                 100  avgt         _   139383.867          ns/op
- * ssMul                1000  avgt         _   616674.326          ns/op
- * ssMul               10000  avgt         _ 18059424.838          ns/op
- * ssMul              100000  avgt         _175439610.431          ns/op
- * ssMul             1000000  avgt        1_986820296.667          ns/op
- * ssMul            10000000  avgt       18_989100691.000          ns/op
- * ssParaMul              10  avgt         _    20901.942          ns/op
- * ssParaMul             100  avgt         _   126681.468          ns/op
- * ssParaMul            1000  avgt         _   594489.145          ns/op
- * ssParaMul           10000  avgt         _ 18032670.980          ns/op
- * ssParaMul          100000  avgt         _183667194.073          ns/op
- * ssParaMul         1000000  avgt        2_003763367.667          ns/op
- * ssParaMul        10000000  avgt       19_285212245.000          ns/op
- *
- *
+ *             (digits)  Mode  Cnt                  Score   Error  Units
+ * ssMul                  10  avgt    2    _    18609.395          ns/op
+ * ssMul                 100  avgt    2    _   105009.138          ns/op
+ * ssMul                1000  avgt    2    _   449234.243          ns/op
+ * ssMul               10000  avgt    2    _  6203279.034          ns/op
+ * ssMul              100000  avgt    2    _ 57825610.734          ns/op
+ * ssMul             1000000  avgt    2   2_890700965.250          ns/op
+ * ssMul            10000000  avgt    2  17_720122125.500          ns/op
+ * ----old---vvv
+ * ssMul                  10  avgt    2    _    19036.802          ns/op
+ * ssMul                 100  avgt    2    _   104743.533          ns/op
+ * ssMul                1000  avgt    2    _   384287.067          ns/op
+ * ssMul               10000  avgt    2    _  4539701.704          ns/op
+ * ssMul              100000  avgt    2    _ 44874125.955          ns/op
+ * ssMul             1000000  avgt    2   2_246791978.900          ns/op
+ * ssMul            10000000  avgt    2  12_747341133.000          ns/op
+ * ssParaMul              10  avgt    2    _    73737.943          ns/op
+ * ssParaMul             100  avgt    2    _   160099.959          ns/op
+ * ssParaMul            1000  avgt    2    _   335127.478          ns/op
+ * ssParaMul           10000  avgt    2    _  2101161.676          ns/op
+ * ssParaMul          100000  avgt    2    _ 14606750.437          ns/op
+ * ssParaMul         1000000  avgt    2    _603003227.412          ns/op
+ * ssParaMul        10000000  avgt    2   3_431732004.333          ns/op
+ * -----old---^^^
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
-        // , "--add-opens", "java.base/java.math=ALL-UNNAMED"
+        , "--add-opens", "java.base/java.math=ALL-UNNAMED"
 
         // Options for analysis with https://github.com/AdoptOpenJDK/jitwatch
         //, "-XX:+UnlockDiagnosticVMOptions"
@@ -75,23 +83,23 @@ import java.util.concurrent.TimeUnit;
         //, "-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 1)
-@Warmup(iterations = 1)
+@Warmup(iterations = 2)
+@Measurement(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhSchoenhageStrassenMultiplier {
+public class JmhSchoenhageStrassenMultiplier_tbuktu {
 
 
     @Param({
-            //"1"
-            //, "10"
-            //, "100"
-            //, "1000"
-            //, "10000"
-            //,"100000"
-            //"1000000"
-            "10000000"
+            //  "1"
+            "10"
+            , "100"
+            , "1000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
             // , "100000000"
             // , "646391315"
 
@@ -126,14 +134,15 @@ public class JmhSchoenhageStrassenMultiplier {
 
     @Benchmark
     public BigInteger ssMul() {
-        return SchoenhageStrassenMultiplier.multiplySchoenhageStrassen(a, b, false);
+        return SchoenhageStrassenMultiplier_tbuktu.multiplySchoenhageStrassen(a, b, false);
     }
-    /*
+/*
     @Benchmark
     public BigInteger ssParaMul() {
-        return SchoenhageStrassenMultiplier.multiplySchoenhageStrassen(a,b,true);
+        return SchoenhageStrassenMultiplier_tbuktu.multiplySchoenhageStrassen(a,b,true);
     }
-*/
+
+ */
 }
 
 

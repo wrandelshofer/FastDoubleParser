@@ -26,11 +26,11 @@ import java.util.Arrays;
  *     <dd><a href="https://github.com/robbymckilliam/bigint">github.com</a></dd>
  * </dl>
  */
-class SchoenhageStrassenMultiplier {
+class SchoenhageStrassenMultiplier_robbymckilliam {
     /**
      * Don't let anyone instantiate this class.
      */
-    private SchoenhageStrassenMultiplier() {
+    private SchoenhageStrassenMultiplier_robbymckilliam() {
     }
 
     private static final int SCHOENHAGEN_STRASSEN_THRESHOLD = 1249000;
@@ -480,11 +480,7 @@ class SchoenhageStrassenMultiplier {
 
         int[] cIntArr = multiplySchoenhageStrassen(aIntArr, a.bitLength(), bIntArr, b.bitLength(), parallel);
 
-        BigInteger c = FastIntegerMath.newBigInteger(1, reverse(cIntArr));
-        if (signum < 0) {
-            c = c.negate();
-        }
-        return c;
+        return FastIntegerMath.newBigInteger(signum, reverse(cIntArr));
     }
 
     /**
