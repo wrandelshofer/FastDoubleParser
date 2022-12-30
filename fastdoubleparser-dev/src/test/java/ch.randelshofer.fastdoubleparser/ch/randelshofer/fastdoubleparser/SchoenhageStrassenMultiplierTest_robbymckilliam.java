@@ -14,7 +14,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class SchoenhageStrassenMultiplierTest {
+public class SchoenhageStrassenMultiplierTest_robbymckilliam {
     @TestFactory
     public List<DynamicTest> dynamicTests() {
         return List.of(
@@ -38,7 +38,7 @@ public class SchoenhageStrassenMultiplierTest {
         BigInteger bigA = new BigInteger(a);
         BigInteger bigB = new BigInteger(b);
         BigInteger expected = bigA.multiply(bigB);
-        BigInteger actual = SchoenhageStrassenMultiplier.multiplySchoenhageStrassen(bigA, bigB, false);
+        BigInteger actual = SchoenhageStrassenMultiplier_robbymckilliam.multiplySchoenhageStrassen(bigA, bigB, false);
         assertEquals(expected, actual);
     }
 
