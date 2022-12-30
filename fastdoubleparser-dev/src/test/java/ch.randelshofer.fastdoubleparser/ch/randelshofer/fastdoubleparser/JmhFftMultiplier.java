@@ -45,22 +45,14 @@ import java.util.concurrent.TimeUnit;
  * bigIntParaMul      100000  avgt         _ 38690763.788          ns/op
  * bigIntParaMul     1000000  avgt        1_078235959.000          ns/op
  * bigIntParaMul    10000000  avgt       30_959947020.000          ns/op
- * ssMul                  10  avgt    2    _    24954.082          ns/op
- * ssMul                 100  avgt    2    _   133307.644          ns/op
- * ssMul                1000  avgt    2    _   688753.339          ns/op
- * ssMul               10000  avgt    2    _ 10995966.152          ns/op
- * ssMul              100000  avgt    2    _111590117.922          ns/op
- * ssMul             1000000  avgt    2   1_317937062.750          ns/op
- * ssMul            10000000  avgt    2  15_649369370.500          ns/op
- * ssParaMul              10  avgt         _    20901.942          ns/op
- * ssParaMul             100  avgt         _   126681.468          ns/op
- * ssParaMul            1000  avgt         _   594489.145          ns/op
- * ssParaMul           10000  avgt         _ 18032670.980          ns/op
- * ssParaMul          100000  avgt         _183667194.073          ns/op
- * ssParaMul         1000000  avgt        2_003763367.667          ns/op
- * ssParaMul        10000000  avgt       19_285212245.000          ns/op
- *
- *
+ * fftMul                  1  avgt    2    _      313.712          ns/op
+ * fftMul                 10  avgt    2    _     1744.232          ns/op
+ * fftMul                100  avgt    2    _    13853.314          ns/op
+ * fftMul               1000  avgt    2    _   188580.924          ns/op
+ * fftMul              10000  avgt    2    _  3362984.192          ns/op
+ * fftMul             100000  avgt    2    _ 38295528.431          ns/op
+ * fftMul            1000000  avgt    2   1_272489768.660          ns/op
+ * fftMul           10000000  avgt    2  12_947464540.000          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -80,18 +72,18 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhSchoenhageStrassenMultiplier {
+public class JmhFftMultiplier {
 
 
     @Param({
-            // "1"
-            // , "10"
-            // , "100"
-            // , "1000"
-            // , "10000"
-            // ,"100000"
-            // ,"1000000"
-            "10000000"
+            "1"
+            , "10"
+            , "100"
+            , "1000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
             //  "100000000"
             // , "646391315"
 
@@ -125,15 +117,9 @@ public class JmhSchoenhageStrassenMultiplier {
 */
 
     @Benchmark
-    public BigInteger ssMul() {
-        return SchoenhageStrassenMultiplier_robbymckilliam.multiplySchoenhageStrassen(a, b, false);
+    public BigInteger fftMul() {
+        return FftMultiplier.multiplyFFT(a, b);
     }
-    /*
-    @Benchmark
-    public BigInteger ssParaMul() {
-        return SchoenhageStrassenMultiplier.multiplySchoenhageStrassen(a,b,true);
-    }
-*/
 }
 
 

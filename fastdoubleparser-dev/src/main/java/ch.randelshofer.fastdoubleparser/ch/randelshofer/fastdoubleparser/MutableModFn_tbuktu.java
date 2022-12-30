@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-class MutableModFn {
+class MutableModFn_tbuktu {
     long[] digits;
 
     /**
@@ -19,7 +19,7 @@ class MutableModFn {
      *
      * @param digits an long array in the same format as {@code BigInteger#mag}
      */
-    MutableModFn(long[] digits) {
+    MutableModFn_tbuktu(long[] digits) {
         this.digits = digits;
     }
 
@@ -28,7 +28,7 @@ class MutableModFn {
      *
      * @param length
      */
-    MutableModFn(int length) {
+    MutableModFn_tbuktu(int length) {
         digits = new long[length];
     }
 
@@ -37,7 +37,7 @@ class MutableModFn {
      *
      * @param b
      */
-    void copyTo(MutableModFn b) {
+    void copyTo(MutableModFn_tbuktu b) {
         System.arraycopy(digits, 0, b.digits, 0, digits.length);
     }
 
@@ -46,7 +46,7 @@ class MutableModFn {
      *
      * @param b
      */
-    void add(MutableModFn b) {
+    void add(MutableModFn_tbuktu b) {
         long carry = 0;
         for (int i = digits.length - 1; i >= 0; i--) {
             long sum = digits[i] + b.digits[i] + carry;
@@ -74,7 +74,7 @@ class MutableModFn {
      *
      * @param b
      */
-    void subtract(MutableModFn b) {
+    void subtract(MutableModFn_tbuktu b) {
         boolean borrow = false;
         for (int i = digits.length - 1; i >= 0; i--) {
             long diff = digits[i] - b.digits[i];
@@ -105,7 +105,7 @@ class MutableModFn {
      * @param b
      * @param parallel
      */
-    void multiply(MutableModFn b, boolean parallel) {
+    void multiply(MutableModFn_tbuktu b, boolean parallel) {
         // if a=b=2^n, a*b=1 (mod Fn)
         if (digits[0] == 1 && b.digits[0] == 1) {
             Arrays.fill(digits, 0);
@@ -126,7 +126,7 @@ class MutableModFn {
         }
     }
 
-    void multiplyOld(MutableModFn b, boolean parallel) {
+    void multiplyOld(MutableModFn_tbuktu b, boolean parallel) {
         // if a=b=2^n, a*b=1 (mod Fn)
         if (digits[0] == 1 && b.digits[0] == 1) {
             Arrays.fill(digits, 0);
@@ -152,7 +152,7 @@ class MutableModFn {
     /**
      * Squares this number.
      *
-     * @see #multiply(MutableModFn, boolean)
+     * @see #multiply(MutableModFn_tbuktu, boolean)
      */
     void square(boolean parallel) {
         // if a=2^n, a^2=1 (mod Fn)
@@ -305,7 +305,7 @@ class MutableModFn {
      * @param shiftAmtBits the shift amount in bits; must be less than <code>64*2*(digits.length-1))</code>
      * @param b            the return value; must have room for at least as many digits as <code>this</code>
      */
-    void shiftRight(int shiftAmtBits, MutableModFn b) {
+    void shiftRight(int shiftAmtBits, MutableModFn_tbuktu b) {
         int len = digits.length;
         if (shiftAmtBits > 64 * (len - 1)) {
             shiftLeft(64 * 2 * (len - 1) - shiftAmtBits, b);
@@ -410,7 +410,7 @@ class MutableModFn {
      * @param shiftAmtBits the shift amount in bits; must be less than <code>64*2*(digits.length-1))</code>
      * @param b            the return value; must have room for at least as many digits as <code>this</code>
      */
-    void shiftLeft(int shiftAmtBits, MutableModFn b) {
+    void shiftLeft(int shiftAmtBits, MutableModFn_tbuktu b) {
         int len = digits.length;
 
         if (shiftAmtBits > 64 * (len - 1)) {

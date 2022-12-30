@@ -246,8 +246,8 @@ class SchoenhageStrassenMultiplier_tbuktu {
 
         // zr mod Fn
         int targetPieceSize = (1 << (n - 6)) + 1; // assume n>=6
-        MutableModFn[] ai = split(a, halfNumPcs, pieceSize, targetPieceSize);
-        MutableModFn[] bi = null;
+        MutableModFn_tbuktu[] ai = split(a, halfNumPcs, pieceSize, targetPieceSize);
+        MutableModFn_tbuktu[] bi = null;
         if (!square) {
             bi = split(b, halfNumPcs, pieceSize, targetPieceSize);
         }
@@ -260,7 +260,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
             dft(bi, omega, parallel);
             multiplyElements(ai, bi, parallel);
         }
-        MutableModFn[] c = ai;
+        MutableModFn_tbuktu[] c = ai;
         idft(c, omega, parallel);
         int[][] cInt = toIntArray(c);
 
@@ -280,14 +280,14 @@ class SchoenhageStrassenMultiplier_tbuktu {
             addShifted(z, eta, shift + (1 << (n - 5)));
         }
 
-        MutableModFn.reduce(z);   // assume m>=5
+        MutableModFn_tbuktu.reduce(z);   // assume m>=5
         return z;
     }
 
-    private static int[][] toIntArray(MutableModFn[] a) {
+    private static int[][] toIntArray(MutableModFn_tbuktu[] a) {
         int[][] aInt = new int[a.length][];
         for (int i = 0; i < a.length; i++)
-            aInt[i] = MutableModFn.toIntArrayOdd(a[i].digits);
+            aInt[i] = MutableModFn_tbuktu.toIntArrayOdd(a[i].digits);
         return aInt;
     }
 
@@ -549,17 +549,17 @@ class SchoenhageStrassenMultiplier_tbuktu {
 
     /**
      * Splits an <code>int</code> array into pieces of <code>pieceSize longs</code> each,
-     * pads each piece to <code>targetPieceSize longs</code>, and wraps it in a {@link MutableModFn}
+     * pads each piece to <code>targetPieceSize longs</code>, and wraps it in a {@link MutableModFn_tbuktu}
      * (this implies <code>targetPieceSize</code>=2<sup>k</sup>+1 for some k).
      *
      * @param a               the input array
      * @param numPieces       the number of pieces to split the array into
      * @param sourcePieceSize the size of each piece in the input array in <code>ints</code>
      * @param targetPieceSize the size of each <code>MutableModFn</code> in the output array in <code>longs</code>
-     * @return an array of length <code>numPieces</code> containing {@link MutableModFn}s of length <code>targetPieceSize longs</code> each
+     * @return an array of length <code>numPieces</code> containing {@link MutableModFn_tbuktu}s of length <code>targetPieceSize longs</code> each
      */
-    private static MutableModFn[] split(int[] a, int numPieces, int sourcePieceSize, int targetPieceSize) {
-        MutableModFn[] ai = new MutableModFn[numPieces];
+    private static MutableModFn_tbuktu[] split(int[] a, int numPieces, int sourcePieceSize, int targetPieceSize) {
+        MutableModFn_tbuktu[] ai = new MutableModFn_tbuktu[numPieces];
         int aIdx = a.length - sourcePieceSize;
         int pieceIdx = 0;
         while (aIdx >= 0) {
@@ -570,7 +570,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
                 for (int i = 0; i < sourcePieceSize; i += 2)
                     digits[targetPieceSize - sourcePieceSize / 2 + i / 2] = (((long) a[aIdx + i]) << 32) | (a[aIdx + i + 1] & 0xFFFFFFFFL);
             }
-            ai[pieceIdx] = new MutableModFn(digits);
+            ai[pieceIdx] = new MutableModFn_tbuktu(digits);
             aIdx -= sourcePieceSize;
             pieceIdx++;
         }
@@ -586,9 +586,9 @@ class SchoenhageStrassenMultiplier_tbuktu {
             // the remaining half-long
             digits[targetPieceSize - 1] |= a[a.length % sourcePieceSize - 1] & 0xFFFFFFFFL;
         }
-        ai[pieceIdx] = new MutableModFn(digits);
+        ai[pieceIdx] = new MutableModFn_tbuktu(digits);
         while (++pieceIdx < numPieces)
-            ai[pieceIdx] = new MutableModFn(targetPieceSize);
+            ai[pieceIdx] = new MutableModFn_tbuktu(targetPieceSize);
         return ai;
     }
 
@@ -604,7 +604,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param omega    root of unity, can be 2 or 4
      * @param parallel number of threads to use; 1 means run on the current thread
      */
-    private static void dft(MutableModFn[] A, int omega, boolean parallel) {
+    private static void dft(MutableModFn_tbuktu[] A, int omega, boolean parallel) {
         if (parallel) {
             try {
                 dftParallel(A, omega, parallel);
@@ -624,7 +624,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param A     the vector to transform
      * @param omega root of unity, can be 2 or 4
      */
-    private static void dftSequential(MutableModFn[] A, int omega) {
+    private static void dftSequential(MutableModFn_tbuktu[] A, int omega) {
         // arrange the elements of A in a matrix roughly sqrt(A.length) by sqrt(A.length) in size
         int rows = 1 << ((31 - Integer.numberOfLeadingZeros(A.length)) / 2);   // number of rows
         int cols = A.length / rows;   // number of columns
@@ -654,7 +654,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param omega    root of unity, can be 2 or 4
      * @param parallel number of threads to use; 1 means run on the current thread
      */
-    private static void dftParallel(final MutableModFn[] A, final int omega, boolean parallel) throws InterruptedException, ExecutionException {
+    private static void dftParallel(final MutableModFn_tbuktu[] A, final int omega, boolean parallel) throws InterruptedException, ExecutionException {
         // arrange the elements of A in a matrix roughly sqrt(A.length) by sqrt(A.length) in size
         final int rows = 1 << ((31 - Integer.numberOfLeadingZeros(A.length)) / 2);   // number of rows
         final int cols = A.length / rows;   // number of columns
@@ -711,10 +711,10 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param idxOffset value to add to the array index when accessing elements of {@code A}
      * @param stride    stride length
      */
-    private static void dftDirect(MutableModFn[] A, int omega, int len, int expOffset, int expScale, int idxOffset, int stride) {
+    private static void dftDirect(MutableModFn_tbuktu[] A, int omega, int len, int expOffset, int expScale, int idxOffset, int stride) {
         int n = 31 - Integer.numberOfLeadingZeros(2 * len);   // multiply by 2 because we're doing a half DFT and we need the n that corresponds to the full DFT length
         int v = 1;   // v starts at 1 rather than 0 for the same reason
-        MutableModFn d = new MutableModFn(A[0].digits.length);
+        MutableModFn_tbuktu d = new MutableModFn_tbuktu(A[0].digits.length);
 
         int slen = len / 2;
         while (slen > 1) {   // slen = #consecutive coefficients for which the sign (add/sub) and x are constant
@@ -815,13 +815,13 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param rows  number of matrix rows
      * @param cols  number of matrix columns
      */
-    private static void applyDftWeights(MutableModFn[] A, int omega, int rows, int cols) {
+    private static void applyDftWeights(MutableModFn_tbuktu[] A, int omega, int rows, int cols) {
         int v = 31 - Integer.numberOfLeadingZeros(rows) + 1;
 
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++) {
                 int idx = i * cols + j;
-                MutableModFn temp = new MutableModFn(A[idx].digits.length);
+                MutableModFn_tbuktu temp = new MutableModFn_tbuktu(A[idx].digits.length);
                 int shiftAmt = getBaileyShiftAmount(i, j, rows, v);
                 if (omega == 4) {
                     shiftAmt *= 2;
@@ -844,7 +844,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param a
      * @param parallel whether to run in parallel
      */
-    private static void squareElements(final MutableModFn[] a, boolean parallel) {
+    private static void squareElements(final MutableModFn_tbuktu[] a, boolean parallel) {
         if (parallel) {
             ForkJoinPool executor = ForkJoinPool.commonPool();
             int numThreads = executor.getParallelism();
@@ -882,7 +882,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param b        an array of the same length as <code>a</code>
      * @param parallel number of threads to use; 1 means run on the current thread
      */
-    private static void multiplyElements(final MutableModFn[] a, final MutableModFn[] b, boolean parallel) {
+    private static void multiplyElements(final MutableModFn_tbuktu[] a, final MutableModFn_tbuktu[] b, boolean parallel) {
         if (parallel) {
             ForkJoinPool executor = ForkJoinPool.commonPool();
             int numThreads = executor.getParallelism();
@@ -924,7 +924,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param omega    root of unity, can be 2 or 4
      * @param parallel number of threads to use; 1 means run on the current thread
      */
-    private static void idft(MutableModFn[] A, int omega, boolean parallel) {
+    private static void idft(MutableModFn_tbuktu[] A, int omega, boolean parallel) {
         if (parallel) {
             try {
                 idftParallel(A, omega, parallel);
@@ -944,7 +944,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param A     the vector to transform
      * @param omega root of unity, can be 2 or 4
      */
-    private static void idftSequential(MutableModFn[] A, int omega) {
+    private static void idftSequential(MutableModFn_tbuktu[] A, int omega) {
         // arrange the elements of A in a matrix roughly sqrt(A.length) by sqrt(A.length) in size
         int rows = 1 << ((31 - Integer.numberOfLeadingZeros(A.length)) / 2);   // number of rows
         int cols = A.length / rows;   // number of columns
@@ -974,7 +974,7 @@ class SchoenhageStrassenMultiplier_tbuktu {
      * @param omega      root of unity, can be 2 or 4
      * @param numThreads number of threads to use; 1 means run on the current thread
      */
-    private static void idftParallel(final MutableModFn[] A, final int omega, boolean numThreads) throws InterruptedException, ExecutionException {
+    private static void idftParallel(final MutableModFn_tbuktu[] A, final int omega, boolean numThreads) throws InterruptedException, ExecutionException {
         // arrange the elements of A in a matrix roughly sqrt(A.length) by sqrt(A.length) in size
         final int rows = 1 << ((31 - Integer.numberOfLeadingZeros(A.length)) / 2);   // number of rows
         final int cols = A.length / rows;   // number of columns
@@ -1020,10 +1020,10 @@ class SchoenhageStrassenMultiplier_tbuktu {
     /**
      * This implementation uses the radix-4 technique which combines two levels of butterflies.
      */
-    private static void idftDirect(MutableModFn[] A, int omega, int len, int expOffset, int expScale, int idxOffset, int stride) {
+    private static void idftDirect(MutableModFn_tbuktu[] A, int omega, int len, int expOffset, int expScale, int idxOffset, int stride) {
         int n = 31 - Integer.numberOfLeadingZeros(2 * len);   // multiply by 2 because we're doing a half DFT and we need the n that corresponds to the full DFT length
         int v = 31 - Integer.numberOfLeadingZeros(len);
-        MutableModFn c = new MutableModFn(A[0].digits.length);
+        MutableModFn_tbuktu c = new MutableModFn_tbuktu(A[0].digits.length);
 
         int slen = 1;
         while (slen <= len / 4) {   // slen = #consecutive coefficients for which the sign (add/sub) and x are constant
@@ -1100,13 +1100,13 @@ class SchoenhageStrassenMultiplier_tbuktu {
     /**
      * Divides vector elements by powers of omega (aka twiddle factors)
      */
-    private static void applyIdftWeights(MutableModFn[] A, int omega, int rows, int cols) {
+    private static void applyIdftWeights(MutableModFn_tbuktu[] A, int omega, int rows, int cols) {
         int v = 31 - Integer.numberOfLeadingZeros(rows) + 1;
 
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++) {
                 int idx = i * cols + j;
-                MutableModFn temp = new MutableModFn(A[idx].digits.length);
+                MutableModFn_tbuktu temp = new MutableModFn_tbuktu(A[idx].digits.length);
                 int shiftAmt = getBaileyShiftAmount(i, j, rows, v);
                 if (omega == 4) {
                     shiftAmt *= 2;

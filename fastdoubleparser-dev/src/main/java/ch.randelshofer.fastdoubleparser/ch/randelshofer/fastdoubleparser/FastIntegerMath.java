@@ -161,6 +161,10 @@ class FastIntegerMath {
     }
 
     static int[] getMagnitude(BigInteger a) {
+        if (a.signum() == -1) {
+            a = a.negate();
+        }
+
         byte[] bytes = a.toByteArray();
         int offset = bytes.length > 0 && bytes[0] == 0 ? 1 : 0;
         int length = bytes.length - offset;
