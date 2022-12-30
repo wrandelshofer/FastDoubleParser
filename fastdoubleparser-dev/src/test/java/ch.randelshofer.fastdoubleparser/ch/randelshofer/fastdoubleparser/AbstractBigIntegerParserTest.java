@@ -4,7 +4,11 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import java.io.BufferedWriter;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +20,29 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public abstract class AbstractBigIntegerParserTest {
     private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
+
+    public static BigInteger createBigIntegerMaxValue() {
+        byte[] bytes = new byte[Integer.MAX_VALUE / 8 + 1];
+        Arrays.fill(bytes, (byte) -1);
+        bytes[0] = (byte) 0x7f;
+        BigInteger bigInteger = new BigInteger(1, bytes);
+        return bigInteger;
+    }
+
+    /**
+     * This takes about 2h 17m.
+     */
+    public static void writeBigIntegerMaxValueFile() throws Exception {
+        Path p = Paths.get("fastdoubleparserdemo/data/BigIntegerMaxValue.txt");
+        if (!Files.exists(p)) {
+            BigInteger b = createBigIntegerMaxValue();
+            try (BufferedWriter w = Files.newBufferedWriter(p)) {
+                String s = b.toString();
+                w.write(s);
+                w.newLine();
+            }
+        }
+    }
 
     protected void test(NumberTestData d, Function<NumberTestData, BigInteger> f) {
         BigInteger expectedValue = (BigInteger) d.expectedValue();
@@ -196,10 +223,13 @@ public abstract class AbstractBigIntegerParserTest {
 
     protected List<NumberTestData> createDataForVeryLongDecStrings() {
         return Arrays.asList(
-                new NumberTestData("'0' ** 1292782622", new VirtualCharSequence('0', 1292782621 + 1), BigInteger.ZERO),
-                new NumberTestData("max input length: '0' ** 1292782621", new VirtualCharSequence('0', 1292782621), BigInteger.ZERO),
-                new NumberTestData("max input length: '0' ** 1292782620, '7'", new VirtualCharSequence('0', 1292782621 - 1) + "7", BigInteger.valueOf(7)),
-                new NumberTestData("'9806543217' ** 1000", repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10))
+                new NumberTestData("'0' ** 1292782622", new VirtualCharSequence('0', 1_292_782_621 + 1), BigInteger.ZERO),
+                new NumberTestData("max input length: '0' ** 1292782621", new VirtualCharSequence('0', 1_292_782_621), BigInteger.ZERO),
+                new NumberTestData("max input length: '0' ** 1292782620, '7'", new VirtualCharSequence("", 0, "", "7", '0', 1_292_782_621), BigInteger.valueOf(7)),
+                new NumberTestData("'9806543217' ** 1000", repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10)),
+                new NumberTestData("max input length: '0'**1291782620,'1','0'**100_000",
+                        new VirtualCharSequence("", 1_292_782_621 - 100_000 - 1, "1", "", '0', 1_292_782_621),
+                        BigInteger.valueOf(5).pow(100_000).shiftLeft(100_000))
         );
     }
 

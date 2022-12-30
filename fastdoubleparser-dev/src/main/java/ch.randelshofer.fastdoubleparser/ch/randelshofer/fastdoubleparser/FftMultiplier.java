@@ -150,13 +150,21 @@ class FftMultiplier {
         return fftVec;
     }
 
-    // Converts an array of complex numbers back into a BigInteger.
-    // Expects the real parts to contain the lower half and the imaginary
-    // parts to contain the upper half of the result.
+    /**
+     * This constant limits {@code mag.length} of BigIntegers to the supported
+     * range.
+     */
+    private static final int MAX_MAG_LENGTH = Integer.MAX_VALUE / Integer.SIZE + 1; // (1 << 26)
+
+    /**
+     * Converts an array of complex numbers back into a BigInteger.
+     * Expects the real parts to contain the lower half and the imaginary
+     * parts to contain the upper half of the result.
+     */
     private static BigInteger fromFFTVector(MutableComplex[] fftVec, int signum, int bitsPerFFTPoint) {
         int fftLen = fftVec.length;
         long magLen = 2 * ((long) fftLen * bitsPerFFTPoint + 31) / 32;
-        int[] mag = new int[(int) Math.min(magLen, Integer.MAX_VALUE - 4)];
+        int[] mag = new int[(int) Math.min(magLen, MAX_MAG_LENGTH)];
         int magIdx = mag.length - 1;
         int magBitIdx = 0;
         long carry = 0;

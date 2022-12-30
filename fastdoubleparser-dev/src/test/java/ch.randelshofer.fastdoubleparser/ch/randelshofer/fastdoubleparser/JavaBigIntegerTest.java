@@ -7,6 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import java.math.BigInteger;
 import java.util.stream.Stream;
 
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
@@ -14,6 +15,11 @@ import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toCharArray;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
+
+    public static BigInteger createBigIntegerPowerOf10(int n) {
+        return BigInteger.valueOf(5).pow(n).shiftLeft(n);
+    }
+
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_byteArray() {
         return createTestData().stream()
