@@ -28,44 +28,51 @@ import java.util.concurrent.TimeUnit;
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *           (digits)   Mode  Cnt          _        Score   Error  Units
- * bigIntMul               1  avgt         _       12.542          ns/op
- * bigIntMul              10  avgt         _       61.165          ns/op
- * bigIntMul             100  avgt         _     2230.654          ns/op
- * bigIntMul            1000  avgt         _   125126.791          ns/op
- * bigIntMul           10000  avgt         _  4345217.581          ns/op
- * bigIntMul          100000  avgt         _130398426.351          ns/op
- * bigIntMul         1000000  avgt        3_793324687.333          ns/op
- * bigIntMul        10000000  avgt       95_997865178.000          ns/op
- * bigIntParaMul           1  avgt         _       12.728          ns/op
- * bigIntParaMul          10  avgt         _      104.104          ns/op
- * bigIntParaMul         100  avgt         _     2243.226          ns/op
- * bigIntParaMul        1000  avgt         _    94033.287          ns/op
- * bigIntParaMul       10000  avgt         _  1534321.503          ns/op
- * bigIntParaMul      100000  avgt         _ 38690763.788          ns/op
- * bigIntParaMul     1000000  avgt        1_078235959.000          ns/op
- * bigIntParaMul    10000000  avgt       30_959947020.000          ns/op
- * fftMul                  1  avgt         _      309.876          ns/op
- * fftMul                 10  avgt         _     1641.160          ns/op
- * fftMul                100  avgt         _    16075.264          ns/op
- * fftMul               1000  avgt         _   235251.826          ns/op
- * fftMul              10000  avgt         _  3812066.357          ns/op
- * fftMul             100000  avgt         _ 51504729.528          ns/op
- * fftMul            1000000  avgt        1_867501162.500          ns/op
- * fftMul           10000000  avgt       11_273404223.000          ns/op
- * mul                     1  avgt         _       10.891          ns/op
- * mul                    10  avgt         _       55.095          ns/op
- * mul                   100  avgt         _     2034.587          ns/op
- * mul                  1000  avgt         _   164422.189          ns/op
- * mul                 10000  avgt         _  2581705.997          ns/op
- * mul                100000  avgt         _ 57813125.661          ns/op
- * mul               1000000  avgt        1_025797666.900          ns/op
- * mul              10000000  avgt       10_895716951.000          ns/op
+ *                 (digits)  Mode  Cnt             Score   Error  Units
+ * bigIntMul              1  avgt          _        0.744          ns/op
+ * bigIntMul             10  avgt          _       10.175          ns/op
+ * bigIntMul            100  avgt          _       69.120          ns/op
+ * bigIntMul           1000  avgt          _     2751.164          ns/op
+ * bigIntMul          10000  avgt          _   139652.212          ns/op
+ * bigIntMul         100000  avgt          _  4892998.360          ns/op
+ * bigIntMul        1000000  avgt          _146510318.377          ns/op
+ * bigIntMul       10000000  avgt         4_544668420.000          ns/op
+ * bigIntMul      100000000  avgt       136_610227832.000          ns/op
+ * bigIntMul      323195659  avgt       768_288129903.000          ns/op
+ * bigIntParaMul          1  avgt          _        0.718          ns/op
+ * bigIntParaMul         10  avgt          _        9.866          ns/op
+ * bigIntParaMul        100  avgt          _       66.354          ns/op
+ * bigIntParaMul       1000  avgt          _     2680.353          ns/op
+ * bigIntParaMul      10000  avgt          _    91212.377          ns/op
+ * bigIntParaMul     100000  avgt          _  1835446.097          ns/op
+ * bigIntParaMul    1000000  avgt          _ 45372758.959          ns/op
+ * bigIntParaMul   10000000  avgt         1_572644848.286          ns/op
+ * bigIntParaMul  100000000  avgt        51_212775272.000          ns/op
+ * bigIntParaMul  323195659  avgt       297_916512893.000          ns/op
+ * fftMul                 1  avgt          _       94.338          ns/op
+ * fftMul                10  avgt          _      278.424          ns/op
+ * fftMul               100  avgt          _     1649.438          ns/op
+ * fftMul              1000  avgt          _    13270.498          ns/op
+ * fftMul             10000  avgt          _   174858.465          ns/op
+ * fftMul            100000  avgt          _  2628755.454          ns/op
+ * fftMul           1000000  avgt          _ 44124072.753          ns/op
+ * fftMul          10000000  avgt          _925856745.091          ns/op
+ * fftMul         100000000  avgt        10_995622424.000          ns/op
+ * mul                    1  avgt          _        0.658          ns/op
+ * mul                   10  avgt          _       10.517          ns/op
+ * mul                  100  avgt          _       67.746          ns/op
+ * mul                 1000  avgt          _     2685.683          ns/op
+ * mul                10000  avgt          _   173804.003          ns/op
+ * mul               100000  avgt          _  2621671.866          ns/op
+ * mul              1000000  avgt          _ 43915961.693          ns/op
+ * mul             10000000  avgt          _897308742.583          ns/op
+ * mul            100000000  avgt        10_951994069.000          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
+        , "-Xmx24g"
         // , "--add-opens", "java.base/java.math=ALL-UNNAMED"
 
         // Options for analysis with https://github.com/AdoptOpenJDK/jitwatch
@@ -84,16 +91,16 @@ public class JmhFftMultiplier {
 
 
     @Param({
-            "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
-            , "100000000"
-            , "646391315"
+            // "1"
+            // , "10"
+            // , "100"
+            // , "1000"
+            // , "10000"
+            // , "100000"
+            // , "1000000"
+            // , "10000000"
+            // , "100000000"
+            "323195659"
 
     })
     public int digits;
@@ -102,13 +109,15 @@ public class JmhFftMultiplier {
 
     @Setup(Level.Trial)
     public void setUp() {
-        byte[] bytesA = new byte[(int) FastIntegerMath.estimateNumBits(digits)];
-        byte[] bytesB = new byte[(int) FastIntegerMath.estimateNumBits(digits)];
+        long estimatedNumBits = FastIntegerMath.estimateNumBits(digits);
+        int estimatedNumBytes = (int) (estimatedNumBits >> 3);
+        byte[] bytesA = new byte[estimatedNumBytes];
+        byte[] bytesB = new byte[estimatedNumBytes];
         Random rng = new Random(0);
         rng.nextBytes(bytesA);
         rng.nextBytes(bytesB);
-        a = new BigInteger(bytesA);
-        b = new BigInteger(bytesB);
+        a = new BigInteger(1, bytesA);
+        b = new BigInteger(1, bytesB);
 
     }
 
@@ -131,7 +140,6 @@ public class JmhFftMultiplier {
     public BigInteger mul() {
         return FftMultiplier.multiply(a, b, false);
     }
-
 
 }
 

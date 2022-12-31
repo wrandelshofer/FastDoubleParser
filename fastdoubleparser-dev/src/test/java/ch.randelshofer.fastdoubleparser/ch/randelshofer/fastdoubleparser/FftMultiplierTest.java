@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class FftMultiplierTest {
+    private boolean longRunningTests = !"false".equals(System.getProperty("xenableLongRunningTests"));
+
     @TestFactory
     public List<DynamicTest> dynamicTestsMultiply() {
         return List.of(
@@ -31,14 +33,78 @@ public class FftMultiplierTest {
                         "3" + repeat("0", 100_000),
                         "4" + repeat("0", 100_000)))
         );
+    }
+
+    @TestFactory
+    public List<DynamicTest> dynamicLongRunningTestsMultiply() {
+        if (longRunningTests) {
+            return List.of(
+                    dynamicTest("1<<Integer.MAX_VALUE/2-1 * 1<<Integer.MAX_VALUE/2-1", () -> shouldMultiply(
+                            BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),
+                            BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),
+                            BigInteger.ONE.shiftLeft(Integer.MAX_VALUE - 1)
+                    ))
+            );
+        } else {
+            return List.of();
+        }
+    }
+
+    @TestFactory
+    public List<DynamicTest> dynamicLongRunningTestsSquare() {
+        if (longRunningTests) {
+            return List.of(
+                    dynamicTest("1<<Integer.MAX_VALUE/2-1 * 1<<Integer.MAX_VALUE/2-1", () -> shouldSquare(
+                            BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),
+                            BigInteger.ONE.shiftLeft(Integer.MAX_VALUE - 1)
+                    ))
+            );
+        } else {
+            return List.of();
+        }
+    }
+
+    private void shouldMultiply(String strA, String strB) {
+        BigInteger a = new BigInteger(strA);
+        BigInteger b = new BigInteger(strB);
+        BigInteger expected = a.multiply(b);
+        BigInteger actual = FftMultiplier.multiplyFFT(a, b);
+        if (expected.compareTo(actual) != 0) {
+            System.err.println("expected: bitLength=" + expected.bitLength());
+            System.err.println(toHexString(expected.toByteArray()));
+            System.err.println("actual: bitLength=" + actual.bitLength());
+            System.err.println(toHexString(expected.toByteArray()));
+        }
+        assertEquals(expected.compareTo(actual), 0);
 
     }
 
-    private void shouldMultiply(String a, String b) {
-        BigInteger bigA = new BigInteger(a);
-        BigInteger bigB = new BigInteger(b);
-        BigInteger expected = bigA.multiply(bigB);
-        BigInteger actual = FftMultiplier.multiplyFFT(bigA, bigB);
+    public static String toHexString(byte[] a) {
+        if (a == null) {
+            return "null";
+        }
+        int iMax = a.length - 1;
+        if (iMax == -1) {
+            return "[]";
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = 0; ; i++) {
+            String hex = Integer.toHexString(a[i] & 0xff);
+            if (hex.length() == 1) {
+                b.append('0');
+            }
+            b.append(hex);
+            if (i == iMax) {
+                return b.append(']').toString();
+            }
+            //b.append(", ");
+        }
+    }
+
+    private void shouldMultiply(BigInteger a, BigInteger b, BigInteger expected) {
+        BigInteger actual = FftMultiplier.multiplyFFT(a, b);
         assertEquals(expected, actual);
     }
 
@@ -65,6 +131,11 @@ public class FftMultiplierTest {
         BigInteger bigA = new BigInteger(a);
         BigInteger expected = bigA.multiply(bigA);
         BigInteger actual = FftMultiplier.square(bigA);
+        assertEquals(expected, actual);
+    }
+
+    private void shouldSquare(BigInteger a, BigInteger expected) {
+        BigInteger actual = FftMultiplier.square(a);
         assertEquals(expected, actual);
     }
 
