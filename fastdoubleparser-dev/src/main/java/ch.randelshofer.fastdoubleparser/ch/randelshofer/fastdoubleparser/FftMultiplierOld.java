@@ -21,191 +21,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.getMagnitude;
  * <dd><a href="https://github.com/tbuktu/bigint/tree/floatfft">github.com</a></dd>
  * </dl>
  */
-class FftMultiplier {
-    private static class FftVector {
-        /**
-         * The number of complex numbers stored in this vector.
-         */
-        private final int length;
-        /**
-         * This arrays contains complex numbers.
-         * <p>
-         * A complex number occupies 2 consecutive array elements:
-         * the real part and then the imaginary part.
-         */
-        private final double[] a;
-        /**
-         * Offset to the real part of a complex number.
-         */
-        private final static int realOffset = 0;
-        /**
-         * Offset to the imaginary part of a complex number.
-         */
-        private final static int imagOffset = 1;
-        /**
-         * A complex number in an FFT double[] vector occupies 2 array elements.
-         */
-        private final static int COMPLEX_SIZE = 2;
-        /**
-         * A complex number in an FFT double[] vector occupies 2 array elements.
-         */
-        private final static int COMPLEX_SIZE_SHIFT = 1;
-
-        public FftVector(int length) {
-            this.a = new double[length << COMPLEX_SIZE_SHIFT];
-            this.length = length;
-        }
-
-
-        public void add(int idxa, MutableComplex c) {
-            a[realIdx(idxa)] += c.real;
-            a[imagIdx(idxa)] += c.imag;
-        }
-
-        private int realIdx(int idxa) {
-            return (idxa << COMPLEX_SIZE_SHIFT) + realOffset;
-        }
-
-        private int imagIdx(int idxa) {
-            return (idxa << COMPLEX_SIZE_SHIFT) + imagOffset;
-        }
-
-        private double real(int idxa) {
-            return a[(idxa << COMPLEX_SIZE_SHIFT) + realOffset];
-        }
-
-        private double part(int idxa, int part) {
-            return a[(idxa << COMPLEX_SIZE_SHIFT) + part];
-        }
-
-        private double imag(int idxa) {
-            return a[(idxa << COMPLEX_SIZE_SHIFT) + imagOffset];
-        }
-
-        private void real(int idxa, double value) {
-            a[(idxa << COMPLEX_SIZE_SHIFT) + realOffset] = value;
-        }
-
-        private void imag(int idxa, double value) {
-            a[(idxa << COMPLEX_SIZE_SHIFT) + imagOffset] = value;
-        }
-
-        public void addTimesITo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] - c.a[imagIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] + c.a[realIdx(idxc)];
-        }
-
-
-        public void addTo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] + c.a[realIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] + c.a[imagIdx(idxc)];
-        }
-
-        public void copyTo(int idxa, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)];
-            destination.imag = a[imagIdx(idxa)];
-        }
-
-        public void copyRange(int idxa, FftVector c, int idxc, int length) {
-            System.arraycopy(c.a, idxc << COMPLEX_SIZE_SHIFT, a, idxa << COMPLEX_SIZE_SHIFT, length << COMPLEX_SIZE_SHIFT);
-        }
-
-        /**
-         * Multiplies {@code a} by {@code c}.
-         * Stores the result in a[idx] and a[idx+1].
-         */
-        public void multiply(int idxa, MutableComplex c) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = real * c.real - imag * c.imag;
-            a[imagIdx(idxa)] = real * c.imag + imag * c.real;
-        }
-
-        public void multiply(int idxa, FftVector c, int idxc) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = real * c.a[realIdx(idxc)] - imag * c.a[imagIdx(idxc)];
-            a[imagIdx(idxa)] = real * c.a[imagIdx(idxc)] + imag * c.a[realIdx(idxc)];
-        }
-
-        /**
-         * Multiplies {@code a} by {@code c} and by {@code i}.
-         * Stores the result in a[idx] and a[idx+1].
-         */
-        public void multiplyByIAnd(int idxa, MutableComplex c) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = -real * c.imag - imag * c.real;
-            a[imagIdx(idxa)] = real * c.real - imag * c.imag;
-        }
-
-        /**
-         * Multiplies {@code a} by the conjugate of {@code c}.
-         * Stores the result in a[i] and a[i+1].
-         */
-        public void multiplyConjugate(int idxa, MutableComplex c) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = real * c.real + imag * c.imag;
-            a[imagIdx(idxa)] = -real * c.imag + imag * c.real;
-        }
-
-        /**
-         * Multiplies {@code (a[i].real,a[i+1].imaginary)} by the conjugate of {@code c}
-         * and by {@code i}.
-         * Stores the result in a[i] and a[i+1].
-         */
-        public void multiplyConjugateTimesI(int idxa, MutableComplex c) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = -real * c.imag + imag * c.real;
-            a[imagIdx(idxa)] = -real * c.real - imag * c.imag;
-        }
-
-        public void multiplyConjugateTo(int idxa, MutableComplex c, MutableComplex destination) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            destination.real = real * c.real + imag * c.imag;
-            destination.imag = -real * c.imag + imag * c.real;
-        }
-
-        public void multiplyTo(int idxa, MutableComplex c, MutableComplex destination) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            destination.real = real * c.real - imag * c.imag;
-            destination.imag = real * c.imag + imag * c.real;
-        }
-
-        public void square(int idxa) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = real * real - imag * imag;
-            a[imagIdx(idxa)] = 2 * real * imag;
-        }
-
-        public void subtractTimesITo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] + c.a[imagIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] - c.a[realIdx(idxc)];
-        }
-
-        public void subtractTo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] - c.a[realIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] - c.a[imagIdx(idxc)];
-        }
-
-        public void timesTwoToThe(int idxa, int n) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = Math.scalb(real, n);
-            a[imagIdx(idxa)] = Math.scalb(imag, n);
-        }
-
-        public FftVector(FftVector c, int from, int to) {
-            this.length = to - from;
-            this.a = Arrays.copyOfRange(c.a, from << COMPLEX_SIZE_SHIFT, to << COMPLEX_SIZE_SHIFT);
-        }
-    }
-
+class FftMultiplierOld {
     /**
      * The threshold value for using 3-way Toom-Cook multiplication.
      */
@@ -248,18 +64,18 @@ class FftMultiplier {
      * Multiplies the elements of an FFT vector by 1/weight.
      * Used for the right-angle convolution.
      */
-    private static void applyInverseWeights(FftVector a, MutableComplex[] weights) {
+    private static void applyInverseWeights(MutableComplex[] a, MutableComplex[] weights) {
         for (int i = 0; i < a.length; i++)
-            a.multiplyConjugate(i, weights[i]);
+            a[i].multiplyConjugate(weights[i]);
     }
 
     /**
      * Multiplies the elements of an FFT vector by weights.
      * Doing this makes a regular FFT convolution a right-angle convolution.
      */
-    private static void applyWeights(FftVector a, MutableComplex[] weights) {
+    private static void applyWeights(MutableComplex[] a, MutableComplex[] weights) {
         for (int i = 0; i < a.length; i++)
-            a.multiply(i, weights[i]);   // possible optimization: use the fact that a[i].imag == 0
+            a[i].multiply(weights[i]);   // possible optimization: use the fact that a[i].imag == 0
     }
 
     /**
@@ -340,7 +156,7 @@ class FftMultiplier {
      *              {@code roots[s][k] = e^(pi*k*i/(2*roots.length))},
      *              i.e., they must cover the first quadrant.
      */
-    private static void fft(FftVector a, MutableComplex[][] roots) {
+    private static void fft(MutableComplex[] a, MutableComplex[][] roots) {
         int n = a.length;
         int logN = 31 - Integer.numberOfLeadingZeros(n);
         MutableComplex a0 = new MutableComplex(0, 0);
@@ -373,29 +189,29 @@ class FftMultiplier {
                     //   a[idx2] = (a[idx0] + a[idx1]*(-1) + a[idx2]      + a[idx3]*(-1)) * w^2
                     //   a[idx3] = (a[idx0] + a[idx1]*i    + a[idx2]*(-1) + a[idx3]*(-i)) * w^3
                     // where w = omega1^(-1) = conjugate(omega1)
-                    a.addTo(idx0, a, idx1, a0);
-                    a0.add(a, idx2);
-                    a0.add(a, idx3);
+                    a[idx0].addTo(a[idx1], a0);
+                    a0.add(a[idx2]);
+                    a0.add(a[idx3]);
 
-                    a.subtractTimesITo(idx0, a, idx1, a1);
-                    a1.subtract(a, idx2);
-                    a1.addTimesI(a, idx3);
+                    a[idx0].subtractTimesITo(a[idx1], a1);
+                    a1.subtract(a[idx2]);
+                    a1.addTimesI(a[idx3]);
                     a1.multiplyConjugate(omega1);
 
-                    a.subtractTo(idx0, a, idx1, a2);
-                    a2.add(a, idx2);
-                    a2.subtract(a, idx3);
+                    a[idx0].subtractTo(a[idx1], a2);
+                    a2.add(a[idx2]);
+                    a2.subtract(a[idx3]);
                     a2.multiplyConjugate(omega2);
 
-                    a.addTimesITo(idx0, a, idx1, a3);
-                    a3.subtract(a, idx2);
-                    a3.subtractTimesI(a, idx3);
+                    a[idx0].addTimesI(a[idx1], a3);
+                    a3.subtract(a[idx2]);
+                    a3.subtractTimesI(a[idx3]);
                     a3.multiply(omega1);   // Bernstein's trick: multiply by omega^(-1) instead of omega^3
 
-                    a0.copyTo(a, idx0);
-                    a1.copyTo(a, idx1);
-                    a2.copyTo(a, idx2);
-                    a3.copyTo(a, idx3);
+                    a0.copyTo(a[idx0]);
+                    a1.copyTo(a[idx1]);
+                    a2.copyTo(a[idx2]);
+                    a3.copyTo(a[idx3]);
                 }
             }
         }
@@ -404,10 +220,10 @@ class FftMultiplier {
         if (s > 0) {
             for (int i = 0; i < n; i += 2) {
                 // omega = 1
-                a.copyTo(i, a0);
-                a.copyTo(i + 1, a1);
-                a.add(i, a1);
-                a0.subtract(a1, a, i + 1);
+                a[i].copyTo(a0);
+                a[i + 1].copyTo(a1);
+                a[i].add(a1);
+                a0.subtractTo(a1, a[i + 1]);
             }
         }
     }
@@ -422,25 +238,25 @@ class FftMultiplier {
      * @param sign  1 for a forward FFT, -1 for an inverse FFT
      * @param scale 1 for a forward FFT, 1/3 for an inverse FFT
      */
-    private static void fft3(FftVector a0, FftVector a1, FftVector a2, int sign, double scale) {
+    private static void fft3(MutableComplex[] a0, MutableComplex[] a1, MutableComplex[] a2, int sign, double scale) {
         double omegaImag = sign * -0.5 * Math.sqrt(3);   // imaginary part of omega for n=3: sin(sign*(-2)*pi*1/3)
         for (int i = 0; i < a0.length; i++) {
-            double a0Real = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] + a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
-            double a0Imag = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-            double c = omegaImag * (a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] - a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset]);
-            double d = omegaImag * (a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] - a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset]);
-            double e = 0.5 * (a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset]);
-            double f = 0.5 * (a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset]);
-            double a1Real = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] - e + c;
-            double a1Imag = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + d - f;
-            double a2Real = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] - e - c;
-            double a2Imag = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] - d - f;
-            a0.real(i, a0Real * scale);
-            a0.imag(i, a0Imag * scale);
-            a1.real(i, a1Real * scale);
-            a1.imag(i, a1Imag * scale);
-            a2.real(i, a2Real * scale);
-            a2.imag(i, a2Imag * scale);
+            double a0Real = a0[i].real + a1[i].real + a2[i].real;
+            double a0Imag = a0[i].imag + a1[i].imag + a2[i].imag;
+            double c = omegaImag * (a2[i].imag - a1[i].imag);
+            double d = omegaImag * (a1[i].real - a2[i].real);
+            double e = 0.5 * (a1[i].real + a2[i].real);
+            double f = 0.5 * (a1[i].imag + a2[i].imag);
+            double a1Real = a0[i].real - e + c;
+            double a1Imag = a0[i].imag + d - f;
+            double a2Real = a0[i].real - e - c;
+            double a2Imag = a0[i].imag - d - f;
+            a0[i].real = a0Real * scale;
+            a0[i].imag = a0Imag * scale;
+            a1[i].real = a1Real * scale;
+            a1[i].imag = a1Imag * scale;
+            a2[i].real = a2Real * scale;
+            a2[i].imag = a2Imag * scale;
         }
     }
 
@@ -460,11 +276,11 @@ class FftMultiplier {
      *               unity such that {@code roots[k] = e^(pi*k*i/(2*roots3.length))},
      *               i.e., they need to cover the first quadrant.
      */
-    private static void fftMixedRadix(FftVector a, MutableComplex[][] roots2, MutableComplex[] roots3) {
+    private static void fftMixedRadix(MutableComplex[] a, MutableComplex[][] roots2, MutableComplex[] roots3) {
         int oneThird = a.length / 3;
-        FftVector a0 = new FftVector(a, 0, oneThird);
-        FftVector a1 = new FftVector(a, oneThird, oneThird * 2);
-        FftVector a2 = new FftVector(a, oneThird * 2, a.length);
+        MutableComplex[] a0 = Arrays.copyOfRange(a, 0, oneThird);
+        MutableComplex[] a1 = Arrays.copyOfRange(a, oneThird, oneThird * 2);
+        MutableComplex[] a2 = Arrays.copyOfRange(a, oneThird * 2, a.length);
 
         // step 1: perform a.length/3 transforms of length 3
         fft3(a0, a1, a2, 1, 1);
@@ -473,16 +289,16 @@ class FftMultiplier {
         for (int i = 0; i < a.length / 4; i++) {
             MutableComplex omega = roots3[i];
             // a0[i] *= omega^0; a1[i] *= omega^1; a2[i] *= omega^2
-            a1.multiplyConjugate(i, omega);
-            a2.multiplyConjugate(i, omega);
-            a2.multiplyConjugate(i, omega);
+            a1[i].multiplyConjugate(omega);
+            a2[i].multiplyConjugate(omega);
+            a2[i].multiplyConjugate(omega);
         }
         for (int i = a.length / 4; i < oneThird; i++) {
             MutableComplex omega = roots3[i - a.length / 4];
             // a0[i] *= omega^0; a1[i] *= omega^1; a2[i] *= omega^2
-            a1.multiplyConjugateTimesI(i, omega);
-            a2.multiplyConjugateTimesI(i, omega);
-            a2.multiplyConjugateTimesI(i, omega);
+            a1[i].multiplyConjugateTimesI(omega);
+            a2[i].multiplyConjugateTimesI(omega);
+            a2[i].multiplyConjugateTimesI(omega);
         }
 
         // step 3 is not needed
@@ -492,13 +308,11 @@ class FftMultiplier {
         fft(a1, roots2);
         fft(a2, roots2);
 
-        // copy result into a
-        a.copyRange(0, a0, 0, oneThird);
-        a.copyRange(oneThird, a1, 0, oneThird);
-        a.copyRange(oneThird * 2, a2, 0, oneThird);
     }
 
-    private static BigInteger fromFftVector(FftVector fftVec, int signum, int bitsPerFFTPoint) {
+    private static BigInteger fromFFTVector(MutableComplex[] fftVec, int signum, int bitsPerFFTPoint) {
+        //int fftLen = fftVec.length;
+        //int magLen =(int)Math.min( 2 * ((long) fftLen * bitsPerFFTPoint + 31) / 32,MAX_MAG_LENGTH);
         int fftLen = (int) Math.min(fftVec.length, ((long) MAX_MAG_LENGTH * 32) / bitsPerFFTPoint + 1);
         int magLen = (int) (2 * ((long) fftLen * bitsPerFFTPoint + 31) / 32);
         byte[] mag = new byte[4 * magLen];
@@ -508,7 +322,7 @@ class FftMultiplier {
         for (int part = 0; part <= 1; part++) {   // 0=real, 1=imaginary
             int fftIdx = 0;
             while (fftIdx < fftLen) {
-                long fftElem = Math.round(fftVec.part(fftIdx, part)) + carry;
+                long fftElem = Math.round(part == 0 ? fftVec[fftIdx].real : fftVec[fftIdx].imag) + carry;
                 carry = fftElem >> bitsPerFFTPoint;
                 fftElem &= (1L << bitsPerFFTPoint) - 1;
                 int fftBitIdx = 0;
@@ -529,7 +343,6 @@ class FftMultiplier {
         }
         return new BigInteger(signum, mag);
     }
-
 
     /**
      * Returns sets of complex roots of unity. For k=logN, logN-2, logN-4, ...,
@@ -582,7 +395,7 @@ class FftMultiplier {
      *              {@code roots[s][k] = e^(pi*k*i/(2*roots.length))},
      *              i.e., they must cover the first quadrant.
      */
-    private static void ifft(FftVector a, MutableComplex[][] roots) {
+    private static void ifft(MutableComplex[] a, MutableComplex[][] roots) {
         int n = a.length;
         int logN = 31 - Integer.numberOfLeadingZeros(n);
         MutableComplex a0 = new MutableComplex(0, 0);
@@ -599,10 +412,10 @@ class FftMultiplier {
         if (logN % 2 != 0) {
             for (int i = 0; i < n; i += 2) {
                 // omega = 1
-                a.copyTo(i + 1, a2);
-                a.copyTo(i, a0);
-                a.add(i, a2);
-                a0.subtract(a2, a, i + 1);
+                a[i + 1].copyTo(a2);
+                a[i].copyTo(a0);
+                a[i].add(a2);
+                a0.subtractTo(a2, a[i + 1]);
             }
             s++;
         }
@@ -631,12 +444,12 @@ class FftMultiplier {
                     //   a[idx2] = a[idx0]*w^0 + a[idx1]*(-1)*w^1 + a[idx2]*w^2      + a[idx3]*(-1)*w^3
                     //   a[idx3] = a[idx0]*w^0 + a[idx1]*(-i)*w^1 + a[idx2]*(-1)*w^2 + a[idx3]*i*w^3
                     // where w = omega1
-                    a.copyTo(idx0, a0);
-                    a.multiplyTo(idx1, omega1, a1);
-                    a.multiplyTo(idx2, omega2, a2);
-                    a.multiplyConjugateTo(idx3, omega1, a3);   // Bernstein's trick: multiply by omega^(-1) instead of omega^3
+                    a0 = a[idx0];
+                    a[idx1].multiplyTo(omega1, a1);
+                    a[idx2].multiplyTo(omega2, a2);
+                    a[idx3].multiplyConjugateTo(omega1, a3);   // Bernstein's trick: multiply by omega^(-1) instead of omega^3
 
-                    a0.add(a1, b0);
+                    a0.addTo(a1, b0);
                     b0.add(a2);
                     b0.add(a3);
 
@@ -644,25 +457,25 @@ class FftMultiplier {
                     b1.subtract(a2);
                     b1.subtractTimesI(a3);
 
-                    a0.subtract(a1, b2);
+                    a0.subtractTo(a1, b2);
                     b2.add(a2);
                     b2.subtract(a3);
 
-                    a0.subtractTimesI(a1, b3);
+                    a0.subtractTimesITo(a1, b3);
                     b3.subtract(a2);
                     b3.addTimesI(a3);
 
-                    b0.copyTo(a, idx0);
-                    b1.copyTo(a, idx1);
-                    b2.copyTo(a, idx2);
-                    b3.copyTo(a, idx3);
+                    b0.copyTo(a[idx0]);
+                    b1.copyTo(a[idx1]);
+                    b2.copyTo(a[idx2]);
+                    b3.copyTo(a[idx3]);
                 }
             }
         }
 
         // divide all vector elements by n
         for (int i = 0; i < n; i++)
-            a.timesTwoToThe(i, -logN);
+            a[i].timesTwoToThe(-logN);
     }
 
     /**
@@ -681,11 +494,10 @@ class FftMultiplier {
      *               unity such that {@code roots[k] = e^(pi*k*i/(2*roots3.length))},
      *               i.e., they need to cover the first quadrant.
      */
-    private static void ifftMixedRadix(FftVector a, MutableComplex[][] roots2, MutableComplex[] roots3) {
-        int oneThird = a.length / 3;
-        FftVector a0 = new FftVector(a, 0, oneThird);
-        FftVector a1 = new FftVector(a, oneThird, oneThird * 2);
-        FftVector a2 = new FftVector(a, oneThird * 2, a.length);
+    private static void ifftMixedRadix(MutableComplex[] a, MutableComplex[][] roots2, MutableComplex[] roots3) {
+        MutableComplex[] a0 = Arrays.copyOfRange(a, 0, a.length / 3);
+        MutableComplex[] a1 = Arrays.copyOfRange(a, a.length / 3, a.length * 2 / 3);
+        MutableComplex[] a2 = Arrays.copyOfRange(a, a.length * 2 / 3, a.length);
 
         // step 1: perform 3 transforms of length a.length/3
         ifft(a0, roots2);
@@ -696,27 +508,22 @@ class FftMultiplier {
         for (int i = 0; i < a.length / 4; i++) {
             MutableComplex omega = roots3[i];
             // a0[i] *= omega^0; a1[i] *= omega^1; a2[i] *= omega^2
-            a1.multiply(i, omega);
-            a2.multiply(i, omega);
-            a2.multiply(i, omega);
+            a1[i].multiply(omega);
+            a2[i].multiply(omega);
+            a2[i].multiply(omega);
         }
-        for (int i = a.length / 4; i < oneThird; i++) {
+        for (int i = a.length / 4; i < a.length / 3; i++) {
             MutableComplex omega = roots3[i - a.length / 4];
             // a0[i] *= omega^0; a1[i] *= omega^1; a2[i] *= omega^2
-            a1.multiplyByIAnd(i, omega);
-            a2.multiplyByIAnd(i, omega);
-            a2.multiplyByIAnd(i, omega);
+            a1[i].multiplyByIAnd(omega);
+            a2[i].multiplyByIAnd(omega);
+            a2[i].multiplyByIAnd(omega);
         }
 
         // step 3 is not needed
 
         // step 4: perform a.length/3 transforms of length 3
         fft3(a0, a1, a2, -1, 1.0 / 3);
-
-        // copy result into a
-        a.copyRange(0, a0, 0, oneThird);
-        a.copyRange(oneThird, a1, 0, oneThird);
-        a.copyRange(oneThird * 2, a2, 0, oneThird);
     }
 
     /**
@@ -805,8 +612,8 @@ class FftMultiplier {
         int fftLen3 = fftLen2 * 3 / 4;   // rounded to 3*2^n
         if (fftLen < fftLen3) {
             fftLen = fftLen3;
-            FftVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
-            FftVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
+            MutableComplex[] aVec = toFFTVector(aMag, fftLen, bitsPerPoint);
+            MutableComplex[] bVec = toFFTVector(bMag, fftLen, bitsPerPoint);
             MutableComplex[][] roots2 = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
             MutableComplex[] weights = getRootsOfUnity3(logFFTLen - 2);
             MutableComplex[] twiddles = getRootsOfUnity3(logFFTLen - 4);
@@ -817,12 +624,12 @@ class FftMultiplier {
             multiplyPointwise(aVec, bVec);
             ifftMixedRadix(aVec, roots2, twiddles);
             applyInverseWeights(aVec, weights);
-            BigInteger c = fromFftVector(aVec, signum, bitsPerPoint);
+            BigInteger c = fromFFTVector(aVec, signum, bitsPerPoint);
             return c;
         } else {
             fftLen = fftLen2;
-            FftVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
-            FftVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
+            MutableComplex[] aVec = toFFTVector(aMag, fftLen, bitsPerPoint);
+            MutableComplex[] bVec = toFFTVector(bMag, fftLen, bitsPerPoint);
             MutableComplex[][] roots = getRootsOfUnity2(logFFTLen);
             applyWeights(aVec, roots[logFFTLen]);
             applyWeights(bVec, roots[logFFTLen]);
@@ -831,7 +638,7 @@ class FftMultiplier {
             multiplyPointwise(aVec, bVec);
             ifft(aVec, roots);
             applyInverseWeights(aVec, roots[logFFTLen]);
-            BigInteger c = fromFftVector(aVec, signum, bitsPerPoint);
+            BigInteger c = fromFFTVector(aVec, signum, bitsPerPoint);
             return c;
         }
     }
@@ -839,9 +646,9 @@ class FftMultiplier {
     /**
      * The result is placed in a.
      */
-    private static void multiplyPointwise(FftVector a, FftVector b) {
+    private static void multiplyPointwise(MutableComplex[] a, MutableComplex[] b) {
         for (int i = 0; i < a.length; i++)
-            a.multiply(i, b, i);
+            a[i].multiply(b[i]);
     }
 
     /**
@@ -853,7 +660,13 @@ class FftMultiplier {
         if (a.signum() == 0) {
             return BigInteger.ZERO;
         }
-        return a.bitLength() < FFT_THRESHOLD ? a.multiply(a) : squareFFT(a);
+        int len = a.bitLength();
+
+        if (len < FFT_THRESHOLD) {
+            return a.multiply(a);
+        } else {
+            return squareFFT(a);
+        }
     }
 
     private static BigInteger squareFFT(BigInteger a) {
@@ -868,7 +681,7 @@ class FftMultiplier {
         int fftLen3 = fftLen2 * 3 / 4;   // rounded to 3*2^n
         if (fftLen < fftLen3) {
             fftLen = fftLen3;
-            FftVector vec = toFftVector(mag, fftLen, bitsPerPoint);
+            MutableComplex[] vec = toFFTVector(mag, fftLen, bitsPerPoint);
             MutableComplex[][] roots2 = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
             MutableComplex[] weights = getRootsOfUnity3(logFFTLen - 2);
             MutableComplex[] twiddles = getRootsOfUnity3(logFFTLen - 4);
@@ -877,34 +690,34 @@ class FftMultiplier {
             squarePointwise(vec);
             ifftMixedRadix(vec, roots2, twiddles);
             applyInverseWeights(vec, weights);
-            BigInteger c = fromFftVector(vec, 1, bitsPerPoint);
+            BigInteger c = fromFFTVector(vec, 1, bitsPerPoint);
             return c;
         } else {
             fftLen = fftLen2;
-            FftVector vec = toFftVector(mag, fftLen, bitsPerPoint);
+            MutableComplex[] vec = toFFTVector(mag, fftLen, bitsPerPoint);
             MutableComplex[][] roots = getRootsOfUnity2(logFFTLen);
             applyWeights(vec, roots[logFFTLen]);
             fft(vec, roots);
             squarePointwise(vec);
             ifft(vec, roots);
             applyInverseWeights(vec, roots[logFFTLen]);
-            BigInteger c = fromFftVector(vec, 1, bitsPerPoint);
+            BigInteger c = fromFFTVector(vec, 1, bitsPerPoint);
             return c;
         }
     }
 
     // The result is placed in the argument
-    private static void squarePointwise(FftVector vec) {
+    private static void squarePointwise(MutableComplex[] vec) {
         for (int i = 0; i < vec.length; i++)
-            vec.square(i);
+            vec[i].square();
     }
 
     /**
      * Converts this BigInteger into an array of complex numbers suitable for an FFT.
      * Populates the real parts and sets the imaginary parts to zero.
      */
-    private static FftVector toFftVector(int[] mag, int fftLen, int bitsPerFFTPoint) {
-        FftVector fftVec = new FftVector(fftLen);
+    private static MutableComplex[] toFFTVector(int[] mag, int fftLen, int bitsPerFFTPoint) {
+        MutableComplex[] fftVec = new MutableComplex[fftLen];
         int fftIdx = 0;
         int magBitIdx = 0;   // next bit of the current mag element
         int magIdx = mag.length - 1;
@@ -936,14 +749,16 @@ class FftMultiplier {
                 carry = 0;
             }
 
-            fftVec.real(fftIdx, fftPoint);
+            fftVec[fftIdx] = new MutableComplex(fftPoint, 0);
             fftIdx++;
         }
         // final carry
         if (carry > 0) {
-            fftVec.real(fftIdx, carry);
+            fftVec[fftIdx] = new MutableComplex(carry, 0);
             fftIdx++;
         }
+        while (fftIdx < fftLen)
+            fftVec[fftIdx++] = new MutableComplex(0, 0);
         return fftVec;
     }
 
@@ -962,12 +777,7 @@ class FftMultiplier {
             imag += c.imag;
         }
 
-        void add(FftVector c, int idxc) {
-            real += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
-            imag += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-        }
-
-        void add(MutableComplex c, MutableComplex destination) {
+        void addTo(MutableComplex c, MutableComplex destination) {
             destination.real = real + c.real;
             destination.imag = imag + c.imag;
         }
@@ -976,11 +786,6 @@ class FftMultiplier {
         void addTimesI(MutableComplex c) {
             real -= c.imag;
             imag += c.real;
-        }
-
-        void addTimesI(FftVector c, int idxc) {
-            real -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-            imag += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
         }
 
         // Adds c*i to this number. Leaves this number unmodified.
@@ -994,18 +799,13 @@ class FftMultiplier {
             c.imag = imag;
         }
 
-        void copyTo(FftVector c, int idxc) {
-            c.real(idxc, real);
-            c.imag(idxc, imag);
-        }
-
         void multiply(MutableComplex c) {
             double temp = real;
             real = real * c.real - imag * c.imag;
             imag = temp * c.imag + imag * c.real;
         }
 
-        void multiply(MutableComplex c, MutableComplex destination) {
+        void multiplyTo(MutableComplex c, MutableComplex destination) {
             destination.real = real * c.real - imag * c.imag;
             destination.imag = real * c.imag + imag * c.real;
         }
@@ -1026,7 +826,7 @@ class FftMultiplier {
 
         // Multiplies this number by the conjugate of c and puts the result into destination.
         // Leaves this number unmodified.
-        void multiplyConjugate(MutableComplex c, MutableComplex destination) {
+        void multiplyConjugateTo(MutableComplex c, MutableComplex destination) {
             destination.real = real * c.real + imag * c.imag;
             destination.imag = -real * c.imag + imag * c.real;
         }
@@ -1054,19 +854,9 @@ class FftMultiplier {
             imag -= c.imag;
         }
 
-        void subtract(FftVector c, int idxc) {
-            real -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
-            imag -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-        }
-
-        void subtract(MutableComplex c, MutableComplex destination) {
+        void subtractTo(MutableComplex c, MutableComplex destination) {
             destination.real = real - c.real;
             destination.imag = imag - c.imag;
-        }
-
-        void subtract(MutableComplex c, FftVector destination, int idxd) {
-            destination.real(idxd, real - c.real);
-            destination.imag(idxd, imag - c.imag);
         }
 
         void subtractTimesI(MutableComplex c) {
@@ -1074,12 +864,7 @@ class FftMultiplier {
             imag -= c.real;
         }
 
-        void subtractTimesI(FftVector c, int idxc) {
-            real += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-            imag -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
-        }
-
-        void subtractTimesI(MutableComplex c, MutableComplex destination) {
+        void subtractTimesITo(MutableComplex c, MutableComplex destination) {
             destination.real = real + c.imag;
             destination.imag = imag - c.real;
         }

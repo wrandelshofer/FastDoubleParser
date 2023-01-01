@@ -133,7 +133,7 @@ public class JmhFftMultiplier {
 
     @Benchmark
     public BigInteger fftMul() {
-        return FftMultiplier.multiplyFFT(a, b);
+        return FftMultiplier.multiplyFft(a, b);
     }
 
     @Benchmark

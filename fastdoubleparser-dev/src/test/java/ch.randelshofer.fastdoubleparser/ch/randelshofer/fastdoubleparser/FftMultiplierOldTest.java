@@ -14,7 +14,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class FftMultiplierTest {
+public class FftMultiplierOldTest {
     private boolean longRunningTests = !"false".equals(System.getProperty("xenableLongRunningTests"));
 
     @TestFactory
@@ -68,7 +68,7 @@ public class FftMultiplierTest {
         BigInteger a = new BigInteger(strA);
         BigInteger b = new BigInteger(strB);
         BigInteger expected = a.multiply(b);
-        BigInteger actual = FftMultiplier.multiplyFft(a, b);
+        BigInteger actual = FftMultiplierOld.multiplyFft(a, b);
         if (expected.compareTo(actual) != 0) {
             System.err.println("expected: bitLength=" + expected.bitLength());
             System.err.println(toHexString(expected.toByteArray()));
@@ -104,12 +104,7 @@ public class FftMultiplierTest {
     }
 
     private void shouldMultiplyFft(BigInteger a, BigInteger b, BigInteger expected) {
-        try {
-            Thread.sleep(10_000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        BigInteger actual = FftMultiplier.multiplyFft(a, b);
+        BigInteger actual = FftMultiplierOld.multiplyFft(a, b);
         assertEquals(expected, actual);
     }
 
@@ -135,12 +130,12 @@ public class FftMultiplierTest {
     private void shouldSquare(String a) {
         BigInteger bigA = new BigInteger(a);
         BigInteger expected = bigA.multiply(bigA);
-        BigInteger actual = FftMultiplier.square(bigA);
+        BigInteger actual = FftMultiplierOld.square(bigA);
         assertEquals(expected, actual);
     }
 
     private void shouldSquare(BigInteger a, BigInteger expected) {
-        BigInteger actual = FftMultiplier.square(a);
+        BigInteger actual = FftMultiplierOld.square(a);
         assertEquals(expected, actual);
     }
 
