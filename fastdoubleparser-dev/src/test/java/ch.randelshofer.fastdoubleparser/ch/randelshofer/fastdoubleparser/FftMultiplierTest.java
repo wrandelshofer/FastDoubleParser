@@ -38,6 +38,11 @@ public class FftMultiplierTest {
     @TestFactory
     public List<DynamicTest> dynamicLongRunningTestsMultiply() {
         if (longRunningTests) {
+            try {
+                Thread.sleep(10_000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return List.of(
                     dynamicTest("1<<Integer.MAX_VALUE/2-1 * 1<<Integer.MAX_VALUE/2-1", () -> shouldMultiplyFft(
                             BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),

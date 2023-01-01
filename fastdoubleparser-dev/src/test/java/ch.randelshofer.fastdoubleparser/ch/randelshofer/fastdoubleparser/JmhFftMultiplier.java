@@ -51,17 +51,17 @@ import java.util.concurrent.TimeUnit;
  * bigIntParaMul  323195659  avgt       297_916512893.000          ns/op
  *
  * After we introduced FftMultiplier.FftVector to reduce memory usage:
- *                 (digits)  Mode  Cnt    _        Score   Error  Units
- * fftMul                 1  avgt         _      116.123          ns/op
- * fftMul                10  avgt         _      285.923          ns/op
- * fftMul               100  avgt         _     1592.825          ns/op
- * fftMul              1000  avgt         _    12607.960          ns/op
- * fftMul             10000  avgt         _   164683.940          ns/op
- * fftMul            100000  avgt         _  2323068.253          ns/op
- * fftMul           1000000  avgt         _ 37438991.317          ns/op
- * fftMul          10000000  avgt         _657465535.938          ns/op
- * fftMul         100000000  avgt        7_804167033.500          ns/op
- * fftMul         323195659  avgt       42_295122981.000          ns/op
+ *          (digits)  Mode  Cnt            Score   Error  Units
+ * fftMul          1  avgt               122.828          ns/op
+ * fftMul         10  avgt               310.785          ns/op
+ * fftMul        100  avgt              1810.012          ns/op
+ * fftMul       1000  avgt             14783.633          ns/op
+ * fftMul      10000  avgt            190124.736          ns/op
+ * fftMul     100000  avgt           2865366.010          ns/op
+ * fftMul    1000000  avgt          46615582.898          ns/op
+ * fftMul   10000000  avgt         714379395.857          ns/op
+ * fftMul  100000000  avgt        8844828633.000          ns/op
+ * fftMul  323195659  avgt       40035577930.000          ns/op
  *
  * Before we introduced FftMultiplier.FftVector to reduce memory usage:
  * fftMul                 1  avgt          _       94.338          ns/op
