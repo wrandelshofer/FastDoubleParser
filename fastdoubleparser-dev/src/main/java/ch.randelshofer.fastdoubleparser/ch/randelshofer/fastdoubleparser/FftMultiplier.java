@@ -5,7 +5,6 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.getMagnitude;
 
@@ -37,11 +36,11 @@ class FftMultiplier {
         /**
          * Offset to the real part of a complex number.
          */
-        private final static int realOffset = 0;
+        private final int realOffset;
         /**
          * Offset to the imaginary part of a complex number.
          */
-        private final static int imagOffset = 1;
+        private final int imagOffset;
         /**
          * A complex number in an FFT double[] vector occupies 2 array elements.
          */
@@ -54,6 +53,8 @@ class FftMultiplier {
         public FftVector(int length) {
             this.a = new double[length << COMPLEX_SIZE_SHIFT];
             this.length = length;
+            this.realOffset = 0;
+            this.imagOffset = 1;
         }
 
 
@@ -91,14 +92,14 @@ class FftMultiplier {
         }
 
         public void addTimesITo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] - c.a[imagIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] + c.a[realIdx(idxc)];
+            destination.real = a[realIdx(idxa)] - c.imag(idxc);
+            destination.imag = a[imagIdx(idxa)] + c.real(idxc);
         }
 
 
         public void addTo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] + c.a[realIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] + c.a[imagIdx(idxc)];
+            destination.real = a[realIdx(idxa)] + c.real(idxc);
+            destination.imag = a[imagIdx(idxa)] + c.imag(idxc);
         }
 
         public void copyTo(int idxa, MutableComplex destination) {
@@ -107,7 +108,7 @@ class FftMultiplier {
         }
 
         public void copyRange(int idxa, FftVector c, int idxc, int length) {
-            System.arraycopy(c.a, idxc << COMPLEX_SIZE_SHIFT, a, idxa << COMPLEX_SIZE_SHIFT, length << COMPLEX_SIZE_SHIFT);
+            //  System.arraycopy(c.a, c.realIdx(idxc), a, realIdx(idxa), length << COMPLEX_SIZE_SHIFT);
         }
 
         /**
@@ -124,8 +125,8 @@ class FftMultiplier {
         public void multiply(int idxa, FftVector c, int idxc) {
             double real = a[realIdx(idxa)];
             double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = real * c.a[realIdx(idxc)] - imag * c.a[imagIdx(idxc)];
-            a[imagIdx(idxa)] = real * c.a[imagIdx(idxc)] + imag * c.a[realIdx(idxc)];
+            a[realIdx(idxa)] = real * c.real(idxc) - imag * c.imag(idxc);
+            a[imagIdx(idxa)] = real * c.imag(idxc) + imag * c.real(idxc);
         }
 
         /**
@@ -184,13 +185,13 @@ class FftMultiplier {
         }
 
         public void subtractTimesITo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] + c.a[imagIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] - c.a[realIdx(idxc)];
+            destination.real = a[realIdx(idxa)] + c.imag(idxc);
+            destination.imag = a[imagIdx(idxa)] - c.real(idxc);
         }
 
         public void subtractTo(int idxa, FftVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] - c.a[realIdx(idxc)];
-            destination.imag = a[imagIdx(idxa)] - c.a[imagIdx(idxc)];
+            destination.real = a[realIdx(idxa)] - c.real(idxc);
+            destination.imag = a[imagIdx(idxa)] - c.imag(idxc);
         }
 
         public void timesTwoToThe(int idxa, int n) {
@@ -200,9 +201,19 @@ class FftMultiplier {
             a[imagIdx(idxa)] = Math.scalb(imag, n);
         }
 
+        /**
+         * Creates a view on another vector.
+         *
+         * @param c    the other vector
+         * @param from start index of the view
+         * @param to   end index of the view
+         */
         public FftVector(FftVector c, int from, int to) {
             this.length = to - from;
-            this.a = Arrays.copyOfRange(c.a, from << COMPLEX_SIZE_SHIFT, to << COMPLEX_SIZE_SHIFT);
+            //this.a = Arrays.copyOfRange(c.a, from << COMPLEX_SIZE_SHIFT, to << COMPLEX_SIZE_SHIFT);
+            this.a = c.a;
+            this.realOffset = from << 1;
+            this.imagOffset = (from << 1) + 1;
         }
     }
 
@@ -425,16 +436,16 @@ class FftMultiplier {
     private static void fft3(FftVector a0, FftVector a1, FftVector a2, int sign, double scale) {
         double omegaImag = sign * -0.5 * Math.sqrt(3);   // imaginary part of omega for n=3: sin(sign*(-2)*pi*1/3)
         for (int i = 0; i < a0.length; i++) {
-            double a0Real = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] + a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
-            double a0Imag = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-            double c = omegaImag * (a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] - a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset]);
-            double d = omegaImag * (a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] - a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset]);
-            double e = 0.5 * (a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset]);
-            double f = 0.5 * (a1.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + a2.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset]);
-            double a1Real = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] - e + c;
-            double a1Imag = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] + d - f;
-            double a2Real = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset] - e - c;
-            double a2Imag = a0.a[(i << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset] - d - f;
+            double a0Real = a0.real(i) + a1.real(i) + a2.real(i);
+            double a0Imag = a0.imag(i) + a1.imag(i) + a2.imag(i);
+            double c = omegaImag * (a2.imag(i) - a1.imag(i));
+            double d = omegaImag * (a1.real(i) - a2.real(i));
+            double e = 0.5 * (a1.real(i) + a2.real(i));
+            double f = 0.5 * (a1.imag(i) + a2.imag(i));
+            double a1Real = a0.real(i) - e + c;
+            double a1Imag = a0.imag(i) + d - f;
+            double a2Real = a0.real(i) - e - c;
+            double a2Imag = a0.imag(i) - d - f;
             a0.real(i, a0Real * scale);
             a0.imag(i, a0Imag * scale);
             a1.real(i, a1Real * scale);
@@ -963,8 +974,8 @@ class FftMultiplier {
         }
 
         void add(FftVector c, int idxc) {
-            real += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
-            imag += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
+            real += c.real(idxc);
+            imag += c.imag(idxc);
         }
 
         void add(MutableComplex c, MutableComplex destination) {
@@ -979,8 +990,8 @@ class FftMultiplier {
         }
 
         void addTimesI(FftVector c, int idxc) {
-            real -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-            imag += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
+            real -= c.imag(idxc);
+            imag += c.real(idxc);
         }
 
         // Adds c*i to this number. Leaves this number unmodified.
@@ -1055,8 +1066,8 @@ class FftMultiplier {
         }
 
         void subtract(FftVector c, int idxc) {
-            real -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
-            imag -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
+            real -= c.real(idxc);
+            imag -= c.imag(idxc);
         }
 
         void subtract(MutableComplex c, MutableComplex destination) {
@@ -1075,8 +1086,8 @@ class FftMultiplier {
         }
 
         void subtractTimesI(FftVector c, int idxc) {
-            real += c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.imagOffset];
-            imag -= c.a[(idxc << FftVector.COMPLEX_SIZE_SHIFT) + FftVector.realOffset];
+            real += c.imag(idxc);
+            imag -= c.real(idxc);
         }
 
         void subtractTimesI(MutableComplex c, MutableComplex destination) {

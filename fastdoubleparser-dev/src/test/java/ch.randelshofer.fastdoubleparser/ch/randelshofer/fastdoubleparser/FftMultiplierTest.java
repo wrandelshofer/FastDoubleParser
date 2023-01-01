@@ -104,11 +104,6 @@ public class FftMultiplierTest {
     }
 
     private void shouldMultiplyFft(BigInteger a, BigInteger b, BigInteger expected) {
-        try {
-            Thread.sleep(10_000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         BigInteger actual = FftMultiplier.multiplyFft(a, b);
         assertEquals(expected, actual);
     }
