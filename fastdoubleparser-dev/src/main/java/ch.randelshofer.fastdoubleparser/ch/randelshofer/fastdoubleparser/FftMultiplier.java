@@ -107,10 +107,6 @@ class FftMultiplier {
             destination.imag = a[imagIdx(idxa)];
         }
 
-        public void copyRange(int idxa, FftVector c, int idxc, int length) {
-            //  System.arraycopy(c.a, c.realIdx(idxc), a, realIdx(idxa), length << COMPLEX_SIZE_SHIFT);
-        }
-
         /**
          * Multiplies {@code a} by {@code c}.
          * Stores the result in a[idx] and a[idx+1].
@@ -502,11 +498,6 @@ class FftMultiplier {
         fft(a0, roots2);
         fft(a1, roots2);
         fft(a2, roots2);
-
-        // copy result into a
-        a.copyRange(0, a0, 0, oneThird);
-        a.copyRange(oneThird, a1, 0, oneThird);
-        a.copyRange(oneThird * 2, a2, 0, oneThird);
     }
 
     private static BigInteger fromFftVector(FftVector fftVec, int signum, int bitsPerFFTPoint) {
@@ -723,11 +714,6 @@ class FftMultiplier {
 
         // step 4: perform a.length/3 transforms of length 3
         fft3(a0, a1, a2, -1, 1.0 / 3);
-
-        // copy result into a
-        a.copyRange(0, a0, 0, oneThird);
-        a.copyRange(oneThird, a1, 0, oneThird);
-        a.copyRange(oneThird * 2, a2, 0, oneThird);
     }
 
     /**

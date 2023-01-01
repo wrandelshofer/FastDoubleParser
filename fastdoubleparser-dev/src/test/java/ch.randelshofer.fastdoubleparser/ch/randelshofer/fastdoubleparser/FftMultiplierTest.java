@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class FftMultiplierTest {
-    private boolean longRunningTests = !"false".equals(System.getProperty("xenableLongRunningTests"));
+    private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
 
     @TestFactory
     public List<DynamicTest> dynamicTestsMultiply() {
