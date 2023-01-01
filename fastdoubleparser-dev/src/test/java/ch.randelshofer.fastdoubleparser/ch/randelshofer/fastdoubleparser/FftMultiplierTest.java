@@ -20,6 +20,15 @@ public class FftMultiplierTest {
     @TestFactory
     public List<DynamicTest> dynamicTestsMultiply() {
         return List.of(
+                dynamicTest("0xFEDCBA9876543210 * 0xEDCBA9876543210", () -> shouldMultiplyFft(
+                        new BigInteger("FEDCBA9876543210", 16),
+                        new BigInteger("EDCBA9876543210", 16))),
+                dynamicTest("3 * 4", () -> shouldMultiplyFft(
+                        "3",
+                        "4")),
+                dynamicTest("2147483647 * 9223372036854775807", () -> shouldMultiplyFft(
+                        "2147483647",
+                        "9223372036854775807")),
                 dynamicTest("'3','0'**84 * '4','0'**84", () -> shouldMultiplyFft(
                         "3" + repeat("0", 84),
                         "4" + repeat("0", 84))),
@@ -72,6 +81,19 @@ public class FftMultiplierTest {
     private void shouldMultiplyFft(String strA, String strB) {
         BigInteger a = new BigInteger(strA);
         BigInteger b = new BigInteger(strB);
+        BigInteger expected = a.multiply(b);
+        BigInteger actual = FftMultiplier.multiplyFft(a, b);
+        if (expected.compareTo(actual) != 0) {
+            System.err.println("expected: bitLength=" + expected.bitLength());
+            System.err.println(toHexString(expected.toByteArray()));
+            System.err.println("actual: bitLength=" + actual.bitLength());
+            System.err.println(toHexString(actual.toByteArray()));
+        }
+        assertEquals(expected.compareTo(actual), 0);
+
+    }
+
+    private void shouldMultiplyFft(BigInteger a, BigInteger b) {
         BigInteger expected = a.multiply(b);
         BigInteger actual = FftMultiplier.multiplyFft(a, b);
         if (expected.compareTo(actual) != 0) {

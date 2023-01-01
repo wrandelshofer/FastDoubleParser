@@ -48,14 +48,15 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * parDec      100000  avgt           _  4569606.572          ns/op
  * parDec     1000000  avgt           _ 56500481.191          ns/op
  * parDec    10000000  avgt          1_637870034.143          ns/op
- * seqDec           1  avgt           _        3.201          ns/op
- * seqDec          10  avgt           _       14.814          ns/op
- * seqDec         100  avgt           _      428.145          ns/op
- * seqDec        1000  avgt           _     4789.136          ns/op
- * seqDec       10000  avgt           _   161220.550          ns/op
- * seqDec      100000  avgt           _  6238443.526          ns/op
- * seqDec     1000000  avgt           _112939439.315          ns/op
- * seqDec    10000000  avgt          2_639500769.250          ns/op
+ *           (digits)  Mode  Cnt      _        Score   Error  Units
+ * seqDec           1  avgt           _        3.705          ns/op
+ * seqDec          10  avgt           _       15.591          ns/op
+ * seqDec         100  avgt           _      517.783          ns/op
+ * seqDec        1000  avgt           _     5533.544          ns/op
+ * seqDec       10000  avgt           _   197494.130          ns/op
+ * seqDec      100000  avgt           _  5959188.610          ns/op
+ * seqDec     1000000  avgt           _ 94879156.528          ns/op
+ * seqDec    10000000  avgt          1_630382273.286          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -70,8 +71,8 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
         //,"-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 1)
-@Warmup(iterations = 1)
+@Measurement(iterations = 4)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -110,11 +111,13 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
     public BigInteger seqDec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);
     }
-
+/*
     @Benchmark
     public BigInteger parDec() {
         return JavaBigIntegerParser.parallelParseBigInteger(decLiteral);
     }
+
+ */
 }
 
 

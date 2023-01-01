@@ -50,18 +50,19 @@ import java.util.concurrent.TimeUnit;
  * bigIntParaMul  100000000  avgt        51_212775272.000          ns/op
  * bigIntParaMul  323195659  avgt       297_916512893.000          ns/op
  *
- * After we introduced FftMultiplier.FftVector to reduce memory usage:
- *          (digits)  Mode  Cnt            Score   Error  Units
- * fftMul          1  avgt               122.828          ns/op
- * fftMul         10  avgt               310.785          ns/op
- * fftMul        100  avgt              1810.012          ns/op
- * fftMul       1000  avgt             14783.633          ns/op
- * fftMul      10000  avgt            190124.736          ns/op
- * fftMul     100000  avgt           2865366.010          ns/op
- * fftMul    1000000  avgt          46615582.898          ns/op
- * fftMul   10000000  avgt         714379395.857          ns/op
- * fftMul  100000000  avgt        8844828633.000          ns/op
- * fftMul  323195659  avgt       40035577930.000          ns/op
+ * After we introduced FftMultiplier.ComplexVector to reduce memory usage:
+ *                 (digits)  Mode  Cnt     _        Score   Error  Units
+ * fftMul                 1  avgt          _      185.320          ns/op
+ * fftMul                10  avgt          _      292.296          ns/op
+ * fftMul               100  avgt          _     1658.466          ns/op
+ * fftMul              1000  avgt          _    12958.809          ns/op
+ * fftMul             10000  avgt          _   152199.739          ns/op
+ * fftMul            100000  avgt          _  2281323.429          ns/op
+ * fftMul           1000000  avgt          _ 29863621.923          ns/op
+ * fftMul          10000000  avgt          _471292876.227          ns/op
+ * fftMul         100000000  avgt         5_263219018.500          ns/op
+ * fftMul         323195659  avgt        28_733061841.000          ns/op
+ * toFftVector  323195659  avgt    4  534861045.209 ± 113458589.478  ns/op
  *
  * Before we introduced FftMultiplier.FftVector to reduce memory usage:
  * fftMul                 1  avgt          _       94.338          ns/op
@@ -97,8 +98,8 @@ import java.util.concurrent.TimeUnit;
         //, "-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 1)
-@Warmup(iterations = 1)
+@Measurement(iterations = 4)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -106,16 +107,16 @@ public class JmhFftMultiplier {
 
 
     @Param({
-            "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
-            , "100000000"
-            , "323195659"
+            //   "1"
+            //   , "10"
+            //   , "100"
+            //   , "1000"
+            //   , "10000"
+            //   , "100000"
+            //   , "1000000"
+            //   , "10000000"
+            //   , "100000000"
+            "323195659"
 
     })
     public int digits;
@@ -147,18 +148,29 @@ public class JmhFftMultiplier {
             return a.parallelMultiply(b);
         }
 
-     */
+
     @Benchmark
     public BigInteger fftMul() {
         return FftMultiplier.multiplyFft(a, b);
     }
-    /*
+
 
     @Benchmark
     public BigInteger mul() {
         return FftMultiplier.multiply(a, b, false);
     }
 */
+
+    @Benchmark
+    public FftMultiplier.ComplexVector toFftVector() {
+        byte[] aMag = (a.signum() < 0 ? a.negate() : a).toByteArray();
+        byte[] bMag = (b.signum() < 0 ? b.negate() : b).toByteArray();
+        int bitLen = Math.max(aMag.length, bMag.length) * 8;
+        int bitsPerPoint = 19;//bitsPerFftPoint(bitLen);
+        int fftLen = (bitLen + bitsPerPoint - 1) / bitsPerPoint + 1;   // +1 for a possible carry, see toFFTVector()
+        return FftMultiplier.toFftVector(aMag, fftLen, bitsPerPoint);
+    }
+
 }
 
 

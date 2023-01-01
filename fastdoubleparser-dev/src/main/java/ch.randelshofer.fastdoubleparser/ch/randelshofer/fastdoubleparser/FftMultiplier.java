@@ -6,8 +6,6 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.getMagnitude;
-
 /**
  * Provides methods for multiplying two {@link BigInteger}s using the
  * {@code FFT algorithm}.
@@ -21,7 +19,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.getMagnitude;
  * </dl>
  */
 class FftMultiplier {
-    private static class ComplexVector {
+    static class ComplexVector {
         /**
          * The number of complex numbers stored in this vector.
          */
@@ -63,18 +61,6 @@ class FftMultiplier {
          * Multiplies the elements of an FFT vector by weights.
          * Doing this makes a regular FFT convolution a right-angle convolution.
          */
-        private void applyWeights(MutableComplex[] weights) {
-            int idx = realOffset;
-            for (int i = 0; i < length; i++) {
-                // The following code is the same as: this.multiply(i,weights[i]);
-                // We use the fact that all a.imag(i) = 0.0
-                double real = a[idx];
-                a[idx] = real * weights[i].real;
-                a[idx + 1] = real * weights[i].imag;
-                idx += 2;
-            }
-        }
-
         private void applyWeights(ComplexVector weights) {
             int offa = realOffset;
             int offw = weights.realOffset;
@@ -94,19 +80,6 @@ class FftMultiplier {
          * Multiplies the elements of an FFT vector by 1/weight.
          * Used for the right-angle convolution.
          */
-        private void applyInverseWeights(MutableComplex[] weights) {
-            int idx = realOffset;
-            for (int i = 0; i < length; i++) {
-                // the following code is the same as: this.multiplyConjugate(i, weights[i]);
-
-                double real = a[idx + REAL];
-                double imag = a[idx + IMAG];
-                a[idx] = real * weights[i].real + imag * weights[i].imag;
-                a[idx + 1] = -real * weights[i].imag + imag * weights[i].real;
-                idx += 2;
-            }
-        }
-
         private void applyInverseWeights(ComplexVector weights) {
             int offa = realOffset;
             int offw = weights.realOffset;
@@ -192,8 +165,10 @@ class FftMultiplier {
         public void multiply(int idxa, ComplexVector c, int idxc) {
             double real = a[realIdx(idxa)];
             double imag = a[imagIdx(idxa)];
-            a[realIdx(idxa)] = real * c.real(idxc) - imag * c.imag(idxc);
-            a[imagIdx(idxa)] = real * c.imag(idxc) + imag * c.real(idxc);
+            double creal = c.real(idxc);
+            double cimag = c.imag(idxc);
+            a[realIdx(idxa)] = real * creal - imag * cimag;
+            a[imagIdx(idxa)] = real * cimag + imag * creal;
         }
 
         /**
@@ -327,7 +302,7 @@ class FftMultiplier {
      * causing the multiplication to be incorrect.
      *
      * @param bitLen length of this number in bits
-     * @return
+     * @return the maximum number of bits
      */
     private static int bitsPerFftPoint(int bitLen) {
         if (bitLen <= 19 * (1 << 9)) {
@@ -852,9 +827,9 @@ class FftMultiplier {
      */
     static BigInteger multiplyFft(BigInteger a, BigInteger b) {
         int signum = a.signum() * b.signum();
-        int[] aMag = getMagnitude(a);
-        int[] bMag = getMagnitude(b);
-        int bitLen = Math.max(aMag.length, bMag.length) * 32;
+        byte[] aMag = (a.signum() < 0 ? a.negate() : a).toByteArray();
+        byte[] bMag = (b.signum() < 0 ? b.negate() : b).toByteArray();
+        int bitLen = Math.max(aMag.length, bMag.length) * 8;
         int bitsPerPoint = bitsPerFftPoint(bitLen);
         int fftLen = (bitLen + bitsPerPoint - 1) / bitsPerPoint + 1;   // +1 for a possible carry, see toFFTVector()
         int logFFTLen = 32 - Integer.numberOfLeadingZeros(fftLen - 1);
@@ -862,7 +837,7 @@ class FftMultiplier {
         // Use a 2^n or 3*2^n transform, whichever is shortest
         int fftLen2 = 1 << (logFFTLen);   // rounded to 2^n
         int fftLen3 = fftLen2 * 3 / 4;   // rounded to 3*2^n
-        if (fftLen < fftLen3) {
+        if (fftLen < fftLen3 && logFFTLen > 3) {
             fftLen = fftLen3;
             ComplexVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
             ComplexVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
@@ -912,12 +887,12 @@ class FftMultiplier {
         if (a.signum() == 0) {
             return BigInteger.ZERO;
         }
-        return a.bitLength() < FFT_THRESHOLD ? a.multiply(a) : squareFFT(a);
+        return a.bitLength() < FFT_THRESHOLD ? a.multiply(a) : squareFft(a);
     }
 
-    private static BigInteger squareFFT(BigInteger a) {
-        int[] mag = getMagnitude(a);
-        int bitLen = mag.length * 32;
+    private static BigInteger squareFft(BigInteger a) {
+        byte[] mag = a.toByteArray();
+        int bitLen = mag.length * 8;
         int bitsPerPoint = bitsPerFftPoint(bitLen);
         int fftLen = (bitLen + bitsPerPoint - 1) / bitsPerPoint + 1;   // +1 for a possible carry, see toFFTVector()
         int logFFTLen = 32 - Integer.numberOfLeadingZeros(fftLen - 1);
@@ -962,38 +937,32 @@ class FftMultiplier {
      * Converts this BigInteger into an array of complex numbers suitable for an FFT.
      * Populates the real parts and sets the imaginary parts to zero.
      */
-    private static ComplexVector toFftVector(int[] mag, int fftLen, int bitsPerFFTPoint) {
+    static ComplexVector toFftVector(byte[] mag, int fftLen, int bitsPerFftPoint) {
         ComplexVector fftVec = new ComplexVector(fftLen);
         int fftIdx = 0;
-        int magBitIdx = 0;   // next bit of the current mag element
-        int magIdx = mag.length - 1;
-        int carry = 0;   // when we subtract base from a digit, we need to carry one
-        int base = 1 << bitsPerFFTPoint;
-        while (magIdx >= 0) {
-            int fftPoint = 0;
-            int fftBitIdx = 0;
-            do {
-                int bitsToCopy = Math.min(32 - magBitIdx, bitsPerFFTPoint - fftBitIdx);
-                fftPoint |= ((mag[magIdx] >> magBitIdx) & ((1 << bitsToCopy) - 1)) << fftBitIdx;
-                fftBitIdx += bitsToCopy;
-                magBitIdx += bitsToCopy;
-                if (magBitIdx >= 32) {
-                    magBitIdx = 0;
-                    magIdx--;
-                    if (magIdx < 0) {
-                        break;
-                    }
-                }
-            } while (fftBitIdx < bitsPerFFTPoint);
+        if (mag.length < 4) {
+            byte[] paddedMag = new byte[4];
+            System.arraycopy(mag, 0, paddedMag, 4 - mag.length, mag.length);
+            mag = paddedMag;
+        }
+
+        // Read fftPoint bits from right (least significant) to left (most significant)
+        int base = 1 << bitsPerFftPoint;
+        int halfBase = base / 2;
+        int bitMask = base - 1;
+        int bitPadding = 32 - bitsPerFftPoint;
+        int bitLength = mag.length * 8;
+        int bitIdx = bitLength - bitsPerFftPoint;
+        int carry = 0;// when we subtract base from a digit, we need to carry one
+        for (; bitIdx > -bitsPerFftPoint; bitIdx -= bitsPerFftPoint) {
+            int idx = Math.min(Math.max(0, bitIdx >> 3), mag.length - 4);
+            int shift = bitPadding - bitIdx + (idx << 3);
+            int fftPoint = (FastDoubleSwar.readIntBE(mag, idx) >> shift) & bitMask;
 
             // "balance" the output digits so -base/2 < digit < base/2
             fftPoint += carry;
-            if (fftPoint > base / 2) {
-                fftPoint -= base;
-                carry = 1;
-            } else {
-                carry = 0;
-            }
+            carry = (halfBase - fftPoint) >>> 31;// if fftPoint>halfBase then carry:=1, else carry:=0
+            fftPoint -= carry * base;//if (carry != 0) then  fftPoint -= base;
 
             fftVec.real(fftIdx, fftPoint);
             fftIdx++;
@@ -1001,8 +970,8 @@ class FftMultiplier {
         // final carry
         if (carry > 0) {
             fftVec.real(fftIdx, carry);
-            fftIdx++;
         }
+
         return fftVec;
     }
 
@@ -1053,11 +1022,6 @@ class FftMultiplier {
             destination.imag = imag + c.real;
         }
 
-        void copyTo(MutableComplex c) {
-            c.real = real;
-            c.imag = imag;
-        }
-
         void copyTo(ComplexVector c, int idxc) {
             c.real(idxc, real);
             c.imag(idxc, imag);
@@ -1069,43 +1033,13 @@ class FftMultiplier {
             imag = temp * c.imag + imag * c.real;
         }
 
-        void multiply(MutableComplex c, MutableComplex destination) {
-            destination.real = real * c.real - imag * c.imag;
-            destination.imag = real * c.imag + imag * c.real;
-        }
-
-        // Multiplies this number by c and by i.
-        void multiplyByIAnd(MutableComplex c) {
-            double temp = real;
-            real = -real * c.imag - imag * c.real;
-            imag = temp * c.real - imag * c.imag;
-        }
-
-        // multiplies this number by the conjugate of c.
+        /**
+         * multiplies this number by the conjugate of c.
+         */
         void multiplyConjugate(MutableComplex c) {
             double temp = real;
             real = real * c.real + imag * c.imag;
             imag = -temp * c.imag + imag * c.real;
-        }
-
-        // Multiplies this number by the conjugate of c and puts the result into destination.
-        // Leaves this number unmodified.
-        void multiplyConjugate(MutableComplex c, MutableComplex destination) {
-            destination.real = real * c.real + imag * c.imag;
-            destination.imag = -real * c.imag + imag * c.real;
-        }
-
-        // Multiplies this number by the conjugate of c and by i.
-        void multiplyConjugateTimesI(MutableComplex c) {
-            double temp = real;
-            real = -real * c.imag + imag * c.real;
-            imag = -temp * c.real - imag * c.imag;
-        }
-
-        void square() {
-            double temp = real;
-            real = real * real - imag * imag;
-            imag = 2 * temp * imag;
         }
 
         void square(MutableComplex destination) {
