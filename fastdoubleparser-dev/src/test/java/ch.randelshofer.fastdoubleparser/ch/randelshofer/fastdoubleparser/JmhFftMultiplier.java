@@ -50,28 +50,18 @@ import java.util.concurrent.TimeUnit;
  * bigIntParaMul  100000000  avgt        51_212775272.000          ns/op
  * bigIntParaMul  323195659  avgt       297_916512893.000          ns/op
  *
- * Regression after we introduced FftMultiplier.FftVector to reduce memory usage:
- *                   (digits)  Mode  Cnt    _        Score   Error  Units
- * fftMul                   1  avgt         _      132.491          ns/op
- * fftMul                  10  avgt         _      347.248          ns/op
- * fftMul                 100  avgt         _     2199.143          ns/op
- * fftMul                1000  avgt         _    17579.358          ns/op
- * fftMul               10000  avgt         _   238527.902          ns/op
- * fftMul              100000  avgt         _  3863881.798          ns/op
- * fftMul             1000000  avgt         _ 67296277.503          ns/op
- * fftMul            10000000  avgt        1_263049470.875          ns/op
- * fftMul           100000000  avgt       14_531461379.000          ns/op
- * fftMul           323195659  avgt       77_261393814.000          ns/op
- * mul                      1  avgt         _        0.769          ns/op
- * mul                     10  avgt         _       17.194          ns/op
- * mul                    100  avgt         _       88.759          ns/op
- * mul                   1000  avgt         _     3520.649          ns/op
- * mul                  10000  avgt         _   206708.380          ns/op
- * mul                 100000  avgt         _  3809848.354          ns/op
- * mul                1000000  avgt         _ 67331075.846          ns/op
- * mul               10000000  avgt        1_115553628.444          ns/op
- * mul              100000000  avgt       16_101246148.000          ns/op
- * mul              323195659  avgt       74_941567452.000          ns/op
+ * After we introduced FftMultiplier.FftVector to reduce memory usage:
+ *                 (digits)  Mode  Cnt    _        Score   Error  Units
+ * fftMul                 1  avgt         _      116.123          ns/op
+ * fftMul                10  avgt         _      285.923          ns/op
+ * fftMul               100  avgt         _     1592.825          ns/op
+ * fftMul              1000  avgt         _    12607.960          ns/op
+ * fftMul             10000  avgt         _   164683.940          ns/op
+ * fftMul            100000  avgt         _  2323068.253          ns/op
+ * fftMul           1000000  avgt         _ 37438991.317          ns/op
+ * fftMul          10000000  avgt         _657465535.938          ns/op
+ * fftMul         100000000  avgt        7_804167033.500          ns/op
+ * fftMul         323195659  avgt       42_295122981.000          ns/op
  *
  * Before we introduced FftMultiplier.FftVector to reduce memory usage:
  * fftMul                 1  avgt          _       94.338          ns/op
@@ -156,17 +146,19 @@ public class JmhFftMultiplier {
         public BigInteger bigIntParaMul() {
             return a.parallelMultiply(b);
         }
-    */
+
+     */
     @Benchmark
     public BigInteger fftMul() {
         return FftMultiplier.multiplyFft(a, b);
     }
+    /*
 
     @Benchmark
     public BigInteger mul() {
         return FftMultiplier.multiply(a, b, false);
     }
-
+*/
 }
 
 

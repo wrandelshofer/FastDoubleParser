@@ -57,6 +57,38 @@ class FftMultiplier {
             this.imagOffset = 1;
         }
 
+        /**
+         * Multiplies the elements of an FFT vector by weights.
+         * Doing this makes a regular FFT convolution a right-angle convolution.
+         */
+        private void applyWeights(MutableComplex[] weights) {
+            int idx = realOffset;
+            for (int i = 0; i < length; i++) {
+                // The following code is the same as: this.multiply(i,weights[i]);
+                // We use the fact that all a.imag(i) = 0.0
+                double real = a[idx];
+                a[idx] = real * weights[i].real;
+                a[idx + 1] = real * weights[i].imag;
+                idx += 2;
+            }
+        }
+
+        /**
+         * Multiplies the elements of an FFT vector by 1/weight.
+         * Used for the right-angle convolution.
+         */
+        private void applyInverseWeights(MutableComplex[] weights) {
+            int idx = realOffset;
+            for (int i = 0; i < length; i++) {
+                // the following code is the same as: this.multiplyConjugate(i, weights[i]);
+
+                double real = a[idx];
+                double imag = a[idx + 1];
+                a[idx] = real * weights[i].real + imag * weights[i].imag;
+                a[idx + 1] = -real * weights[i].imag + imag * weights[i].real;
+                idx += 2;
+            }
+        }
 
         public void add(int idxa, MutableComplex c) {
             a[realIdx(idxa)] += c.real;
@@ -250,24 +282,6 @@ class FftMultiplier {
      * Used for FFT multiplication.
      */
     private volatile static MutableComplex[][] ROOTS3_CACHE = new MutableComplex[ROOTS3_CACHE_SIZE][];
-
-    /**
-     * Multiplies the elements of an FFT vector by 1/weight.
-     * Used for the right-angle convolution.
-     */
-    private static void applyInverseWeights(FftVector a, MutableComplex[] weights) {
-        for (int i = 0; i < a.length; i++)
-            a.multiplyConjugate(i, weights[i]);
-    }
-
-    /**
-     * Multiplies the elements of an FFT vector by weights.
-     * Doing this makes a regular FFT convolution a right-angle convolution.
-     */
-    private static void applyWeights(FftVector a, MutableComplex[] weights) {
-        for (int i = 0; i < a.length; i++)
-            a.multiply(i, weights[i]);   // possible optimization: use the fact that a[i].imag == 0
-    }
 
     /**
      * Returns the maximum number of bits that one double precision number can fit without
@@ -807,13 +821,13 @@ class FftMultiplier {
             MutableComplex[][] roots2 = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
             MutableComplex[] weights = getRootsOfUnity3(logFFTLen - 2);
             MutableComplex[] twiddles = getRootsOfUnity3(logFFTLen - 4);
-            applyWeights(aVec, weights);
-            applyWeights(bVec, weights);
+            aVec.applyWeights(weights);
+            bVec.applyWeights(weights);
             fftMixedRadix(aVec, roots2, twiddles);
             fftMixedRadix(bVec, roots2, twiddles);
             multiplyPointwise(aVec, bVec);
             ifftMixedRadix(aVec, roots2, twiddles);
-            applyInverseWeights(aVec, weights);
+            aVec.applyInverseWeights(weights);
             BigInteger c = fromFftVector(aVec, signum, bitsPerPoint);
             return c;
         } else {
@@ -821,13 +835,13 @@ class FftMultiplier {
             FftVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
             FftVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
             MutableComplex[][] roots = getRootsOfUnity2(logFFTLen);
-            applyWeights(aVec, roots[logFFTLen]);
-            applyWeights(bVec, roots[logFFTLen]);
+            aVec.applyWeights(roots[logFFTLen]);
+            bVec.applyWeights(roots[logFFTLen]);
             fft(aVec, roots);
             fft(bVec, roots);
             multiplyPointwise(aVec, bVec);
             ifft(aVec, roots);
-            applyInverseWeights(aVec, roots[logFFTLen]);
+            aVec.applyInverseWeights(roots[logFFTLen]);
             BigInteger c = fromFftVector(aVec, signum, bitsPerPoint);
             return c;
         }
@@ -869,22 +883,22 @@ class FftMultiplier {
             MutableComplex[][] roots2 = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
             MutableComplex[] weights = getRootsOfUnity3(logFFTLen - 2);
             MutableComplex[] twiddles = getRootsOfUnity3(logFFTLen - 4);
-            applyWeights(vec, weights);
+            vec.applyWeights(weights);
             fftMixedRadix(vec, roots2, twiddles);
             squarePointwise(vec);
             ifftMixedRadix(vec, roots2, twiddles);
-            applyInverseWeights(vec, weights);
+            vec.applyInverseWeights(weights);
             BigInteger c = fromFftVector(vec, 1, bitsPerPoint);
             return c;
         } else {
             fftLen = fftLen2;
             FftVector vec = toFftVector(mag, fftLen, bitsPerPoint);
             MutableComplex[][] roots = getRootsOfUnity2(logFFTLen);
-            applyWeights(vec, roots[logFFTLen]);
+            vec.applyWeights(roots[logFFTLen]);
             fft(vec, roots);
             squarePointwise(vec);
             ifft(vec, roots);
-            applyInverseWeights(vec, roots[logFFTLen]);
+            vec.applyInverseWeights(roots[logFFTLen]);
             BigInteger c = fromFftVector(vec, 1, bitsPerPoint);
             return c;
         }
