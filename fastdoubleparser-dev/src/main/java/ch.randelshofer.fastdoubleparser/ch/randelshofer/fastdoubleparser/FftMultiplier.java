@@ -839,14 +839,14 @@ class FftMultiplier {
         int fftLen3 = fftLen2 * 3 / 4;   // rounded to 3*2^n
         if (fftLen < fftLen3 && logFFTLen > 3) {
             fftLen = fftLen3;
-            ComplexVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
-            ComplexVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
             ComplexVector[] roots2 = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
             ComplexVector weights = getRootsOfUnity3(logFFTLen - 2);
             ComplexVector twiddles = getRootsOfUnity3(logFFTLen - 4);
+            ComplexVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
             aVec.applyWeights(weights);
-            bVec.applyWeights(weights);
             fftMixedRadix(aVec, roots2, twiddles);
+            ComplexVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
+            bVec.applyWeights(weights);
             fftMixedRadix(bVec, roots2, twiddles);
             multiplyPointwise(aVec, bVec);
             ifftMixedRadix(aVec, roots2, twiddles);
@@ -855,12 +855,12 @@ class FftMultiplier {
             return c;
         } else {
             fftLen = fftLen2;
-            ComplexVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
-            ComplexVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
             ComplexVector[] roots = getRootsOfUnity2(logFFTLen);
+            ComplexVector aVec = toFftVector(aMag, fftLen, bitsPerPoint);
             aVec.applyWeights(roots[logFFTLen]);
-            bVec.applyWeights(roots[logFFTLen]);
             fft(aVec, roots);
+            ComplexVector bVec = toFftVector(bMag, fftLen, bitsPerPoint);
+            bVec.applyWeights(roots[logFFTLen]);
             fft(bVec, roots);
             multiplyPointwise(aVec, bVec);
             ifft(aVec, roots);

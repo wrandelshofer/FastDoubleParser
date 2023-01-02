@@ -48,20 +48,23 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * parDec      100000  avgt           _  4569606.572          ns/op
  * parDec     1000000  avgt           _ 56500481.191          ns/op
  * parDec    10000000  avgt          1_637870034.143          ns/op
- *           (digits)  Mode  Cnt      _        Score   Error  Units
- * seqDec           1  avgt           _        3.705          ns/op
- * seqDec          10  avgt           _       15.591          ns/op
- * seqDec         100  avgt           _      517.783          ns/op
- * seqDec        1000  avgt           _     5533.544          ns/op
- * seqDec       10000  avgt           _   197494.130          ns/op
- * seqDec      100000  avgt           _  5959188.610          ns/op
- * seqDec     1000000  avgt           _ 94879156.528          ns/op
- * seqDec    10000000  avgt          1_630382273.286          ns/op
+ *           (digits)  Mode  Cnt      _        Score          Error  Units
+ * seqDec           1  avgt    4      _        3.733 ±        0.349  ns/op
+ * seqDec          10  avgt    4      _       17.959 ±        1.761  ns/op
+ * seqDec         100  avgt    4      _      505.845 ±      111.849  ns/op
+ * seqDec        1000  avgt    4      _     5527.022 ±      199.217  ns/op
+ * seqDec       10000  avgt    4      _   197207.502 ±     6519.489  ns/op
+ * seqDec      100000  avgt    4      _  6707270.184 ±   382960.495  ns/op
+ * seqDec     1000000  avgt    4      _111331188.763 ± 63617989.241  ns/op
+ * seqDec    10000000  avgt    4     1_610442339.750 ± 48623222.687  ns/op
+ * seqDec   100000000  avgt         26_460563123.000          ns/op
+ * seqDec   646391315  avgt        241_777155009.000          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
+        , "-Xmx16g"
         //, "--add-opens", "java.base/java.math=ALL-UNNAMED"
 
         // Options for analysis with https://github.com/AdoptOpenJDK/jitwatch
@@ -71,8 +74,8 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
         //,"-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 4)
-@Warmup(iterations = 2)
+@Measurement(iterations = 1)
+@Warmup(iterations = 0)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -80,16 +83,16 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
 
     @Param({
-            "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
-            //, "100000000"
-            //, "646391315"
+            // "1"
+            // , "10"
+            // , "100"
+            // , "1000"
+            // , "10000"
+            // , "100000"
+            // , "1000000"
+            // , "10000000"
+            "100000000"
+            , "646391315"
 
     })
     public int digits;

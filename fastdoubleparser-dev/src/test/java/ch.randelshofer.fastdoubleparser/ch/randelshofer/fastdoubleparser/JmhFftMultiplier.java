@@ -4,7 +4,6 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Level;
@@ -160,7 +159,7 @@ public class JmhFftMultiplier {
         return FftMultiplier.multiply(a, b, false);
     }
 */
-
+/*
     @Benchmark
     public FftMultiplier.ComplexVector toFftVector() {
         byte[] aMag = (a.signum() < 0 ? a.negate() : a).toByteArray();
@@ -170,7 +169,7 @@ public class JmhFftMultiplier {
         int fftLen = (bitLen + bitsPerPoint - 1) / bitsPerPoint + 1;   // +1 for a possible carry, see toFFTVector()
         return FftMultiplier.toFftVector(aMag, fftLen, bitsPerPoint);
     }
-
+*/
 }
 
 

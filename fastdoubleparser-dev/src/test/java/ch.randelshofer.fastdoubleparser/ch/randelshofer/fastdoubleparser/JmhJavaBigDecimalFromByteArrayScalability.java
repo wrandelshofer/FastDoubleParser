@@ -29,6 +29,14 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # JMH version: 1.35
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * After we integrated FftMultiplier:
+ *
+ *      (digits)  Mode  Cnt               Score   Error  Units
+ * seq  646391315  avgt       284_707376315.000          ns/op
+ *
+ * Before we integrated FftMultiplier:
+ *
  *      (digits)  Mode  Cnt            Score   Error  Units
  * par        24  avgt                77.542          ns/op
  * par         1  avgt                10.387          ns/op
@@ -162,11 +170,13 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
     public BigDecimal seq() {
         return JavaBigDecimalParser.parseBigDecimal(str);
     }
-
+/*
     @Benchmark
     public BigDecimal par() {
         return JavaBigDecimalParser.parallelParseBigDecimal(str);
     }
+
+ */
 }
 
 
