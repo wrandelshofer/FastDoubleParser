@@ -94,12 +94,17 @@
             <systemPropertyVariables>
               <enableLongRunningTests>false</enableLongRunningTests>
             </systemPropertyVariables>
-            <argLine>-Xmx16g</argLine>
+            <argLine>-Xmx12g</argLine>
           </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>3.4.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.4.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -212,7 +217,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.3.2</version>
         <reportSets>
           <reportSet>
             <id>aggregate</id>
