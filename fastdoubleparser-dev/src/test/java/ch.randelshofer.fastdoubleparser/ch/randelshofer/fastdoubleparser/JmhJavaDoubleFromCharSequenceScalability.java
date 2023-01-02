@@ -41,13 +41,15 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * m   100000000  avgt    2   153397857.242          ns/op
  * m  1000000000  avgt    2  1528759668.000          ns/op
  * m  2147483643  avgt    2  3289661698.125          ns/op
+ *
+ * m  2147483643  avgt    2  4350359642.500          ns/op
  * </pre>
  */
 
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
-        , "-Xmx16g"
+        , "-Xmx10g"
 
         //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/FastDoubleParser.*"
 
@@ -61,18 +63,18 @@ public class JmhJavaDoubleFromCharSequenceScalability {
 
 
     @Param({
-            "24" // Double.toString() never produces more than 24 characters
-            , "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
-            , "100000000"
-            , "1000000000"
-            , "2147483643" // Integer.MAX_VALUE - 4 = the largest support array size
+            //"24" // Double.toString() never produces more than 24 characters
+            //, "1"
+            //, "10"
+            //, "100"
+            //, "1000"
+            //, "10000"
+            //, "100000"
+            //, "1000000"
+            //, "10000000"
+            //, "100000000"
+            //, "1000000000"
+            "2147483643" // Integer.MAX_VALUE - 4 = the largest support array size
     })
     public int digits;
     private String str;

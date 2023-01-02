@@ -59,12 +59,13 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * seqDec    10000000  avgt    4     1_610442339.750 ± 48623222.687  ns/op
  * seqDec   100000000  avgt         26_460563123.000          ns/op
  * seqDec   646391315  avgt        241_777155009.000          ns/op
+ * seqDec  1292782621  avgt        395_434726445.000          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector"
         , "--enable-preview"
-        , "-Xmx16g"
+        , "-Xmx14g"
         //, "--add-opens", "java.base/java.math=ALL-UNNAMED"
 
         // Options for analysis with https://github.com/AdoptOpenJDK/jitwatch
@@ -91,8 +92,10 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
             // , "100000"
             // , "1000000"
             // , "10000000"
-            "100000000"
-            , "646391315"
+            //"100000000"
+            //, "646391315"
+            "646456993"
+            , "1292782621"
 
     })
     public int digits;
@@ -100,7 +103,11 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
     @Setup(Level.Trial)
     public void setUp() {
-        String str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
+        String str =
+                "-"
+                        + repeat("0", Math.max(0, digits - 646456993))
+                        + repeat("1234567890", (Math.min(646456993, digits) + 9) / 10).substring(0, Math.min(digits, 646456993));
+
         decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
     }
 

@@ -78,6 +78,19 @@ If your input data contains inputs with many thousands of digits, consider using
 of the fast algorithms. They have even lower constant time factors than the regular fast `parse` methods - they use
 more CPU and memory resources though.
 
+### Memory usage and computation time
+
+The memory usage depends on the result type and the maximal supported input character length.
+
+The computation times are given for a Mac mini 2018 with Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz.
+
+| Parser               |Result Type          | Maximal<br/>input length | Memory usage<br/>JVM -Xmx | Computation<br/>Time |
+|----------------------|---------------------|---------------------:|----------------------:|---------------------:|
+| JavaDoubleParser     |java.lang.Double     |             2^31 - 5 |          10 gigabytes |              < 5 sec |
+| JavaFloatParser      |java.lang.Float      |             2^31 - 5 |          10 gigabytes |              < 5 sec |
+| JavaBigIntegerParser |java.math.BigInteger |        1,292,782,622 |          14 gigabytes |              < 7 min |
+| JavaBigDecimalParser |java.math.BigDecimal |        1,292,782,635 |          14 gigabytes |              < 7 min |
+
 ## Performance measurements
 
 On my Mac mini (2018) I get the results shown below.
@@ -219,18 +232,6 @@ When you clone the code repository from github. you can choose from the followin
 - `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
   that are included in Java 20.
 
-## Memory and time requirements
-
-The memory requirements vary depending on the result type and the maximal supported input character length.
-
-The time requirements are given for a Mac mini 2018 with Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz.
-
-| Parser               |Result Type          | Maximal<br/>input length | Memory usage<br/>JVM -Xmx | Computation<br/>Time |
-|----------------------|---------------------|---------------------:|----------------------:|---------------------:|
-| JavaDoubleParser     |java.lang.Double     |             2^31 - 5 |          10 gigabytes |              < 5 sec |
-| JavaFloatParser      |java.lang.Float      |             2^31 - 5 |          10 gigabytes |              < 5 sec |
-| JavaBigIntegerParser |java.math.BigInteger |        1,292,782,622 |          14 gigabytes |              < 7 min |
-| JavaBigDecimalParser |java.math.BigDecimal |        1,292,782,635 |          14 gigabytes |              < 7 min |
 
 ## Command sequence with Java SE 20 on macOS:
 

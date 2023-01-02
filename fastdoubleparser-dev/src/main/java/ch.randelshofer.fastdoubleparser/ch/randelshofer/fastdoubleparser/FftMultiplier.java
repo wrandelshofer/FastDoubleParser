@@ -1,5 +1,5 @@
 /*
- * @(#)FftMultiplierOld.java
+ * @(#)FftMultiplier.java
  * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -815,8 +815,10 @@ class FftMultiplier {
      *     a problem because it is reordered back in the IFFT.
      * <li>Roots of unity are cached
      * </ul>
-     * FFT vectors are stored as arrays of MutableComplex objects. Storing them
-     * as arrays of primitive doubles would obviously be more memory efficient,
+     * FFT vectors are stored as arrays of primitive doubles (two array
+     * elements are needed for representing one complex number). Storing them
+     * as arrays of primitive doubles instead of as MutableComplex objects is
+     * memory efficient,
      * but in some cases below ~10^6 decimal digits, it hurts speed because
      * it requires additional copying. Ideally this would be implemented using
      * value types when they become available.
@@ -874,8 +876,9 @@ class FftMultiplier {
      * The result is placed in a.
      */
     private static void multiplyPointwise(ComplexVector a, ComplexVector b) {
-        for (int i = 0; i < a.length; i++)
+        for (int i = 0; i < a.length; i++) {
             a.multiply(i, b, i);
+        }
     }
 
     /**
