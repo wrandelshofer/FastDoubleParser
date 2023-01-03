@@ -285,6 +285,7 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("significand with maximal number of zero digits in significand", new VirtualCharSequence("", 1000, ".", "", '0', 1_292_782_621 + 1), new BigDecimal("0E-1292781621")),
 
                 new NumberTestData("'7' ** (MAX_INPUT_LENGTH + 1)", new VirtualCharSequence('7', 1_292_782_635 + 1), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("'8' ** 646_456_993", new VirtualCharSequence('8', 646_456_993), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class),
                 new NumberTestData("' ' ** (MAX_INPUT_LENGTH + 1)", new VirtualCharSequence(' ', 1_292_782_635 + 1), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
         );
     }

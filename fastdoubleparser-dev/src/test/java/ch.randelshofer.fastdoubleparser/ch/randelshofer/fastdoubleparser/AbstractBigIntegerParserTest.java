@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractBigIntegerParserTest {
     private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
@@ -61,7 +61,9 @@ public abstract class AbstractBigIntegerParserTest {
                     "expected:" + expectedValue.bitLength() + " <> actual:" + actual.bitLength());
             assertEquals(expectedValue, actual);
         } else {
-            assertNull(actual);
+            // Do not use assertNull(actual) here, because it will call toString
+            // on a potentially very large BigInteger!
+            assertTrue(actual == null);
         }
     }
 
@@ -224,6 +226,8 @@ public abstract class AbstractBigIntegerParserTest {
     protected List<NumberTestData> createDataForVeryLongDecStrings() {
         return Arrays.asList(
                 new NumberTestData("'0' ** 1292782622", new VirtualCharSequence('0', 1_292_782_621 + 1), BigInteger.ZERO),
+                new NumberTestData("'9' ** 1292782622", new VirtualCharSequence('9', 1_292_782_621 + 1), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class),
+                new NumberTestData("'8' ** 646_456_993", new VirtualCharSequence('8', 646_456_993), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class),
                 new NumberTestData("max input length: '0' ** 1292782621", new VirtualCharSequence('0', 1_292_782_621), BigInteger.ZERO),
                 new NumberTestData("max input length: '0' ** 1292782620, '7'", new VirtualCharSequence("", 0, "", "7", '0', 1_292_782_621), BigInteger.valueOf(7)),
                 new NumberTestData("'9806543217' ** 1000", repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10)),
