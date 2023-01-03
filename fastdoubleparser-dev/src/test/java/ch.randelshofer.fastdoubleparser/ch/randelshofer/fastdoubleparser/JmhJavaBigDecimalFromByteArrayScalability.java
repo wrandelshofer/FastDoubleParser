@@ -37,42 +37,29 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  *
  * Before we integrated FftMultiplier:
  *
- *        (digits)  Mode  Cnt             Score   Error  Units
- * par           1  avgt                 28.920          ns/op
- * par          10  avgt                 33.386          ns/op
- * par         100  avgt                239.757          ns/op
- * par        1000  avgt               5340.531          ns/op
- * par       10000  avgt             148642.089          ns/op
- * par      100000  avgt            4191720.295          ns/op
- * par     1000000  avgt           55534506.779          ns/op
- * par    10000000  avgt         1265775257.500          ns/op
- * par   100000000  avgt        11097618757.000          ns/op
- * par   646456993  avgt       124624773576.000          ns/op
- * par  1292782621  avgt       113081690529.000          ns/op
- * seq           1  avgt                 26.439          ns/op
- * seq          10  avgt                 31.468          ns/op
- * seq         100  avgt                227.576          ns/op
- * seq        1000  avgt               4871.361          ns/op
- * seq       10000  avgt             164414.233          ns/op
- * seq      100000  avgt            5626324.087          ns/op
- * seq     1000000  avgt           89353576.741          ns/op
- * seq    10000000  avgt         1621865401.429          ns/op
- * seq   100000000  avgt        23823624891.000          ns/op
- * seq   646456993  avgt       232468403178.000          ns/op
- * seq  1292782621  avgt       222404103626.000          ns/op
- *
- *       (digits)  Mode  Cnt     _        Score   Error  Units
- * seq         24  avgt          _       78.961          ns/op
- * seq          1  avgt          _       10.397          ns/op
- * seq         10  avgt          _       17.432          ns/op
- * seq        100  avgt          _      232.310          ns/op
- * seq       1000  avgt          _     5085.790          ns/op
- * seq      10000  avgt          _   178608.728          ns/op
- * seq     100000  avgt          _  6997056.928          ns/op
- * seq    1000000  avgt          _224134358.400          ns/op
- * seq   10000000  avgt         4_307235737.000          ns/op
- * seq  100000000  avgt       105_586368850.000          ns/op
- * seq  646391315  avgt       627_362411969.000          ns/op
+ *        (digits)  Mode  Cnt     _        Score   Error  Units
+ * par           1  avgt          _       28.920          ns/op
+ * par          10  avgt          _       33.386          ns/op
+ * par         100  avgt          _      239.757          ns/op
+ * par        1000  avgt          _     5340.531          ns/op
+ * par       10000  avgt          _   148642.089          ns/op
+ * par      100000  avgt          _  4191720.295          ns/op
+ * par     1000000  avgt          _ 55534506.779          ns/op
+ * par    10000000  avgt         1_265775257.500          ns/op
+ * par   100000000  avgt        11_097618757.000          ns/op
+ * par   646456993  avgt       124_624773576.000          ns/op
+ * par  1292782621  avgt       113_081690529.000          ns/op
+ * seq           1  avgt          _       26.439          ns/op
+ * seq          10  avgt          _       31.468          ns/op
+ * seq         100  avgt          _      227.576          ns/op
+ * seq        1000  avgt          _     4871.361          ns/op
+ * seq       10000  avgt          _   164414.233          ns/op
+ * seq      100000  avgt          _  5626324.087          ns/op
+ * seq     1000000  avgt          _ 89353576.741          ns/op
+ * seq    10000000  avgt         1_621865401.429          ns/op
+ * seq   100000000  avgt        23_823624891.000          ns/op
+ * seq   646456993  avgt       232_468403178.000          ns/op
+ * seq  1292782621  avgt       222_404103626.000          ns/op
  *
  * recursive only (recursion threshold=0)
  *      (digits)  Mode  Cnt      _        Score   Error  Units
