@@ -120,11 +120,11 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
 
     private BigInteger parseManyDecDigits(char[] str, int from, int to, boolean isNegative, int parallelThreshold) {
         from = skipZeroes(str, from, to);
-        Map<Integer, BigInteger> powersOfTen = fillPowersOf10Floor16(from, to, parallelThreshold < Integer.MAX_VALUE);
         int numDigits = to - from;
         if (numDigits > MAX_DECIMAL_DIGITS) {
             throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
         }
+        Map<Integer, BigInteger> powersOfTen = fillPowersOf10Floor16(from, to, parallelThreshold < Integer.MAX_VALUE);
         BigInteger result = parseDigits(str, from, to, powersOfTen, parallelThreshold);
         return isNegative ? result.negate() : result;
     }
