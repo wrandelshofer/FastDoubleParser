@@ -62,7 +62,7 @@ On common input data, the fast `BigDecimal` and `BigInteger` parsers are about a
 `java.math.BigDecimal(String)` and `java.math.BigInteger(String)`.
 
 For less common inputs with many digits, the fast parsers can be a lot faster than their `java.math` counterparts.
-The fast parsers can convert even the longest supported inputs in less than 10 minutes, whereas
+The fast parsers can convert even the longest supported inputs in less than 6 minutes, whereas
 their `java.math` counterparts need months (!).
 
 The fast parsers convert digit characters from base 10 to a bit sequence in base 2
@@ -88,8 +88,8 @@ The computation times are given for a Mac mini 2018 with Intel(R) Core(TM) i7-87
 |----------------------|---------------------|---------------------:|----------------------:|---------------------:|
 | JavaDoubleParser     |java.lang.Double     |             2^31 - 5 |          10 gigabytes |              < 5 sec |
 | JavaFloatParser      |java.lang.Float      |             2^31 - 5 |          10 gigabytes |              < 5 sec |
-| JavaBigIntegerParser |java.math.BigInteger |        1,292,782,622 |          14 gigabytes |              < 7 min |
-| JavaBigDecimalParser |java.math.BigDecimal |        1,292,782,635 |          14 gigabytes |              < 7 min |
+| JavaBigIntegerParser |java.math.BigInteger |        1,292,782,622 |          14 gigabytes |              < 6 min |
+| JavaBigDecimalParser |java.math.BigDecimal |        1,292,782,635 |          14 gigabytes |              < 6 min |
 
 ## Performance measurements
 
