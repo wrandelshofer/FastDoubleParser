@@ -97,8 +97,8 @@ class FastDoubleSwar {
      */
     public static boolean isEightDigits(char[] a, int offset) {
         MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
-        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
+        long first = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1));
+        long second = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1) + 8);
         return isEightDigitsUtf16(first, second);
     }
 
@@ -151,7 +151,6 @@ class FastDoubleSwar {
      * @return true if eight digits
      * @throws IndexOutOfBoundsException if offset is larger than 2^29.
      */
-    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static boolean isEightZeroes(char[] a, int offset) {
         MemorySegment seg = MemorySegment.ofArray(a);
         long first = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1));
@@ -171,8 +170,8 @@ class FastDoubleSwar {
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
     public static int parseEightDigits(char[] a, int offset) {
         MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
-        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
+        long first = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1));
+        long second = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1) + 8);
         return FastDoubleSwar.parseEightDigitsUtf16(first, second);
     }
 
@@ -260,8 +259,8 @@ class FastDoubleSwar {
      */
     public static int tryToParseEightDigits(char[] a, int offset) {
         MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(CHAR_ALIGNED_LONG, (offset << 1));
-        long second = seg.get(CHAR_ALIGNED_LONG, (offset << 1) + 8);
+        long first = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1));
+        long second = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1) + 8);
         return FastDoubleSwar.tryToParseEightDigitsUtf16(first, second);
     }
 
