@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Level;
@@ -32,6 +33,12 @@ import java.util.concurrent.TimeUnit;
  * bigIntMul             10  avgt          _       10.175          ns/op
  * bigIntMul            100  avgt          _       69.120          ns/op
  * bigIntMul           1000  avgt          _     2751.164          ns/op
+ * bigIntMul           5000  avgt               49006.859          ns/op
+ * bigIntMul           6000  avgt               62359.419          ns/op
+ * bigIntMul           7000  avgt               87777.763          ns/op
+ * bigIntMul           8000  avgt              108487.443          ns/op
+ * bigIntMul           9000  avgt              122055.372          ns/op
+ * bigIntMul          10000  avgt              139125.192          ns/op
  * bigIntMul          10000  avgt          _   139652.212          ns/op
  * bigIntMul         100000  avgt          _  4892998.360          ns/op
  * bigIntMul        1000000  avgt          _146510318.377          ns/op
@@ -48,40 +55,36 @@ import java.util.concurrent.TimeUnit;
  * bigIntParaMul   10000000  avgt         1_572644848.286          ns/op
  * bigIntParaMul  100000000  avgt        51_212775272.000          ns/op
  * bigIntParaMul  323195659  avgt       297_916512893.000          ns/op
- *
- * After we introduced FftMultiplier.ComplexVector to reduce memory usage:
- *                 (digits)  Mode  Cnt     _        Score   Error  Units
- * fftMul                 1  avgt          _      185.320          ns/op
- * fftMul                10  avgt          _      292.296          ns/op
- * fftMul               100  avgt          _     1658.466          ns/op
- * fftMul              1000  avgt          _    12958.809          ns/op
- * fftMul             10000  avgt          _   152199.739          ns/op
- * fftMul            100000  avgt          _  2281323.429          ns/op
- * fftMul           1000000  avgt          _ 29863621.923          ns/op
- * fftMul          10000000  avgt          _471292876.227          ns/op
- * fftMul         100000000  avgt         5_263219018.500          ns/op
- * fftMul         323195659  avgt        28_733061841.000          ns/op
- * toFftVector  323195659  avgt    4  534861045.209 ± 113458589.478  ns/op
- *
- * Before we introduced FftMultiplier.FftVector to reduce memory usage:
- * fftMul                 1  avgt          _       94.338          ns/op
- * fftMul                10  avgt          _      278.424          ns/op
- * fftMul               100  avgt          _     1649.438          ns/op
- * fftMul              1000  avgt          _    13270.498          ns/op
- * fftMul             10000  avgt          _   174858.465          ns/op
- * fftMul            100000  avgt          _  2628755.454          ns/op
- * fftMul           1000000  avgt          _ 44124072.753          ns/op
- * fftMul          10000000  avgt          _925856745.091          ns/op
- * fftMul         100000000  avgt        10_995622424.000          ns/op
- * mul                    1  avgt          _        0.658          ns/op
- * mul                   10  avgt          _       10.517          ns/op
- * mul                  100  avgt          _       67.746          ns/op
- * mul                 1000  avgt          _     2685.683          ns/op
- * mul                10000  avgt          _   173804.003          ns/op
- * mul               100000  avgt          _  2621671.866          ns/op
- * mul              1000000  avgt          _ 43915961.693          ns/op
- * mul             10000000  avgt          _897308742.583          ns/op
- * mul            100000000  avgt        10_951994069.000          ns/op
+ * fftMul                 1  avgt          _      163.768          ns/op
+ * fftMul                10  avgt          _      275.918          ns/op
+ * fftMul               100  avgt          _     1437.130          ns/op
+ * fftMul              1000  avgt          _    12068.933          ns/op
+ * fftMul              5000  avgt               65503.577          ns/op
+ * fftMul              6000  avgt              102141.575          ns/op
+ * fftMul              7000  avgt               98315.762          ns/op
+ * fftMul              8000  avgt              122717.239          ns/op
+ * fftMul              9000  avgt              125783.198          ns/op
+ * fftMul             10000  avgt          _   129202.977          ns/op
+ * fftMul            100000  avgt          _  1948854.827          ns/op
+ * fftMul           1000000  avgt          _ 28343218.317          ns/op
+ * fftMul          10000000  avgt          _449109977.913          ns/op
+ * fftMul         100000000  avgt         5_116104944.500          ns/op
+ * fftMul         323195659  avgt        13_690917821.000          ns/op
+ * mul                    1  avgt          _       13.713          ns/op
+ * mul                   10  avgt          _       19.097          ns/op
+ * mul                  100  avgt          _       65.922          ns/op
+ * mul                 1000  avgt          _     2753.316          ns/op
+ * mul                 5000  avgt          _    46420.694          ns/op
+ * mul                 6000  avgt          _    59641.915          ns/op
+ * mul                 7000  avgt          _    84799.189          ns/op
+ * mul                 8000  avgt          _    99404.765          ns/op
+ * mul                 9000  avgt          _   119522.130          ns/op
+ * mul                10000  avgt          _   127678.434          ns/op
+ * mul               100000  avgt          _  1964966.407          ns/op
+ * mul              1000000  avgt          _ 29734690.534          ns/op
+ * mul             10000000  avgt          _445866861.913          ns/op
+ * mul            100000000  avgt         5_164456660.500          ns/op
+ * mul            323195659  avgt        13_102521069.000          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -97,8 +100,8 @@ import java.util.concurrent.TimeUnit;
         //, "-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 4)
-@Warmup(iterations = 2)
+@Measurement(iterations = 1)
+@Warmup(iterations = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -106,17 +109,22 @@ public class JmhFftMultiplier {
 
 
     @Param({
-            //   "1"
-            //   , "10"
-            //   , "100"
-            //   , "1000"
-            //   , "10000"
-            //   , "100000"
-            //   , "1000000"
-            //   , "10000000"
-            //   , "100000000"
-            "323195659"
-
+            "1"
+            , "10"
+            , "100"
+            , "1000"
+            , "5000"
+            , "6000"
+            , "7000"
+            , "8000"
+            , "9000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            , "100000000"
+            , "323195659"
+//
     })
     public int digits;
     private BigInteger a;
@@ -124,8 +132,9 @@ public class JmhFftMultiplier {
 
     @Setup(Level.Trial)
     public void setUp() {
-        long estimatedNumBits = FastIntegerMath.estimateNumBits(digits);
-        int estimatedNumBytes = (int) (estimatedNumBits >> 3);
+        long estimatedNumBits = Math.min(1L << 29, FastIntegerMath.estimateNumBits(digits));
+        System.out.println("estimatedNumBits=" + estimatedNumBits);
+        int estimatedNumBytes = (int) ((estimatedNumBits + 7) >> 3);
         byte[] bytesA = new byte[estimatedNumBytes];
         byte[] bytesB = new byte[estimatedNumBytes];
         Random rng = new Random(0);
@@ -133,43 +142,32 @@ public class JmhFftMultiplier {
         rng.nextBytes(bytesB);
         a = new BigInteger(1, bytesA);
         b = new BigInteger(1, bytesB);
+    }
 
+
+    @Benchmark
+    public BigInteger bigIntMul() {
+        return a.multiply(b);
     }
 
     /*
-        @Benchmark
-        public BigInteger bigIntMul() {
-            return a.multiply(b);
-        }
-
-        @Benchmark
-        public BigInteger bigIntParaMul() {
-            return a.parallelMultiply(b);
-        }
-
+            @Benchmark
+            public BigInteger bigIntParaMul() {
+                return a.parallelMultiply(b);
+            }
 
     @Benchmark
     public BigInteger fftMul() {
         return FftMultiplier.multiplyFft(a, b);
     }
-
+*/
 
     @Benchmark
     public BigInteger mul() {
         return FftMultiplier.multiply(a, b, false);
     }
-*/
-/*
-    @Benchmark
-    public FftMultiplier.ComplexVector toFftVector() {
-        byte[] aMag = (a.signum() < 0 ? a.negate() : a).toByteArray();
-        byte[] bMag = (b.signum() < 0 ? b.negate() : b).toByteArray();
-        int bitLen = Math.max(aMag.length, bMag.length) * 8;
-        int bitsPerPoint = 19;//bitsPerFftPoint(bitLen);
-        int fftLen = (bitLen + bitsPerPoint - 1) / bitsPerPoint + 1;   // +1 for a possible carry, see toFFTVector()
-        return FftMultiplier.toFftVector(aMag, fftLen, bitsPerPoint);
-    }
-*/
+
+
 }
 
 

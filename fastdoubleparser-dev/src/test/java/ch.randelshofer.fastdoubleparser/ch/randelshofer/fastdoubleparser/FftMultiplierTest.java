@@ -68,7 +68,7 @@ public class FftMultiplierTest {
     public List<DynamicTest> dynamicLongRunningTestsSquare() {
         if (longRunningTests) {
             return List.of(
-                    dynamicTest("1<<Integer.MAX_VALUE/2-1 * 1<<Integer.MAX_VALUE/2-1", () -> shouldSquare(
+                    dynamicTest("1<<Integer.MAX_VALUE/2 ^2", () -> shouldSquare(
                             BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),
                             BigInteger.ONE.shiftLeft(Integer.MAX_VALUE - 1)
                     ))

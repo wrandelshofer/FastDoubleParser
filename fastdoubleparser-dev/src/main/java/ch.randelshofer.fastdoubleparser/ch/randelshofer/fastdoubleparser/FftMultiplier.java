@@ -302,7 +302,7 @@ class FftMultiplier {
      * the mag arrays is greater than this threshold, then FFT
      * multiplication will be used.
      */
-    private static final int FFT_THRESHOLD = 3400 * 8;
+    private static final int FFT_THRESHOLD = 33220;
     /**
      * This constant limits {@code mag.length} of BigIntegers to the supported
      * range.
@@ -336,7 +336,7 @@ class FftMultiplier {
      * @param bitLen length of this number in bits
      * @return the maximum number of bits
      */
-    private static int bitsPerFftPoint(int bitLen) {
+    static int bitsPerFftPoint(int bitLen) {
         if (bitLen <= 19 * (1 << 9)) {
             return 19;
         }
@@ -571,33 +571,31 @@ class FftMultiplier {
         assert bitsPerFftPoint <= 25 : bitsPerFftPoint + " does not fit into an int with slack";
 
         int fftLen = (int) Math.min(fftVec.length, ((long) MAX_MAG_LENGTH * 32) / bitsPerFftPoint + 1);
-        int magLen = (int) (2 * ((long) fftLen * bitsPerFftPoint + 31) / 32);
-        byte[] mag = new byte[4 * magLen];
-        int magIdx = magLen - 1;
-        int magBitIdx = 0;
+        int magLen = (int) (8 * ((long) fftLen * bitsPerFftPoint + 31) / 32);
+        byte[] mag = new byte[magLen];
+        int base = 1 << bitsPerFftPoint;
+        int bitMask = base - 1;
+        int bitPadding = 32 - bitsPerFftPoint;
         long carry = 0;
+        int bitLength = mag.length * 8;
+        int bitIdx = bitLength - bitsPerFftPoint;
         for (int part = 0; part <= 1; part++) {   // 0=real, 1=imaginary
             for (int fftIdx = 0; fftIdx < fftLen; fftIdx++) {
                 long fftElem = Math.round(fftVec.part(fftIdx, part)) + carry;
                 carry = fftElem >> bitsPerFftPoint;
-                fftElem &= (1L << bitsPerFftPoint) - 1;
-                int fftBitIdx = 0;
-                do {
-                    int bitsToCopy = Math.min(32 - magBitIdx, bitsPerFftPoint - fftBitIdx);
-                    int magComponent = FastDoubleSwar.readIntBE(mag, magIdx << 2);
-                    magComponent |= (fftElem >> fftBitIdx) << magBitIdx;
-                    FastDoubleSwar.writeIntBE(mag, magIdx << 2, magComponent);
-                    magBitIdx += bitsToCopy;
-                    fftBitIdx += bitsToCopy;
-                    if (magBitIdx >= 32) {
-                        magBitIdx = 0;
-                        magIdx--;
-                    }
-                } while (fftBitIdx < bitsPerFftPoint);
+
+                int idx = Math.min(Math.max(0, bitIdx >> 3), mag.length - 4);
+                int shift = bitPadding - bitIdx + (idx << 3);
+                int magComponent = FastDoubleSwar.readIntBE(mag, idx);
+                magComponent |= (fftElem & bitMask) << shift;
+                FastDoubleSwar.writeIntBE(mag, idx, magComponent);
+
+                bitIdx -= bitsPerFftPoint;
             }
         }
         return new BigInteger(signum, mag);
     }
+
 
 
     /**
@@ -985,7 +983,7 @@ class FftMultiplier {
         for (; bitIdx > -bitsPerFftPoint; bitIdx -= bitsPerFftPoint) {
             int idx = Math.min(Math.max(0, bitIdx >> 3), mag.length - 4);
             int shift = bitPadding - bitIdx + (idx << 3);
-            int fftPoint = (FastDoubleSwar.readIntBE(mag, idx) >> shift) & bitMask;
+            int fftPoint = (FastDoubleSwar.readIntBE(mag, idx) >>> shift) & bitMask;
 
             // "balance" the output digits so -base/2 < digit < base/2
             fftPoint += carry;
