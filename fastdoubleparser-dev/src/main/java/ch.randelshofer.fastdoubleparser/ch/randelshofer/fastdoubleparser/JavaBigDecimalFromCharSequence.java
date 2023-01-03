@@ -74,103 +74,112 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
      * @throws NumberFormatException    if the input string can not be parsed successfully
      */
     public BigDecimal parseBigDecimalString(CharSequence str, int offset, int length, boolean parallel) {
-        int parallelThreshold = parallel ? DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
-        if (length >= MANY_DIGITS_THRESHOLD) {
-            return parseBigDecimalStringWithManyDigits(str, offset, length, parallelThreshold);
-        }
-        long significand = 0L;
-        final int integerPartIndex;
-        int decimalPointIndex = -1;
-        final int exponentIndicatorIndex;
+        try {
+            int parallelThreshold = parallel ? DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
+            if (length >= MANY_DIGITS_THRESHOLD) {
+                return parseBigDecimalStringWithManyDigits(str, offset, length, parallelThreshold);
+            }
+            long significand = 0L;
+            final int integerPartIndex;
+            int decimalPointIndex = -1;
+            final int exponentIndicatorIndex;
 
-        final int endIndex = offset + length;
-        int index = offset;
-        char ch = index < endIndex ? str.charAt(index) : 0;
-        boolean illegal = false;
+            final int endIndex = offset + length;
+            int index = offset;
+            char ch = index < endIndex ? str.charAt(index) : 0;
+            boolean illegal = false;
 
 
-        // Parse optional sign
-        // -------------------
-        final boolean isNegative = ch == '-';
-        if (isNegative || ch == '+') {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
-            if (ch == 0) {
+            // Parse optional sign
+            // -------------------
+            final boolean isNegative = ch == '-';
+            if (isNegative || ch == '+') {
+                ch = ++index < endIndex ? str.charAt(index) : 0;
+                if (ch == 0) {
+                    throw new NumberFormatException(SYNTAX_ERROR);
+                }
+            }
+
+            // Parse significand
+            integerPartIndex = index;
+            for (; index < endIndex; index++) {
+                ch = str.charAt(index);
+                if (FastDoubleSwar.isDigit(ch)) {
+                    // This might overflow, we deal with it later.
+                    significand = 10 * (significand) + ch - '0';
+                } else if (ch == '.') {
+                    illegal |= decimalPointIndex >= 0;
+                    decimalPointIndex = index;
+                    for (; index < endIndex - 4; index += 4) {
+                        int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
+                        if (digits < 0) {
+                            break;
+                        }
+                        // This might overflow, we deal with it later.
+                        significand = 10_000L * significand + digits;
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            final int digitCount;
+            final int significandEndIndex = index;
+            long exponent;
+            if (decimalPointIndex < 0) {
+                digitCount = significandEndIndex - integerPartIndex;
+                decimalPointIndex = significandEndIndex;
+                exponent = 0;
+            } else {
+                digitCount = significandEndIndex - integerPartIndex - 1;
+                exponent = decimalPointIndex - significandEndIndex + 1;
+            }
+
+            // Parse exponent number
+            // ---------------------
+            long expNumber = 0;
+            if (ch == 'e' || ch == 'E') {
+                exponentIndicatorIndex = index;
+                ch = ++index < endIndex ? str.charAt(index) : 0;
+                boolean isExponentNegative = ch == '-';
+                if (isExponentNegative || ch == '+') {
+                    ch = ++index < endIndex ? str.charAt(index) : 0;
+                }
+                illegal |= !FastDoubleSwar.isDigit(ch);
+                do {
+                    // Guard against overflow
+                    if (expNumber < MAX_EXPONENT_NUMBER) {
+                        expNumber = 10 * (expNumber) + ch - '0';
+                    }
+                    ch = ++index < endIndex ? str.charAt(index) : 0;
+                } while (FastDoubleSwar.isDigit(ch));
+                if (isExponentNegative) {
+                    expNumber = -expNumber;
+                }
+                exponent += expNumber;
+            } else {
+                exponentIndicatorIndex = endIndex;
+            }
+            if (illegal || index < endIndex
+                    || digitCount == 0
+                    || digitCount > MAX_DIGIT_COUNT) {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
-        }
-
-        // Parse significand
-        integerPartIndex = index;
-        for (; index < endIndex; index++) {
-            ch = str.charAt(index);
-            if (FastDoubleSwar.isDigit(ch)) {
-                // This might overflow, we deal with it later.
-                significand = 10 * (significand) + ch - '0';
-            } else if (ch == '.') {
-                illegal |= decimalPointIndex >= 0;
-                decimalPointIndex = index;
-                for (; index < endIndex - 4; index += 4) {
-                    int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
-                    if (digits < 0) {
-                        break;
-                    }
-                    // This might overflow, we deal with it later.
-                    significand = 10_000L * significand + digits;
-                }
-            } else {
-                break;
+            if (exponent <= Integer.MIN_VALUE
+                    || exponent > Integer.MAX_VALUE) {
+                throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
             }
-        }
 
-        final int digitCount;
-        final int significandEndIndex = index;
-        long exponent;
-        if (decimalPointIndex < 0) {
-            digitCount = significandEndIndex - integerPartIndex;
-            decimalPointIndex = significandEndIndex;
-            exponent = 0;
-        } else {
-            digitCount = significandEndIndex - integerPartIndex - 1;
-            exponent = decimalPointIndex - significandEndIndex + 1;
-        }
-
-        // Parse exponent number
-        // ---------------------
-        long expNumber = 0;
-        if (ch == 'e' || ch == 'E') {
-            exponentIndicatorIndex = index;
-            ch = ++index < endIndex ? str.charAt(index) : 0;
-            boolean isExponentNegative = ch == '-';
-            if (isExponentNegative || ch == '+') {
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+            if (digitCount <= 18) {
+                return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
             }
-            illegal |= !FastDoubleSwar.isDigit(ch);
-            do {
-                // Guard against overflow
-                if (expNumber < MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * (expNumber) + ch - '0';
-                }
-                ch = ++index < endIndex ? str.charAt(index) : 0;
-            } while (FastDoubleSwar.isDigit(ch));
-            if (isExponentNegative) {
-                expNumber = -expNumber;
-            }
-            exponent += expNumber;
-        } else {
-            exponentIndicatorIndex = endIndex;
-        }
-        if (illegal || index < endIndex
-                || digitCount == 0
-                || exponent < Integer.MIN_VALUE
-                || exponent > Integer.MAX_VALUE
-                || digitCount > MAX_DIGIT_COUNT) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return valueOfBigDecimalString(str, integerPartIndex, decimalPointIndex, decimalPointIndex + 1, exponentIndicatorIndex, isNegative, (int) exponent, parallelThreshold);
+        } catch (ArithmeticException e) {
+            NumberFormatException nfe = new NumberFormatException(VALUE_EXCEEDS_LIMITS);
+            nfe.initCause(e);
+            throw nfe;
         }
 
-        if (digitCount <= 18) {
-            return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
-        }
-        return valueOfBigDecimalString(str, integerPartIndex, decimalPointIndex, decimalPointIndex + 1, exponentIndicatorIndex, isNegative, (int) exponent, parallelThreshold);
     }
 
     /**

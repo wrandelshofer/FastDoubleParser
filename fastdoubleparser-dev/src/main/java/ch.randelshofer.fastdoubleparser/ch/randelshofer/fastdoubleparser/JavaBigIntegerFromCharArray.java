@@ -29,30 +29,36 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
      */
     public BigInteger parseBigIntegerLiteral(char[] str, int offset, int length, int radix, boolean parallel)
             throws NumberFormatException {
-        int parallelThreshold = parallel ? DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
-        final int endIndex = offset + length;
-        if (offset < 0 || endIndex < offset || endIndex > str.length || length > MAX_INPUT_LENGTH) {
-            throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
-        }
-        // Parse optional sign
-        // -------------------
-        int index = offset;
-        char ch = str[index];
-        final boolean isNegative = ch == '-';
-        if (isNegative || ch == '+') {
-            ch = ++index < endIndex ? str[index] : 0;
-            if (ch == 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
+        try {
+            int parallelThreshold = parallel ? DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
+            final int endIndex = offset + length;
+            if (offset < 0 || endIndex < offset || endIndex > str.length || length > MAX_INPUT_LENGTH) {
+                throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
             }
-        }
+            // Parse optional sign
+            // -------------------
+            int index = offset;
+            char ch = str[index];
+            final boolean isNegative = ch == '-';
+            if (isNegative || ch == '+') {
+                ch = ++index < endIndex ? str[index] : 0;
+                if (ch == 0) {
+                    throw new NumberFormatException(SYNTAX_ERROR);
+                }
+            }
 
-        switch (radix) {
-        case 10:
-            return parseDecDigits(str, index, endIndex, isNegative, parallelThreshold);
-        case 16:
-            return parseHexDigits(str, index, endIndex, isNegative);
-        default:
-            return new BigInteger(new String(str, offset, length), radix);
+            switch (radix) {
+            case 10:
+                return parseDecDigits(str, index, endIndex, isNegative, parallelThreshold);
+            case 16:
+                return parseHexDigits(str, index, endIndex, isNegative);
+            default:
+                return new BigInteger(new String(str, offset, length), radix);
+            }
+        } catch (ArithmeticException e) {
+            NumberFormatException nfe = new NumberFormatException(VALUE_EXCEEDS_LIMITS);
+            nfe.initCause(e);
+            throw nfe;
         }
     }
 

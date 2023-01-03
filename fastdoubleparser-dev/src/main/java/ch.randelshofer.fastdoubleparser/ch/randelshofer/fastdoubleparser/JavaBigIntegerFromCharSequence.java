@@ -27,30 +27,36 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
      */
     public BigInteger parseBigIntegerLiteral(CharSequence str, int offset, int length, int radix, boolean parallel)
             throws NumberFormatException {
-        int parallelThreshold = parallel ? ParseDigitsTaskCharSequence.DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
-        final int endIndex = offset + length;
-        if (offset < 0 || endIndex < offset || endIndex > str.length() || length > MAX_INPUT_LENGTH) {
-            throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
-        }
-        // Parse optional sign
-        // -------------------
-        int index = offset;
-        char ch = str.charAt(index);
-        final boolean isNegative = ch == '-';
-        if (isNegative || ch == '+') {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
-            if (ch == 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
+        try {
+            int parallelThreshold = parallel ? ParseDigitsTaskCharSequence.DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
+            final int endIndex = offset + length;
+            if (offset < 0 || endIndex < offset || endIndex > str.length() || length > MAX_INPUT_LENGTH) {
+                throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
             }
-        }
+            // Parse optional sign
+            // -------------------
+            int index = offset;
+            char ch = str.charAt(index);
+            final boolean isNegative = ch == '-';
+            if (isNegative || ch == '+') {
+                ch = ++index < endIndex ? str.charAt(index) : 0;
+                if (ch == 0) {
+                    throw new NumberFormatException(SYNTAX_ERROR);
+                }
+            }
 
-        switch (radix) {
-        case 10:
-            return parseDecDigits(str, index, endIndex, isNegative, parallelThreshold);
-        case 16:
-            return parseHexDigits(str, index, endIndex, isNegative);
-        default:
-            return new BigInteger(str.subSequence(offset, length).toString(), radix);
+            switch (radix) {
+            case 10:
+                return parseDecDigits(str, index, endIndex, isNegative, parallelThreshold);
+            case 16:
+                return parseHexDigits(str, index, endIndex, isNegative);
+            default:
+                return new BigInteger(str.subSequence(offset, length).toString(), radix);
+            }
+        } catch (ArithmeticException e) {
+            NumberFormatException nfe = new NumberFormatException(VALUE_EXCEEDS_LIMITS);
+            nfe.initCause(e);
+            throw nfe;
         }
     }
 

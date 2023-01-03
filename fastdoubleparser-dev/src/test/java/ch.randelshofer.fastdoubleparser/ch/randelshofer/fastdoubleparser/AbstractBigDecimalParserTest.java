@@ -66,6 +66,10 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("0x123pa"),
                 new NumberTestData("0x1.2e7"),
                 new NumberTestData("0xp89"),
+
+                new NumberTestData("Exponent underflow", "1e" + (Integer.MIN_VALUE), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class),
+                new NumberTestData("Exponent overflow", "1e" + (Integer.MAX_VALUE + 1L), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class),
+
                 new NumberTestData("FloatTypeSuffix", "1d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("FloatTypeSuffix", "1.2d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("FloatTypeSuffix", "1.2e-3d", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
@@ -135,6 +139,9 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestData("1234567890", new BigDecimal("1234567890")),
                 new NumberTestData("000000000", new BigDecimal("000000000")),
                 new NumberTestData("0000.0000", new BigDecimal("0000.0000")),
+
+                new NumberTestData("min exponent", "1e" + (Integer.MIN_VALUE + 1), BigDecimal.ONE.scaleByPowerOfTen(Integer.MIN_VALUE + 1)),
+                new NumberTestData("max exponent", "1e" + Integer.MAX_VALUE, BigDecimal.ONE.scaleByPowerOfTen(Integer.MAX_VALUE)),
 
                 new NumberTestData("8." + (repeat("9", 19)) + "e68", new BigDecimal("8." + (repeat("9", 19)) + "e68")),
                 new NumberTestData("103203303403503603703803903.122232425262728292", new BigDecimal("103203303403503603703803903.122232425262728292")),

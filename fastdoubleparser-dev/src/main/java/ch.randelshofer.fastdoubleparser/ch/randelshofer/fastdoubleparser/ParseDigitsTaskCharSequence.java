@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.RecursiveTask;
 
 import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
-import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.VALUE_EXCEEDS_LIMITS;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 /**
@@ -60,7 +59,6 @@ class ParseDigitsTaskCharSequence extends RecursiveTask<BigInteger> {
     }
 
     static BigInteger parseDigits(CharSequence str, int from, int to, Map<Integer, BigInteger> powersOfTen, int parallelThreshold) {
-        try {
             int numDigits = to - from;
             if (numDigits < RECURSION_THRESHOLD) {
                 return parseDigitsIterative(str, from, to);
@@ -69,12 +67,6 @@ class ParseDigitsTaskCharSequence extends RecursiveTask<BigInteger> {
             } else {
                 return new ParseDigitsTaskCharSequence(str, from, to, powersOfTen, parallelThreshold).compute();
             }
-        } catch (ArithmeticException e) {
-            NumberFormatException nfe = new NumberFormatException(VALUE_EXCEEDS_LIMITS);
-            nfe.initCause(e);
-            throw nfe;
-        }
-
     }
 
     /**

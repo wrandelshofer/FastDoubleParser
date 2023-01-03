@@ -139,44 +139,51 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 })
 @Measurement(iterations = 1)
-@Warmup(iterations = 0)
+@Warmup(iterations = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
 public class JmhJavaBigDecimalFromByteArrayScalability {
     @Param({
-            // "24"
-            // , "1"
-            // , "10"
-            // , "100"
-            // , "1000"
-            // , "10000"
-            // , "100000"
-            // , "1000000"
-            // , "10000000"
-            //  "100000000"
-            "646391315"// The maximal number non-zero digits in the significand
+            "1"
+            , "10"
+            , "100"
+            , "1000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            , "100000000"
+            , "646456993"
+            , "1292782621"
 
     })
     public int digits;
-    private byte[] str;
+    private byte[] decLiteral;
 
     @Setup(Level.Trial)
     public void setUp() {
-        str = repeat("9806543217", (digits + 9) / 10).substring(0, digits).getBytes(StandardCharsets.ISO_8859_1);
+        String str =
+                "-"
+                        + repeat("0", Math.max(0, digits - 646456993))
+                        + repeat("1234567890", (Math.min(646456993, digits) + 9) / 10).substring(0, Math.min(digits, 646456993))
+                        + "e"
+                        + (Integer.MIN_VALUE + 1);
+
+        decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
     }
 
     @Benchmark
     public BigDecimal seq() {
-        return JavaBigDecimalParser.parseBigDecimal(str);
-    }
-/*
-    @Benchmark
-    public BigDecimal par() {
-        return JavaBigDecimalParser.parallelParseBigDecimal(str);
+        return JavaBigDecimalParser.parseBigDecimal(decLiteral);
     }
 
- */
+    @Benchmark
+    public BigDecimal par() {
+        return JavaBigDecimalParser.parallelParseBigDecimal(decLiteral);
+    }
+
+
 }
 
 
