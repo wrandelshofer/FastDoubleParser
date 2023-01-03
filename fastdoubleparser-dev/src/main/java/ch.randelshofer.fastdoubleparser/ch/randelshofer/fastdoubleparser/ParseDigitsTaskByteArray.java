@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.RecursiveTask;
 
 import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.VALUE_EXCEEDS_LIMITS;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 /**
@@ -59,13 +60,19 @@ class ParseDigitsTaskByteArray extends RecursiveTask<BigInteger> {
     }
 
     static BigInteger parseDigits(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, int parallelThreshold) {
-        int numDigits = to - from;
-        if (numDigits < RECURSION_THRESHOLD) {
-            return parseDigitsIterative(str, from, to);
-        } else if (numDigits < parallelThreshold) {
-            return ParseDigitsTaskByteArray.parseDigitsRecursive(str, from, to, powersOfTen);
-        } else {
-            return new ParseDigitsTaskByteArray(str, from, to, powersOfTen, parallelThreshold).compute();
+        try {
+            int numDigits = to - from;
+            if (numDigits < RECURSION_THRESHOLD) {
+                return parseDigitsIterative(str, from, to);
+            } else if (numDigits < parallelThreshold) {
+                return ParseDigitsTaskByteArray.parseDigitsRecursive(str, from, to, powersOfTen);
+            } else {
+                return new ParseDigitsTaskByteArray(str, from, to, powersOfTen, parallelThreshold).compute();
+            }
+        } catch (ArithmeticException e) {
+            NumberFormatException nfe = new NumberFormatException(VALUE_EXCEEDS_LIMITS);
+            nfe.initCause(e);
+            throw nfe;
         }
     }
 
