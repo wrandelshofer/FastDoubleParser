@@ -4,9 +4,6 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
@@ -85,7 +82,7 @@ public class FastIntegerMath {
             diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff);
             powersOfTen.put(diff, diffValue);
         }
-        return floorValue.multiply(diffValue);
+        return FftMultiplier.multiply(floorValue, diffValue, false);
     }
 
     static NavigableMap<Integer, BigInteger> createPowersOfTenFloor16Map() {
@@ -165,46 +162,6 @@ public class FastIntegerMath {
                 (middle << 32) | (p00 & 0xffffffffL));
     }
 
-    /**
-     * Returns {@code a * 10}.
-     * <p>
-     * We compute {@code (a + a * 4) * 2}, which is {@code (a + (a << 2)) << 1}.
-     * <p>
-     * Expected assembly code on x64:
-     * <pre>
-     * lea     eax, [rdi+rdi*4]
-     * add     eax, eax
-     * </pre>
-     * Expected assembly code on aarch64:
-     * <pre>
-     * add     w0, w0, w0, lsl 2
-     * lsl     w0, w0, 1
-     * </pre>
-     */
-    public static int mul10(int a) {
-        return (a + (a << 2)) << 1;
-    }
-
-    /**
-     * Returns {@code a * 10}.
-     * <p>
-     * We compute {@code (a + a * 4) * 2}, which is {@code (a + (a << 2)) << 1}.
-     * <p>
-     * Expected assembly code on x64:
-     * <pre>
-     * lea     rax, [rdi+rdi*4]
-     * add     rax, rax
-     * </pre>
-     * Expected assembly code on aarch64:
-     * <pre>
-     * add     x0, x0, x0, lsl 2
-     * lsl     x0, x0, 1
-     * </pre>
-     */
-    public static long mul10L(long a) {
-        return (a + (a << 2)) << 1;
-    }
-
     static BigInteger parallelMultiply(BigInteger a, BigInteger b, boolean parallel) {
         return a.multiply(b);
     }
@@ -222,88 +179,5 @@ public class FastIntegerMath {
             this.high = high;
             this.low = low;
         }
-    }
-
-    private final static Constructor<BigInteger> bigInteger_IntIntArrayConstructor;
-
-    static {
-        Constructor<BigInteger> constructor;
-        try {
-            constructor = BigInteger.class.getDeclaredConstructor(int.class, int[].class);
-            constructor.setAccessible(true);
-            constructor.newInstance(0, new byte[1]);
-        } catch (NoSuchMethodException | InstantiationException |
-                 IllegalAccessException | InvocationTargetException |
-                 RuntimeException e) {
-            constructor = null;
-        }
-        bigInteger_IntIntArrayConstructor = constructor;
-    }
-
-    static BigInteger newBigInteger(int signum, int[] magnitude) {
-        try {
-            if (bigInteger_IntIntArrayConstructor != null) {
-                return bigInteger_IntIntArrayConstructor.newInstance(signum, magnitude);
-            }
-        } catch (InstantiationException |
-                 IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-
-        byte[] bytes = new byte[magnitude.length << 2];
-        for (int i = 0; i < magnitude.length; i++) {
-            FastDoubleSwar.writeIntBE(bytes, i << 2, magnitude[i]);
-        }
-        return new BigInteger(signum, bytes);
-    }
-
-    private final static Field BigInteger_magField;
-
-    static {
-        Field field;
-        try {
-            field = BigInteger.class.getDeclaredField("mag");
-            field.setAccessible(true);
-            field.get(BigInteger.ZERO);
-        } catch (NoSuchFieldException | IllegalAccessException |
-                 RuntimeException e) {
-            field = null;
-        }
-        BigInteger_magField = field;
-    }
-
-    static int[] getMagnitude(BigInteger a) {
-        try {
-            if (BigInteger_magField != null) {
-                return (int[]) BigInteger_magField.get(a);
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (a.signum() == -1) {
-            a = a.negate();
-        }
-
-        byte[] bytes = a.toByteArray();
-        int offset = bytes.length > 0 && bytes[0] == 0 ? 1 : 0;
-        int length = bytes.length - offset;
-        int[] ints = new int[(length + 3) >> 2];
-        if (ints.length == 0) {
-            return ints;
-        }
-
-        int modulo = length & 3;
-        int value = 0;
-        for (int i = 0; i < modulo; i++) {
-            value = (value << 8) | (bytes[i + offset] & 0xff);
-        }
-        ints[0] = value;
-
-        int j = modulo == 0 ? 0 : 1;
-        for (int i = modulo; i < length; i += 4) {
-            ints[j++] = FastDoubleSwar.readIntBE(bytes, i + offset);
-        }
-        return ints;
     }
 }

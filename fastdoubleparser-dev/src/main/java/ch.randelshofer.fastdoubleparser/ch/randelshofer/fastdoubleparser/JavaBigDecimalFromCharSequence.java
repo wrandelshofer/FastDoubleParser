@@ -185,7 +185,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
     /**
      * Parses a big decimal string that has many digits.
      */
-    private BigDecimal parseBigDecimalStringWithManyDigits(CharSequence str, int offset, int length, int parallelThreshold) {
+    BigDecimal parseBigDecimalStringWithManyDigits(CharSequence str, int offset, int length, int parallelThreshold) {
         if (length > MAX_INPUT_LENGTH) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }

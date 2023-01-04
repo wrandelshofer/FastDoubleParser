@@ -23,16 +23,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * Tests class {@link FastDoubleMath}.
  */
 public class FastDoubleMathTest {
-    @Test
-    public void testFullMultiplication() {
-        FastIntegerMath.UInt128 actual = FastIntegerMath.fullMultiplication(0x123456789ABCDEF0L, 0x10L);
-        assertEquals(1L, actual.high);
-        assertEquals(0x23456789abcdef00L, actual.low);
 
-        actual = FastIntegerMath.fullMultiplication(0x123456789ABCDEF0L, -0x10L);
-        assertEquals(0x123456789abcdeeeL, actual.high);
-        assertEquals(0xdcba987654321100L, actual.low);
-    }
 
     @TestFactory
     public List<DynamicNode> dynamicTestsTryDecFloatToDouble() {

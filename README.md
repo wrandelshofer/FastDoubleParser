@@ -85,11 +85,11 @@ The memory usage depends on the result type and the maximal supported input char
 The computation times are given for a Mac mini 2018 with Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz.
 
 | Parser               |Result Type          | Maximal<br/>input length | Memory usage<br/>JVM -Xmx | Computation<br/>Time |
-|----------------------|---------------------|---------------------:|----------------------:|---------------------:|
-| JavaDoubleParser     |java.lang.Double     |             2^31 - 5 |          10 gigabytes |              < 5 sec |
-| JavaFloatParser      |java.lang.Float      |             2^31 - 5 |          10 gigabytes |              < 5 sec |
-| JavaBigIntegerParser |java.math.BigInteger |        1,292,782,622 |          14 gigabytes |              < 6 min |
-| JavaBigDecimalParser |java.math.BigDecimal |        1,292,782,635 |          14 gigabytes |              < 6 min |
+|----------------------|---------------------|---------------------:|--------------------------:|---------------------:|
+| JavaDoubleParser     |java.lang.Double     |             2^31 - 5 |              10 gigabytes |              < 5 sec |
+| JavaFloatParser      |java.lang.Float      |             2^31 - 5 |              10 gigabytes |              < 5 sec |
+| JavaBigIntegerParser |java.math.BigInteger |        1,292,782,622 |              16 gigabytes |              < 6 min |
+| JavaBigDecimalParser |java.math.BigDecimal |        1,292,782,635 |              16 gigabytes |              < 6 min |
 
 ## Performance measurements
 

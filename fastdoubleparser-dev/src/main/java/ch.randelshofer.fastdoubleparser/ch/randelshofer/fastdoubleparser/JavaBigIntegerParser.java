@@ -140,7 +140,8 @@ public class JavaBigIntegerParser {
     /**
      * Convenience method for calling {@link #parallelParseBigInteger(byte[], int, int, int)}.
      *
-     * @param str the string to be parsed
+     * @param str   the string to be parsed
+     * @param radix the radix to be used in interpreting the {@code str}
      * @return the parsed value
      * @throws NullPointerException  if the string is null
      * @throws NumberFormatException if the string can not be parsed successfully

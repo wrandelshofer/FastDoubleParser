@@ -23,9 +23,12 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_byteArray() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0
-                        && t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0
+                            && t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(toByteArray(u.input())))));
 
@@ -34,8 +37,11 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_byteArray_int() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(toByteArray(u.input()),
                                 u.radix()))));
@@ -45,7 +51,10 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_byteArray_int_int() {
         return createTestData().stream()
-                .filter(t -> t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(toByteArray(u.input()), u.charOffset(), u.charLength()))));
 
@@ -63,9 +72,12 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_byteArray() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0
-                        && t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0
+                            && t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(toByteArray(u.input())))));
 
@@ -74,8 +86,11 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_byteArray_int() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(toByteArray(u.input()),
                                 u.radix()))));
@@ -85,7 +100,10 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_byteArray_int_int() {
         return createTestData().stream()
-                .filter(t -> t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(toByteArray(u.input()), u.charOffset(), u.charLength()))));
 
@@ -102,9 +120,12 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_charArray() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0
-                        && t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0
+                            && t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(toCharArray(u.input())))));
 
@@ -113,8 +134,11 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_charArray_int() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(toCharArray(u.input()),
                                 u.radix()))));
@@ -124,7 +148,10 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_charArray_int_int() {
         return createTestData().stream()
-                .filter(t -> t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(toCharArray(u.input()), u.charOffset(), u.charLength()))));
 
@@ -142,9 +169,12 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_charArray() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0
-                        && t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0
+                            && t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(toCharArray(u.input())))));
 
@@ -153,8 +183,11 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_charArray_int() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(toCharArray(u.input()),
                                 u.radix()))));
@@ -164,7 +197,10 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_charArray_int_int() {
         return createTestData().stream()
-                .filter(t -> t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(toCharArray(u.input()), u.charOffset(), u.charLength()))));
 
@@ -182,9 +218,12 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_CharSequence() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0
-                        && t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0
+                            && t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(u.input()))));
 
@@ -193,8 +232,11 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_CharSequence_int() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(u.input(),
                                 u.radix()))));
@@ -204,7 +246,10 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parseBigInteger_CharSequence_int_int() {
         return createTestData().stream()
-                .filter(t -> t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parseBigInteger(u.input(), u.charOffset(), u.charLength()))));
 
@@ -221,9 +266,12 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_CharSequence() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0
-                        && t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0
+                            && t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input()))));
 
@@ -232,8 +280,11 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_CharSequence_int() {
         return createTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charLength() == t.input().length()
+                            && t.charOffset() == 0;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input(),
                                 u.radix()))));
@@ -243,7 +294,10 @@ public class JavaBigIntegerTest extends AbstractBigIntegerParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsParse_JavaBigIntegerParser_parallelParseBigInteger_CharSequence_int_int() {
         return createTestData().stream()
-                .filter(t -> t.radix() == 10)
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.radix() == 10;
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigIntegerParser.parallelParseBigInteger(u.input(), u.charOffset(), u.charLength()))));
 

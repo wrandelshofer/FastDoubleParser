@@ -44,6 +44,12 @@ public record NumberTestData(String title,
                 expectedThrowableClass);
     }
 
+    public NumberTestData(CharSequence input, int radix, String expectedErrorMessage, Class<? extends Throwable> expectedThrowableClass) {
+        this(input.toString(), input, 0, input.length(), 0, input.length(),
+                radix, null, expectedErrorMessage,
+                expectedThrowableClass);
+    }
+
     public NumberTestData(CharSequence input, Number expectedValue, int offset, int length, String expectedErrorMessage, Class<? extends Throwable> expectedThrowableClass) {
         this(input.toString(), input, offset, length, offset, length,
                 10, expectedValue, expectedErrorMessage,
@@ -78,12 +84,26 @@ public record NumberTestData(String title,
         );
     }
 
+    public NumberTestData(CharSequence input, Function<String, Number> constructor) {
+        this(input.toString(),
+                input, 0, input.length(), 0, input.length(),
+                constructor.apply(input.toString())
+        );
+    }
+
     public NumberTestData(CharSequence input) {
         this(input.toString(), input, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class);
     }
 
     public NumberTestData(String title, CharSequence input, String expectedErrorMessage, Class<? extends Throwable> expectedThrowableClass) {
         this(title,
+                input, 0, input.length(), 0, input.length(),
+                10, null, expectedErrorMessage,
+                expectedThrowableClass);
+    }
+
+    public NumberTestData(CharSequence input, String expectedErrorMessage, Class<? extends Throwable> expectedThrowableClass) {
+        this(input.toString(),
                 input, 0, input.length(), 0, input.length(),
                 10, null, expectedErrorMessage,
                 expectedThrowableClass);

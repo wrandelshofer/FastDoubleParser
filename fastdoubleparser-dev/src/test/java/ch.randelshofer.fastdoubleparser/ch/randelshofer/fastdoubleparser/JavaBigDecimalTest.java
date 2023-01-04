@@ -19,7 +19,10 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_byteArray() {
         return createRegularTestData().stream()
-                .filter(t -> t.charOffset() == 0 && t.charLength() == t.input().length())
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charOffset() == 0 && t.charLength() == t.input().length();
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
                                 toByteArray(u.input())
@@ -40,7 +43,10 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_byteArray() {
         return createRegularTestData().stream()
-                .filter(t -> t.charOffset() == 0 && t.charLength() == t.input().length())
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charOffset() == 0 && t.charLength() == t.input().length();
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
                                 toByteArray(u.input())
@@ -62,7 +68,10 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_charArray() {
         return createRegularTestData().stream()
-                .filter(t -> t.charOffset() == 0 && t.charLength() == t.input().length())
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charOffset() == 0 && t.charLength() == t.input().length();
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
                                 toCharArray(u.input())
@@ -83,7 +92,10 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_charArray() {
         return createRegularTestData().stream()
-                .filter(t -> t.byteOffset() == 0 && t.byteLength() == t.input().length())
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.byteOffset() == 0 && t.byteLength() == t.input().length();
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
                                 toCharArray(u.input())
@@ -104,7 +116,10 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_CharSequence() {
         return createRegularTestData().stream()
-                .filter(t -> t.charOffset() == 0 && t.charLength() == t.input().length())
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.charOffset() == 0 && t.charLength() == t.input().length();
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
                                 u.input()
@@ -124,7 +139,10 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_CharSequence() {
         return createRegularTestData().stream()
-                .filter(t -> t.byteOffset() == 0 && t.byteLength() == t.input().length())
+                .filter(s -> {
+                    NumberTestData t = s.supplier().get();
+                    return t.byteOffset() == 0 && t.byteLength() == t.input().length();
+                })
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
                                 u.input().toString()

@@ -183,7 +183,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
     /**
      * Parses a big decimal string that has many digits.
      */
-    private BigDecimal parseBigDecimalStringWithManyDigits(char[] str, int offset, int length, int parallelThreshold) {
+    BigDecimal parseBigDecimalStringWithManyDigits(char[] str, int offset, int length, int parallelThreshold) {
         if (length > MAX_INPUT_LENGTH) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }

@@ -68,6 +68,7 @@
                   </includes>
                   <excludes>
                     <exclude>**/NumberTestData.java</exclude>
+                    <exclude>**/NumberTestDataSupplier.java</exclude>
                     <exclude>**/Jmh*.java</exclude>
                     <exclude>**/EarlyAccess*.java</exclude>
                   </excludes>
