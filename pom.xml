@@ -95,6 +95,8 @@
               <enableLongRunningTests>false</enableLongRunningTests>
             </systemPropertyVariables>
             <argLine>-Xmx24g</argLine>
+            <parallel>all</parallel>
+            <forkCount>4</forkCount>
           </configuration>
         </plugin>
         <plugin>
