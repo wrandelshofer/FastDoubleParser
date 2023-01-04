@@ -58,12 +58,12 @@ to the precision of a `double` or a `float`.
 
 ### `BigDecimal` and `BigInteger` parsers
 
-On common input data, the fast `BigDecimal` and `BigInteger` parsers are about as fast as
+On common input data, the fast `BigDecimal` and `BigInteger` parsers are slightly faster than
 `java.math.BigDecimal(String)` and `java.math.BigInteger(String)`.
 
 For less common inputs with many digits, the fast parsers can be a lot faster than their `java.math` counterparts.
 The fast parsers can convert even the longest supported inputs in less than 6 minutes, whereas
-their `java.math` counterparts need months (!).
+their `java.math` counterparts need months!
 
 The fast parsers convert digit characters from base 10 to a bit sequence in base 2
 using a divide-and-conquer algorithm. Small sequences of digits are converted
