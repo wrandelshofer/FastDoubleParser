@@ -251,6 +251,11 @@ public abstract class AbstractBigIntegerParserTest {
         list.addAll(createDataForLegalHexStrings());
         list.addAll(createDataForLegalRadixStrings());
         list.addAll(createDataForIllegalRadixStrings());
+        return list;
+    }
+
+    List<NumberTestDataSupplier> createLongRunningTestData() {
+        List<NumberTestDataSupplier> list = new ArrayList<>();
         if (longRunningTests) {
             list.addAll(createDataForVeryLongDecStrings());
             list.addAll(createDataForVeryLongHexStrings());

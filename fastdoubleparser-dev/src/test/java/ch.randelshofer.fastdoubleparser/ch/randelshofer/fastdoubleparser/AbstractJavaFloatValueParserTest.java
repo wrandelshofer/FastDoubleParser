@@ -249,7 +249,7 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
     }
 
 
-    List<NumberTestData> createAllDoubleTestData() {
+    List<NumberTestData> createRegularDoubleTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());
@@ -263,13 +263,18 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
+        return list;
+    }
+
+    List<NumberTestData> createLongRunningDoubleTestData() {
+        List<NumberTestData> list = new ArrayList<>();
         if (longRunningTests) {
             list.addAll(createDataWithVeryLongInputStrings());
         }
         return list;
     }
 
-    List<NumberTestData> createAllFloatTestData() {
+    List<NumberTestData> createRegularFloatTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());
@@ -283,6 +288,11 @@ public abstract class AbstractJavaFloatValueParserTest extends AbstractFloatValu
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
+        return list;
+    }
+
+    List<NumberTestData> createLongRunningFloatTestData() {
+        List<NumberTestData> list = new ArrayList<>();
         if (longRunningTests) {
             list.addAll(createDataWithVeryLongInputStrings());
         }

@@ -17,7 +17,7 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
 
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_byteArray() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_byteArray() {
         return createRegularTestData().stream()
                 .filter(s -> {
                     NumberTestData t = s.supplier().get();
@@ -31,7 +31,7 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_byteArray_int_int() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_byteArray_int_int() {
         return createRegularTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
@@ -41,7 +41,17 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_byteArray() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_byteArray_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
+                                toByteArray(u.input()),
+                                u.byteOffset(), u.byteLength()))));
+
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_byteArray() {
         return createRegularTestData().stream()
                 .filter(s -> {
                     NumberTestData t = s.supplier().get();
@@ -55,8 +65,18 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_byteArray_int_int() {
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_byteArray_int_int() {
         return createRegularTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
+                                toByteArray(u.input()),
+                                u.byteOffset(), u.byteLength()))));
+
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_byteArray_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
                                 toByteArray(u.input()),
@@ -66,7 +86,7 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
 
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_charArray() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_charArray() {
         return createRegularTestData().stream()
                 .filter(s -> {
                     NumberTestData t = s.supplier().get();
@@ -81,7 +101,7 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
 
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_charArray_int_int() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_charArray_int_int() {
         return createRegularTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
@@ -90,7 +110,16 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_charArray() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_charArray_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
+                                toCharArray(u.input()),
+                                u.charOffset(), u.charLength()))));
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_charArray() {
         return createRegularTestData().stream()
                 .filter(s -> {
                     NumberTestData t = s.supplier().get();
@@ -104,8 +133,17 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_charArray_int_int() {
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_charArray_int_int() {
         return createRegularTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
+                                toCharArray(u.input()),
+                                u.charOffset(), u.charLength()))));
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_charArray_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
                                 toCharArray(u.input()),
@@ -114,7 +152,7 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
 
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_CharSequence() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_CharSequence() {
         return createRegularTestData().stream()
                 .filter(s -> {
                     NumberTestData t = s.supplier().get();
@@ -128,7 +166,7 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parallelParseBigDecimal_CharSequence_int_int() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_CharSequence_int_int() {
         return createRegularTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
@@ -137,7 +175,16 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_CharSequence() {
+    public Stream<DynamicTest> dynamicTests_parallelParseBigDecimal_CharSequence_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigDecimalParser.parallelParseBigDecimal(
+                                u.input(),
+                                u.charOffset(), u.charLength()))));
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_CharSequence() {
         return createRegularTestData().stream()
                 .filter(s -> {
                     NumberTestData t = s.supplier().get();
@@ -151,8 +198,17 @@ public class JavaBigDecimalTest extends AbstractBigDecimalParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicTest> dynamicTestsJavaBigDecimalParser_parseBigDecimal_CharSequence_int_int() {
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_CharSequence_int_int() {
         return createRegularTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
+                                u.input(),
+                                u.charOffset(), u.charLength()))));
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> dynamicTests_parseBigDecimal_CharSequence_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JavaBigDecimalParser.parseBigDecimal(
                                 u.input(),

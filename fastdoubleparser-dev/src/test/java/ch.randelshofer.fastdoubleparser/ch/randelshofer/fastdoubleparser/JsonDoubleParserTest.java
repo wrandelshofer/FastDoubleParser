@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharSequence() {
-        return createAllTestData().stream()
+    public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {
+        return createRegularTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
@@ -32,15 +32,22 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharSequenceIntInt() {
-        return createAllTestData().stream()
+    public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int() {
+        return createRegularTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JsonDoubleParser.parseDouble(u.input(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleByteArray() {
-        return createAllTestData().stream()
+    public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int_longRunningTest() {
+        return createLongRunningTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input(), u.charOffset(), u.charLength()))));
+    }
+
+    @TestFactory
+    public Stream<DynamicNode> dynamicTests_parseDouble_ByteArray() {
+        return createRegularTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.byteLength() <= EXPECTED_MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
@@ -49,15 +56,22 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleByteArrayIntInt() {
-        return createAllTestData().stream()
+    public Stream<DynamicNode> dynamicTests_parseDouble_ByteArray_int_int() {
+        return createRegularTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharArray() {
-        return createAllTestData().stream()
+    public Stream<DynamicNode> dynamicTests_parseDouble_ByteArray_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+    }
+
+    @TestFactory
+    public Stream<DynamicNode> dynamicTests_parseDouble_charArray() {
+        return createRegularTestData().stream()
                 .filter(t -> t.charLength() == t.input().length()
                         && t.byteLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
                         && t.charOffset() == 0)
@@ -66,8 +80,15 @@ public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTestsParseDoubleCharArrayIntInt() {
-        return createAllTestData().stream()
+    public Stream<DynamicNode> dynamicTests_parseDouble_charArray_int_int() {
+        return createRegularTestData().stream()
+                .map(t -> dynamicTest(t.title(),
+                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
+    }
+
+    @TestFactory
+    public Stream<DynamicNode> dynamicTests_parseDouble_charArray_int_int_longRunningTests() {
+        return createLongRunningTestData().stream()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
     }

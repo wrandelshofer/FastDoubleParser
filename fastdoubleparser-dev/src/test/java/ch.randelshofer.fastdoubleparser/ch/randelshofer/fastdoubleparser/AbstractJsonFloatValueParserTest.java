@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValueParserTest {
     public final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
-
+    private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
     protected List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
                 new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
@@ -165,7 +165,7 @@ public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValu
         );
     }
 
-    List<NumberTestData> createAllTestData() {
+    List<NumberTestData> createRegularTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createDataForDoubleDecimalLimits());
         list.addAll(createDataForBadStrings());
@@ -176,4 +176,17 @@ public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValu
         return list;
     }
 
+    protected List<NumberTestData> createDataWithVeryLongInputStrings() {
+        return Arrays.asList(
+                new NumberTestData("too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 3), AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class)
+        );
+    }
+
+    List<NumberTestData> createLongRunningTestData() {
+        List<NumberTestData> list = new ArrayList<>();
+        if (longRunningTests) {
+            list.addAll(createDataWithVeryLongInputStrings());
+        }
+        return list;
+    }
 }

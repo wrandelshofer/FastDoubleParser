@@ -294,6 +294,11 @@ public abstract class AbstractBigDecimalParserTest {
         list.addAll(createDataForIllegalCroppedStrings());
         list.addAll(createTestDataForInputClassesInMethodParseBigDecimalString());
         list.addAll(createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits());
+        return list;
+    }
+
+    List<NumberTestDataSupplier> createLongRunningTestData() {
+        List<NumberTestDataSupplier> list = new ArrayList<>();
         if (longRunningTests) {
             list.addAll(createDataWithVeryLongInputStrings());
         }
