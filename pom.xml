@@ -94,7 +94,7 @@
             <systemPropertyVariables>
               <enableLongRunningTests>false</enableLongRunningTests>
             </systemPropertyVariables>
-            <argLine>-Xmx22g</argLine>
+            <argLine>-Xmx24g</argLine>
             <parallel>classesAndMethods</parallel>
             <forkCount>6</forkCount>
           </configuration>

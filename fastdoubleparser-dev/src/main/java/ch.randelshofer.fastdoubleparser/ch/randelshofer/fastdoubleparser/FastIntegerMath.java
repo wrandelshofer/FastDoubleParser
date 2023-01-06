@@ -67,7 +67,7 @@ class FastIntegerMath {
     /**
      * Computes 10<sup>n&~15</sup>.
      */
-    static BigInteger computeTenRaisedByNFloor16Recursive(NavigableMap<Integer, BigInteger> powersOfTen, int n, boolean parallel) {
+    static BigInteger computeTenRaisedByNFloor16Recursive(NavigableMap<Integer, BigInteger> powersOfTen, int n) {
         n = n & ~15;
         Map.Entry<Integer, BigInteger> floorEntry = powersOfTen.floorEntry(n);
         int floorPower = floorEntry.getKey();
@@ -78,7 +78,7 @@ class FastIntegerMath {
         int diff = n - floorPower;
         BigInteger diffValue = powersOfTen.get(diff);
         if (diffValue == null) {
-            diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff, parallel);
+            diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff);
             powersOfTen.put(diff, diffValue);
         }
         return FftMultiplier.multiply(floorValue, diffValue, false);
@@ -109,7 +109,7 @@ class FastIntegerMath {
      * @return the filled map
      */
     static NavigableMap<Integer, BigInteger> fillPowersOf10Floor16(int from, int to, boolean parallel) {
-        // We fill the map with powers of 5
+        // Fill the map with powers of 5
         NavigableMap<Integer, BigInteger> powers = new TreeMap<>();
         powers.put(0, BigInteger.valueOf(5));
         powers.put(16, FIVE_POW_16);
@@ -136,10 +136,9 @@ class FastIntegerMath {
         if (!powersOfTen.containsKey(n)) {
             fillPowersOfNFloor16Recursive(powersOfTen, from, mid, parallel);
             fillPowersOfNFloor16Recursive(powersOfTen, mid, to, parallel);
-            powersOfTen.put(n, computeTenRaisedByNFloor16Recursive(powersOfTen, n, parallel));
+            powersOfTen.put(n, computeTenRaisedByNFloor16Recursive(powersOfTen, n));
         }
     }
-
 
     /**
      * Computes {@code uint128 product = (uint64)x * (uint64)y}.

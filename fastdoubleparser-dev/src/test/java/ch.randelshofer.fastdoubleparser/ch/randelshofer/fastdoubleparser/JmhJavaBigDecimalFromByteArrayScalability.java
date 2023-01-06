@@ -32,10 +32,9 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  *
  * After we integrated FftMultiplier:
  *
- *      (digits)  Mode  Cnt               Score   Error  Units
- * seq  646391315  avgt       284_707376315.000          ns/op
- *
- * Before we integrated FftMultiplier:
+ *      (digits)  Mode  Cnt                Score   Error  Units
+ * seq   10000000  avgt          2_858113121.500          ns/op
+ * seq  646391315  avgt        284_707376315.000          ns/op
  *
  *        (digits)  Mode  Cnt     _        Score   Error  Units
  * par           1  avgt          _       28.920          ns/op
@@ -60,6 +59,32 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * seq   100000000  avgt        23_823624891.000          ns/op
  * seq   646456993  avgt       232_468403178.000          ns/op
  * seq  1292782621  avgt       222_404103626.000          ns/op
+ *
+ * Before we integrated FftMultiplier:
+ *
+ *      (digits)  Mode  Cnt            Score   Error  Units
+ * par        24  avgt                77.542          ns/op
+ * par         1  avgt                10.387          ns/op
+ * par        10  avgt                16.126          ns/op
+ * par       100  avgt               218.620          ns/op
+ * par      1000  avgt              4804.543          ns/op
+ * par     10000  avgt            117301.625          ns/op
+ * par    100000  avgt           3805758.892          ns/op
+ * par   1000000  avgt          55026280.527          ns/op
+ * par  10000000  avgt       1_455180955.000          ns/op
+ * par 100000000  avgt      33_793710446.000          ns/op
+ * par 646391315  avgt     393_551821905.000          ns/op
+ * seq        24  avgt                68.342          ns/op
+ * seq         1  avgt                 7.347          ns/op
+ * seq        10  avgt                14.433          ns/op
+ * seq       100  avgt               217.995          ns/op
+ * seq      1000  avgt              4784.030          ns/op
+ * seq     10000  avgt            166472.648          ns/op
+ * seq    100000  avgt           6472800.381          ns/op
+ * seq   1000000  avgt         111609901.267          ns/op
+ * seq  10000000  avgt       2_418388865.000          ns/op
+ * seq 100000000  avgt      41_679193822.000          ns/op
+ * seq 646391315  avgt     400_608301899.000          ns/op
  *
  * recursive only (recursion threshold=0)
  *      (digits)  Mode  Cnt      _        Score   Error  Units
@@ -132,17 +157,17 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 @State(Scope.Benchmark)
 public class JmhJavaBigDecimalFromByteArrayScalability {
     @Param({
-            "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
-            , "100000000"
-            , "646456993"
-            , "1292782621"
+            // "1"
+            // , "10"
+            // , "100"
+            // , "1000"
+            // , "10000"
+            // , "100000"
+            // , "1000000"
+            "10000000"
+            //   , "100000000"
+            //   , "646456993"
+            //   , "1292782621"
 
     })
     public int digits;
@@ -164,12 +189,12 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
     public BigDecimal seq() {
         return JavaBigDecimalParser.parseBigDecimal(decLiteral);
     }
-
+/*
     @Benchmark
     public BigDecimal par() {
         return JavaBigDecimalParser.parallelParseBigDecimal(decLiteral);
     }
-
+*/
 
 }
 

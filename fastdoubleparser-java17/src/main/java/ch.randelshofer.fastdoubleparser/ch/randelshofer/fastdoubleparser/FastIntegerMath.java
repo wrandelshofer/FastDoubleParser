@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-public class FastIntegerMath {
+class FastIntegerMath {
     public static final BigInteger FIVE = BigInteger.valueOf(5);
     final static BigInteger TEN_POW_16 = BigInteger.valueOf(10_000_000_000_000_000L);
     final static BigInteger FIVE_POW_16 = BigInteger.valueOf(152_587_890_625L);
@@ -32,7 +32,6 @@ public class FastIntegerMath {
             BigInteger.valueOf(100_000_000_000_000L),
             BigInteger.valueOf(1_000_000_000_000_000L)
     };
-
 
     /**
      * Don't let anyone instantiate this class.
@@ -59,7 +58,7 @@ public class FastIntegerMath {
             if (floorN == n) {
                 return floorEntry.getValue();
             } else {
-                return parallelMultiply(floorEntry.getValue(), computePowerOfTen(powersOfTen, n - floorN, parallel), parallel);
+                return FftMultiplier.multiply(floorEntry.getValue(), computePowerOfTen(powersOfTen, n - floorN, parallel), parallel);
             }
         }
         return FIVE.pow(n).shiftLeft(n);
@@ -101,6 +100,14 @@ public class FastIntegerMath {
         return (((numDecimalDigits * 3402L) >>> 10) + 1);
     }
 
+    /**
+     * Fills a map with powers of 10 floor 16.
+     *
+     * @param from     the start index of the character sequence that contains the digits
+     * @param to       the end index of the character sequence that contains the digits
+     * @param parallel whether to fill the map in parallel
+     * @return the filled map
+     */
     static NavigableMap<Integer, BigInteger> fillPowersOf10Floor16(int from, int to, boolean parallel) {
         // Fill the map with powers of 5
         NavigableMap<Integer, BigInteger> powers = new TreeMap<>();
@@ -117,7 +124,6 @@ public class FastIntegerMath {
         return powers;
     }
 
-
     static void fillPowersOfNFloor16Recursive(NavigableMap<Integer, BigInteger> powersOfTen, int from, int to, boolean parallel) {
         int numDigits = to - from;
         // base case:
@@ -132,7 +138,6 @@ public class FastIntegerMath {
             fillPowersOfNFloor16Recursive(powersOfTen, mid, to, parallel);
             powersOfTen.put(n, computeTenRaisedByNFloor16Recursive(powersOfTen, n));
         }
-        return;
     }
 
     /**
@@ -184,13 +189,5 @@ public class FastIntegerMath {
             this.high = high;
             this.low = low;
         }
-    }
-
-    static BigInteger newBigInteger(int signum, int[] magnitude) {
-        byte[] bytes = new byte[magnitude.length << 2];
-        for (int i = 0; i < magnitude.length; i++) {
-            FastDoubleSwar.writeIntBE(bytes, i << 2, magnitude[i]);
-        }
-        return new BigInteger(signum, bytes);
     }
 }
