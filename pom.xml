@@ -5,7 +5,7 @@
 
   <groupId>ch.randelshofer</groupId>
   <artifactId>fastdoubleparser-parentproject</artifactId>
-  <version>0.6.0</version>
+  <version>${revision}</version>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -42,6 +42,7 @@
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
+    <revision>0.7.0</revision>
   </properties>
 
   <build>

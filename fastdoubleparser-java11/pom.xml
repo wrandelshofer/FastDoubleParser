@@ -5,7 +5,7 @@
   <parent>
     <groupId>ch.randelshofer</groupId>
     <artifactId>fastdoubleparser-parentproject</artifactId>
-    <version>0.6.0</version>
+    <version>${revision}</version>
   </parent>
   <artifactId>fastdoubleparser-java11</artifactId>
   <packaging>jar</packaging>
