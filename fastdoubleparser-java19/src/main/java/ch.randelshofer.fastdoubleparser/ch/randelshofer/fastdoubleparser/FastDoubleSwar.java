@@ -604,4 +604,8 @@ class FastDoubleSwar {
     public static void writeLongBE(byte[] a, int offset, long value) {
         readLongBE.set(a, offset, value);
     }
+
+    public static double fma(double a, double b, double c) {
+        return Math.fma(a, b, c);
+    }
 }

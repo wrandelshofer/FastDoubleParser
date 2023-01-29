@@ -684,4 +684,8 @@ class FastDoubleSwar {
         a[offset + 6] = (byte) (v >>> 8);
         a[offset + 7] = (byte) v;
     }
+
+    public static double fma(double a, double b, double c) {
+        return a * b + c;
+    }
 }
