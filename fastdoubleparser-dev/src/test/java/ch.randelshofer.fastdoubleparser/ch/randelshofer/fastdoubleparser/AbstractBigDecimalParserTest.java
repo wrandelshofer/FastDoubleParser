@@ -169,9 +169,9 @@ public abstract class AbstractBigDecimalParserTest {
     /**
      * White-box tests for the following methods:
      * <ul>
-     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalString(byte[], int, int, boolean)}</li>
-     *     <li>{@link JavaBigDecimalFromCharArray#parseBigDecimalString(char[], int, int, boolean)}</li>
-     *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalString(CharSequence, int, int, boolean)}</li>
+     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalString(byte[], int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharArray#parseBigDecimalString(char[], int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalString(CharSequence, int, int)}</li>
      * </ul>
      */
     protected List<NumberTestDataSupplier> createTestDataForInputClassesInMethodParseBigDecimalString() {
@@ -231,9 +231,9 @@ public abstract class AbstractBigDecimalParserTest {
     /**
      * White-box tests for the following methods:
      * <ul>
-     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalStringWithManyDigits(byte[], int, int, int)}</li>
-     *     <li>{@link JavaBigDecimalFromCharArray#parseBigDecimalStringWithManyDigits(char[], int, int, int)}</li>
-     *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalStringWithManyDigits(CharSequence, int, int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromByteArray#parseBigDecimalStringWithManyDigits(byte[], int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharArray#parseBigDecimalStringWithManyDigits(char[], int, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalStringWithManyDigits(CharSequence, int, int)}</li>
      * </ul>
      */
     protected List<NumberTestDataSupplier> createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits() {
@@ -258,12 +258,11 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestDataSupplier("significand with 128 integer digits (above recursion threshold)", () -> new NumberTestData("significand with 128 integer digits (above recursion threshold)", new VirtualCharSequence('7', 128), BigDecimal::new)),
                 new NumberTestDataSupplier("significand with 127 fraction digits (below recursion threshold)", () -> new NumberTestData("significand with 127 fraction digits (below recursion threshold)", new VirtualCharSequence(".", '7', 128), BigDecimal::new)),
                 new NumberTestDataSupplier("significand with 128 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 128 fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', 129), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1023 integer digits (below parallel threshold)", () -> new NumberTestData("significand with 1023 integer digits (below parallel threshold)", new VirtualCharSequence('7', 1023), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1024 integer digits (above parallel threshold)", () -> new NumberTestData("significand with 1024 integer digits (above parallel threshold)", new VirtualCharSequence('7', 1024), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 2048 integer digits (twice above parallel threshold)", () -> new NumberTestData("significand with 2048 integer digits (twice above parallel threshold)", new VirtualCharSequence('7', 2048), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1023 fraction digits (below parallel threshold)", () -> new NumberTestData("significand with 1023 fraction digits (below parallel threshold)", new VirtualCharSequence(".", '7', 1024), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1024 fraction digits (above parallel threshold)", () -> new NumberTestData("significand with 1024 fraction digits (above parallel threshold)", new VirtualCharSequence(".", '7', 1025), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 2048 integer digits, 4096 fraction digits (above parallel threshold)", () -> new NumberTestData("significand with 2048 integer digits, 4096 fraction digits (above parallel threshold)", new VirtualCharSequence("", 2048, ".", "", '7', 2048 + 4096 + 1), BigDecimal::new))
+                new NumberTestDataSupplier("significand with 1023 integer digits (above recursion threshold)", () -> new NumberTestData("significand with 1023 integer digits (above recursion threshold)", new VirtualCharSequence('7', 1023), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 1024 integer digits (above recursion threshold)", () -> new NumberTestData("significand with 1024 integer digits (above recursion threshold)", new VirtualCharSequence('7', 2048), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 1023 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 1023 fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', 1024), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 1024 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 1024 fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', 1025), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 2048 integer digits, 4096 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 2048 integer digits, 4096 fraction digits (above recursion threshold)", new VirtualCharSequence("", 2048, ".", "", '7', 2048 + 4096 + 1), BigDecimal::new))
         );
     }
 

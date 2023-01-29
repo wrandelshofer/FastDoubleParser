@@ -150,10 +150,6 @@ public class JmhFftMultiplier {
         return a.multiply(b);
     }
 
-            @Benchmark
-            public BigInteger bigIntParaMul() {
-                return a.parallelMultiply(b);
-            }
 */
     @Benchmark
     public BigInteger fftMul() {

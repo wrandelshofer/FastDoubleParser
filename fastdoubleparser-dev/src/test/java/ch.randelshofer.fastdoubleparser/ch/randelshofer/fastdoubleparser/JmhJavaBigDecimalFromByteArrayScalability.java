@@ -4,18 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.annotations.*;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -186,15 +175,10 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
     }
 
     @Benchmark
-    public BigDecimal seq() {
+    public BigDecimal m() {
         return JavaBigDecimalParser.parseBigDecimal(decLiteral);
     }
-/*
-    @Benchmark
-    public BigDecimal par() {
-        return JavaBigDecimalParser.parallelParseBigDecimal(decLiteral);
-    }
-*/
+
 
 }
 

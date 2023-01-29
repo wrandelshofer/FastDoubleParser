@@ -6,7 +6,6 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
 import java.util.Map;
-import java.util.concurrent.RecursiveTask;
 
 import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
@@ -14,7 +13,13 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 /**
  * Parses digits in exponential time O(e^n).
  */
-class ParseDigitsTaskCharArray extends RecursiveTask<BigInteger> {
+class ParseDigitsTaskCharArray {
+    /**
+     * Don't let anyone instantiate this class.
+     */
+    private ParseDigitsTaskCharArray() {
+    }
+
     /**
      * Threshold on the number of digits for selecting the
      * recursive algorithm instead of the iterative algorithm.
@@ -30,43 +35,15 @@ class ParseDigitsTaskCharArray extends RecursiveTask<BigInteger> {
      * the threshold value.
      */
     static final int RECURSION_THRESHOLD = 400;
-    /**
-     * Threshold on the number of digits for selecting the multi-threaded
-     * algorithm instead of the single-thread algorithm.
-     * <p>
-     * Set this to {@link Integer#MAX_VALUE} if you only want to use
-     * the single-threaded algorithm.
-     * <p>
-     * Set this to {@code 0} if you only want to use the multi-threaded
-     * algorithm.
-     * <p>
-     * Rationale for choosing a specific threshold value:
-     * We speculate that we need to perform at least 10,000 CPU cycles
-     * before it is worth using multiple threads.
-     */
-    static final int DEFAULT_PARALLEL_THRESHOLD = 1024;
-    private final int from, to;
-    private final char[] str;
-    private final Map<Integer, BigInteger> powersOfTen;
-    private final int parallelThreshold;
 
-    ParseDigitsTaskCharArray(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, int parallelThreshold) {
-        this.from = from;
-        this.to = to;
-        this.str = str;
-        this.powersOfTen = powersOfTen;
-        this.parallelThreshold = parallelThreshold;
-    }
 
-    static BigInteger parseDigits(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, int parallelThreshold) {
-            int numDigits = to - from;
-            if (numDigits < RECURSION_THRESHOLD) {
-                return ParseDigitsTaskCharArray.parseDigitsIterative(str, from, to);
-            } else if (numDigits < parallelThreshold) {
-                return ParseDigitsTaskCharArray.parseDigitsRecursive(str, from, to, powersOfTen);
-            } else {
-                return new ParseDigitsTaskCharArray(str, from, to, powersOfTen, parallelThreshold).compute();
-            }
+    static BigInteger parseDigits(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
+        int numDigits = to - from;
+        if (numDigits < RECURSION_THRESHOLD) {
+            return ParseDigitsTaskCharArray.parseDigitsIterative(str, from, to);
+        } else {
+            return ParseDigitsTaskCharArray.parseDigitsRecursive(str, from, to, powersOfTen);
+        }
     }
 
     /**
@@ -108,7 +85,7 @@ class ParseDigitsTaskCharArray extends RecursiveTask<BigInteger> {
         BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
 
-        high = FftMultiplier.multiply(high, powersOfTen.get(to - mid), false);
+        high = FftMultiplier.multiply(high, powersOfTen.get(to - mid));
         return low.add(high);
     }
 
@@ -129,21 +106,5 @@ class ParseDigitsTaskCharArray extends RecursiveTask<BigInteger> {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
         return BigInteger.valueOf(significand);
-    }
-
-    protected BigInteger compute() {
-        int range = to - from;
-        // Base case:
-        if (range <= parallelThreshold) {
-            return parseDigitsRecursive(str, from, to, powersOfTen);
-        }
-        // Recursion case:
-        int mid = splitFloor16(from, to);
-        ParseDigitsTaskCharArray high = new ParseDigitsTaskCharArray(str, from, mid, powersOfTen, parallelThreshold);
-        ParseDigitsTaskCharArray low = new ParseDigitsTaskCharArray(str, mid, to, powersOfTen, parallelThreshold);
-        // perform about half the work locally
-        low.fork();
-        BigInteger highValue = FftMultiplier.multiply(high.compute(), powersOfTen.get(to - mid), false);
-        return low.join().add(highValue);
     }
 }

@@ -108,16 +108,9 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
         }
     */
     @Benchmark
-    public BigInteger seqDec() {
+    public BigInteger dec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);
     }
-/*
-    @Benchmark
-    public BigInteger parDec() {
-        return JavaBigIntegerParser.parallelParseBigInteger(decLiteral);
-    }
-
-*/
 }
 
 

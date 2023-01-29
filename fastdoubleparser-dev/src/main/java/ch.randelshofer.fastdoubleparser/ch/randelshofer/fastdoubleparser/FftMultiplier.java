@@ -5,7 +5,6 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
-import java.util.stream.IntStream;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
 
@@ -478,90 +477,6 @@ class FftMultiplier {
         }
     }
 
-    private static void parallelFftB(ComplexVector a, ComplexVector[] roots) {
-        int n = a.length;
-        int logN = 31 - Integer.numberOfLeadingZeros(n);
-
-        // do two FFT stages at a time (radix-4)
-        int s = logN;
-        for (; s >= 2; s -= 2) {
-            int m = 1 << s;
-            //for (int ii = 0; ii < n; ii += m) {
-            IntStream.range(0, n / m).parallel().forEach(ii -> {
-                final ComplexVector rootsS = roots[logN - 2];
-                final int i = ii * m;
-
-                MutableComplex a0 = new MutableComplex();
-                MutableComplex a1 = new MutableComplex();
-                MutableComplex a2 = new MutableComplex();
-                MutableComplex a3 = new MutableComplex();
-                MutableComplex omega1 = new MutableComplex();
-                MutableComplex omega2 = new MutableComplex();
-                for (int j = 0; j < m / 4; j++) {
-                    omega1.set(rootsS, j);
-                    // computing omega2 from omega1 is less accurate than Math.cos() and Math.sin(),
-                    // but it is the same error we'd incur with radix-2, so we're not breaking the
-                    // assumptions of the Percival paper.
-                    omega1.squareInto(omega2);
-
-                    int idx0 = i + j;
-                    int idx1 = i + j + m / 4;
-                    int idx2 = i + j + m / 2;
-                    int idx3 = i + j + m * 3 / 4;
-
-                    // radix-4 butterfly:
-                    //   a[idx0] = (a[idx0] + a[idx1]      + a[idx2]      + a[idx3])      * w^0
-                    //   a[idx1] = (a[idx0] + a[idx1]*(-i) + a[idx2]*(-1) + a[idx3]*i)    * w^1
-                    //   a[idx2] = (a[idx0] + a[idx1]*(-1) + a[idx2]      + a[idx3]*(-1)) * w^2
-                    //   a[idx3] = (a[idx0] + a[idx1]*i    + a[idx2]*(-1) + a[idx3]*(-i)) * w^3
-                    // where w = omega1^(-1) = conjugate(omega1)
-                    a.addInto(idx0, a, idx1, a0);
-                    a0.add(a, idx2);
-                    a0.add(a, idx3);
-
-                    a.subtractTimesIInto(idx0, a, idx1, a1);
-                    a1.subtract(a, idx2);
-                    a1.addTimesI(a, idx3);
-                    a1.multiplyConjugate(omega1);
-
-                    a.subtractInto(idx0, a, idx1, a2);
-                    a2.add(a, idx2);
-                    a2.subtract(a, idx3);
-                    a2.multiplyConjugate(omega2);
-
-                    a.addTimesIInto(idx0, a, idx1, a3);
-                    a3.subtract(a, idx2);
-                    a3.subtractTimesI(a, idx3);
-                    a3.multiply(omega1);   // Bernstein's trick: multiply by omega^(-1) instead of omega^3
-
-                    a0.copyInto(a, idx0);
-                    a1.copyInto(a, idx1);
-                    a2.copyInto(a, idx2);
-                    a3.copyInto(a, idx3);
-                }
-            });
-        }
-
-
-        // do one final radix-2 step if there is an odd number of stages
-        if (s > 0) {
-            MutableComplex a0 = new MutableComplex();
-            MutableComplex a1 = new MutableComplex();
-            for (int i = 0; i < n; i += 2) {
-                // omega = 1
-
-                //    a0 = a[i];
-                //    a1 = a[i + 1];
-                //    a[i] += a1;
-                //    a[i + 1] = a0 - a1;
-                a.copyInto(i, a0);
-                a.copyInto(i + 1, a1);
-                a.add(i, a1);
-                a0.subtractInto(a1, a, i + 1);
-            }
-        }
-    }
-
     /**
      * Performs FFTs or IFFTs of size 3 on the vector {@code (a0[i], a1[i], a2[i])}
      * for each {@code i}. The output is placed back into {@code a0, a1, and a2}.
@@ -861,14 +776,13 @@ class FftMultiplier {
     /**
      * Returns a BigInteger whose value is {@code (a * b)}.
      *
-     * @param a        value a
-     * @param b        value b
-     * @param parallel whether to perform the computation in parallel
+     * @param a value a
+     * @param b value b
      * @return {@code this * val}
      * @implNote An implementation may offer better algorithmic
      * performance when {@code a == b}.
      */
-    static BigInteger multiply(BigInteger a, BigInteger b, boolean parallel) {
+    static BigInteger multiply(BigInteger a, BigInteger b) {
         if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }
@@ -887,7 +801,7 @@ class FftMultiplier {
                 && (xlen > FFT_THRESHOLD || ylen > FFT_THRESHOLD)) {
             return multiplyFft(a, b);
         }
-        return FastIntegerMath.parallelMultiply(a, b, parallel);
+        return a.multiply(b);
     }
 
     /**

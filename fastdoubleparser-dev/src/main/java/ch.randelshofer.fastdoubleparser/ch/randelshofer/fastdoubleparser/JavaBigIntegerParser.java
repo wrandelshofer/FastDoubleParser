@@ -68,192 +68,6 @@ public class JavaBigIntegerParser {
     }
 
     /**
-     * Convenience method for calling {@link #parallelParseBigInteger(CharSequence, int, int)}.
-     *
-     * @param str the string to be parsed
-     * @return the parsed value
-     * @throws NullPointerException  if the string is null
-     * @throws NumberFormatException if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(CharSequence str) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), 10, true);
-    }
-
-    /**
-     * Convenience method for calling {@link #parallelParseBigInteger(CharSequence, int, int, int)}.
-     *
-     * @param str   the string to be parsed
-     * @param radix the radix to be used in interpreting the {@code str}
-     * @return the parsed value
-     * @throws NullPointerException  if the string is null
-     * @throws NumberFormatException if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(CharSequence str, int radix) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), radix, true);
-    }
-
-    /**
-     * Parses a {@code BigIntegerLiteral} from a {@code byte}-Array and converts it
-     * into a {@link BigInteger} value.
-     *
-     * @param str    the string to be parsed
-     * @param offset The index of the first character to parse
-     * @param length The number of characters to parse
-     * @return the parsed value
-     * @throws NullPointerException     if the string is null
-     * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException    if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(CharSequence str, int offset, int length) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, 10, true);
-    }
-
-    /**
-     * Parses a {@code BigIntegerLiteral} from a {@code byte}-Array and converts it
-     * into a {@link BigInteger} value.
-     *
-     * @param str    the string to be parsed
-     * @param offset The index of the first character to parse
-     * @param length The number of characters to parse
-     * @param radix  the radix to be used in interpreting the {@code str}
-     * @return the parsed value
-     * @throws NullPointerException     if the string is null
-     * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException    if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(CharSequence str, int offset, int length, int radix) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, radix, true);
-    }
-
-    /**
-     * Convenience method for calling {@link #parallelParseBigInteger(byte[], int, int)}.
-     *
-     * @param str the string to be parsed
-     * @return the parsed value
-     * @throws NullPointerException  if the string is null
-     * @throws NumberFormatException if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(byte[] str) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10, true);
-    }
-
-    /**
-     * Convenience method for calling {@link #parallelParseBigInteger(byte[], int, int, int)}.
-     *
-     * @param str   the string to be parsed
-     * @param radix the radix to be used in interpreting the {@code str}
-     * @return the parsed value
-     * @throws NullPointerException  if the string is null
-     * @throws NumberFormatException if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(byte[] str, int radix) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix, true);
-    }
-
-    /**
-     * Parses a {@code BigIntegerLiteral} from a {@code byte}-Array and converts it
-     * into a {@link BigInteger} value.
-     * <p>
-     * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
-     *
-     * @param str    the string to be parsed, a byte array with characters
-     *               in ISO-8859-1, ASCII or UTF-8 encoding
-     * @param offset The index of the first character to parse
-     * @param length The number of characters to parse
-     * @return the parsed value
-     * @throws NullPointerException     if the string is null
-     * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException    if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(byte[] str, int offset, int length) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10, true);
-    }
-
-    /**
-     * Parses a {@code BigIntegerLiteral} from a {@code byte}-Array and converts it
-     * into a {@link BigInteger} value.
-     * <p>
-     * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
-     *
-     * @param str    the string to be parsed, a byte array with characters
-     *               in ISO-8859-1, ASCII or UTF-8 encoding
-     * @param offset The index of the first character to parse
-     * @param length The number of characters to parse
-     * @param radix  the radix to be used in interpreting the {@code str}
-     * @return the parsed value
-     * @throws NullPointerException     if the string is null
-     * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException    if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(byte[] str, int offset, int length, int radix) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix, true);
-    }
-
-    /**
-     * Convenience method for calling {@link #parallelParseBigInteger(char[], int, int)}.
-     *
-     * @param str the string to be parsed
-     * @return the parsed value
-     * @throws NullPointerException  if the string is null
-     * @throws NumberFormatException if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(char[] str) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10, true);
-    }
-
-    /**
-     * Convenience method for calling {@link #parallelParseBigInteger(char[], int, int, int)}.
-     *
-     * @param str   the string to be parsed
-     * @param radix the radix to be used in interpreting the {@code str}
-     * @return the parsed value
-     * @throws NullPointerException  if the string is null
-     * @throws NumberFormatException if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(char[] str, int radix) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix, true);
-    }
-
-    /**
-     * Parses a {@code BigIntegerLiteral} from a {@code char}-Array and converts it
-     * into a {@link BigInteger} value.
-     * <p>
-     * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
-     *
-     * @param str    the string to be parsed, a byte array with characters
-     *               in ISO-8859-1, ASCII or UTF-8 encoding
-     * @param offset The index of the first character to parse
-     * @param length The number of characters to parse
-     * @return the parsed value
-     * @throws NullPointerException     if the string is null
-     * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException    if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(char[] str, int offset, int length) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10, true);
-    }
-
-    /**
-     * Parses a {@code BigIntegerLiteral} from a {@code char}-Array and converts it
-     * into a {@link BigInteger} value.
-     * <p>
-     * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
-     *
-     * @param str    the string to be parsed, a byte array with characters
-     *               in ISO-8859-1, ASCII or UTF-8 encoding
-     * @param offset The index of the first character to parse
-     * @param length The number of characters to parse
-     * @param radix  the radix to be used in interpreting the {@code str}
-     * @return the parsed value
-     * @throws NullPointerException     if the string is null
-     * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException    if the string can not be parsed successfully
-     */
-    public static BigInteger parallelParseBigInteger(char[] str, int offset, int length, int radix) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix, true);
-    }
-
-    /**
      * Convenience method for calling {@link #parseBigInteger(CharSequence, int, int)}.
      *
      * @param str the string to be parsed
@@ -262,7 +76,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), 10, false);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), 10);
     }
 
     /**
@@ -275,7 +89,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str, int radix) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), radix, false);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), radix);
     }
 
     /**
@@ -290,7 +104,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str, int offset, int length) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, 10, false);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, 10);
     }
 
     /**
@@ -307,7 +121,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str, int offset, int length, int radix) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, radix, false);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, radix);
     }
 
     /**
@@ -319,7 +133,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10, false);
+        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10);
     }
 
     /**
@@ -332,7 +146,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str, int radix) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix, false);
+        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix);
     }
 
     /**
@@ -351,7 +165,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str, int offset, int length) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10, false);
+        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10);
     }
 
     /**
@@ -371,7 +185,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str, int offset, int length, int radix) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix, false);
+        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix);
     }
 
     /**
@@ -383,7 +197,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10, false);
+        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10);
     }
 
     /**
@@ -396,7 +210,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str, int radix) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix, false);
+        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix);
     }
 
     /**
@@ -415,7 +229,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str, int offset, int length) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10, false);
+        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10);
     }
 
     /**
@@ -435,6 +249,6 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str, int offset, int length, int radix) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix, false);
+        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix);
     }
 }

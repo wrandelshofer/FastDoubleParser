@@ -8,9 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.RECURSION_THRESHOLD;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.parseDigits;
 
@@ -77,20 +75,18 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
     /**
      * Parses a {@code BigDecimalString} as specified in {@link JavaBigDecimalParser}.
      *
-     * @param str      the input string
-     * @param offset   start of the input data
-     * @param length   length of the input data
-     * @param parallel true if parsing of many digits may be parallelized
+     * @param str    the input string
+     * @param offset start of the input data
+     * @param length length of the input data
      * @return the parsed {@link BigDecimal}
      * @throws NullPointerException     if str is null
      * @throws IllegalArgumentException if offset or length are illegal
      * @throws NumberFormatException    if the input string can not be parsed successfully
      */
-    public BigDecimal parseBigDecimalString(byte[] str, int offset, int length, boolean parallel) {
+    public BigDecimal parseBigDecimalString(byte[] str, int offset, int length) {
         try {
-            int parallelThreshold = parallel ? ParseDigitsTaskByteArray.DEFAULT_PARALLEL_THRESHOLD : Integer.MAX_VALUE;
             if (length >= MANY_DIGITS_THRESHOLD) {
-                return parseBigDecimalStringWithManyDigits(str, offset, length, parallelThreshold);
+                return parseBigDecimalStringWithManyDigits(str, offset, length);
             }
             long significand = 0L;
             final int integerPartIndex;
@@ -186,7 +182,7 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
             if (digitCount <= 18) {
                 return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
             }
-            return valueOfBigDecimalString(str, integerPartIndex, decimalPointIndex, decimalPointIndex + 1, exponentIndicatorIndex, isNegative, (int) exponent, parallelThreshold);
+            return valueOfBigDecimalString(str, integerPartIndex, decimalPointIndex, decimalPointIndex + 1, exponentIndicatorIndex, isNegative, (int) exponent);
         } catch (ArithmeticException e) {
             NumberFormatException nfe = new NumberFormatException(VALUE_EXCEEDS_LIMITS);
             nfe.initCause(e);
@@ -197,7 +193,7 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
     /**
      * Parses a big decimal string that has many digits.
      */
-    BigDecimal parseBigDecimalStringWithManyDigits(byte[] str, int offset, int length, int parallelThreshold) {
+    BigDecimal parseBigDecimalStringWithManyDigits(byte[] str, int offset, int length) {
         if (length > MAX_INPUT_LENGTH) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
@@ -310,26 +306,25 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
                 || digitCount > MAX_DIGIT_COUNT) {
             throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
         }
-        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent,
-                parallelThreshold);
+        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
+        );
     }
 
 
-    private BigDecimal valueOfBigDecimalString(byte[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent, int parallelThreshold) {
+    private BigDecimal valueOfBigDecimalString(byte[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
         int fractionDigitsCount = exponentIndicatorIndex - decimalPointIndex - 1;
         int nonZeroFractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
         int integerDigitsCount = decimalPointIndex - integerPartIndex;
-        boolean parallel = parallelThreshold < Integer.MAX_VALUE;
         NavigableMap<Integer, BigInteger> powersOfTen = null;
 
         BigInteger integerPart;
         if (integerDigitsCount > 0) {
             if (integerDigitsCount > RECURSION_THRESHOLD) {
                 powersOfTen = createPowersOfTenFloor16Map();
-                fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex, parallel);
-                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, powersOfTen, parallelThreshold);
+                fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
+                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, powersOfTen);
             } else {
-                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, null, parallelThreshold);
+                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, null);
             }
         } else {
             integerPart = BigInteger.ZERO;
@@ -342,16 +337,16 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
                 if (powersOfTen == null) {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
-                fillPowersOfNFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex, parallel);
-                fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen, parallelThreshold);
+                fillPowersOfNFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex);
+                fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen);
             } else {
-                fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, null, parallelThreshold);
+                fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, null);
             }
             if (integerPart.signum() == 0) {
                 significand = fractionalPart;
             } else {
-                BigInteger integerFactor = computePowerOfTen(powersOfTen, fractionDigitsCount, parallelThreshold < Integer.MAX_VALUE);
-                significand = FftMultiplier.multiply(integerPart, integerFactor, parallel).add(fractionalPart);
+                BigInteger integerFactor = computePowerOfTen(powersOfTen, fractionDigitsCount);
+                significand = FftMultiplier.multiply(integerPart, integerFactor).add(fractionalPart);
             }
         } else {
             significand = integerPart;
@@ -360,4 +355,5 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
         BigDecimal result = new BigDecimal(significand, -exponent);
         return isNegative ? result.negate() : result;
     }
+
 }
