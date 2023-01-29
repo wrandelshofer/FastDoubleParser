@@ -1070,4 +1070,6 @@ class FastDoubleMath {
         // The fast path has failed
         return Double.NaN;
     }
+
+
 }

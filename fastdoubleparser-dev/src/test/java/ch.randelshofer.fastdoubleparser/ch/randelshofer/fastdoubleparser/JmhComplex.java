@@ -6,7 +6,6 @@ package ch.randelshofer.fastdoubleparser;
 
 import org.openjdk.jmh.annotations.*;
 
-import java.math.BigInteger;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -104,78 +103,47 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhFftMultiplier {
+public class JmhComplex {
 
 
-    @Param({
-            // "1"
-            // , "10"
-            // , "100"
-            // , "1000"
-            // , "5000"
-            // , "6000"
-            // , "7000"
-            // , "8000"
-            // , "9000"
-            // , "10000"
-            // , "100000"
-            // , "1000000"
-            // , "10000000"
-            "100000000"
-            // , "323195659"
-//
-    })
-    public int digits;
-    private BigInteger a;
-    private BigInteger b;
+    private double ar, ai;
+    private double br, bi;
+
+    private double rr, ri;
 
     @Setup(Level.Trial)
     public void setUp() {
-        long estimatedNumBits = Math.min(1L << 29, FastIntegerMath.estimateNumBits(digits));
-        //System.out.println("estimatedNumBits=" + estimatedNumBits);
-        int estimatedNumBytes = (int) ((estimatedNumBits + 7) >> 3);
-        byte[] bytesA = new byte[estimatedNumBytes];
-        byte[] bytesB = new byte[estimatedNumBytes];
-        Random rng = new Random(0);
-        rng.nextBytes(bytesA);
-        rng.nextBytes(bytesB);
-        a = new BigInteger(1, bytesA);
-        b = new BigInteger(1, bytesB);
-    }
-
-
-    /*
-    @Benchmark
-    public BigInteger bigIntMul() {
-        return a.multiply(b);
-    }
-
-            @Benchmark
-            public BigInteger bigIntParaMul() {
-                return a.parallelMultiply(b);
-            }
-*/
-    @Benchmark
-    public BigInteger fftMul() {
-        return FftMultiplier.multiplyFft(a, b);
-    }
-    /*
-    @Benchmark
-    public BigInteger fftMulInterleaved() {
-        return FftMultiplier.interleavedMultiplyFft(a, b);
-    }
-
-    @Benchmark
-    public BigInteger fftSquare() {
-        return FftMultiplier.squareFft(a);
+        Random rng = new Random();
+        ar = rng.nextDouble();
+        ai = rng.nextDouble();
+        br = rng.nextDouble();
+        bi = rng.nextDouble();
     }
 
 
     @Benchmark
-    public BigInteger mul() {
-        return FftMultiplier.multiply(a, b, false);
+    public void mul() {
+        double real = ar;
+        double imag = ai;
+        rr = real * br - imag * bi;
+        ri = real * bi + imag * br;
     }
-*/
+
+    @Benchmark
+    public void mulFma1() {
+        double real = ar;
+        double imag = ai;
+        rr = real * br - imag * bi;
+        ri = Math.fma(real, bi, imag * br);
+    }
+
+    @Benchmark
+    public void mulFma2() {
+        double real = ar;
+        double imag = ai;
+        rr = Math.fma(real, br, -imag * bi);
+        ri = Math.fma(real, bi, imag * br);
+    }
 
 }
 

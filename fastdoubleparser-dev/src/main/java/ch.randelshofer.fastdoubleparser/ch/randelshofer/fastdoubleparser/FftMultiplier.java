@@ -7,6 +7,8 @@ package ch.randelshofer.fastdoubleparser;
 import java.math.BigInteger;
 import java.util.stream.IntStream;
 
+import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
+
 /**
  * Provides methods for multiplying two {@link BigInteger}s using the
  * {@code FFT algorithm}.
@@ -81,8 +83,8 @@ class FftMultiplier {
                 double imag = a[offa + IMAG];
                 double creal = c[offc + REAL];
                 double cimag = c[offc + IMAG];
-                a[offa + REAL] = real * creal - imag * cimag;
-                a[offa + IMAG] = real * cimag + imag * creal;
+                a[offa + REAL] = fma(real, creal, -imag * cimag);
+                a[offa + IMAG] = fma(real, cimag, +imag * creal);
                 offc += 2;
             }
         }
@@ -97,7 +99,7 @@ class FftMultiplier {
             for (int offa = offset; offa < end; offa += 2) {
                 double real = a[offa + REAL];
                 double imag = a[offa + IMAG];
-                a[offa + REAL] = real * real - imag * imag;
+                a[offa + REAL] = fma(real, real, -imag * imag);
                 a[offa + IMAG] = 2 * real * imag;
             }
         }
@@ -115,8 +117,8 @@ class FftMultiplier {
 
                 double real = a[offa + REAL];
                 double imag = a[offa + IMAG];
-                a[offa] = real * w[offw + REAL] + imag * w[offw + IMAG];
-                a[offa + 1] = -real * w[offw + IMAG] + imag * w[offw + REAL];
+                a[offa] = fma(real, w[offw + REAL], imag * w[offw + IMAG]);
+                a[offa + 1] = fma(-real, w[offw + IMAG], imag * w[offw + REAL]);
                 offa += 2;
                 offw += 2;
             }
@@ -186,8 +188,8 @@ class FftMultiplier {
             int ii = imagIdx(idxa);
             double real = a[ri];
             double imag = a[ii];
-            a[ri] = real * c.real - imag * c.imag;
-            a[ii] = real * c.imag + imag * c.real;
+            a[ri] = fma(real, c.real, -imag * c.imag);
+            a[ii] = fma(real, c.imag, +imag * c.real);
         }
 
         /**
@@ -199,8 +201,8 @@ class FftMultiplier {
             int ii = imagIdx(idxa);
             double real = a[ri];
             double imag = a[ii];
-            a[ri] = -real * c.imag - imag * c.real;
-            a[ii] = real * c.real - imag * c.imag;
+            a[ri] = fma(-real, c.imag, -imag * c.real);
+            a[ii] = fma(real, c.real, -imag * c.imag);
         }
 
         /**
@@ -212,8 +214,8 @@ class FftMultiplier {
             int ii = imagIdx(idxa);
             double real = a[ri];
             double imag = a[ii];
-            a[ri] = real * c.real + imag * c.imag;
-            a[ii] = -real * c.imag + imag * c.real;
+            a[ri] = fma(real, c.real, +imag * c.imag);
+            a[ii] = fma(-real, c.imag, +imag * c.real);
         }
 
         /**
@@ -226,22 +228,22 @@ class FftMultiplier {
             int ii = imagIdx(idxa);
             double real = a[ri];
             double imag = a[ii];
-            a[ri] = -real * c.imag + imag * c.real;
-            a[ii] = -real * c.real - imag * c.imag;
+            a[ri] = fma(-real, c.imag, +imag * c.real);
+            a[ii] = fma(-real, c.real, -imag * c.imag);
         }
 
         void multiplyConjugateInto(int idxa, MutableComplex c, MutableComplex destination) {
             double real = a[realIdx(idxa)];
             double imag = a[imagIdx(idxa)];
-            destination.real = real * c.real + imag * c.imag;
-            destination.imag = -real * c.imag + imag * c.real;
+            destination.real = fma(real, c.real, +imag * c.imag);
+            destination.imag = fma(-real, c.imag, +imag * c.real);
         }
 
         void multiplyInto(int idxa, MutableComplex c, MutableComplex destination) {
             double real = a[realIdx(idxa)];
             double imag = a[imagIdx(idxa)];
-            destination.real = real * c.real - imag * c.imag;
-            destination.imag = real * c.imag + imag * c.real;
+            destination.real = fma(real, c.real, -imag * c.imag);
+            destination.imag = fma(real, c.imag, +imag * c.real);
         }
 
         void subtractTimesIInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
@@ -1118,8 +1120,8 @@ class FftMultiplier {
 
         void multiply(MutableComplex c) {
             double temp = real;
-            real = Math.fma(temp, c.real, -imag * c.imag);
-            imag = Math.fma(temp, c.imag, imag * c.real);
+            real = fma(temp, c.real, -imag * c.imag);
+            imag = fma(temp, c.imag, imag * c.real);
         }
 
         /**
@@ -1127,12 +1129,12 @@ class FftMultiplier {
          */
         void multiplyConjugate(MutableComplex c) {
             double temp = real;
-            real = Math.fma(temp, c.real, imag * c.imag);
-            imag = Math.fma(-temp, c.imag, imag * c.real);
+            real = fma(temp, c.real, imag * c.imag);
+            imag = fma(-temp, c.imag, imag * c.real);
         }
 
         void squareInto(MutableComplex destination) {
-            destination.real = Math.fma(real, real, -imag * imag);
+            destination.real = fma(real, real, -imag * imag);
             destination.imag = 2 * real * imag;
         }
 

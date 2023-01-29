@@ -4,18 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.annotations.*;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -86,17 +75,17 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
 
     @Param({
-            "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
-            , "100000000"
-            , "646456993"
-            , "1292782621"
+            // "1"
+            // , "10"
+            // , "100"
+            // , "1000"
+            // , "10000"
+            // , "100000"
+            // , "1000000"
+            // , "10000000"
+            "100000000"
+            // , "646456993"
+            //    "1292782621"
 
     })
     public int digits;
@@ -112,22 +101,23 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
         decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
     }
 
-    @Benchmark
-    public BigInteger hex() {
-        return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
-    }
-
+    /*
+        @Benchmark
+        public BigInteger hex() {
+            return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
+        }
+    */
     @Benchmark
     public BigInteger seqDec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);
     }
-
+/*
     @Benchmark
     public BigInteger parDec() {
         return JavaBigIntegerParser.parallelParseBigInteger(decLiteral);
     }
 
-
+*/
 }
 
 
