@@ -15,13 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -349,7 +343,7 @@ public class Main {
     private int sumFastBigDecimalFromCharSequence(List<String> s) {
         int answer = 0;
         for (String st : s) {
-            BigDecimal x = JavaBigDecimalParser.parallelParseBigDecimal(st);
+            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
             answer += x.scale();
         }
         return answer;
@@ -358,7 +352,7 @@ public class Main {
     private int sumFastBigDecimalFromByteArray(List<byte[]> s) {
         int answer = 0;
         for (byte[] st : s) {
-            BigDecimal x = JavaBigDecimalParser.parallelParseBigDecimal(st);
+            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
             answer += x.scale();
         }
         return answer;
@@ -367,7 +361,7 @@ public class Main {
     private int sumFastBigDecimalFromCharArray(List<char[]> s) {
         int answer = 0;
         for (char[] st : s) {
-            BigDecimal x = JavaBigDecimalParser.parallelParseBigDecimal(st);
+            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
             answer += x.scale();
         }
         return answer;

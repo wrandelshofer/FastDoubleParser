@@ -74,9 +74,6 @@ The multiplications in the frequency domain can be performed in `O(Nlog N (log l
 where `N` is the number of digits.
 In contrast, conventional multiplication algorithms in the time domain need `O(N²)` time.
 
-If your input data contains inputs with many thousands of digits, consider using the `parallelParse` methods
-of the fast algorithms. They have even lower constant time factors than the regular fast `parse` methods - they use
-more CPU and memory resources though.
 
 ### Memory usage and computation time
 
