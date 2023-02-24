@@ -8,7 +8,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.RECURSION_THRESHOLD;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.parseDigits;
 
@@ -57,20 +59,6 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
 
     }
 
-    /**
-     * Parses digits in exponential time O(e^n).
-     */
-    static BigInteger parseDigitsIterative(byte[] str, int from, int to) {
-        int numDigits = to - from;
-        BigSignificand bigSignificand = new BigSignificand(FastIntegerMath.estimateNumBits(numDigits));
-        int preroll = from + (numDigits & 7);
-        bigSignificand.add(FastDoubleSwar.parseUpTo7Digits(str, from, preroll));
-        for (from = preroll; from < to; from += 8) {
-            bigSignificand.fma(100_000_000, FastDoubleSwar.parseEightDigits(str, from));
-        }
-
-        return bigSignificand.toBigInteger();
-    }
 
     /**
      * Parses a {@code BigDecimalString} as specified in {@link JavaBigDecimalParser}.
