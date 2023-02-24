@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link JsonDoubleParser}
  */
-public class JsonDoubleParserTest extends AbstractJsonFloatValueParserTest {
+public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link JavaDoubleParser}
  */
-public class JavaDoubleParserTest extends AbstractJavaFloatValueParserTest {
+public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {

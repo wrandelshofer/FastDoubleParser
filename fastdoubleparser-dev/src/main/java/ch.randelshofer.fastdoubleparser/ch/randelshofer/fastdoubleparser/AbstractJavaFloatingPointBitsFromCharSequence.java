@@ -279,7 +279,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                /*
                 for (; index < endIndex - 8; index += 8) {
                     long parsed = FastDoubleSwar.tryToParseEightHexDigits(str, index + 1);
                     if (parsed >= 0) {
@@ -288,7 +287,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                     } else {
                         break;
                     }
-                }*/
+                }
             } else {
                 break;
             }
@@ -368,7 +367,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         }
 
         return valueOfHexLiteral(str, startIndex, endIndex, isNegative, significand, exponent, isSignificandTruncated,
-                virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber);
+                (virtualIndexOfPoint - index + skipCountInTruncatedDigits) * 4 + expNumber);
     }
 
     private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
