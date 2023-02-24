@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractJsonFloatValueParserTest extends AbstractFloatValueParserTest {
+public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValueParserTest {
     public final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
     private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
+
     protected List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
                 new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),

@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
- * Tests class {@link JavaDoubleParser}
+ * Tests class {@link JavaFloatParser}
  */
-public class JavaFloatParserTest extends AbstractJavaFloatValueParserTest {
+public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
 
 
     @TestFactory
