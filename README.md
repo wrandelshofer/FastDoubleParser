@@ -167,14 +167,14 @@ Most numbers look like this: `-0x1.09219008205fcp6`.
 
 |Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
 |---------------------------|------:|-----:|------:|--------:|--------:|--------|
-|java.lang.Double           |  37.32| 4.5 %|   2.05|   488.70|     1.00|20-ea   |
-|java.lang.Float            |  37.71| 2.9 %|   2.07|   483.68|     1.00|20-ea   |
-|JavaDoubleParser String    | 329.93|10.5 %|  18.09|    55.28|     8.84|20-ea   |
-|JavaDoubleParser char[]    | 473.75|14.9 %|  25.98|    38.50|    12.69|20-ea   |
-|JavaDoubleParser byte[]    | 525.24|13.3 %|  28.80|    34.72|    14.07|20-ea   |
-|JavaFloatParser  String    | 311.42| 9.9 %|  17.08|    58.56|     8.26|20-ea   |
-|JavaFloatParser  char[]    | 440.50|13.0 %|  24.15|    41.40|    11.68|20-ea   |
-|JavaFloatParser  byte[]    | 529.19|12.0 %|  29.02|    34.46|    14.03|20-ea   |
+|java.lang.Double           |  35.74| 3.4 %|   1.96|   510.34|     1.00|20      |
+|java.lang.Float            |  35.76| 3.3 %|   1.96|   510.04|     1.00|20      |
+|JavaDoubleParser String    | 312.41|11.2 %|  17.13|    58.38|     8.74|20      |
+|JavaDoubleParser char[]    | 443.68|16.9 %|  24.33|    41.11|    12.41|20      |
+|JavaDoubleParser byte[]    | 497.49|14.5 %|  27.28|    36.66|    13.92|20      |
+|JavaFloatParser  String    | 313.17|11.5 %|  17.17|    58.24|     8.76|20      |
+|JavaFloatParser  char[]    | 434.04|16.2 %|  23.80|    42.02|    12.14|20      |
+|JavaFloatParser  byte[]    | 494.68|14.7 %|  27.12|    36.87|    13.83|20      |
 
 ### Comparison with C version
 
