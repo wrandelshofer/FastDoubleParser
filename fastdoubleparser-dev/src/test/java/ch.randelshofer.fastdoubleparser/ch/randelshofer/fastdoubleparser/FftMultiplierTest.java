@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
@@ -19,7 +20,7 @@ public class FftMultiplierTest {
 
     @TestFactory
     public List<DynamicTest> dynamicTestsMultiply() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest("0xFEDCBA9876543210 * 0xEDCBA9876543210", () -> shouldMultiplyFft(
                         new BigInteger("FEDCBA9876543210", 16),
                         new BigInteger("EDCBA9876543210", 16))),
@@ -52,7 +53,7 @@ public class FftMultiplierTest {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return List.of(
+            return Arrays.asList(
                     dynamicTest("1<<Integer.MAX_VALUE/2-1 * 1<<Integer.MAX_VALUE/2-1", () -> shouldMultiplyFft(
                             BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),
                             BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),
@@ -60,21 +61,21 @@ public class FftMultiplierTest {
                     ))
             );
         } else {
-            return List.of();
+            return Arrays.asList();
         }
     }
 
     @TestFactory
     public List<DynamicTest> dynamicLongRunningTestsSquare() {
         if (longRunningTests) {
-            return List.of(
+            return Arrays.asList(
                     dynamicTest("1<<Integer.MAX_VALUE/2 ^2", () -> shouldSquare(
                             BigInteger.ONE.shiftLeft(Integer.MAX_VALUE / 2),
                             BigInteger.ONE.shiftLeft(Integer.MAX_VALUE - 1)
                     ))
             );
         } else {
-            return List.of();
+            return Arrays.asList();
         }
     }
 
@@ -137,7 +138,7 @@ public class FftMultiplierTest {
 
     @TestFactory
     public List<DynamicTest> dynamicTestsSquare() {
-        return List.of(
+        return Arrays.asList(
                 dynamicTest("'3','0'**84", () -> shouldSquare(
                         "3" + repeat("0", 84)
                 )),

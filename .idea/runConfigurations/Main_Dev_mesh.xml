@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="fastdoubleparserdemo-dev" />
     <option name="PROGRAM_PARAMETERS" value="--markdown data/mesh.txt" />
-    <option name="VM_PARAMETERS" value="--enable-preview" />
+    <option name="VM_PARAMETERS" value="--enable-preview -XX:CompileCommand=inline,java/lang/String.charAt" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
     <extension name="coverage">
       <pattern>
