@@ -38,7 +38,7 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
             char ch = str.charAt(index);
             final boolean isNegative = ch == '-';
             if (isNegative || ch == '+') {
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+                ch = charAt(str, ++index, endIndex);
                 if (ch == 0) {
                     throw new NumberFormatException(SYNTAX_ERROR);
                 }

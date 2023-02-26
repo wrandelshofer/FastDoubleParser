@@ -4,10 +4,16 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class AbstractFloatValueParserTest {
+    protected boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
 
     protected List<NumberTestData> createDataForDoubleDecimalLimits() {
         return Arrays.asList(
@@ -114,6 +120,79 @@ public abstract class AbstractFloatValueParserTest {
                         2.2250738585072024E-308)
         );
     }
+
+    enum NumberType {
+        FLOAT16, FLOAT32, FLOAT64
+    }
+
+    protected Stream<NumberTestData> createSupplementalTestData(NumberType type) {
+        try {
+            return
+                    Files.walk(Path.of("../supplemental_test_files/data"))
+                            .filter(path -> path.getFileName().toString().endsWith(".txt"))
+                            .map(path1 -> createSupplementalTestData(path1, type))
+                            .reduce(Stream.empty(), Stream::concat);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    protected Stream<Path> getSupplementalTestDataFiles() {
+        if (longRunningTests) {
+            try {
+                return Files.walk(Path.of("../supplemental_test_files/data"))
+                        .filter(path -> path.getFileName().toString().endsWith(".txt"));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return Stream.empty();
+    }
+
+
+    /**
+     * Reads a text file. Each line has the following format:
+     * <pre>
+     * float16 bits (4 hex digits)
+     * │    float32 bits (8 hex digits)
+     * │    │        float64 bits (16 hex digits)
+     * │    │        │                input string
+     * ↓    ↓        ↓                ↓
+     * 0000 00000000 0000000000000000 .0
+     * </pre>
+     *
+     * @param path path to text file
+     * @return A stream of {@link NumberTestData}.
+     */
+    protected Stream<NumberTestData> createSupplementalTestData(Path path, NumberType type) {
+        try {
+            @SuppressWarnings("resource")
+            Stream<String> lines = Files.lines(path);
+            String fileName = path.getFileName().toString();
+            int[] lineNumber = {1};
+            return lines.map(line -> {
+                String[] fields = line.split(" ");
+                Number number;
+                switch (type) {
+                    case FLOAT16:
+                        number = Short.parseShort(fields[0], 16);
+                        break;
+                    case FLOAT32:
+                        number = Float.intBitsToFloat(Integer.parseInt(fields[1], 16));
+                        break;
+                    case FLOAT64:
+                        number = Double.longBitsToDouble(Long.parseLong(fields[2], 16));
+                        break;
+                    default:
+                        throw new IllegalArgumentException();
+                }
+                return new NumberTestData(fileName + " " + lineNumber[0]++ + " " + fields[3], fields[3], number);
+            });
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
 
     protected List<NumberTestData> createDataWithVeryLongInputStrings() {
         return Arrays.asList(

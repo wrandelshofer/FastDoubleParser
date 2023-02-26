@@ -52,7 +52,7 @@ class FastDoubleSwar {
     protected static boolean isDigit(char c) {
         // We take advantage of the fact that char is an unsigned numeric type:
         // subtracted values wrap around.
-        return (char) (c - '0') <= (char) ('9' - '0');
+        return (char) (c - '0') < 10;
     }
 
     /**
@@ -65,7 +65,7 @@ class FastDoubleSwar {
         // We check if '0' <= c && c <= '9'.
         // We take advantage of the fact that char is an unsigned numeric type:
         // subtracted values wrap around.
-        return (char) (c - '0') <= (char) ('9' - '0');
+        return (char) (c - '0') < 10;
     }
 
     public static boolean isEightDigits(byte[] a, int offset) {
@@ -455,7 +455,7 @@ class FastDoubleSwar {
      * returns a negative value if the two longs do not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
-        long highBytes = (first | second) & 0xff00ff00_ff00ff00L;
+        long highBytes = (first | second) & 0xff80ff80_ff80ff80L;
         if (highBytes != 0L) {
             return -1L;
         }

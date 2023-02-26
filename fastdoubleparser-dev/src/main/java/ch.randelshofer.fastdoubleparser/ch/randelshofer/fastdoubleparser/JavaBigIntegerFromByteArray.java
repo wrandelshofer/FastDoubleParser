@@ -44,7 +44,7 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
             byte ch = str[index];
             final boolean isNegative = ch == '-';
             if (isNegative || ch == '+') {
-                ch = ++index < endIndex ? str[index] : 0;
+                ch = charAt(str, ++index, endIndex);
                 if (ch == 0) {
                     throw new NumberFormatException(SYNTAX_ERROR);
                 }

@@ -111,10 +111,10 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // ---------------------
         int expNumber = 0;
         if (ch == 'e' || ch == 'E') {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
+            ch = charAt(str, ++index, endIndex);
             boolean isExponentNegative = ch == '-';
             if (isExponentNegative || ch == '+') {
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+                ch = charAt(str, ++index, endIndex);
             }
             illegal |= !FastDoubleSwar.isDigit(ch);
             do {
@@ -122,7 +122,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + ch - '0';
                 }
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+                ch = charAt(str, ++index, endIndex);
             } while (FastDoubleSwar.isDigit(ch));
             if (isExponentNegative) {
                 expNumber = -expNumber;
@@ -210,7 +210,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // -------------------
         final boolean isNegative = ch == '-';
         if (isNegative || ch == '+') {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
+            ch = charAt(str, ++index, endIndex);
             if (ch == 0) {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
@@ -226,7 +226,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // ---------------------------
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
+            ch = charAt(str, ++index, endIndex);
             if (ch == 'x' || ch == 'X') {
                 return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
             }
@@ -273,7 +273,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
             // Table look up is faster than a sequence of if-else-branches.
-            int hexValue = ch > 127 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
+            int hexValue = lookupHex(ch);
             if (hexValue >= 0) {
                 significand = significand << 4 | hexValue;// This might overflow, we deal with it later.
             } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
@@ -306,10 +306,10 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         int expNumber = 0;
         final boolean hasExponent = ch == 'p' || ch == 'P';
         if (hasExponent) {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
+            ch = charAt(str, ++index, endIndex);
             boolean isExponentNegative = ch == '-';
             if (isExponentNegative || ch == '+') {
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+                ch = charAt(str, ++index, endIndex);
             }
             illegal |= !FastDoubleSwar.isDigit(ch);
             do {
@@ -317,7 +317,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + ch - '0';
                 }
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+                ch = charAt(str, ++index, endIndex);
             } while (FastDoubleSwar.isDigit(ch));
             if (isExponentNegative) {
                 expNumber = -expNumber;
@@ -350,7 +350,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             for (index = significandStartIndex; index < significandEndIndex; index++) {
                 ch = str.charAt(index);
                 // Table look up is faster than a sequence of if-else-branches.
-                int hexValue = ch > 127 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch];
+                int hexValue = lookupHex(ch);
                 if (hexValue >= 0) {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                         significand = significand << 4 | hexValue;
@@ -369,6 +369,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         return valueOfHexLiteral(str, startIndex, endIndex, isNegative, significand, exponent, isSignificandTruncated,
                 (virtualIndexOfPoint - index + skipCountInTruncatedDigits) * 4 + expNumber);
     }
+
 
     private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
         if (str.charAt(index) == 'N') {

@@ -7,6 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -41,9 +42,15 @@ public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseFloat_CharSequence_int_int_longRunningTests() {
-        return createLongRunningFloatTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input(), u.charOffset(), u.charLength()))));
+        ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat((u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningFloatTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
     @TestFactory
@@ -68,10 +75,15 @@ public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseFloat_byteArray_int_int_longRunningTests() {
-        return createLongRunningFloatTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(toByteArray(u.input()),
-                                u.byteOffset(), u.byteLength()))));
+        ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat(toByteArray(u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningFloatTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
     @TestFactory
@@ -94,12 +106,21 @@ public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseFloat_charArray_int_int_longRunningTests() {
-        return createLongRunningFloatTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(toCharArray(u.input()),
-                                u.charOffset(), u.charLength()))));
+        ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat(toCharArray(u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningFloatTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
+    protected void testFile(Path path, ToFloatFunction<NumberTestData> f) {
+        createSupplementalTestData(path, NumberType.FLOAT32)
+                .forEach(d -> test(d, f));
+    }
 
     protected void test(NumberTestData d, ToFloatFunction<NumberTestData> f) {
         if (d.expectedErrorMessage() != null) {
@@ -115,7 +136,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
             }
         } else {
             float actual = f.applyAsFloat(d);
-            assertEquals(d.expectedValue().floatValue(), actual);
+            assertEquals(d.expectedValue().floatValue(), actual, () -> d.input().toString());
         }
     }
 

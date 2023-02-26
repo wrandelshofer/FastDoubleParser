@@ -7,6 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
@@ -40,9 +41,15 @@ public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int_longRunningTests() {
-        return createLongRunningFloatTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaDoubleParser.parseDouble(u.input(), u.charOffset(), u.charLength()))));
+        ToDoubleFunction<NumberTestData> lambda = u -> JavaDoubleParser.parseDouble(u.input(), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningDoubleTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
     @TestFactory
@@ -64,9 +71,15 @@ public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_byteArray_int_int_longRunningTests() {
-        return createLongRunningDoubleTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaDoubleParser.parseDouble(toByteArray(u.input()), u.byteOffset(), u.byteLength()))));
+        ToDoubleFunction<NumberTestData> lambda = u -> JavaDoubleParser.parseDouble(toByteArray(u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningDoubleTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
     @TestFactory
@@ -88,9 +101,20 @@ public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_charArray_int_int_longRunningTests() {
-        return createLongRunningDoubleTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaDoubleParser.parseDouble(toCharArray(u.input()), u.charOffset(), u.charLength()))));
+        ToDoubleFunction<NumberTestData> lambda = u -> JavaDoubleParser.parseDouble(toCharArray(u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningDoubleTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
+    }
+
+    protected void testFile(Path path, ToDoubleFunction<NumberTestData> f) {
+        createSupplementalTestData(path, NumberType.FLOAT64)
+                .forEach(d -> test(d, f));
     }
 
     private void test(NumberTestData d, ToDoubleFunction<NumberTestData> f) {
@@ -110,6 +134,4 @@ public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
             assertEquals(d.expectedValue().doubleValue(), actual);
         }
     }
-
-
 }

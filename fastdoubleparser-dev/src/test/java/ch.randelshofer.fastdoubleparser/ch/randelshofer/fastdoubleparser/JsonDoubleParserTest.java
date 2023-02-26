@@ -8,10 +8,13 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
+import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toCharArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -40,9 +43,15 @@ public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int_longRunningTest() {
-        return createLongRunningTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input(), u.charOffset(), u.charLength()))));
+        ToDoubleFunction<NumberTestData> lambda = u -> JsonDoubleParser.parseDouble((u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
     @TestFactory
@@ -64,9 +73,15 @@ public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_ByteArray_int_int_longRunningTests() {
-        return createLongRunningTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().getBytes(StandardCharsets.UTF_8), u.byteOffset(), u.byteLength()))));
+        ToDoubleFunction<NumberTestData> lambda = u -> JsonDoubleParser.parseDouble(toByteArray(u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
     @TestFactory
@@ -88,11 +103,21 @@ public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_charArray_int_int_longRunningTests() {
-        return createLongRunningTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JsonDoubleParser.parseDouble(u.input().toString().toCharArray(), u.charOffset(), u.charLength()))));
+        ToDoubleFunction<NumberTestData> lambda = u -> JsonDoubleParser.parseDouble(toCharArray(u.input()), u.charOffset(), u.charLength());
+        return Stream.concat(
+                getSupplementalTestDataFiles()
+                        .map(t -> dynamicTest(t.getFileName().toString(),
+                                () -> testFile(t, lambda))),
+                createLongRunningTestData()
+                        .map(t -> dynamicTest(t.title(),
+                                () -> test(t, lambda)))
+        );
     }
 
+    protected void testFile(Path path, ToDoubleFunction<NumberTestData> f) {
+        createSupplementalTestData(path, NumberType.FLOAT64)
+                .forEach(d -> test(d, f));
+    }
 
     private void test(NumberTestData d, ToDoubleFunction<NumberTestData> f) {
         if (d.expectedErrorMessage() != null) {

@@ -39,7 +39,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         // -------------------
         final boolean isNegative = ch == '-';
         if (isNegative) {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
+            ch = charAt(str, ++index, endIndex);
             if (ch == 0) {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
@@ -49,7 +49,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         // ---------------------------
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
+            ch = charAt(str, ++index, endIndex);
             if (ch == '0') {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
@@ -99,10 +99,10 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         // ---------------------
         int expNumber = 0;
         if (ch == 'e' || ch == 'E') {
-            ch = ++index < endIndex ? str.charAt(index) : 0;
+            ch = charAt(str, ++index, endIndex);
             boolean isExponentNegative = ch == '-';
             if (isExponentNegative || ch == '+') {
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+                ch = charAt(str, ++index, endIndex);
             }
             illegal |= !FastDoubleSwar.isDigit(ch);
             do {
@@ -110,7 +110,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + ch - '0';
                 }
-                ch = ++index < endIndex ? str.charAt(index) : 0;
+                ch = charAt(str, ++index, endIndex);
             } while (FastDoubleSwar.isDigit(ch));
             if (isExponentNegative) {
                 expNumber = -expNumber;
@@ -153,6 +153,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         return valueOfFloatLiteral(str, offset, endIndex, isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
     }
+
 
     /**
      * Computes a float value from the given components of a {@code number}

@@ -7,9 +7,9 @@ package ch.randelshofer.fastdoubleparser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class AbstractJavaFloatParserTest extends AbstractFloatValueParserTest {
-    protected boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
     protected final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
     protected List<NumberTestData> createTestDataForNaN() {
@@ -142,9 +142,9 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         );
     }
 
-    List<NumberTestData> createDataForLegalHexStrings() {
+    protected List<NumberTestData> createDataForLegalHexStrings() {
         return Arrays.asList(
-                new NumberTestData("0xap2", 0xap2),
+                new NumberTestData("0xap2", 0xap2f),
 
                 new NumberTestData("FloatTypeSuffix", "0xap2d", 0xap2f),
                 new NumberTestData("FloatTypeSuffix", "0xap2D", 0xap2f),
@@ -164,6 +164,13 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
                 new NumberTestData("0x1234567890.abcdef12p-45", 0x1234567890.abcdef12p-45f),
                 new NumberTestData("0x1234567890abcdef1234567890abcdef1234567890abcdef.1234567890abcdefp-45", Float.POSITIVE_INFINITY)
 
+        );
+    }
+
+    protected List<NumberTestData> createDataForIllegalHexStrings() {
+        return Arrays.asList(
+                new NumberTestData("0xäp2"),
+                new NumberTestData("0x0.1234567äp0")
         );
     }
 
@@ -259,6 +266,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         list.addAll(createDataForBadStrings());
         list.addAll(createDataForLegalDecStrings());
         list.addAll(createDataForLegalHexStrings());
+        list.addAll(createDataForIllegalHexStrings());
         list.addAll(createDataForFloatDecimalClingerInputClasses());
         list.addAll(createDataForFloatHexadecimalClingerInputClasses());
         list.addAll(createDataForLegalCroppedStrings());
@@ -267,12 +275,12 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         return list;
     }
 
-    List<NumberTestData> createLongRunningFloatTestData() {
-        List<NumberTestData> list = new ArrayList<>();
+    Stream<NumberTestData> createLongRunningFloatTestData() {
+        Stream<NumberTestData> s = Stream.empty();
         if (longRunningTests) {
-            list.addAll(createDataWithVeryLongInputStrings());
+            s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
         }
-        return list;
+        return s;
     }
 
 }

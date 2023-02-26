@@ -7,10 +7,10 @@ package ch.randelshofer.fastdoubleparser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValueParserTest {
     public final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
-    private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
 
     protected List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
@@ -183,11 +183,12 @@ public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    List<NumberTestData> createLongRunningTestData() {
-        List<NumberTestData> list = new ArrayList<>();
+    Stream<NumberTestData> createLongRunningTestData() {
+        Stream<NumberTestData> s = Stream.empty();
         if (longRunningTests) {
-            list.addAll(createDataWithVeryLongInputStrings());
+            s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
         }
-        return list;
+        return s;
     }
+
 }

@@ -34,38 +34,5 @@ abstract class AbstractFloatValueParser extends AbstractNumberParser {
      * The hexadecimal exponent of a double has a range of -1022 to +1023.
      */
     final static int MAX_EXPONENT_NUMBER = 1024;
-    /**
-     * Special value in {@link #CHAR_TO_HEX_MAP} for
-     * the decimal point character.
-     */
-    static final byte DECIMAL_POINT_CLASS = -4;
-    /**
-     * Special value in {@link #CHAR_TO_HEX_MAP} for
-     * characters that are neither a hex digit nor
-     * a decimal point character..
-     */
-    static final byte OTHER_CLASS = -1;
-    /**
-     * Includes all non-negative values of a {@code byte}, so that we only have
-     * to check for byte values {@literal <} 0 before accessing this array.
-     */
-    static final byte[] CHAR_TO_HEX_MAP = new byte[128];
 
-    static {
-        for (char ch = 0; ch < AbstractFloatValueParser.CHAR_TO_HEX_MAP.length; ch++) {
-            AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch] = AbstractFloatValueParser.OTHER_CLASS;
-        }
-        for (char ch = '0'; ch <= '9'; ch++) {
-            AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch] = (byte) (ch - '0');
-        }
-        for (char ch = 'A'; ch <= 'F'; ch++) {
-            AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'A' + 10);
-        }
-        for (char ch = 'a'; ch <= 'f'; ch++) {
-            AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'a' + 10);
-        }
-        for (char ch = '.'; ch <= '.'; ch++) {
-            AbstractFloatValueParser.CHAR_TO_HEX_MAP[ch] = AbstractFloatValueParser.DECIMAL_POINT_CLASS;
-        }
-    }
 }
