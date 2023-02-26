@@ -1,6 +1,6 @@
 /*
  * @(#)JavaBigDecimalFromCharSequence.java
- * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 
@@ -8,7 +8,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharSequence.RECURSION_THRESHOLD;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharSequence.parseDigits;
 

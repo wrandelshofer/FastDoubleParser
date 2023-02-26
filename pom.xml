@@ -311,7 +311,7 @@
         <configuration>
           <windowtitle>fastdoubleparser ${project.version}</windowtitle>
           <header>fastdoubleparser ${project.version}</header>
-          <bottom>Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.</bottom>
+          <bottom>Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.</bottom>
           <additionalOptions>-Xdoclint:all</additionalOptions>
         </configuration>
       </plugin>

@@ -1,6 +1,6 @@
 /*
- * @(#)AbstractJavaFloatValueParserTest.java
- * Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.
+ * @(#)AbstractJavaFloatParserTest.java
+ * Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 

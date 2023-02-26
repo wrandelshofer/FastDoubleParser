@@ -26,18 +26,19 @@
         <module name="FastDoubleParser-Java11" />
         <module name="FastDoubleParserDemo-Java8" />
         <module name="fastdoubleparserdemo-dev" />
-        <module name="fastdoubleparser" />
         <module name="FastDoubleParserDemo-Java19" />
         <module name="FastDoubleParserDemo-JavaEarlyAccess" />
         <module name="fastdoubleparser-java8" />
         <module name="FastDoubleParser-JavaEarlyAccess" />
         <module name="FastDoubleParserDemo-Java11" />
         <module name="fastdoubleparserdemo-java8" />
-        <module name="FastDoubleParser (1)" />
         <module name="FastDoubleParserDemo-Java17" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="FastDoubleParser" target="20" />
+      <module name="fastdoubleparser" target="20" />
+      <module name="FastDoubleParser (1)" target="20" />
       <module name="FastDoubleParser-JavaEarlyAccess" target="20" />
       <module name="FastDoubleParserDemo-JavaEarlyAccess" target="20" />
     </bytecodeTargetLevel>
