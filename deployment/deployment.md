@@ -10,25 +10,15 @@ We deploy the following files:
 - fastdoubleparser-java9/target/fastdoubleparser-java19-x.y.z-sources.jar
 
 
-All files must be signed with GPG.
+All files must be signed with GPG. We create a bundle.jar file, which we then
+can upload to the nexus repository manager.
 
 ```shell
 cp ../fastdoubleparser/target/*.jar .
-cp ../fastdoubleparser-java19/target/*javadoc.jar .
-mv fastdoubleparser-java19-0.6.0-javadoc.jar fastdoubleparser-0.6.0-javadoc.jar 
+cp ../fastdoubleparser-java19/target/*javadoc.jar fastdoubleparser-0.7.0-javadoc.jar 
 rm *.asc
 for f in *.jar; do gpg -ab "$f"; done
 for f in *.pom; do gpg -ab "$f"; done
-```
-
-```shell
-ls -1
-fastdoubleparser-0.5.0-javadoc.jar
-fastdoubleparser-0.5.0-javadoc.jar.asc
-fastdoubleparser-0.5.0-sources.jar
-fastdoubleparser-0.5.0-sources.jar.asc
-fastdoubleparser-0.5.0.jar
-fastdoubleparser-0.5.0.jar.asc
-fastdoubleparser.pom
-fastdoubleparser.pom.asc
+rm *bundle.jar
+jar -cf fastdoubleparser-0.7.0-bundle.jar $(ls -1 fastdoubleparser*|xargs)
 ```

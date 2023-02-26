@@ -10,6 +10,7 @@
   <artifactId>fastdoubleparser</artifactId>
   <name>fastdoubleparser multi-release jar</name>
   <packaging>jar</packaging>
+  <description>A Java port of Daniel Lemire's fast_float project.</description>
 
   <properties>
     <maven.install.skip>false</maven.install.skip>

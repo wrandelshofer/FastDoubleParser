@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ch.randelshofer</groupId>
   <artifactId>fastdoubleparser</artifactId>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
   <packaging>jar</packaging>
 
   <name>ch.randelshofer:fastdoubleparser</name>
