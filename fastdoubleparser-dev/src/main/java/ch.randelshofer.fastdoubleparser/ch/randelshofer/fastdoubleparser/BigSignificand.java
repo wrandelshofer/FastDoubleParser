@@ -78,11 +78,6 @@ class BigSignificand {
         return new BigInteger(x);
     }
 
-    @Override
-    public String toString() {
-        return toBigInteger().toString();
-    }
-
     private void x(int i, int value) {
         readIntBE.set(x, i << 2, value);
     }

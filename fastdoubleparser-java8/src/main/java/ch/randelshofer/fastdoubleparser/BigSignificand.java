@@ -27,14 +27,6 @@ class BigSignificand {
         firstNonZeroInt = numInts;
     }
 
-    public static long estimateNumBits(long numDecimalDigits) {
-        // For the decimal number 10 we need log_2(10) = 3.3219 bits.
-        // The following formula uses 3.322 * 1024 = 3401.8 rounded up
-        // and adds 1, so that we overestimate but never underestimate
-        // the number of bits.
-        return (((numDecimalDigits * 3402L) >>> 10) + 1);
-    }
-
     /**
      * Adds the specified value to the significand in place.
      *
@@ -78,7 +70,6 @@ class BigSignificand {
         }
     }
 
-
     public BigInteger toBigInteger() {
         byte[] bytes = new byte[x.length << 2];
         IntBuffer buf = ByteBuffer.wrap(bytes).asIntBuffer();
@@ -88,11 +79,6 @@ class BigSignificand {
         return new BigInteger(bytes);
     }
 
-    @Override
-    public String toString() {
-        return toBigInteger().toString();
-    }
-
     private void x(int i, int value) {
         x[i] = value;
     }
@@ -100,5 +86,4 @@ class BigSignificand {
     private int x(int i) {
         return x[i];
     }
-
 }
