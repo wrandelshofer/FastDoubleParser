@@ -59,7 +59,7 @@
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
-    <revision>0.7.0</revision>
+    <revision>0.8.0</revision>
   </properties>
 
   <build>

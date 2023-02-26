@@ -15,10 +15,10 @@ can upload to the nexus repository manager.
 
 ```shell
 cp ../fastdoubleparser/target/*.jar .
-cp ../fastdoubleparser-java19/target/*javadoc.jar fastdoubleparser-0.7.0-javadoc.jar 
+cp ../fastdoubleparser-java19/target/*javadoc.jar fastdoubleparser-0.8.0-javadoc.jar 
 rm *.asc
 for f in *.jar; do gpg -ab "$f"; done
 for f in *.pom; do gpg -ab "$f"; done
 rm *bundle.jar
-jar -cf fastdoubleparser-0.7.0-bundle.jar $(ls -1 fastdoubleparser*|xargs)
+jar -cf fastdoubleparser-0.8.0-bundle.jar $(ls -1 fastdoubleparser*|xargs)
 ```
