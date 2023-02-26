@@ -45,7 +45,7 @@ public class FastDoubleMathTest {
     }
 
     public void testTryDecFloatToDouble(boolean isNegative, long significand, int power, double expected) {
-        double actual = FastDoubleMath.tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand, power);
+        double actual = FastDoubleMath.tryDecToDoubleWithFastAlgorithm(isNegative, significand, power);
         assertEquals(expected, actual);
     }
 

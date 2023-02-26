@@ -784,8 +784,8 @@ class FastDoubleMath {
             // There are cases, in which rounding has no effect.
             if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponentOfTruncatedSignificand
                     && exponentOfTruncatedSignificand <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
-                double withoutRounding = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
-                double roundedUp = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
+                double withoutRounding = tryDecToDoubleWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
+                double roundedUp = tryDecToDoubleWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
                 if (!Double.isNaN(withoutRounding) && roundedUp == withoutRounding) {
                     return withoutRounding;
                 }
@@ -795,7 +795,7 @@ class FastDoubleMath {
             result = Double.NaN;
 
         } else if (DOUBLE_MIN_EXPONENT_POWER_OF_TEN <= exponent && exponent <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
-            result = tryDecFloatToDoubleWithFastAlgorithm(isNegative, significand, exponent);
+            result = tryDecToDoubleWithFastAlgorithm(isNegative, significand, exponent);
         } else {
             result = Double.NaN;
         }
@@ -817,7 +817,7 @@ class FastDoubleMath {
      * @param power       the exponent number (the power)
      * @return the computed double on success, {@link Double#NaN} on failure
      */
-    static double tryDecFloatToDoubleWithFastAlgorithm(boolean isNegative, long significand, int power) {
+    static double tryDecToDoubleWithFastAlgorithm(boolean isNegative, long significand, int power) {
         // we start with a fast path
         // It was described in Clinger WD (1990).
         if (-22 <= power && power <= 22 && Long.compareUnsigned(significand, (1L << DOUBLE_SIGNIFICAND_WIDTH) - 1) <= 0) {
@@ -889,45 +889,11 @@ class FastDoubleMath {
         FastIntegerMath.UInt128 product = fullMultiplication(shiftedSignificand, factorMantissa);
         long lower = product.low;
         long upper = product.high;
-        // We know that upper has at most one leading zero because
-        // both i and factor_mantissa have a leading one. This means
-        // that the result is at least as large as ((1<<63)*(1<<63))/(1<<64).
 
-        // As long as the first 9 bits of "upper" are not "1", then we
-        // know that we have an exact computed value for the leading
-        // 55 bits because any imprecision would play out as a +1, in
-        // the worst case.
-        // Having 55 bits is necessary because
-        // we need 53 bits for the mantissa, but we have to have one rounding bit and
-        // we can waste a bit if the most significant bit of the product is zero.
-        // We expect this next branch to be rarely taken (say 1% of the time).
-        // When (upper & 0x1FF) == 0x1FF, it can be common for
-        // lower + i < lower to be true (proba. much higher than 1%).
-        if ((upper & 0x1ffL) == 0x1ffL && Long.compareUnsigned(lower + shiftedSignificand, lower) < 0) {
-            long factorMantissaLow =
-                    MANTISSA_128[power - DOUBLE_MIN_EXPONENT_POWER_OF_TEN];
-            // next, we compute the 64-bit x 128-bit multiplication, getting a 192-bit
-            // result (three 64-bit values)
-            product = fullMultiplication(shiftedSignificand, factorMantissaLow);
-            long productLow = product.low;
-            long productMiddle2 = product.high;
-            long productMiddle1 = lower;
-            long productHigh = upper;
-            long productMiddle = productMiddle1 + productMiddle2;
-            if (Long.compareUnsigned(productMiddle, productMiddle1) < 0) {
-                productHigh++; // overflow carry
-            }
+        // The computed 'product' is always sufficient.
+        // Mathematical proof:
+        // Noble Mushtak and Daniel Lemire, Fast Number Parsing Without Fallback (to appear)
 
-
-            // we want to check whether mantissa *i + i would affect our result
-            // This does happen, e.g. with 7.3177701707893310e+15
-            if (((productMiddle + 1 == 0) && ((productHigh & 0x1ffL) == 0x1ffL) &&
-                    (productLow + Long.compareUnsigned(shiftedSignificand, productLow) < 0))) { // let us be prudent and bail out.
-                return Double.NaN;
-            }
-            upper = productHigh;
-            //lower = product_middle;
-        }
 
         // The final mantissa should be 53 bits with a leading 1.
         // We shift it so that it occupies 54 bits with a leading 1.
