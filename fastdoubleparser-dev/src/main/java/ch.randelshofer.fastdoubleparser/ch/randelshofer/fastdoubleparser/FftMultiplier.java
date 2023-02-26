@@ -24,268 +24,6 @@ class FftMultiplier {
 
     public static final double COS_0_25 = Math.cos(0.25 * Math.PI);
     public static final double SIN_0_25 = Math.sin(0.25 * Math.PI);
-
-    final static class ComplexVector {
-        /**
-         * The number of complex numbers stored in this vector.
-         */
-        private final int length;
-        /**
-         * This arrays contains complex numbers.
-         * <p>
-         * A complex number occupies 2 consecutive array elements:
-         * the real part and then the imaginary part.
-         */
-        private final double[] a;
-        /**
-         * Offset to the real part of a complex number.
-         */
-        private final int offset;
-
-        /**
-         * A complex number in an FFT double[] vector occupies 2^1 array elements.
-         */
-        private final static int COMPLEX_SIZE_SHIFT = 1;
-        private final static int REAL = 0;
-        private final static int IMAG = 1;
-
-        ComplexVector(int length) {
-            this.a = new double[length << COMPLEX_SIZE_SHIFT];
-            this.length = length;
-            this.offset = 0;
-        }
-
-        /**
-         * Multiplies the elements of an FFT vector by weights.
-         * Doing this makes a regular FFT convolution a right-angle convolution.
-         */
-        void applyWeights(ComplexVector weights) {
-            // The following code is the same as:
-            //    for (int i=0;i<length;i++) this.multiply(i,weights,i);
-            // We use the fact that all a.imag(i) = 0.0
-            int offw = weights.offset;
-            double[] w = weights.a;
-            int end = offset + length << 1;
-            for (int offa = offset; offa < end; offa += 2) {
-                double real = a[offa + REAL];
-                a[offa + REAL] = real * w[offw + REAL];
-                a[offa + IMAG] = real * w[offw + IMAG];
-                offw += 2;
-            }
-        }
-
-        void multiplyPointwise(ComplexVector cvec) {
-            // The following code is the same as:
-            //    for (int i=0;i<length;i++) this.multiply(i,cvec,i);
-            int offc = cvec.offset;
-            double[] c = cvec.a;
-            int end = offset + length << 1;
-            for (int offa = offset; offa < end; offa += 2) {
-                // The following code is the same as: this.multiply(i,cvec[i]);
-                double real = a[offa + REAL];
-                double imag = a[offa + IMAG];
-                double creal = c[offc + REAL];
-                double cimag = c[offc + IMAG];
-                a[offa + REAL] = fma(real, creal, -imag * cimag);
-                a[offa + IMAG] = fma(real, cimag, +imag * creal);
-                offc += 2;
-            }
-        }
-
-        /**
-         * The result is placed in the argument
-         */
-        void squarePointwise() {
-            // The following code is the same as:
-            //    for (int i=0;i<length;i++) this.square(i);
-            int end = offset + length << 1;
-            for (int offa = offset; offa < end; offa += 2) {
-                double real = a[offa + REAL];
-                double imag = a[offa + IMAG];
-                a[offa + REAL] = fma(real, real, -imag * imag);
-                a[offa + IMAG] = 2 * real * imag;
-            }
-        }
-
-        /**
-         * Multiplies the elements of an FFT vector by 1/weight.
-         * Used for the right-angle convolution.
-         */
-        void applyInverseWeights(ComplexVector weights) {
-            int offa = offset;
-            int offw = weights.offset;
-            double[] w = weights.a;
-            for (int i = 0; i < length; i++) {
-                // the following code is the same as: this.multiplyConjugate(i, weights[i]);
-
-                double real = a[offa + REAL];
-                double imag = a[offa + IMAG];
-                a[offa] = fma(real, w[offw + REAL], imag * w[offw + IMAG]);
-                a[offa + 1] = fma(-real, w[offw + IMAG], imag * w[offw + REAL]);
-                offa += 2;
-                offw += 2;
-            }
-        }
-
-        void add(int idxa, MutableComplex c) {
-            a[realIdx(idxa)] += c.real;
-            a[imagIdx(idxa)] += c.imag;
-        }
-
-        void set(int idxa, double real, double imag) {
-            int idx = realIdx(idxa);
-            a[idx] = real;
-            a[idx + 1] = imag;
-        }
-
-        private int realIdx(int idxa) {
-            return (idxa << COMPLEX_SIZE_SHIFT) + offset;
-        }
-
-        private int imagIdx(int idxa) {
-            return (idxa << COMPLEX_SIZE_SHIFT) + offset + IMAG;
-        }
-
-        double real(int idxa) {
-            return a[(idxa << COMPLEX_SIZE_SHIFT) + offset];
-        }
-
-        double part(int idxa, int part) {
-            return a[(idxa << COMPLEX_SIZE_SHIFT) + part];
-        }
-
-        double imag(int idxa) {
-            return a[(idxa << COMPLEX_SIZE_SHIFT) + offset + IMAG];
-        }
-
-        void real(int idxa, double value) {
-            a[(idxa << COMPLEX_SIZE_SHIFT) + offset] = value;
-        }
-
-        void imag(int idxa, double value) {
-            a[(idxa << COMPLEX_SIZE_SHIFT) + offset + IMAG] = value;
-        }
-
-        void addTimesIInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] - c.imag(idxc);
-            destination.imag = a[imagIdx(idxa)] + c.real(idxc);
-        }
-
-
-        void addInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] + c.real(idxc);
-            destination.imag = a[imagIdx(idxa)] + c.imag(idxc);
-        }
-
-        void copyInto(int idxa, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)];
-            destination.imag = a[imagIdx(idxa)];
-        }
-
-        /**
-         * Multiplies {@code a} by {@code c}.
-         * Stores the result in a[idx] and a[idx+1].
-         */
-        void multiply(int idxa, MutableComplex c) {
-            int ri = realIdx(idxa);
-            int ii = imagIdx(idxa);
-            double real = a[ri];
-            double imag = a[ii];
-            a[ri] = fma(real, c.real, -imag * c.imag);
-            a[ii] = fma(real, c.imag, +imag * c.real);
-        }
-
-        /**
-         * Multiplies {@code a} by {@code c} and by {@code i}.
-         * Stores the result in a[idx] and a[idx+1].
-         */
-        void multiplyByIAnd(int idxa, MutableComplex c) {
-            int ri = realIdx(idxa);
-            int ii = imagIdx(idxa);
-            double real = a[ri];
-            double imag = a[ii];
-            a[ri] = fma(-real, c.imag, -imag * c.real);
-            a[ii] = fma(real, c.real, -imag * c.imag);
-        }
-
-        /**
-         * Multiplies {@code a} by the conjugate of {@code c}.
-         * Stores the result in a[i] and a[i+1].
-         */
-        void multiplyConjugate(int idxa, MutableComplex c) {
-            int ri = realIdx(idxa);
-            int ii = imagIdx(idxa);
-            double real = a[ri];
-            double imag = a[ii];
-            a[ri] = fma(real, c.real, +imag * c.imag);
-            a[ii] = fma(-real, c.imag, +imag * c.real);
-        }
-
-        /**
-         * Multiplies {@code (a[i].real,a[i+1].imaginary)} by the conjugate of {@code c}
-         * and by {@code i}.
-         * Stores the result in a[i] and a[i+1].
-         */
-        void multiplyConjugateTimesI(int idxa, MutableComplex c) {
-            int ri = realIdx(idxa);
-            int ii = imagIdx(idxa);
-            double real = a[ri];
-            double imag = a[ii];
-            a[ri] = fma(-real, c.imag, +imag * c.real);
-            a[ii] = fma(-real, c.real, -imag * c.imag);
-        }
-
-        void multiplyConjugateInto(int idxa, MutableComplex c, MutableComplex destination) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            destination.real = fma(real, c.real, +imag * c.imag);
-            destination.imag = fma(-real, c.imag, +imag * c.real);
-        }
-
-        void multiplyInto(int idxa, MutableComplex c, MutableComplex destination) {
-            double real = a[realIdx(idxa)];
-            double imag = a[imagIdx(idxa)];
-            destination.real = fma(real, c.real, -imag * c.imag);
-            destination.imag = fma(real, c.imag, +imag * c.real);
-        }
-
-        void subtractTimesIInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] + c.imag(idxc);
-            destination.imag = a[imagIdx(idxa)] - c.real(idxc);
-        }
-
-        void subtractInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
-            destination.real = a[realIdx(idxa)] - c.real(idxc);
-            destination.imag = a[imagIdx(idxa)] - c.imag(idxc);
-        }
-
-        void timesTwoToThe(int idxa, int n) {
-            int ri = realIdx(idxa);
-            int ii = imagIdx(idxa);
-            double real = a[ri];
-            double imag = a[ii];
-            a[ri] = Math.scalb(real, n);
-            a[ii] = Math.scalb(imag, n);
-        }
-
-        /**
-         * Creates a view on another vector.
-         *
-         * @param c    the other vector
-         * @param from start index of the view
-         * @param to   end index of the view
-         */
-        ComplexVector(ComplexVector c, int from, int to) {
-            this.length = to - from;
-            this.a = c.a;
-            this.offset = from << 1;
-        }
-    }
-
-    /**
-     * The threshold value for using 3-way Toom-Cook multiplication.
-     */
-    private static final int TOOM_COOK_THRESHOLD = 240 * 8;
     /**
      * The threshold value for using floating point FFT multiplication.
      * If the number of bits in each mag array is greater than the
@@ -300,13 +38,17 @@ class FftMultiplier {
      */
     private static final int MAX_MAG_LENGTH = Integer.MAX_VALUE / Integer.SIZE + 1; // (1 << 26)
     /**
+     * for FFTs of length up to 3*2^19
+     */
+    private static final int ROOTS3_CACHE_SIZE = 20;
+    /**
      * for FFTs of length up to 2^19
      */
     private static final int ROOTS_CACHE2_SIZE = 20;
     /**
-     * for FFTs of length up to 3*2^19
+     * The threshold value for using 3-way Toom-Cook multiplication.
      */
-    private static final int ROOTS3_CACHE_SIZE = 20;
+    private static final int TOOM_COOK_THRESHOLD = 240 * 8;
     /**
      * Sets of complex roots of unity. The set at index k contains 2^k
      * elements representing all (2^(k+2))-th roots between 0 and pi/2.
@@ -592,7 +334,6 @@ class FftMultiplier {
         }
         return new BigInteger(signum, mag);
     }
-
 
     /**
      * Returns sets of complex roots of unity. For k=logN, logN-2, logN-4, ...,
@@ -892,7 +633,6 @@ class FftMultiplier {
         }
     }
 
-
     /**
      * Returns a BigInteger whose value is {@code (this<sup>2</sup>)}.
      *
@@ -940,7 +680,6 @@ class FftMultiplier {
         }
     }
 
-
     /**
      * Converts this BigInteger into an array of complex numbers suitable for an FFT.
      * Populates the real parts and sets the imaginary parts to zero.
@@ -985,6 +724,261 @@ class FftMultiplier {
         return fftVec;
     }
 
+    final static class ComplexVector {
+        /**
+         * A complex number in an FFT double[] vector occupies 2^1 array elements.
+         */
+        private final static int COMPLEX_SIZE_SHIFT = 1;
+        private final static int IMAG = 1;
+        private final static int REAL = 0;
+        /**
+         * This arrays contains complex numbers.
+         * <p>
+         * A complex number occupies 2 consecutive array elements:
+         * the real part and then the imaginary part.
+         */
+        private final double[] a;
+        /**
+         * The number of complex numbers stored in this vector.
+         */
+        private final int length;
+        /**
+         * Offset to the real part of a complex number.
+         */
+        private final int offset;
+
+        ComplexVector(int length) {
+            this.a = new double[length << COMPLEX_SIZE_SHIFT];
+            this.length = length;
+            this.offset = 0;
+        }
+
+        /**
+         * Creates a view on another vector.
+         *
+         * @param c    the other vector
+         * @param from start index of the view
+         * @param to   end index of the view
+         */
+        ComplexVector(ComplexVector c, int from, int to) {
+            this.length = to - from;
+            this.a = c.a;
+            this.offset = from << 1;
+        }
+
+        void add(int idxa, MutableComplex c) {
+            a[realIdx(idxa)] += c.real;
+            a[imagIdx(idxa)] += c.imag;
+        }
+
+        void addInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
+            destination.real = a[realIdx(idxa)] + c.real(idxc);
+            destination.imag = a[imagIdx(idxa)] + c.imag(idxc);
+        }
+
+        void addTimesIInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
+            destination.real = a[realIdx(idxa)] - c.imag(idxc);
+            destination.imag = a[imagIdx(idxa)] + c.real(idxc);
+        }
+
+        /**
+         * Multiplies the elements of an FFT vector by 1/weight.
+         * Used for the right-angle convolution.
+         */
+        void applyInverseWeights(ComplexVector weights) {
+            int offa = offset;
+            int offw = weights.offset;
+            double[] w = weights.a;
+            for (int i = 0; i < length; i++) {
+                // the following code is the same as: this.multiplyConjugate(i, weights[i]);
+
+                double real = a[offa + REAL];
+                double imag = a[offa + IMAG];
+                a[offa] = fma(real, w[offw + REAL], imag * w[offw + IMAG]);
+                a[offa + 1] = fma(-real, w[offw + IMAG], imag * w[offw + REAL]);
+                offa += 2;
+                offw += 2;
+            }
+        }
+
+        /**
+         * Multiplies the elements of an FFT vector by weights.
+         * Doing this makes a regular FFT convolution a right-angle convolution.
+         */
+        void applyWeights(ComplexVector weights) {
+            // The following code is the same as:
+            //    for (int i=0;i<length;i++) this.multiply(i,weights,i);
+            // We use the fact that all a.imag(i) = 0.0
+            int offw = weights.offset;
+            double[] w = weights.a;
+            int end = offset + length << 1;
+            for (int offa = offset; offa < end; offa += 2) {
+                double real = a[offa + REAL];
+                a[offa + REAL] = real * w[offw + REAL];
+                a[offa + IMAG] = real * w[offw + IMAG];
+                offw += 2;
+            }
+        }
+
+        void copyInto(int idxa, MutableComplex destination) {
+            destination.real = a[realIdx(idxa)];
+            destination.imag = a[imagIdx(idxa)];
+        }
+
+        double imag(int idxa) {
+            return a[(idxa << COMPLEX_SIZE_SHIFT) + offset + IMAG];
+        }
+
+        void imag(int idxa, double value) {
+            a[(idxa << COMPLEX_SIZE_SHIFT) + offset + IMAG] = value;
+        }
+
+        private int imagIdx(int idxa) {
+            return (idxa << COMPLEX_SIZE_SHIFT) + offset + IMAG;
+        }
+
+        /**
+         * Multiplies {@code a} by {@code c}.
+         * Stores the result in a[idx] and a[idx+1].
+         */
+        void multiply(int idxa, MutableComplex c) {
+            int ri = realIdx(idxa);
+            int ii = imagIdx(idxa);
+            double real = a[ri];
+            double imag = a[ii];
+            a[ri] = fma(real, c.real, -imag * c.imag);
+            a[ii] = fma(real, c.imag, +imag * c.real);
+        }
+
+        /**
+         * Multiplies {@code a} by {@code c} and by {@code i}.
+         * Stores the result in a[idx] and a[idx+1].
+         */
+        void multiplyByIAnd(int idxa, MutableComplex c) {
+            int ri = realIdx(idxa);
+            int ii = imagIdx(idxa);
+            double real = a[ri];
+            double imag = a[ii];
+            a[ri] = fma(-real, c.imag, -imag * c.real);
+            a[ii] = fma(real, c.real, -imag * c.imag);
+        }
+
+        /**
+         * Multiplies {@code a} by the conjugate of {@code c}.
+         * Stores the result in a[i] and a[i+1].
+         */
+        void multiplyConjugate(int idxa, MutableComplex c) {
+            int ri = realIdx(idxa);
+            int ii = imagIdx(idxa);
+            double real = a[ri];
+            double imag = a[ii];
+            a[ri] = fma(real, c.real, +imag * c.imag);
+            a[ii] = fma(-real, c.imag, +imag * c.real);
+        }
+
+        void multiplyConjugateInto(int idxa, MutableComplex c, MutableComplex destination) {
+            double real = a[realIdx(idxa)];
+            double imag = a[imagIdx(idxa)];
+            destination.real = fma(real, c.real, +imag * c.imag);
+            destination.imag = fma(-real, c.imag, +imag * c.real);
+        }
+
+        /**
+         * Multiplies {@code (a[i].real,a[i+1].imaginary)} by the conjugate of {@code c}
+         * and by {@code i}.
+         * Stores the result in a[i] and a[i+1].
+         */
+        void multiplyConjugateTimesI(int idxa, MutableComplex c) {
+            int ri = realIdx(idxa);
+            int ii = imagIdx(idxa);
+            double real = a[ri];
+            double imag = a[ii];
+            a[ri] = fma(-real, c.imag, +imag * c.real);
+            a[ii] = fma(-real, c.real, -imag * c.imag);
+        }
+
+        void multiplyInto(int idxa, MutableComplex c, MutableComplex destination) {
+            double real = a[realIdx(idxa)];
+            double imag = a[imagIdx(idxa)];
+            destination.real = fma(real, c.real, -imag * c.imag);
+            destination.imag = fma(real, c.imag, +imag * c.real);
+        }
+
+        void multiplyPointwise(ComplexVector cvec) {
+            // The following code is the same as:
+            //    for (int i=0;i<length;i++) this.multiply(i,cvec,i);
+            int offc = cvec.offset;
+            double[] c = cvec.a;
+            int end = offset + length << 1;
+            for (int offa = offset; offa < end; offa += 2) {
+                // The following code is the same as: this.multiply(i,cvec[i]);
+                double real = a[offa + REAL];
+                double imag = a[offa + IMAG];
+                double creal = c[offc + REAL];
+                double cimag = c[offc + IMAG];
+                a[offa + REAL] = fma(real, creal, -imag * cimag);
+                a[offa + IMAG] = fma(real, cimag, +imag * creal);
+                offc += 2;
+            }
+        }
+
+        double part(int idxa, int part) {
+            return a[(idxa << COMPLEX_SIZE_SHIFT) + part];
+        }
+
+        double real(int idxa) {
+            return a[(idxa << COMPLEX_SIZE_SHIFT) + offset];
+        }
+
+        void real(int idxa, double value) {
+            a[(idxa << COMPLEX_SIZE_SHIFT) + offset] = value;
+        }
+
+        private int realIdx(int idxa) {
+            return (idxa << COMPLEX_SIZE_SHIFT) + offset;
+        }
+
+        void set(int idxa, double real, double imag) {
+            int idx = realIdx(idxa);
+            a[idx] = real;
+            a[idx + 1] = imag;
+        }
+
+        /**
+         * The result is placed in the argument
+         */
+        void squarePointwise() {
+            // The following code is the same as:
+            //    for (int i=0;i<length;i++) this.square(i);
+            int end = offset + length << 1;
+            for (int offa = offset; offa < end; offa += 2) {
+                double real = a[offa + REAL];
+                double imag = a[offa + IMAG];
+                a[offa + REAL] = fma(real, real, -imag * imag);
+                a[offa + IMAG] = 2 * real * imag;
+            }
+        }
+
+        void subtractInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
+            destination.real = a[realIdx(idxa)] - c.real(idxc);
+            destination.imag = a[imagIdx(idxa)] - c.imag(idxc);
+        }
+
+        void subtractTimesIInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
+            destination.real = a[realIdx(idxa)] + c.imag(idxc);
+            destination.imag = a[imagIdx(idxa)] - c.real(idxc);
+        }
+
+        void timesTwoToThe(int idxa, int n) {
+            int ri = realIdx(idxa);
+            int ii = imagIdx(idxa);
+            double real = a[ri];
+            double imag = a[ii];
+            a[ri] = Math.scalb(real, n);
+            a[ii] = Math.scalb(imag, n);
+        }
+    }
+
     final static class MutableComplex {
         double real, imag;
 
@@ -999,11 +993,6 @@ class FftMultiplier {
         void add(ComplexVector c, int idxc) {
             real += c.real(idxc);
             imag += c.imag(idxc);
-        }
-
-        void set(ComplexVector c, int idxc) {
-            real = c.real(idxc);
-            imag = c.imag(idxc);
         }
 
         void addInto(MutableComplex c, MutableComplex destination) {
@@ -1052,6 +1041,11 @@ class FftMultiplier {
             imag = fma(-temp, c.imag, imag * c.real);
         }
 
+        void set(ComplexVector c, int idxc) {
+            real = c.real(idxc);
+            imag = c.imag(idxc);
+        }
+
         void squareInto(MutableComplex destination) {
             destination.real = fma(real, real, -imag * imag);
             destination.imag = 2 * real * imag;
@@ -1092,6 +1086,4 @@ class FftMultiplier {
             destination.imag = imag - c.real;
         }
     }
-
-
 }
