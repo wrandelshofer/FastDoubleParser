@@ -887,7 +887,6 @@ class FastDoubleMath {
         // this will be non-zero because the most significant bit of digits is
         // 1.
         FastIntegerMath.UInt128 product = fullMultiplication(shiftedSignificand, factorMantissa);
-        long lower = product.low;
         long upper = product.high;
 
         // The computed 'product' is always sufficient.

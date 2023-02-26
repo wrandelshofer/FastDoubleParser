@@ -47,10 +47,6 @@ class FastDoubleSwar {
     private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
             .withBitAlignment(16);
 
-    public static int countUpToEightDigitsUtf8(byte[] a, int offset) {
-        return countUpToEightDigitsUtf8((long) readLongLE(a, offset));
-    }
-
     public static int countUpToEightDigitsUtf8(long chunk) {
         long val = chunk - 0x3030303030303030L;
         long predicate = ((chunk + 0x4646464646464646L) | val) & 0x8080808080808080L;
@@ -167,72 +163,11 @@ class FastDoubleSwar {
         return chunk == 0x3030303030303030L;
     }
 
-    @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
-    public static int parseEightDigits(char[] a, int offset) {
-        MemorySegment seg = MemorySegment.ofArray(a);
-        long first = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1));
-        long second = seg.get(CHAR_ALIGNED_LONG, ((long) offset << 1) + 8);
-        return FastDoubleSwar.parseEightDigitsUtf16(first, second);
-    }
-
-    public static int parseEightDigits(CharSequence str, int offset) {
-        long first = str.charAt(offset)
-                | (long) str.charAt(offset + 1) << 16
-                | (long) str.charAt(offset + 2) << 32
-                | (long) str.charAt(offset + 3) << 48;
-        long second = str.charAt(offset + 4)
-                | (long) str.charAt(offset + 5) << 16
-                | (long) str.charAt(offset + 6) << 32
-                | (long) str.charAt(offset + 7) << 48;
-        return FastDoubleSwar.parseEightDigitsUtf16(first, second);
-    }
-
-    public static int parseEightDigits(byte[] a, int offset) {
-        return parseEightDigitsUtf8((long) readLongLE.get(a, offset));
-    }
-
     public static int parseEightDigitsUtf16(long first, long second) {
         long fval = first - 0x0030_0030_0030_0030L;
         long sval = second - 0x0030_0030_0030_0030L;
         return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
                 + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
-    }
-
-    public static int parseEightDigitsUtf8(long chunk) {
-        // Subtract the character '0' from all characters.
-        long val = chunk - 0x3030303030303030L;
-
-        // The last 2 multiplications are independent of each other.
-        long mask = 0xff_000000ffL;
-        long mul1 = 100 + (100_0000L << 32);
-        long mul2 = 1 + (1_0000L << 32);
-        val = val * 10 + (val >>> 8);// same as: val = val * (1 + (10 << 8)) >>> 8;
-        val = (val & mask) * mul1 + (val >>> 16 & mask) * mul2 >>> 32;
-        return (int) val;
-    }
-
-    public static int parseUpTo7Digits(byte[] str, int from, int to) {
-        int result = 0;
-        for (; from < to; from++) {
-            result = 10 * (result) + str[from] - '0';
-        }
-        return result;
-    }
-
-    public static int parseUpTo7Digits(char[] str, int from, int to) {
-        int result = 0;
-        for (; from < to; from++) {
-            result = 10 * (result) + str[from] - '0';
-        }
-        return result;
-    }
-
-    public static int parseUpTo7Digits(CharSequence str, int from, int to) {
-        int result = 0;
-        for (; from < to; from++) {
-            result = 10 * (result) + str.charAt(from) - '0';
-        }
-        return result;
     }
 
     public static int readIntBE(byte[] a, int offset) {
@@ -594,10 +529,6 @@ class FastDoubleSwar {
 
     public static void writeIntBE(byte[] a, int offset, int value) {
         readIntBE.set(a, offset, value);
-    }
-
-    public static void writeIntLE(byte[] a, int offset, int value) {
-        readIntLE.set(a, offset, value);
     }
 
     public static void writeLongBE(byte[] a, int offset, long value) {
