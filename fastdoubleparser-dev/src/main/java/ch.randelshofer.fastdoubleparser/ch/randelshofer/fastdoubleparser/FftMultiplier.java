@@ -300,13 +300,13 @@ class FftMultiplier {
      */
     private static final int MAX_MAG_LENGTH = Integer.MAX_VALUE / Integer.SIZE + 1; // (1 << 26)
     /**
-     * for FFTs of length up to 2^17
+     * for FFTs of length up to 2^19
      */
-    private static final int ROOTS_CACHE2_SIZE = 18;
+    private static final int ROOTS_CACHE2_SIZE = 20;
     /**
-     * for FFTs of length up to 3*2^15
+     * for FFTs of length up to 3*2^19
      */
-    private static final int ROOTS3_CACHE_SIZE = 15;
+    private static final int ROOTS3_CACHE_SIZE = 20;
     /**
      * Sets of complex roots of unity. The set at index k contains 2^k
      * elements representing all (2^(k+2))-th roots between 0 and pi/2.

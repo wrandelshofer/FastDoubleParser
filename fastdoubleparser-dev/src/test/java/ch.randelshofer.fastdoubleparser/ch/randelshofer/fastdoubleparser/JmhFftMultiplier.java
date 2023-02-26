@@ -35,11 +35,6 @@ import java.util.concurrent.TimeUnit;
  * fftMul                10  avgt    2     _      273.737          ns/op
  * fftMul               100  avgt    2     _     1380.586          ns/op
  * fftMul              1000  avgt    2     _    11375.487          ns/op
- * fftMul              5000  avgt    2     _    61001.775          ns/op
- * fftMul              6000  avgt    2     _    88805.441          ns/op
- * fftMul              7000  avgt    2     _    92513.482          ns/op
- * fftMul              8000  avgt    2     _   115086.615          ns/op
- * fftMul              9000  avgt    2     _   119289.776          ns/op
  * fftMul             10000  avgt    2     _   121724.031          ns/op
  * fftMul            100000  avgt    2     _  1814285.567          ns/op
  * fftMul           1000000  avgt    2     _ 26303655.749          ns/op
@@ -145,21 +140,21 @@ public class JmhFftMultiplier {
 
 
     @Param({
-            "1"
-            , "10"
-            , "100"
-            , "1000"
-            , "5000"
-            , "6000"
-            , "7000"
-            , "8000"
-            , "9000"
-            , "10000"
-            , "100000"
-            , "1000000"
-            , "10000000"
-            , "100000000"
-            , "323195659"
+            // "1"
+            // , "10"
+            // , "100"
+            // , "1000"
+            // , "5000"
+            // , "6000"
+            // , "7000"
+            // , "8000"
+            // , "9000"
+            // , "10000"
+            // , "100000"
+            // , "1000000"
+            "10000000"
+            // , "100000000"
+            // , "323195659"
 //
     })
     public int digits;
