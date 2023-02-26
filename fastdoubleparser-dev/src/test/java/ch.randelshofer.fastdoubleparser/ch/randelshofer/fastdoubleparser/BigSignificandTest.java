@@ -37,7 +37,7 @@ public class BigSignificandTest {
 
         BigSignificand instance = new BigSignificand(64);
         instance.add(value);
-        instance.mul(factor);
+        instance.fma(factor, 0);
         BigInteger actual = instance.toBigInteger();
 
         assertEquals(expected, actual);

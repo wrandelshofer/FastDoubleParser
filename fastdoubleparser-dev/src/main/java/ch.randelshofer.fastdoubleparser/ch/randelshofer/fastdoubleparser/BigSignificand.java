@@ -16,8 +16,8 @@ class BigSignificand {
     private static final long LONG_MASK = 0xffffffffL;
     private final static VarHandle readIntBE =
             MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.BIG_ENDIAN);
-    private final byte[] x;
     private final int numInts;
+    private final byte[] x;
     private int firstNonZeroInt;
 
     public BigSignificand(long numBits) {
@@ -65,27 +65,6 @@ class BigSignificand {
         int i = numInts - 1;
         for (; i >= firstNonZeroInt; i--) {
             long product = factorL * (x(i) & LONG_MASK) + carry;
-            x(i, (int) product);
-            carry = product >>> 32;
-        }
-        if (carry != 0) {
-            x(i, (int) carry);
-            firstNonZeroInt = i;
-        }
-    }
-
-    /**
-     * Multiplies the significand with the specified value in place.
-     *
-     * @param value the multiplication factor, must be a non-negative value
-     * @throws ArrayIndexOutOfBoundsException on overflow
-     */
-    public void mul(int value) {
-        long factor = value & LONG_MASK;
-        long carry = 0;
-        int i = numInts - 1;
-        for (; i >= firstNonZeroInt; i--) {
-            long product = factor * (x(i) & LONG_MASK) + carry;
             x(i, (int) product);
             carry = product >>> 32;
         }
