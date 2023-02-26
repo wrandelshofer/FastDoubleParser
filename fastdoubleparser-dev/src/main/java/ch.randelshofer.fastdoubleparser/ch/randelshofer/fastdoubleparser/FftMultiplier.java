@@ -21,6 +21,10 @@ import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
  * </dl>
  */
 class FftMultiplier {
+
+    public static final double COS_0_25 = Math.cos(0.25 * Math.PI);
+    public static final double SIN_0_25 = Math.sin(0.25 * Math.PI);
+
     final static class ComplexVector {
         /**
          * The number of complex numbers stored in this vector.
@@ -375,11 +379,12 @@ class FftMultiplier {
         }
         ComplexVector roots = new ComplexVector(n);
         roots.set(0, 1.0, 0.0);
-        double cos = Math.cos(0.25 * Math.PI);
-        double sin = Math.sin(0.25 * Math.PI);
+        double cos = COS_0_25;
+        double sin = SIN_0_25;
         roots.set(n / 2, cos, sin);
+        double angleTerm = 0.5 * Math.PI / n;
         for (int i = 1; i < n / 2; i++) {
-            double angle = 0.5 * Math.PI * i / n;
+            double angle = angleTerm * i;
             cos = Math.cos(angle);
             sin = Math.sin(angle);
             roots.set(i, cos, sin);

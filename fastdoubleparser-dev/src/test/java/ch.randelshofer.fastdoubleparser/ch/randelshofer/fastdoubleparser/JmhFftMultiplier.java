@@ -24,6 +24,32 @@ import java.util.concurrent.TimeUnit;
 /**
  * Benchmarks for selected integer strings.
  * <pre>
+ * After optimising FftMultiplier.calculateRootsOfUnity().
+ *
+ * # JMH version: 1.35
+ * # VM version: JDK 20, OpenJDK 64-Bit Server VM, 20+36-2344
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * Benchmark       (digits)  Mode  Cnt     _        Score   Error  Units
+ * fftMul                 1  avgt    2     _      158.802          ns/op
+ * fftMul                10  avgt    2     _      273.737          ns/op
+ * fftMul               100  avgt    2     _     1380.586          ns/op
+ * fftMul              1000  avgt    2     _    11375.487          ns/op
+ * fftMul              5000  avgt    2     _    61001.775          ns/op
+ * fftMul              6000  avgt    2     _    88805.441          ns/op
+ * fftMul              7000  avgt    2     _    92513.482          ns/op
+ * fftMul              8000  avgt    2     _   115086.615          ns/op
+ * fftMul              9000  avgt    2     _   119289.776          ns/op
+ * fftMul             10000  avgt    2     _   121724.031          ns/op
+ * fftMul            100000  avgt    2     _  1814285.567          ns/op
+ * fftMul           1000000  avgt    2     _ 26303655.749          ns/op
+ * fftMul          10000000  avgt    2     _409355950.960          ns/op
+ * fftMul         100000000  avgt    2    4_894774550.500          ns/op
+ * fftMul         323195659  avgt    2    9_322687438.500          ns/op
+ * </pre>
+ * <pre>
+ * Before optimising FftMultiplier.calculateRootsOfUnity().
+ *
  * # JMH version: 1.35
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
@@ -110,7 +136,7 @@ import java.util.concurrent.TimeUnit;
         //, "-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 4)
+@Measurement(iterations = 2)
 @Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
@@ -119,21 +145,21 @@ public class JmhFftMultiplier {
 
 
     @Param({
-            // "1"
-            // , "10"
-            // , "100"
-            // , "1000"
-            // , "5000"
-            // , "6000"
-            // , "7000"
-            // , "8000"
-            // , "9000"
-            // , "10000"
-            // , "100000"
-            // , "1000000"
-            // , "10000000"
-            "100000000"
-            // , "323195659"
+            "1"
+            , "10"
+            , "100"
+            , "1000"
+            , "5000"
+            , "6000"
+            , "7000"
+            , "8000"
+            , "9000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            , "100000000"
+            , "323195659"
 //
     })
     public int digits;
