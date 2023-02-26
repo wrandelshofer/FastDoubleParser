@@ -104,7 +104,9 @@ abstract class AbstractNumberParser {
      * @return the hex value or a value &lt; 0.
      */
     protected static int lookupHex(byte ch) {
-        return CHAR_TO_HEX_MAP[ch & 127] | (ch >> 31);
+        // The branchy code is faster than the branch-less code.
+        // Branch-less code: return CHAR_TO_HEX_MAP[ch & 127] | (ch >> 31);
+        return ch > 0 ? CHAR_TO_HEX_MAP[ch] : -1;
     }
 
     /**
@@ -117,7 +119,9 @@ abstract class AbstractNumberParser {
      * @return the hex value or a value &lt; 0.
      */
     protected static int lookupHex(char ch) {
-        return CHAR_TO_HEX_MAP[ch & 127] | (127 - ch) >> 31;
+        // The branchy code is faster than the branch-less code.
+        // Branch-less code: return CHAR_TO_HEX_MAP[ch & 127] | (127 - ch) >> 31;
+        return ch < 128 ? CHAR_TO_HEX_MAP[ch] : -1;
     }
 
 }
