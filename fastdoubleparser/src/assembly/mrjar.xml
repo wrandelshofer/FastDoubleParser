@@ -26,9 +26,11 @@
         <unpack>true</unpack>
         <includeDependencies>false</includeDependencies>
         <unpackOptions>
-          <excludes>
-            <exclude>/META-INF/**</exclude>
-          </excludes>
+          <includes>
+            <include>**/BigSignificand*.class</include>
+            <include>**/FastDoubleSwar*.class</include>
+            <include>**/FastIntegerMath*.class</include>
+          </includes>
         </unpackOptions>
       </binaries>
     </moduleSet>
@@ -42,9 +44,10 @@
         <unpack>true</unpack>
         <includeDependencies>false</includeDependencies>
         <unpackOptions>
-          <excludes>
-            <exclude>/META-INF/**</exclude>
-          </excludes>
+          <includes>
+            <include>**/FastDoubleSwar*.class</include>
+            <include>**/FastIntegerMath*.class</include>
+          </includes>
         </unpackOptions>
       </binaries>
     </moduleSet>
@@ -58,9 +61,10 @@
         <unpack>true</unpack>
         <includeDependencies>false</includeDependencies>
         <unpackOptions>
-          <excludes>
-            <exclude>/META-INF/**</exclude>
-          </excludes>
+          <includes>
+            <include>**/FastDoubleSwar*.class</include>
+            <include>**/FastIntegerMath*.class</include>
+          </includes>
         </unpackOptions>
       </binaries>
     </moduleSet>
