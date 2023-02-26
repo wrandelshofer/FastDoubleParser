@@ -995,6 +995,10 @@ class FftMultiplier {
             imag += c.imag(idxc);
         }
 
+        /**
+         * Adds c to this number and stores the result in destination.
+         * Leaves this number unmodified.
+         */
         void addInto(MutableComplex c, MutableComplex destination) {
             destination.real = real + c.real;
             destination.imag = imag + c.imag;
@@ -1014,7 +1018,8 @@ class FftMultiplier {
         }
 
         /**
-         * Adds c*i to this number. Leaves this number unmodified.
+         * Adds c*i to this number and stores the result in destination.
+         * Leaves this number unmodified.
          */
         void addTimesIInto(MutableComplex c, MutableComplex destination) {
             destination.real = real - c.imag;
