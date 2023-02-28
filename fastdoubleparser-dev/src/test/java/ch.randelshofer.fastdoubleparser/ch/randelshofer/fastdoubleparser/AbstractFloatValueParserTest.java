@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -128,7 +129,7 @@ public abstract class AbstractFloatValueParserTest {
     protected Stream<NumberTestData> createSupplementalTestData(NumberType type) {
         try {
             return
-                    Files.walk(Path.of("../supplemental_test_files/data"))
+                    Files.walk(Paths.get("../supplemental_test_files/data"))
                             .filter(path -> path.getFileName().toString().endsWith(".txt"))
                             .map(path1 -> createSupplementalTestData(path1, type))
                             .reduce(Stream.empty(), Stream::concat);
@@ -140,7 +141,7 @@ public abstract class AbstractFloatValueParserTest {
     protected Stream<Path> getSupplementalTestDataFiles() {
         if (longRunningTests) {
             try {
-                return Files.walk(Path.of("../supplemental_test_files/data"))
+                return Files.walk(Paths.get("../supplemental_test_files/data"))
                         .filter(path -> path.getFileName().toString().endsWith(".txt"));
             } catch (IOException e) {
                 throw new UncheckedIOException(e);

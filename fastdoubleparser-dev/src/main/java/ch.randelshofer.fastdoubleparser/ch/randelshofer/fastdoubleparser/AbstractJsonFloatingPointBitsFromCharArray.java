@@ -33,7 +33,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
             throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
         }
         int index = offset;
-        char ch = index < endIndex ? str[index] : 0;
+        char ch = charAt(str, index, endIndex);
 
         // Parse optional minus sign
         // -------------------

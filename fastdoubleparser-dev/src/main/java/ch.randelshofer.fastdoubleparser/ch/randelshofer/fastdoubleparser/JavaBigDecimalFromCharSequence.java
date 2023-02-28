@@ -83,7 +83,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
 
             final int endIndex = offset + length;
             int index = offset;
-            char ch = index < endIndex ? str.charAt(index) : 0;
+            char ch = charAt(str, index, endIndex);
             boolean illegal = false;
 
 
@@ -194,7 +194,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractNumberParser {
 
         final int endIndex = offset + length;
         int index = offset;
-        char ch = index < endIndex ? str.charAt(index) : 0;
+        char ch = charAt(str, index, endIndex);
         boolean illegal = false;
 
         // Parse optional sign
