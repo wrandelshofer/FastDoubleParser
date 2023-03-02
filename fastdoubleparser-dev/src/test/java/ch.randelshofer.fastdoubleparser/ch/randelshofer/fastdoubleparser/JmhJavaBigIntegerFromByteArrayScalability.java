@@ -30,38 +30,27 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *           (digits)  Mode  Cnt    _        Score   Error  Units
- * hex              1  avgt         _       21.791          ns/op
- * hex             10  avgt         _       28.969          ns/op
- * hex            100  avgt         _      132.085          ns/op
- * hex           1000  avgt         _     1136.079          ns/op
- * hex          10000  avgt         _    10960.841          ns/op
- * hex         100000  avgt         _   107655.529          ns/op
- * hex        1000000  avgt         _  1159378.097          ns/op
- * hex       10000000  avgt         _ 13527667.547          ns/op
- * hex      100000000  avgt         _136392967.149          ns/op
- * parDec           1  avgt         _        3.672          ns/op
- * parDec          10  avgt         _       14.365          ns/op
- * parDec         100  avgt         _      451.139          ns/op
- * parDec        1000  avgt         _     4822.375          ns/op
- * parDec       10000  avgt         _   110501.414          ns/op
- * parDec      100000  avgt         _  2868811.338          ns/op
- * parDec     1000000  avgt         _ 37864639.087          ns/op
- * parDec    10000000  avgt         _655854712.875          ns/op
- * parDec   100000000  avgt       10_396544430.000          ns/op
- * parDec   646456993  avgt      105_021966151.000          ns/op
- * parDec  1292782621  avgt      109_162700507.000          ns/op
- * seqDec           1  avgt         _        3.636          ns/op
- * seqDec          10  avgt         _       14.796          ns/op
- * seqDec         100  avgt         _      452.669          ns/op
- * seqDec        1000  avgt         _     5070.600          ns/op
- * seqDec       10000  avgt         _   171745.829          ns/op
- * seqDec      100000  avgt         _  5439038.952          ns/op
- * seqDec     1000000  avgt         _ 87288729.661          ns/op
- * seqDec    10000000  avgt        1_533647605.714          ns/op
- * seqDec   100000000  avgt       23_473318663.000          ns/op
- * seqDec   646456993  avgt      229_532516121.000          ns/op
- * seqDec  1292782621  avgt      228_312615257.000          ns/op
+ *        (digits)  Mode  Cnt     _        Score            Error  Units
+ * dec           1  avgt    4     _        3.880 ±          0.516  ns/op
+ * dec          10  avgt    4     _       13.327 ±          0.182  ns/op
+ * dec         100  avgt    4     _      431.815 ±         17.828  ns/op
+ * dec        1000  avgt    4     _     4723.527 ±        140.066  ns/op
+ * dec       10000  avgt    4     _   160260.630 ±       4473.628  ns/op
+ * dec      100000  avgt    4     _  5115129.545 ±      30648.873  ns/op
+ * dec     1000000  avgt    4     _ 84585203.925 ±    1717849.243  ns/op
+ * dec    10000000  avgt    4    1_322781727.969 ±   30016267.997  ns/op
+ * dec   100000000  avgt    4   22_319001493.000 ±  151861005.500  ns/op
+ * dec   646456993  avgt    4  203_270000609.750 ± 9549048639.338  ns/op
+ * dec  1292782621  avgt    4  209_153677323.500 ± 4978317262.414  ns/op
+ * hex           1  avgt    4     _       15.976 ±          1.003  ns/op
+ * hex          10  avgt    4     _       26.896 ±          0.218  ns/op
+ * hex         100  avgt    4     _      131.585 ±          0.756  ns/op
+ * hex        1000  avgt    4     _     1046.923 ±         24.097  ns/op
+ * hex       10000  avgt    4     _    10789.885 ±        184.191  ns/op
+ * hex      100000  avgt    4     _   113695.942 ±       3368.431  ns/op
+ * hex     1000000  avgt    4     _  1155096.199 ±      25860.593  ns/op
+ * hex    10000000  avgt    4     _ 13046375.887 ±     102391.425  ns/op
+ * hex   100000000  avgt    4     _130816711.539 ±     814238.405  ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -77,8 +66,8 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
         //,"-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 1)
-@Warmup(iterations = 1)
+@Measurement(iterations = 4)
+@Warmup(iterations = 4)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -86,17 +75,17 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
 
     @Param({
-            // "1"
-            // , "10"
-            // , "100"
-            // , "1000"
-            // , "10000"
-            // , "100000"
-            // , "1000000"
-            // , "10000000"
-            "100000000"
-            // , "646456993"
-            //    "1292782621"
+            "1"
+            , "10"
+            , "100"
+            , "1000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            , "100000000"
+            , "646456993"
+            , "1292782621"
 
     })
     public int digits;
@@ -112,12 +101,12 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
         decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
     }
 
-    /*
-        @Benchmark
+
+    @Benchmark
         public BigInteger hex() {
             return JavaBigIntegerParser.parseBigInteger(decLiteral, 16);
         }
-    */
+
     @Benchmark
     public BigInteger dec() {
         return JavaBigIntegerParser.parseBigInteger(decLiteral);

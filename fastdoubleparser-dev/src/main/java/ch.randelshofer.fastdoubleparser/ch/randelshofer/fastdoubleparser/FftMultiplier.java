@@ -306,7 +306,7 @@ class FftMultiplier {
         fft(a2, roots2);
     }
 
-    private static BigInteger fromFftVector(ComplexVector fftVec, int signum, int bitsPerFftPoint) {
+    static BigInteger fromFftVector(ComplexVector fftVec, int signum, int bitsPerFftPoint) {
         assert bitsPerFftPoint <= 25 : bitsPerFftPoint + " does not fit into an int with slack";
 
         int fftLen = (int) Math.min(fftVec.length, ((long) MAX_MAG_LENGTH * 32) / bitsPerFftPoint + 1);
@@ -318,17 +318,20 @@ class FftMultiplier {
         long carry = 0;
         int bitLength = mag.length * 8;
         int bitIdx = bitLength - bitsPerFftPoint;
+        int magComponent = 0;
+        int prevIdx = Math.min(Math.max(0, bitIdx >> 3), mag.length - 4);
         for (int part = 0; part <= 1; part++) {   // 0=real, 1=imaginary
             for (int fftIdx = 0; fftIdx < fftLen; fftIdx++) {
                 long fftElem = Math.round(fftVec.part(fftIdx, part)) + carry;
                 carry = fftElem >> bitsPerFftPoint;
 
                 int idx = Math.min(Math.max(0, bitIdx >> 3), mag.length - 4);
+                magComponent >>>= (prevIdx - idx) << 3;
                 int shift = bitPadding - bitIdx + (idx << 3);
-                int magComponent = FastDoubleSwar.readIntBE(mag, idx);
                 magComponent |= (fftElem & bitMask) << shift;
                 FastDoubleSwar.writeIntBE(mag, idx, magComponent);
 
+                prevIdx = idx;
                 bitIdx -= bitsPerFftPoint;
             }
         }
@@ -688,7 +691,6 @@ class FftMultiplier {
         assert bitsPerFftPoint <= 25 : bitsPerFftPoint + " does not fit into an int with slack";
 
         ComplexVector fftVec = new ComplexVector(fftLen);
-        int fftIdx = 0;
         if (mag.length < 4) {
             byte[] paddedMag = new byte[4];
             System.arraycopy(mag, 0, paddedMag, 4 - mag.length, mag.length);
@@ -701,9 +703,9 @@ class FftMultiplier {
         int bitMask = base - 1;
         int bitPadding = 32 - bitsPerFftPoint;
         int bitLength = mag.length * 8;
-        int bitIdx = bitLength - bitsPerFftPoint;
         int carry = 0;// when we subtract base from a digit, we need to carry one
-        for (; bitIdx > -bitsPerFftPoint; bitIdx -= bitsPerFftPoint) {
+        int fftIdx = 0;
+        for (int bitIdx = bitLength - bitsPerFftPoint; bitIdx > -bitsPerFftPoint; bitIdx -= bitsPerFftPoint) {
             int idx = Math.min(Math.max(0, bitIdx >> 3), mag.length - 4);
             int shift = bitPadding - bitIdx + (idx << 3);
             int fftPoint = (FastDoubleSwar.readIntBE(mag, idx) >>> shift) & bitMask;
@@ -711,7 +713,7 @@ class FftMultiplier {
             // "balance" the output digits so -base/2 < digit < base/2
             fftPoint += carry;
             carry = (halfBase - fftPoint) >>> 31;// if fftPoint>halfBase then carry:=1, else carry:=0
-            fftPoint -= carry * base;//if (carry != 0) then  fftPoint -= base;
+            fftPoint -= base & (-carry);//if (carry != 0) then  fftPoint -= base;
 
             fftVec.real(fftIdx, fftPoint);
             fftIdx++;
@@ -723,6 +725,7 @@ class FftMultiplier {
 
         return fftVec;
     }
+
 
     final static class ComplexVector {
         /**
