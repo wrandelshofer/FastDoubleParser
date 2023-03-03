@@ -110,7 +110,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // Parse exponent number
         // ---------------------
         int expNumber = 0;
-        if (ch == 'e' || ch == 'E') {
+        if ((ch | 0x20) == 'e') {// equals ignore case
             ch = charAt(str, ++index, endIndex);
             boolean isExponentNegative = ch == '-';
             if (isExponentNegative || ch == '+') {
@@ -304,7 +304,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // Parse exponent
         // --------------
         int expNumber = 0;
-        final boolean hasExponent = ch == 'p' || ch == 'P';
+        final boolean hasExponent = (ch | 0x20) == 'p';// equals ignore case;
         if (hasExponent) {
             ch = charAt(str, ++index, endIndex);
             boolean isExponentNegative = ch == '-';

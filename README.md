@@ -130,21 +130,21 @@ Most input lines look like this: `52.038048000000117`.
 
 |Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
 |---------------------------|------:|-----:|------:|--------:|--------:|--------|
-|java.lang.Double           |  80.33| 5.2 %|   4.62|   216.62|     1.00|20      |
-|java.lang.Float            |  94.04| 4.7 %|   5.40|   185.04|     1.00|20      |
-|java.math.BigDecimal       | 298.46|11.9 %|  17.15|    58.30|     1.00|20      |
-|JavaDoubleParser String    | 366.14|13.9 %|  21.04|    47.53|     4.56|20      |
-|JavaDoubleParser char[]    | 590.31| 4.8 %|  33.92|    29.48|     7.35|20      |
-|JavaDoubleParser byte[]    | 548.01|12.2 %|  31.49|    31.75|     6.82|20      |
-|JsonDoubleParser String    | 404.25|14.8 %|  23.23|    43.05|     5.03|20      |
-|JsonDoubleParser char[]    | 575.44| 3.5 %|  33.07|    30.24|     7.16|20      |
-|JsonDoubleParser byte[]    | 576.21| 3.2 %|  33.11|    30.20|     7.17|20      |
-|JavaFloatParser  String    | 342.41|14.5 %|  19.68|    50.82|     3.64|20      |
-|JavaFloatParser  char[]    | 576.07|16.1 %|  33.10|    30.21|     6.13|20      |
-|JavaFloatParser  byte[]    | 592.73|12.2 %|  34.06|    29.36|     6.30|20      |
-|JavaBigDecimalParser String| 420.41|15.4 %|  24.16|    41.39|     1.41|20      |
-|JavaBigDecimalParser char[]| 643.92|18.4 %|  37.00|    27.02|     2.16|20      |
-|JavaBigDecimalParser byte[]| 686.99| 5.8 %|  39.48|    25.33|     2.30|20      |
+|java.lang.Double           |  85.65| 6.0 %|   4.92|   203.18|     1.00|20      |
+|java.lang.Float            |  90.42| 4.3 %|   5.20|   192.45|     1.00|20      |
+|java.math.BigDecimal       | 300.85|12.9 %|  17.29|    57.84|     1.00|20      |
+|JavaDoubleParser String    | 369.51|13.4 %|  21.23|    47.09|     4.31|20      |
+|JavaDoubleParser char[]    | 549.31|15.3 %|  31.57|    31.68|     6.41|20      |
+|JavaDoubleParser byte[]    | 688.91| 3.0 %|  39.59|    25.26|     8.04|20      |
+|JsonDoubleParser String    | 385.61|14.8 %|  22.16|    45.13|     4.50|20      |
+|JsonDoubleParser char[]    | 571.06| 3.9 %|  32.82|    30.47|     6.67|20      |
+|JsonDoubleParser byte[]    | 700.08| 3.6 %|  40.23|    24.86|     8.17|20      |
+|JavaFloatParser  String    | 379.28|14.0 %|  21.80|    45.88|     4.19|20      |
+|JavaFloatParser  char[]    | 655.42| 4.9 %|  37.66|    26.55|     7.25|20      |
+|JavaFloatParser  byte[]    | 578.16|13.5 %|  33.23|    30.10|     6.39|20      |
+|JavaBigDecimalParser String| 406.57|15.5 %|  23.36|    42.80|     1.35|20      |
+|JavaBigDecimalParser char[]| 628.74|18.9 %|  36.13|    27.68|     2.09|20      |
+|JavaBigDecimalParser byte[]| 687.52| 5.9 %|  39.51|    25.31|     2.29|20      |
 
 ### The data file `mesh.txt`
 
@@ -152,21 +152,21 @@ This file contains input lines like `1749`, and `0.539081215858`.
 
 |Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
 |---------------------------|------:|-----:|------:|--------:|--------:|--------|
-|java.lang.Double           | 167.28|22.7 %|  22.79|    43.88|     1.00|20-ea   |
-|java.lang.Float            |  94.41|11.0 %|  12.86|    77.75|     1.00|20-ea   |
-|java.math.BigDecimal       | 181.11|24.2 %|  24.67|    40.53|     1.00|20-ea   |
-|JavaDoubleParser String    | 230.94|22.0 %|  31.46|    31.79|     1.38|20-ea   |
-|JavaDoubleParser char[]    | 330.35|23.2 %|  45.00|    22.22|     1.97|20-ea   |
-|JavaDoubleParser byte[]    | 353.26|20.2 %|  48.12|    20.78|     2.11|20-ea   |
-|JsonDoubleParser String    | 230.26|19.0 %|  31.37|    31.88|     1.38|20-ea   |
-|JsonDoubleParser char[]    | 321.63|23.1 %|  43.81|    22.82|     1.92|20-ea   |
-|JsonDoubleParser byte[]    | 374.07|24.2 %|  50.96|    19.62|     2.24|20-ea   |
-|JavaFloatParser  String    | 199.30|22.5 %|  27.15|    36.83|     2.11|20-ea   |
-|JavaFloatParser  char[]    | 245.89|33.6 %|  33.50|    29.85|     2.60|20-ea   |
-|JavaFloatParser  byte[]    | 287.94|33.6 %|  39.22|    25.49|     3.05|20-ea   |
-|JavaBigDecimalParser String| 211.58|36.2 %|  28.82|    34.70|     1.17|20-ea   |
-|JavaBigDecimalParser char[]| 319.68|39.6 %|  43.55|    22.96|     1.77|20-ea   |
-|JavaBigDecimalParser byte[]| 337.29|36.4 %|  45.95|    21.76|     1.86|20-ea   |
+|java.lang.Double           | 160.78|21.1 %|  21.90|    45.66|     1.00|20      |
+|java.lang.Float            |  83.57|15.8 %|  11.38|    87.84|     1.00|20      |
+|java.math.BigDecimal       | 167.68|25.0 %|  22.84|    43.78|     1.00|20      |
+|JavaDoubleParser String    | 224.29|28.1 %|  30.55|    32.73|     1.40|20      |
+|JavaDoubleParser char[]    | 332.82|38.2 %|  45.34|    22.06|     2.07|20      |
+|JavaDoubleParser byte[]    | 381.87|39.7 %|  52.02|    19.22|     2.38|20      |
+|JsonDoubleParser String    | 231.77|38.3 %|  31.57|    31.67|     1.44|20      |
+|JsonDoubleParser char[]    | 359.96|38.8 %|  49.04|    20.39|     2.24|20      |
+|JsonDoubleParser byte[]    | 415.99| 4.5 %|  56.67|    17.65|     2.59|20      |
+|JavaFloatParser  String    | 244.35|20.3 %|  33.29|    30.04|     2.92|20      |
+|JavaFloatParser  char[]    | 378.61| 4.4 %|  51.58|    19.39|     4.53|20      |
+|JavaFloatParser  byte[]    | 421.33|20.8 %|  57.40|    17.42|     5.04|20      |
+|JavaBigDecimalParser String| 296.23|21.6 %|  40.36|    24.78|     1.77|20      |
+|JavaBigDecimalParser char[]| 420.40|25.3 %|  57.27|    17.46|     2.51|20      |
+|JavaBigDecimalParser byte[]| 413.61| 3.9 %|  56.34|    17.75|     2.47|20      |
 
 ### The data file `canada_hex.txt`
 
@@ -175,14 +175,14 @@ Most input lines look like this: `-0x1.09219008205fcp6`.
 
 |Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
 |---------------------------|------:|-----:|------:|--------:|--------:|--------|
-|java.lang.Double           |  36.57| 2.4 %|   2.01|   498.71|     1.00|20      |
-|java.lang.Float            |  36.53| 2.4 %|   2.00|   499.29|     1.00|20      |
-|JavaDoubleParser String    | 314.91|11.1 %|  17.27|    57.92|     8.61|20      |
-|JavaDoubleParser char[]    | 450.63|15.9 %|  24.71|    40.47|    12.32|20      |
-|JavaDoubleParser byte[]    | 553.66|15.0 %|  30.36|    32.94|    15.14|20      |
-|JavaFloatParser  String    | 322.78|12.3 %|  17.70|    56.50|     8.84|20      |
-|JavaFloatParser  char[]    | 454.16|16.1 %|  24.90|    40.16|    12.43|20      |
-|JavaFloatParser  byte[]    | 561.10|16.1 %|  30.77|    32.50|    15.36|20      |
+|java.lang.Double           |  37.68| 5.2 %|   2.07|   484.07|     1.00|20      |
+|java.lang.Float            |  37.78| 4.4 %|   2.07|   482.70|     1.00|20      |
+|JavaDoubleParser String    | 394.05|14.3 %|  21.61|    46.28|    10.46|20      |
+|JavaDoubleParser char[]    | 563.86|16.1 %|  30.92|    32.35|    14.97|20      |
+|JavaDoubleParser byte[]    | 705.25| 2.7 %|  38.67|    25.86|    18.72|20      |
+|JavaFloatParser  String    | 399.74|14.8 %|  21.92|    45.62|    10.58|20      |
+|JavaFloatParser  char[]    | 601.32| 4.3 %|  32.97|    30.33|    15.91|20      |
+|JavaFloatParser  byte[]    | 571.88|12.4 %|  31.36|    31.89|    15.14|20      |
 
 ### Comparison with C version
 

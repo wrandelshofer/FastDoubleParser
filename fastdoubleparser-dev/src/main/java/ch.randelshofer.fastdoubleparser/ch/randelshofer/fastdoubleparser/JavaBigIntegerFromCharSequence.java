@@ -17,7 +17,11 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
      * The decimal representation of {@code 2^31 - 1} has 646,456,993 digits.
      */
     private static final int MAX_DECIMAL_DIGITS = 646_456_993;
-
+    /**
+     * The resulting value must fit into {@code 2^31 - 1} bits.
+     * The hexadecimal representation of {@code 2^31 - 1} has 536870912 digits.
+     */
+    private static final int MAX_HEX_DIGITS = 536870912;
 
     /**
      * Parses a {@code BigIntegerLiteral} as specified in {@link JavaBigIntegerParser}.
@@ -45,12 +49,12 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
             }
 
             switch (radix) {
-            case 10:
-                return parseDecDigits(str, index, endIndex, isNegative);
-            case 16:
-                return parseHexDigits(str, index, endIndex, isNegative);
-            default:
-                return new BigInteger(str.subSequence(offset, length).toString(), radix);
+                case 10:
+                    return parseDecDigits(str, index, endIndex, isNegative);
+                case 16:
+                    return parseHexDigits(str, index, endIndex, isNegative);
+                default:
+                    return new BigInteger(str.subSequence(offset, length).toString(), radix);
             }
         } catch (ArithmeticException e) {
             NumberFormatException nfe = new NumberFormatException(VALUE_EXCEEDS_LIMITS);
@@ -83,6 +87,9 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
         int numDigits = to - from;
         if (numDigits <= 0) {
             return BigInteger.ZERO;
+        }
+        if (numDigits > MAX_HEX_DIGITS) {
+            throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
         }
         byte[] bytes = new byte[((numDigits + 1) >> 1) + 1];
         int index = 1;

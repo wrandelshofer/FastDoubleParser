@@ -134,7 +134,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
             // Parse exponent number
             // ---------------------
             long expNumber = 0;
-            if (ch == 'e' || ch == 'E') {
+            if ((ch | 0x20) == 'e') {// equals ignore case
                 exponentIndicatorIndex = index;
                 ch = charAt(str, ++index, endIndex);
                 boolean isExponentNegative = ch == '-';
@@ -260,7 +260,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
         // Parse exponent number
         // ---------------------
         long expNumber = 0;
-        if (ch == 'e' || ch == 'E') {
+        if ((ch | 0x20) == 'e') {// equals ignore case
             exponentIndicatorIndex = index;
             ch = charAt(str, ++index, endIndex);
             boolean isExponentNegative = ch == '-';

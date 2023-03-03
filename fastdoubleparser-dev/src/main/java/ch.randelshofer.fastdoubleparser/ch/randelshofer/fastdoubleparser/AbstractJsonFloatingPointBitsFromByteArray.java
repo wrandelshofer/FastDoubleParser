@@ -107,7 +107,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
         // Parse exponent number
         // ---------------------
         int expNumber = 0;
-        if (ch == 'e' || ch == 'E') {
+        if ((ch | 0x20) == 'e') {// equals ignore case
             ch = charAt(str, ++index, endIndex);
             boolean isExponentNegative = ch == '-';
             if (isExponentNegative || ch == '+') {
