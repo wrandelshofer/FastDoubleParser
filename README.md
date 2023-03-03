@@ -11,7 +11,13 @@ The code in this project contains optimised versions for Java SE 1.8, 11, 17, 19
 The code is released in a single multi-release jar, which contains the code for all these versions
 except 20-ea.
 
-Usage:
+## License
+
+Everything except the content of the folder `supplemental_test_files` is MIT License.
+
+The the content of the folder `supplemental_test_files` is Apache 2.0 License.
+
+## Usage
 
 ```java
 module MyModule {
@@ -345,3 +351,28 @@ Code from the **-dev** module is located in the **generated source** and
 
 The Maven POM of a module contains **maven-resources-plugin** elements that copy code
 from the **-dev** module to the delta modules.
+
+## Testing the code
+
+Unfortunately it is not possible to test floating parsers exhaustively, because the input
+and output spaces are too big.
+
+| Parser               | Input Space                                                                                     | Output Space                                                                            |
+|----------------------|-------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| JavaDoubleParser     | 1 to 2<sup>31</sup>-1 chars<br>= 65536<sup>2<sup>31</sup></sup><br>= 2<sup>34,359,738,368</sup> | 64 bits<br>= 2<sup>64</sup>                                                             |
+| JavaFloatParser      | 1 to 2<sup>31</sup>-1 chars<br>= 2<sup>34,359,738,368</sup>                                     | 32 bits<br>= 2<sup>32</sup>                                                             |
+| JsonDoubleParser     | 1 to 2<sup>31</sup>-1 chars<br>= 2<sup>34,359,738,368</sup>                                     | 64 bits<br>= 2<sup>64</sup>                                                             |
+| JavaBigIntegerParser | 1 to 1,292,782,622 chars<br>= 65536<sup>1292782623</sup><br>= 2<sup>20,684,521,968</sup>        | 0 to 2<sup>31</sup> bits<br>= 2<sup>2<sup>31</sup></sup><br>= 2<sup>2,147,483,648</sup> |
+| JavaBigDecimalParser | 1 to 1,292,782,635 chars<br>= 65536<sup>1292782636</sup><br>= 2<sup>20,684,522,176</sup>        | 0 to 2<sup>31</sup> bit mantissa * 64 bit exponent<br>= 2<sup>12,884,901,888</sup>      |
+
+You can quickly run a number of hand-picked tests that aim for 100 % line coverage:
+
+```
+mvn -DenableLongRunningTests=true test
+```
+
+You can run additional tests with the following command.
+
+```
+mvn -DenableLongRunningTests=true test
+```

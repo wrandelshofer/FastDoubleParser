@@ -51,6 +51,7 @@ class ParseDigitsTaskCharSequence {
      */
     static BigInteger parseDigitsIterative(CharSequence str, int from, int to) {
         int numDigits = to - from;
+
         BigSignificand bigSignificand = new BigSignificand(FastIntegerMath.estimateNumBits(numDigits));
         int preroll = from + (numDigits & 7);
         int value = FastDoubleSwar.tryToParseUpTo7Digits(str, from, preroll);
@@ -73,14 +74,13 @@ class ParseDigitsTaskCharSequence {
     static BigInteger parseDigitsRecursive(CharSequence str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
         // Base case: All sequences of 18 or fewer digits fit into a long.
         int numDigits = to - from;
-        if (numDigits <= 18) {
-            return parseDigitsUpTo18(str, from, to);
-        }
+
+        // Base case: Short sequences can be parsed iteratively.
         if (numDigits <= RECURSION_THRESHOLD) {
             return parseDigitsIterative(str, from, to);
         }
 
-        // Recursion case: Sequences of more than 18 digits do not fit into a long.
+        // Recursion case: Split large sequences up into two parts. The lower part is a multiple of 16 digits.
         int mid = splitFloor16(from, to);
         BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
@@ -88,24 +88,5 @@ class ParseDigitsTaskCharSequence {
         //high = high.multiply(powersOfTen.get(to - mid));
         high = FftMultiplier.multiply(high, powersOfTen.get(to - mid));
         return low.add(high);
-    }
-
-    /**
-     * Parses up to 18 digits in exponential time O(e^n).
-     */
-    static BigInteger parseDigitsUpTo18(CharSequence str, int from, int to) {
-        int numDigits = to - from;
-        int preroll = from + (numDigits & 7);
-        long significand = FastDoubleSwar.tryToParseUpTo7Digits(str, from, preroll);
-        boolean success = significand >= 0;
-        for (from = preroll; from < to; from += 8) {
-            int result = FastDoubleSwar.tryToParseEightDigits(str, from);
-            success &= result >= 0;
-            significand = significand * 100_000_000L + result;
-        }
-        if (!success) {
-            throw new NumberFormatException(SYNTAX_ERROR);
-        }
-        return BigInteger.valueOf(significand);
     }
 }
