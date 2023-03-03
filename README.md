@@ -175,14 +175,14 @@ Most input lines look like this: `-0x1.09219008205fcp6`.
 
 |Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |
 |---------------------------|------:|-----:|------:|--------:|--------:|--------|
-|java.lang.Double           |  36.60| 7.1 %|   2.01|   498.35|     1.00|20      |
-|java.lang.Float            |  37.47| 5.0 %|   2.05|   486.78|     1.00|20      |
-|JavaDoubleParser String    | 387.82|11.9 %|  21.26|    47.03|    10.60|20      |
-|JavaDoubleParser char[]    | 535.71|10.9 %|  29.37|    34.04|    14.64|20      |
-|JavaDoubleParser byte[]    | 523.70| 9.4 %|  28.71|    34.83|    14.31|20      |
-|JavaFloatParser  String    | 404.32|12.4 %|  22.17|    45.11|    10.79|20      |
-|JavaFloatParser  char[]    | 531.39| 3.3 %|  29.14|    34.32|    14.18|20      |
-|JavaFloatParser  byte[]    | 519.60| 9.6 %|  28.49|    35.10|    13.87|20      |
+|java.lang.Double           |  36.57| 2.4 %|   2.01|   498.71|     1.00|20      |
+|java.lang.Float            |  36.53| 2.4 %|   2.00|   499.29|     1.00|20      |
+|JavaDoubleParser String    | 314.91|11.1 %|  17.27|    57.92|     8.61|20      |
+|JavaDoubleParser char[]    | 450.63|15.9 %|  24.71|    40.47|    12.32|20      |
+|JavaDoubleParser byte[]    | 553.66|15.0 %|  30.36|    32.94|    15.14|20      |
+|JavaFloatParser  String    | 322.78|12.3 %|  17.70|    56.50|     8.84|20      |
+|JavaFloatParser  char[]    | 454.16|16.1 %|  24.90|    40.16|    12.43|20      |
+|JavaFloatParser  byte[]    | 561.10|16.1 %|  30.77|    32.50|    15.36|20      |
 
 ### Comparison with C version
 

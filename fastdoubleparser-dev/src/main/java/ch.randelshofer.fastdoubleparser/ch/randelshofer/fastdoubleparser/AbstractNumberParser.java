@@ -4,6 +4,8 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import java.util.Arrays;
+
 abstract class AbstractNumberParser {
     /**
      * Message text for the {@link IllegalArgumentException} that is thrown
@@ -35,12 +37,10 @@ abstract class AbstractNumberParser {
      * Includes all non-negative values of a {@code byte}, so that we only have
      * to check for byte values {@literal <} 0 before accessing this array.
      */
-    static final byte[] CHAR_TO_HEX_MAP = new byte[128];
+    static final byte[] CHAR_TO_HEX_MAP = new byte[256];
 
     static {
-        for (char ch = 0; ch < CHAR_TO_HEX_MAP.length; ch++) {
-            CHAR_TO_HEX_MAP[ch] = OTHER_CLASS;
-        }
+        Arrays.fill(CHAR_TO_HEX_MAP, OTHER_CLASS);
         for (char ch = '0'; ch <= '9'; ch++) {
             CHAR_TO_HEX_MAP[ch] = (byte) (ch - '0');
         }
@@ -104,9 +104,7 @@ abstract class AbstractNumberParser {
      * @return the hex value or a value &lt; 0.
      */
     protected static int lookupHex(byte ch) {
-        // The branchy code is faster than the branch-less code.
-        // Branch-less code: return CHAR_TO_HEX_MAP[ch & 127] | (ch >> 31);
-        return ch > 0 ? CHAR_TO_HEX_MAP[ch] : -1;
+        return CHAR_TO_HEX_MAP[ch & 0xff];
     }
 
     /**
