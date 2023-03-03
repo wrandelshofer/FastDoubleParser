@@ -83,6 +83,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
+                /*
                 for (; index < endIndex - 4; index += 4) {
                     int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
@@ -90,7 +91,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
                     }
                     // This might overflow, we deal with it later.
                     significand = 10_000L * significand + digits;
-                }
+                }*/
             } else {
                 break;
             }
