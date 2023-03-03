@@ -231,12 +231,25 @@ on the same computer:
 
 # Building and running the code
 
+This project requires **at least** the items below to build it from source:
+
+- Maven 3.8.6
+- OpenJDK SE 20
+
+This project contains optimised code for various JDK versions.
+If you intend to assess the fitness and/or performance of this project for all supported
+JDKs, you **also need** to install the following items:
+
+- OpenJDK SE 8
+- OpenJDK SE 11
+- OpenJDK SE 17
+- OpenJDK SE 19
+
 When you clone the code repository from github. you can choose from the following branches:
 
 - `main` Aims to contain only working code.
 - `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
   that are included in Java 20.
-
 
 ## Command sequence with Java SE 20 on macOS:
 
