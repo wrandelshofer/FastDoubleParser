@@ -30,29 +30,29 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * (digits)  Mode  Cnt            _ Score            Error  Units
- * dec           1  avgt    4     _        3.895 ±          0.434  ns/op
- * dec          10  avgt    4     _       14.167 ±          6.323  ns/op
- * dec         100  avgt    4     _      423.402 ±         18.461  ns/op
- * dec        1000  avgt    4     _     4871.160 ±        234.454  ns/op
- * dec       10000  avgt    4     _   159159.396 ±       4277.295  ns/op
- * dec      100000  avgt    4     _  5095496.842 ±     128428.326  ns/op
- * dec     1000000  avgt    4     _ 83316446.206 ±    2572808.486  ns/op
- * dec    10000000  avgt    4    1_337268796.438 ±  122864907.274  ns/op
- * dec   100000000  avgt    4   22_335176215.000 ±  967941880.037  ns/op
- * dec   646456993  avgt       201_927131337.000                   ns/op
- * dec  1292782621  avgt    4  198_901668791.500 ± 4310147258.136  ns/op
- * hex           1  avgt    4     _       15.576 ±          0.693  ns/op
- * hex          10  avgt    4     _       27.551 ±          9.898  ns/op
- * hex         100  avgt    4     _      121.339 ±          7.258  ns/op
- * hex        1000  avgt    4     _     1043.819 ±         28.706  ns/op
- * hex       10000  avgt    4     _    10741.632 ±        258.920  ns/op
- * hex      100000  avgt    4     _   112710.224 ±       2946.230  ns/op
- * hex     1000000  avgt    4     _  1145607.433 ±      37200.668  ns/op
- * hex    10000000  avgt    4     _ 12940545.545 ±     182941.922  ns/op
- * hex   100000000  avgt    4     _133010989.979 ±   9262778.811  ns/op
- * hex   646456993  avgt    4     _786577513.250 ±  86855481.927  ns/op
- * hex  1292782621  avgt    4     _881336008.671 ± 248831282.555  ns/op
+ *        (digits)  Mode  Cnt     _        Score             Error  Units
+ * dec           1  avgt    4     _        3.895 ±           0.051  ns/op
+ * dec          10  avgt    4     _       13.073 ±           1.012  ns/op
+ * dec         100  avgt    4     _      417.791 ±           7.421  ns/op
+ * dec        1000  avgt    4     _     4713.890 ±          95.678  ns/op
+ * dec       10000  avgt    4     _   159283.207 ±        5076.778  ns/op
+ * dec      100000  avgt    4     _  5148743.967 ±      269250.312  ns/op
+ * dec     1000000  avgt    4     _ 82326733.043 ±      988263.342  ns/op
+ * dec    10000000  avgt    4    1_359363201.768 ±   306440228.295  ns/op
+ * dec   100000000  avgt    4   22_241605723.500 ±  1486815357.018  ns/op
+ * dec   646456993  avgt    4  202_298930337.000 ± 10730148276.875  ns/op
+ * dec  1292782621  avgt    4  197_858301116.000 ±  5372926664.595  ns/op
+ * hex           1  avgt    4     _       15.576 ±           0.693  ns/op
+ * hex          10  avgt    4     _       27.551 ±           9.898  ns/op
+ * hex         100  avgt    4     _      121.339 ±           7.258  ns/op
+ * hex        1000  avgt    4     _     1043.819 ±          28.706  ns/op
+ * hex       10000  avgt    4     _    10741.632 ±         258.920  ns/op
+ * hex      100000  avgt    4     _   112710.224 ±        2946.230  ns/op
+ * hex     1000000  avgt    4     _  1145607.433 ±       37200.668  ns/op
+ * hex    10000000  avgt    4     _ 12940545.545 ±      182941.922  ns/op
+ * hex   100000000  avgt    4     _133010989.979 ±     9262778.811  ns/op
+ * hex   646456993  avgt    4     _786577513.250 ±    86855481.927  ns/op
+ * hex  1292782621  avgt    4     _881336008.671 ±   248831282.555  ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -107,7 +107,6 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
 
         hexLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
     }
-
 
     @Benchmark
     public BigInteger hex() {

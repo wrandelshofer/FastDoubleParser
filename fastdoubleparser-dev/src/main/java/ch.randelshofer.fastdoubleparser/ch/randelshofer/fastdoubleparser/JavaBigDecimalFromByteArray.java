@@ -12,7 +12,6 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.RECURSION_THRESHOLD;
-import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.parseDigits;
 
 
 /**
@@ -298,27 +297,57 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
         );
     }
 
-
+    /**
+     * Parses a big decimal string after we have identified the parts of the significand,
+     * and after we have obtained the exponent value.
+     * <pre>
+     *       integerPartIndex
+     *       │  decimalPointIndex
+     *       │  │  nonZeroFractionalPartIndex
+     *       │  │  │  exponentIndicatorIndex
+     *       ↓  ↓  ↓  ↓
+     *     "-123.00456e-789"
+     *
+     * </pre>
+     *
+     * @param str                        the input string
+     * @param integerPartIndex           the start index of the integer part of the significand
+     * @param decimalPointIndex          the index of the decimal point in the significand (same as exponentIndicatorIndex
+     *                                   if there is no decimal point)
+     * @param nonZeroFractionalPartIndex the start index of the non-zero fractional part of the significand
+     * @param exponentIndicatorIndex     the index of the exponent indicator (same as end of string if there is no
+     *                                   exponent indicator)
+     * @param isNegative                 indicates that the significand is negative
+     * @param exponent                   the exponent value
+     * @return the parsed big decimal
+     */
     private BigDecimal valueOfBigDecimalString(byte[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
         int fractionDigitsCount = exponentIndicatorIndex - decimalPointIndex - 1;
         int nonZeroFractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
         int integerDigitsCount = decimalPointIndex - integerPartIndex;
         NavigableMap<Integer, BigInteger> powersOfTen = null;
 
+        // Parse the significand
+        // ---------------------
+        BigInteger significand;
+
+        // If there is an integer part, we parse it using a recursive algorithm.
+        // The recursive algorithm needs a map with powers of ten, if we have more than RECURSION_THRESHOLD digits.
         BigInteger integerPart;
         if (integerDigitsCount > 0) {
             if (integerDigitsCount > RECURSION_THRESHOLD) {
                 powersOfTen = createPowersOfTenFloor16Map();
                 fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
-                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, powersOfTen);
+                integerPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen);
             } else {
-                integerPart = parseDigits(str, integerPartIndex, decimalPointIndex, null);
+                integerPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, null);
             }
         } else {
             integerPart = BigInteger.ZERO;
         }
 
-        BigInteger significand;
+        // If there is a fraction part, we parse it using a recursive algorithm.
+        // The recursive algorithm needs a map with powers of ten, if we have more than RECURSION_THRESHOLD digits.
         if (fractionDigitsCount > 0) {
             BigInteger fractionalPart;
             if (nonZeroFractionDigitsCount > RECURSION_THRESHOLD) {
@@ -326,10 +355,11 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
                 fillPowersOfNFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex);
-                fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen);
+                fractionalPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen);
             } else {
-                fractionalPart = parseDigits(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, null);
+                fractionalPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, null);
             }
+            // If the integer part is not 0, we combine it with the fraction part.
             if (integerPart.signum() == 0) {
                 significand = fractionalPart;
             } else {
@@ -340,8 +370,8 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
             significand = integerPart;
         }
 
-        BigDecimal result = new BigDecimal(significand, -exponent);
-        return isNegative ? result.negate() : result;
+        // Combine the significand with the sign and the exponent
+        // ------------------------------------------------------
+        return new BigDecimal(isNegative ? significand.negate() : significand, -exponent);
     }
-
 }

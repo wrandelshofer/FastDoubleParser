@@ -7,9 +7,9 @@ This is a Java port of Daniel Lemire's [fast_float](https://github.com/fastfloat
 This project provides parsers for `double`, `float`, `BigDecimal` and `BigInteger` values.
 The parsers are optimised for speed for the most common inputs.
 
-The code in this project contains optimised versions for Java SE 1.8, 11, 17, 19 and 20-ea.
+The code in this project contains optimised versions for Java SE 1.8, 11, 17, 19 and 20.
 The code is released in a single multi-release jar, which contains the code for all these versions
-except 20-ea.
+except 20.
 
 ## License
 
@@ -33,19 +33,19 @@ import ch.randelshofer.fastdoubleparser.JavaBigIntegerParser;
 import ch.randelshofer.fastdoubleparser.JsonDoubleParser;
 
 class MyMain {
-  public static void main(String... args) {
-    double d = JavaDoubleParser.parseDouble("1.2345e135");
-    float f = JavaFloatParser.parseFloat("1.2345f");
-      BigDecimal bd = JavaBigDecimalParser.parseBigDecimal("1.2345");
-      BigInteger bi = JavaBigIntegerParser.parseBigInteger("12345");
-      double jsonD = JsonDoubleParser.parseDouble("1.2345e85");
-  }
+    public static void main(String... args) {
+        double d = JavaDoubleParser.parseDouble("1.2345e135");
+        float f = JavaFloatParser.parseFloat("1.2345f");
+        BigDecimal bd = JavaBigDecimalParser.parseBigDecimal("1.2345");
+        BigInteger bi = JavaBigIntegerParser.parseBigInteger("12345");
+        double jsonD = JsonDoubleParser.parseDouble("1.2345e85");
+    }
 }
 ```
 
-The `parse...()`-methods take a `CharacterSequence`. a `char`-array or a `byte`-array as argument. This way. you can
+The `parse...()`-methods take a `CharacterSequence`. a `char`-array or a `byte`-array as argument. This way, you can
 parse from a `StringBuffer` or an array without having to convert your input to a `String`. Parsing from an array is
-faster. because the parser can process multiple characters at once using SIMD instructions.
+faster, because the parser can process multiple characters at once using SIMD instructions.
 
 ## Performance Tuning
 
@@ -85,7 +85,7 @@ using a divide-and-conquer algorithm. Small sequences of digits are converted
 individually to bit sequences and then gradually combined to the final bit sequence.
 This algorithm needs to perform multiplications of very long bit sequences.
 The multiplications are performed in the frequency domain using a discrete fourier transform.
-The multiplications in the frequency domain can be performed in `O(Nlog N (log log N))` time,
+The multiplications in the frequency domain can be performed in `O(N log N (log log N))` time,
 where `N` is the number of digits.
 In contrast, conventional multiplication algorithms in the time domain need `O(N²)` time.
 
@@ -206,34 +206,34 @@ on the same computer:
     model: generate random numbers uniformly in the interval [0.0.1.0]
     volume: 100000 floats
     volume = 2.09808 MB 
-    netlib                                  :   317.31 MB/s (+/- 6.0 %)    15.12 Mfloat/s      66.12 ns/f 
-    doubleconversion                        :   263.89 MB/s (+/- 4.2 %)    12.58 Mfloat/s      79.51 ns/f 
-    strtod                                  :    86.13 MB/s (+/- 3.7 %)     4.10 Mfloat/s     243.61 ns/f 
-    abseil                                  :   467.27 MB/s (+/- 9.0 %)    22.27 Mfloat/s      44.90 ns/f 
-    fastfloat                               :   880.79 MB/s (+/- 6.6 %)    41.98 Mfloat/s      23.82 ns/f 
+    netlib                      :   317.31 MB/s (+/- 6.0 %)    15.12 Mfloat/s      66.12 ns/f 
+    doubleconversion            :   263.89 MB/s (+/- 4.2 %)    12.58 Mfloat/s      79.51 ns/f 
+    strtod                      :    86.13 MB/s (+/- 3.7 %)     4.10 Mfloat/s     243.61 ns/f 
+    abseil                      :   467.27 MB/s (+/- 9.0 %)    22.27 Mfloat/s      44.90 ns/f 
+    fastfloat                   :   880.79 MB/s (+/- 6.6 %)    41.98 Mfloat/s      23.82 ns/f 
 
-    OpenJDK 20-ea+22-1594
-    java.lang.Double                        :    89.59 MB/s (+/- 6.0 %)     5.14 Mfloat/s     194.44 ns/f
-    JavaDoubleParser String                 :   485.97 MB/s (+/-13.8 %)    27.90 Mfloat/s      35.85 ns/f
-    JavaDoubleParser char[]                 :   562.55 MB/s (+/-10.0 %)    32.29 Mfloat/s      30.97 ns/f
-    JavaDoubleParser byte[]                 :   644.65 MB/s (+/- 8.7 %)    37.01 Mfloat/s      27.02 ns/f
+    OpenJDK 20+36-2344
+    java.lang.Double            :    93.97 MB/s (+/- 5.0 %)     5.39 Mfloat/s     185.43 ns/f     1.00 speedup
+    JavaDoubleParser String     :   534.52 MB/s (+/-11.2 %)    30.67 Mfloat/s      32.60 ns/f     5.69 speedup
+    JavaDoubleParser char[]     :   620.86 MB/s (+/- 9.9 %)    35.63 Mfloat/s      28.07 ns/f     6.61 speedup
+    JavaDoubleParser byte[]     :   724.91 MB/s (+/- 5.7 %)    41.60 Mfloat/s      24.04 ns/f     7.71 speedup
 
 '
 
     $ ./build/benchmarks/benchmark -f data/canada.txt
     # read 111126 lines 
     volume = 1.93374 MB 
-    netlib                                  :   337.79 MB/s (+/- 5.8 %)    19.41 Mfloat/s      51.52 ns/f 
-    doubleconversion                        :   254.22 MB/s (+/- 6.0 %)    14.61 Mfloat/s      68.45 ns/f 
-    strtod                                  :    73.33 MB/s (+/- 7.1 %)     4.21 Mfloat/s     237.31 ns/f 
-    abseil                                  :   411.11 MB/s (+/- 7.3 %)    23.63 Mfloat/s      42.33 ns/f 
-    fastfloat                               :   741.32 MB/s (+/- 5.3 %)    42.60 Mfloat/s      23.47 ns/f 
+    netlib                      :   337.79 MB/s (+/- 5.8 %)    19.41 Mfloat/s      51.52 ns/f 
+    doubleconversion            :   254.22 MB/s (+/- 6.0 %)    14.61 Mfloat/s      68.45 ns/f 
+    strtod                      :    73.33 MB/s (+/- 7.1 %)     4.21 Mfloat/s     237.31 ns/f 
+    abseil                      :   411.11 MB/s (+/- 7.3 %)    23.63 Mfloat/s      42.33 ns/f 
+    fastfloat                   :   741.32 MB/s (+/- 5.3 %)    42.60 Mfloat/s      23.47 ns/f 
 
-    OpenJDK 20-ea+29-2280
-    java.lang.Double            :    77.84 MB/s (+/- 4.1 %)     4.47 Mfloat/s     223.54 ns/f     1.00 speedup
-    JavaDoubleParser String     :   329.79 MB/s (+/-13.4 %)    18.95 Mfloat/s      52.77 ns/f     4.24 speedup
-    JavaDoubleParser char[]     :   521.30 MB/s (+/-15.2 %)    29.96 Mfloat/s      33.38 ns/f     6.70 speedup
-    JavaDoubleParser byte[]     :   560.48 MB/s (+/-12.7 %)    32.21 Mfloat/s      31.05 ns/f     7.20 speedup
+    OpenJDK 20+36-2344
+    java.lang.Double            :    82.56 MB/s (+/- 4.4 %)     4.74 Mfloat/s     210.76 ns/f     1.00 speedup
+    JavaDoubleParser String     :   366.27 MB/s (+/- 9.7 %)    21.05 Mfloat/s      47.51 ns/f     4.44 speedup
+    JavaDoubleParser char[]     :   571.76 MB/s (+/-11.4 %)    32.86 Mfloat/s      30.43 ns/f     6.93 speedup
+    JavaDoubleParser byte[]     :   622.03 MB/s (+/- 7.5 %)    35.75 Mfloat/s      27.98 ns/f     7.53 speedup
 
 # Building and running the code
 
@@ -299,6 +299,8 @@ java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/targe
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_281.jdk/Contents/Home
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 ```
 
 ## IntelliJ IDEA with Java SE 8, 11, 17, 19 and 20 on macOS
@@ -355,7 +357,7 @@ from the **-dev** module to the delta modules.
 ## Testing the code
 
 Unfortunately it is not possible to test floating parsers exhaustively, because the input
-and output spaces are too big.
+and output spaces are far too big.
 
 | Parser               | Input Space                                                                                     | Output Space                                                                            |
 |----------------------|-------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
@@ -371,7 +373,8 @@ You can quickly run a number of hand-picked tests that aim for 100 % line covera
 mvn -DenableLongRunningTests=true test
 ```
 
-You can run additional tests with the following command.
+You can run additional tests with the following command. The purpose of these tests is to explore additional
+regions of the input and output spaces.
 
 ```
 mvn -DenableLongRunningTests=true test

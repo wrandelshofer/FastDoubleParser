@@ -36,17 +36,8 @@ class ParseDigitsTaskByteArray {
      */
     public static final int RECURSION_THRESHOLD = 400;
 
-    static BigInteger parseDigits(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
-        int numDigits = to - from;
-        if (numDigits < RECURSION_THRESHOLD) {
-            return parseDigitsIterative(str, from, to);
-        } else {
-            return parseDigitsRecursive(str, from, to, powersOfTen);
-        }
-    }
-
     /**
-     * Parses digits in exponential time O(e^n).
+     * Parses digits in quadratic time O(N<sup>2</sup>).
      */
     static BigInteger parseDigitsIterative(byte[] str, int from, int to) {
         int numDigits = to - from;
@@ -68,7 +59,11 @@ class ParseDigitsTaskByteArray {
     }
 
     /**
-     * Parses digits in exponential time O(e^n).
+     * Parses digits in O(N log N (log log N)) time.
+     * <p>
+     * A conventional recursive algorithm would require O(N<sup>1.5</sup>).
+     * We achieve better performance by performing multiplications of long bit sequences
+     * in the frequencey domain.
      */
     static BigInteger parseDigitsRecursive(byte[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
         int numDigits = to - from;

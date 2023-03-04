@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import java.util.Map;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOf10Floor16;
-import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharSequence.parseDigits;
 
 class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
     public final static int MAX_INPUT_LENGTH = 1_292_782_622;
@@ -128,7 +127,7 @@ class JavaBigIntegerFromCharSequence extends AbstractNumberParser {
             throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
         }
         Map<Integer, BigInteger> powersOfTen = fillPowersOf10Floor16(from, to);
-        BigInteger result = parseDigits(str, from, to, powersOfTen);
+        BigInteger result = ParseDigitsTaskCharSequence.parseDigitsRecursive(str, from, to, powersOfTen);
         return isNegative ? result.negate() : result;
     }
 
