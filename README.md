@@ -15,13 +15,21 @@ except 20.
 
 Everything except the content of the folder `supplemental_test_files` is MIT License.
 
-The the content of the folder `supplemental_test_files` is Apache 2.0 License.
+The content of the folder `supplemental_test_files` is Apache 2.0 License.
+
+Alternatively, you can license this project under the Apache 2.0 License. Please, do the following:
+
+- copy source files from this project into your project - as needed
+- replace the file headers with the file headers of your project.
+- Insert a comment in the file, that states that the file originates from
+  FastDoubleParser, Copyright © Werner Randelshofer, Switzerland, Apache 2.0 License.
+- Include a copy of the Apache 2.0 License in your distribution, as required by its license terms.
 
 ## Usage
 
 ```java
 module MyModule {
-  requires ch.randelshofer.fastdoubleparser;
+    requires ch.randelshofer.fastdoubleparser;
 }
 ```
 
