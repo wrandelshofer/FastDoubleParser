@@ -14,7 +14,7 @@
   <licenses>
     <license>
       <name>MIT License</name>
-      <url>https://opensource.org/licenses/MIT</url>
+      <url>${license.url}</url>
     </license>
   </licenses>
   <url>https://github.com/wrandelshofer/fastdoubleparser</url>
@@ -29,7 +29,7 @@
   <description>The parent project of the fastdoubleparser library.</description>
   <developers>
     <developer>
-      <id>wrandelshoer</id>
+      <id>wrandelshofer</id>
       <name>Werner Randelshofer</name>
       <email>werner.randelshofer@bluewin.ch</email>
       <organization>Werner Randelshofer</organization>
@@ -60,9 +60,13 @@
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
     <revision>0.8.0</revision>
+    <license.url>
+      https://github.com/wrandelshofer/FastDoubleParser/blob/9a3ccae38254c9bf84b5e6a218a47675bf80ed9f/LICENSE
+    </license.url>
   </properties>
 
   <build>
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -83,7 +87,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.10.1</version>
+          <version>3.11.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -218,6 +222,7 @@
               <SCM-URL>${project.scm.url}</SCM-URL>
               <Git-Commit-Time>${git.commit.time}</Git-Commit-Time>
               <Git-Commit-Id>${git.commit.id.full}</Git-Commit-Id>
+              <Bundle-License>MIT; link=${license.url}</Bundle-License>
             </manifestEntries>
             <addMavenDescriptor>false</addMavenDescriptor>
           </archive>
@@ -227,7 +232,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-license-file</id>
+            <id>copy-license-file-to-sources</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -236,7 +241,25 @@
               <outputDirectory>${project.build.directory}/generated-sources/java/META-INF</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/..</directory>
+                  <directory>..</directory>
+                  <includes>
+                    <include>LICENSE</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-license-file-to-classes</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>..</directory>
                   <includes>
                     <include>LICENSE</include>
                   </includes>
@@ -246,7 +269,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -280,7 +302,7 @@
         <configuration>
           <windowtitle>fastdoubleparser ${project.version}</windowtitle>
           <header>fastdoubleparser ${project.version}</header>
-          <bottom>Copyright © 2022 Werner Randelshofer, Switzerland. MIT License.</bottom>
+          <bottom>Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.</bottom>
           <charset>UTF-8</charset>
           <docencoding>UTF-8</docencoding>
           <encoding>UTF-8</encoding>

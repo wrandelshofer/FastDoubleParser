@@ -14,6 +14,12 @@
       <binaries>
         <unpack>true</unpack>
         <includeDependencies>false</includeDependencies>
+        <unpackOptions>
+          <includes>
+            <include>**/*.class</include>
+            <include>**/LICENSE</include>
+          </includes>
+        </unpackOptions>
       </binaries>
     </moduleSet>
     <moduleSet>
@@ -30,6 +36,7 @@
             <include>**/BigSignificand*.class</include>
             <include>**/FastDoubleSwar*.class</include>
             <include>**/FastIntegerMath*.class</include>
+            <include>module-info.class</include>
           </includes>
         </unpackOptions>
       </binaries>
@@ -47,6 +54,7 @@
           <includes>
             <include>**/FastDoubleSwar*.class</include>
             <include>**/FastIntegerMath*.class</include>
+            <include>module-info.class</include>
           </includes>
         </unpackOptions>
       </binaries>
@@ -64,6 +72,7 @@
           <includes>
             <include>**/FastDoubleSwar*.class</include>
             <include>**/FastIntegerMath*.class</include>
+            <include>module-info.class</include>
           </includes>
         </unpackOptions>
       </binaries>
