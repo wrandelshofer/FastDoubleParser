@@ -84,7 +84,9 @@ public class ParseSignificandWithSwarTest {
      * <p>
      * References:
      * <dl>
-     *     <dt>Eichenherz,  Attempt at creating a fast float parser #22 </dt>
+     *     <dt>Eichenherz,  Attempt at creating a fast float parser #22.
+     *     <a href="https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE">Apache License 2.0</a>.</dt>
+     *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
      *     <dd><a href="https://github.com/lemire/fast_double_parser/issues/22">github/fast_double_parser</a></dd>
      *     <dd><a href="https://gist.github.com/Eichenherz/657b1d794325310f8eafa5af6375f673">gist.github</a></dd>
      * </dl>
