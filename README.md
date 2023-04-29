@@ -18,8 +18,9 @@ Everything except the content of the folder `supplemental_test_files` is MIT Lic
 The content of the folder `supplemental_test_files` is Apache 2.0 License.
 
 Alternatively, you can license this project under the Apache 2.0 License. In this case, you do not need to
-include the MIT License with your project. Make sure that you change the copyright notice in the source files
-accordingly. So that it is immediately clear under which license you use the code. For example:
+include the MIT License with your project.
+If you copy the source files, make sure that you change the copyright notice in the source files accordingly.
+So that it is immediately clear under which license you use the code. For example:
 
 - Replace the file headers with the file headers of your project.
 - Insert a comment in the file, that states that the file originates from
