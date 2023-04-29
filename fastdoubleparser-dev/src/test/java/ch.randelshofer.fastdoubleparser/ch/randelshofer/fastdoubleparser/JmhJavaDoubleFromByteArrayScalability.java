@@ -4,18 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Fork;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.annotations.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +13,26 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 
 /**
  * Benchmarks for selected floating point strings.
+ * <pre>
+ # JMH version:1.36
+ # VM version: JDK 21-ea, OpenJDK 64-Bit Server VM, 21-ea+20-1677
+ * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+ *
+ * In this benchmark we use a slow path that takes advantage of https://bugs.openjdk.org/browse/JDK-8205592
+ * However, we do not yet limit the number of significand digits that we pass to the BigDecimalParser.
+ * Therfore all performance numbers beyond 768 significand digits are bad.
+ *
+ *    (digits)  Mode  Cnt         Score   Error  Units
+ * Benchmark                                (digits)  Mode  Cnt            Score   Error  Units
+ * JmhJavaDoubleFromByteArrayScalability.m         1  avgt    2            8.277          ns/op
+ * JmhJavaDoubleFromByteArrayScalability.m        10  avgt    2           13.895          ns/op
+ * JmhJavaDoubleFromByteArrayScalability.m       100  avgt    2          111.082          ns/op
+ * JmhJavaDoubleFromByteArrayScalability.m      1000  avgt    2        35081.468          ns/op
+ * JmhJavaDoubleFromByteArrayScalability.m     10000  avgt    2       860002.968          ns/op
+ * JmhJavaDoubleFromByteArrayScalability.m    100000  avgt    2     21702647.901          ns/op
+ * JmhJavaDoubleFromByteArrayScalability.m   1000000  avgt    2    601357744.000          ns/op
+ * JmhJavaDoubleFromByteArrayScalability.m  10000000  avgt    2  19482614272.000          ns/op
+ * </pre>
  * <pre>
  # JMH version: 1.35
  # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+27-2213

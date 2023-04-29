@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
   <name>fastdoubleparser-dev</name>
   <properties>
-    <javaVersion>20</javaVersion>
+    <javaVersion>21</javaVersion>
     <maven.install.skip>true</maven.install.skip>
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <maven.deploy.skip>true</maven.deploy.skip>
@@ -32,9 +32,12 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <argLine>-Xmx24g --enable-preview</argLine>
+            <argLine>--enable-preview --add-modules jdk.incubator.vector -Xmx20g</argLine>
+            <parallel>classesAndMethods</parallel>
+            <forkCount>4</forkCount>
           </configuration>
         </plugin>
       </plugins>

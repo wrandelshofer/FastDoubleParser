@@ -39,7 +39,12 @@ final class JavaDoubleBitsFromByteArray extends AbstractJavaFloatingPointBitsFro
                              int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-        return Double.doubleToRawLongBits(Double.isNaN(d) ? Double.parseDouble(new String(str, startIndex, endIndex - startIndex, StandardCharsets.ISO_8859_1)) : d);
+        return Double.doubleToRawLongBits(Double.isNaN(d)
+                // FIXME Only pass up to 764 significand digits to the BigDecimalParser
+                // new JavaBigDecimalFromByteArray().valueOfBigDecimalString(str,integerPartIndex,decimalPointIndex,nonZeroFractionalPartIndex,exponentIndicatorIndex,isNegative,exponent).doubleValue()
+
+                ? new JavaBigDecimalFromByteArray().parseBigDecimalString(str, startIndex, endIndex - startIndex).doubleValue()
+                : d);
     }
 
     @Override

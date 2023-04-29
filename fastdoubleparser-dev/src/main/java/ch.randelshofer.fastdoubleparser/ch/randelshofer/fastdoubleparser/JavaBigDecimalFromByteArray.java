@@ -8,9 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.RECURSION_THRESHOLD;
 
 
@@ -321,7 +319,7 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
      * @param exponent                   the exponent value
      * @return the parsed big decimal
      */
-    private BigDecimal valueOfBigDecimalString(byte[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
+    BigDecimal valueOfBigDecimalString(byte[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
         int fractionDigitsCount = exponentIndicatorIndex - decimalPointIndex - 1;
         int nonZeroFractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
         int integerDigitsCount = decimalPointIndex - integerPartIndex;
