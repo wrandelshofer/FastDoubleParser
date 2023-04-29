@@ -17,7 +17,7 @@
         <unpackOptions>
           <includes>
             <include>**/*.class</include>
-            <include>**/LICENSE</include>
+            <include>**/*LICENSE</include>
           </includes>
         </unpackOptions>
       </binaries>

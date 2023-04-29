@@ -243,7 +243,7 @@
                 <resource>
                   <directory>..</directory>
                   <includes>
-                    <include>LICENSE</include>
+                    <include>*LICENSE</include>
                   </includes>
                 </resource>
               </resources>
@@ -261,7 +261,7 @@
                 <resource>
                   <directory>..</directory>
                   <includes>
-                    <include>LICENSE</include>
+                    <include>*LICENSE</include>
                   </includes>
                 </resource>
               </resources>

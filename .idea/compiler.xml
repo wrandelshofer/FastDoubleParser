@@ -64,16 +64,16 @@
       <module name="fastdoubleparser-java17" options="" />
       <module name="fastdoubleparser-java19" options="" />
       <module name="fastdoubleparser-java8" options="" />
-      <module name="fastdoubleparserdemo" options="-Xlint:all" />
+      <module name="fastdoubleparserdemo" options="" />
       <module name="fastdoubleparserdemo-Java11" options="" />
       <module name="fastdoubleparserdemo-Java17" options="" />
       <module name="fastdoubleparserdemo-Java19" options="" />
       <module name="fastdoubleparserdemo-Java8" options="" />
       <module name="fastdoubleparserdemo-dev" options="" />
-      <module name="fastdoubleparserdemo-java11" options="-Xlint:all" />
-      <module name="fastdoubleparserdemo-java17" options="-Xlint:all" />
-      <module name="fastdoubleparserdemo-java19" options="-Xlint:all" />
-      <module name="fastdoubleparserdemo-java8" options="-Xlint:all" />
+      <module name="fastdoubleparserdemo-java11" options="" />
+      <module name="fastdoubleparserdemo-java17" options="" />
+      <module name="fastdoubleparserdemo-java19" options="" />
+      <module name="fastdoubleparserdemo-java8" options="" />
     </option>
   </component>
 </project>
