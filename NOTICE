@@ -1,0 +1,30 @@
+# FastDoubleParser
+
+This is a Java port of Daniel Lemire's fast_float project.
+This project provides parsers for double, float, BigDecimal and BigInteger values.
+
+## Copyright
+
+Copyright © 2023 Werner Randelshofer, Switzerland.
+
+## Licensing
+
+This code is licensed under MIT License.
+https://github.com/wrandelshofer/FastDoubleParser/blob/522be16e145f43308c43b23094e31d5efcaa580e/LICENSE
+
+Some portions of the code have been derived from other projects.
+These projects require that we include their copyright notice and permission notice in all copies or
+substantial portions of derived software.
+
+fast_double_parser, Copyright (c) 2022 Daniel Lemire. Apache 2.0 License.
+https://github.com/fastfloat/fast_float
+https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-APACHE
+
+fast_float, Copyright (c) 2021 The fast_float authors. Apache 2.0 License.
+https://github.com/fastfloat/fast_float
+https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE
+
+bigint, Copyright 2020 Tim Buktu. 2-clause BSD License.
+https://github.com/tbuktu/bigint/tree/floatfft
+https://github.com/tbuktu/bigint/blob/617c8cd8a7c5e4fb4d919c6a4d11e2586107f029/LICENSE
+(We only use those portions of the bigint project that can be licensed under 2-clause BSD License.)

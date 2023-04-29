@@ -15,7 +15,10 @@ import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
  * This code is based on {@code bigint} by Timothy Buktu.
  * <p>
  * References:
- * <dt>bigint, Copyright 2013 Timothy Buktu, 2-Clause BSD License.
+ * <dl>
+ * <dt>bigint, Copyright 2013 Timothy Buktu, 2-clause BSD License.<br>
+ * Note: We only use portions from this project, that have been marked with 2-clause BSD License
+ * in this file <a href="https://github.com/tbuktu/bigint/blob/617c8cd8a7c5e4fb4d919c6a4d11e2586107f029/LICENSE">LICENSE</a>.
  * </dt>
  * <dd><a href="https://github.com/tbuktu/bigint/tree/floatfft">github.com</a></dd>
  * </dl>
