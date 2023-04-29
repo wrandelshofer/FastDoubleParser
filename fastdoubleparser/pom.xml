@@ -150,19 +150,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <executable>jar</executable>
-          <arguments>
-            <argument>-d</argument>
-            <argument>-f</argument>
-            <argument>fastdoubleparser-0.8.0.jar</argument>
-          </arguments>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>
