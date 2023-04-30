@@ -14,18 +14,35 @@ except 20.
 
 ## License
 
-Everything except the content of the folder `supplemental_test_files` is MIT License.
+### Project License
 
-The content of the folder `supplemental_test_files` is Apache 2.0 License.
+This project is licensed under
+an [MIT License](https://github.com/wrandelshofer/FastDoubleParser/blob/645dcc236687d22897406ddfeac45fa52d292580/LICENSE).
 
-Alternatively, you can license this project under the Apache 2.0 License. In this case, you do not need to
-include the MIT License in your project.
-If you copy source files, make sure that you change the copyright notice in the copied files accordingly.
-So that it is immediately clear under which license you use the code. For example:
+Alternatively, you can license this project under the Apache 2.0 License. If you do this,
+make sure that you change the copyright notice in the files accordingly,
+so that it is immediately clear under which license you use the code. For example:
 
 - Replace the file headers with the file headers of your project.
 - Insert a comment in the file, that states that the file originates from
   FastDoubleParser, Copyright © Werner Randelshofer, Switzerland, Apache 2.0 License.
+
+### Code License
+
+Some code *in* this project is derived from the following projects.
+
+- [fast_float](https://github.com/fastfloat/fast_float) licensed
+  under [Apache 2.0 License](https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-APACHE)
+- [bigint](https://github.com/tbuktu/bigint/tree/floatfft) licensed
+  under [BSD 2-clause License](https://github.com/tbuktu/bigint/blob/617c8cd8a7c5e4fb4d919c6a4d11e2586107f029/LICENSE)
+
+The code is marked as such.
+
+If you redistribute code, you must follow the terms of all involved licenses (MIT License, Apache 2.0 License,
+BSD 2-clause License).
+
+The build scripts in this project do include the data that are required by these licenses in deployed source- and
+classes-Jar files.
 
 ## Usage
 
