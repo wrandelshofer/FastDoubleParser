@@ -5,7 +5,8 @@
 This is a Java port of Daniel Lemire's [fast_float](https://github.com/fastfloat/fast_float) project.
 
 This project provides parsers for `double`, `float`, `BigDecimal` and `BigInteger` values.
-The parsers are optimised for speed for the most common inputs.
+The `double` and `float` parsers are optimised for speed for the most common inputs.
+The `BigDecimal` and `BigInteger` parsers are optimised for speed on all inputs.
 
 The code in this project contains optimised versions for Java SE 1.8, 11, 17, 19 and 20.
 The code is released in a single multi-release jar, which contains the code for all these versions
