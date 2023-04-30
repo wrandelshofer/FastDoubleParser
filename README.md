@@ -16,8 +16,8 @@ except 20.
 
 ### Project License
 
-This project is licensed under
-an [MIT License](https://github.com/wrandelshofer/FastDoubleParser/blob/645dcc236687d22897406ddfeac45fa52d292580/LICENSE).
+This project can be licensed under an
+[MIT License](https://github.com/wrandelshofer/FastDoubleParser/blob/645dcc236687d22897406ddfeac45fa52d292580/LICENSE).
 
 Alternatively, you can license this project under the Apache 2.0 License. If you do this,
 make sure that you change the copyright notice in the files accordingly,
