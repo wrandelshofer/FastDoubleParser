@@ -59,7 +59,7 @@
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
-    <revision>0.9.0</revision>
+    <revision>0.10.0</revision>
     <license.url>
       https://github.com/wrandelshofer/FastDoubleParser/blob/9a3ccae38254c9bf84b5e6a218a47675bf80ed9f/LICENSE
     </license.url>
@@ -232,32 +232,13 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-license-file-to-sources</id>
+            <id>copy-license-file-to-generated-resources</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/java/META-INF</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>..</directory>
-                  <includes>
-                    <include>*LICENSE</include>
-                    <include>*NOTICE</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-license-file-to-classes</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+              <outputDirectory>${project.build.directory}/classes/META-INF</outputDirectory>
               <resources>
                 <resource>
                   <directory>..</directory>

@@ -94,7 +94,7 @@
               <resources>
                 <resource>
                   <directory>
-                    ${basedir}/../fastdoubleparser-java19/src/main/java/ch.randelshofer.fastdoubleparser
+                    ${basedir}/../fastdoubleparser-java19/src/main/java
                   </directory>
                 </resource>
               </resources>

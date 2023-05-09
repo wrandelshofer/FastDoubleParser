@@ -19,22 +19,24 @@
   <name>fastdoubleparserdemo-Java8</name>
 
   <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-sources-from-fastdoubleparserdemo-dev</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
+      <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparserdemo</sourceDirectory>
+      <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparserdemo</testSourceDirectory>
+      <plugins>
+          <plugin>
+              <artifactId>maven-resources-plugin</artifactId>
+              <executions>
+                  <execution>
+                      <id>copy-sources-from-fastdoubleparserdemo-dev</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                          <goal>copy-resources</goal>
+                      </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
               <resources>
                 <resource>
                   <directory>
-                    ${basedir}/../fastdoubleparserdemo-dev/src/main/java/ch.randelshofer.fastdoubleparserdemo
+                      ${basedir}/../fastdoubleparserdemo-dev/src/main/javademo
                   </directory>
                   <includes>
                     <include>**/*.java</include>

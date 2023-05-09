@@ -20,6 +20,19 @@
   </properties>
 
   <build>
+    <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparser</sourceDirectory>
+    <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparser</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources/java</directory>
+      </resource>
+      <resource>
+        <directory>${project.build.directory}/generated-resources/java</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}/../fastdoubleparser-dev/src/main/resources/ch.randelshofer.fastdoubleparser</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
@@ -106,23 +119,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultEntries>false</addDefaultEntries>
-            </manifest>
-            <manifestEntries>
-              <Git-Commit-Time>${git.commit.time}</Git-Commit-Time>
-              <Git-Commit-Id>${git.commit.id.full}</Git-Commit-Id>
-              <Automatic-Module-Name>ch.randelshofer.fastdoubleparser</Automatic-Module-Name>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
   </build>

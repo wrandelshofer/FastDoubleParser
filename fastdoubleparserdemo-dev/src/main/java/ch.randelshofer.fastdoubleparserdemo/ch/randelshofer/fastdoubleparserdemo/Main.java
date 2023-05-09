@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * References:
  * <dl>
  *     <dt>Daniel Lemire. fast_double_parser, 4x faster than strtod.
- *     Apache License 2.0 or Boost Software License.</dt>
+ *     <a href="https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE.BSL>Boost Software License</a>.</dt>
  *     <dd><a href="https://github.com/lemire/fast_double_parser">github</a></dd>
  * </dl>
  * References:
