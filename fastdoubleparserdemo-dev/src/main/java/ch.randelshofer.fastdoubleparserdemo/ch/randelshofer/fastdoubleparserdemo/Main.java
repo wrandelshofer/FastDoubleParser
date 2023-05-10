@@ -37,13 +37,13 @@ import java.util.stream.Collectors;
  * is smaller than {@value MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH} of the average
  * measured time.
  * <p>
- * It then prints the the average times, standard deviations and confidence intervals.
+ * It then prints the average times, standard deviations and confidence intervals.
  * <p>
  * References:
  * <dl>
- *     <dt>Daniel Lemire. fast_double_parser, 4x faster than strtod.
- *     <a href="https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE.BSL>Boost Software License</a>.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github</a></dd>
+ *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
+ *     <a href="https://github.com/fastfloat/fast_float/blob/cc1e01e9eee74128e48d51488a6b1df4a767a810/LICENSE-MIT">MIT License</a>.</dt>
+ *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
  * </dl>
  * References:
  * <dl>

@@ -12,10 +12,6 @@ package ch.randelshofer.fastdoubleparser;
  * <p>
  * References:
  * <dl>
- *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
- *     Apache License 2.0 or Boost Software License.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
- *
  *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
  *     Apache License 2.0.</dt>
  *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
