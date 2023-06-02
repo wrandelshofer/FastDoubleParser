@@ -6,7 +6,6 @@ package ch.randelshofer.fastdoubleparser;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.DOUBLE_MIN_EXPONENT_POWER_OF_TEN;
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.MANTISSA_64;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fullMultiplication;
 
 /**
  * This class complements {@link FastDoubleMath} with methods for
@@ -186,9 +185,7 @@ class FastFloatMath {
         // We want the most significant 64 bits of the product. We know
         // this will be non-zero because the most significant bit of i is
         // 1.
-        FastIntegerMath.UInt128 product = fullMultiplication(shiftedSignificand, factorMantissa);
-        long upper = product.high;
-
+        long upper = Math.unsignedMultiplyHigh(shiftedSignificand, factorMantissa);
         // The computed 'product' is always sufficient.
         // Mathematical proof:
         // Noble Mushtak and Daniel Lemire, Fast Number Parsing Without Fallback (to appear)
