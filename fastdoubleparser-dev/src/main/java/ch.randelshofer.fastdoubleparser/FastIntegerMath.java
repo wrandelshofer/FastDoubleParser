@@ -91,12 +91,17 @@ class FastIntegerMath {
         return powersOfTen;
     }
 
-    public static long estimateNumBits(long numDecimalDigits) {
-        // For the decimal number 10 we need log_2(10) = 3.3219 bits.
-        // The following formula uses 3.322 * 1024 = 3401.8 rounded up
-        // and adds 1, so that we overestimate but never underestimate
-        // the number of bits.
-        return (((numDecimalDigits * 3402L) >>> 10) + 1);
+    /** Gives the number of bits necessary to store given number of decimal digits.
+     *  According to tests, overestimation is 1 bit at most for numbers like "999...",
+     *  as the smallest one is "100..." additional 4 bits overestimation can occur.
+     * @param numDecimalDigits number of decimal digits, expected to be positive
+     * @return estimated number of bits
+     */
+    public static long estimateNumBits(int numDecimalDigits) {
+        // For the decimal digit we need log_2(10) = 3.32192809488736234787 bits.
+        // The following formula uses 3.32192809488736234787 * 1073741824 (=2^30) = 3566893131.8 rounded up
+        // and adds 1, so that we overestimate but never underestimate the number of bits.
+        return (((numDecimalDigits * 3_566_893_132L) >>> 30) + 1);
     }
 
     /**
