@@ -932,13 +932,13 @@ class FastDoubleMath {
         mantissa >>>= 1;
 
         // Here we have mantissa < (1<<53), unless there was an overflow
-        if (mantissa >= (1L << DOUBLE_SIGNIFICAND_WIDTH)) {
+        if (mantissa == (1L << DOUBLE_SIGNIFICAND_WIDTH)) {
             // This will happen when parsing values such as 7.2057594037927933e+16
-            mantissa = (1L << (DOUBLE_SIGNIFICAND_WIDTH - 1));
+            mantissa = 0;
             lz--; // undo previous addition
+        } else {
+            mantissa &= ~(1L << (DOUBLE_SIGNIFICAND_WIDTH - 1));
         }
-
-        mantissa &= ~(1L << (DOUBLE_SIGNIFICAND_WIDTH - 1));
 
         long realExponent = exponent - lz;
         // we have to check that realExponent is in range, otherwise we bail out
