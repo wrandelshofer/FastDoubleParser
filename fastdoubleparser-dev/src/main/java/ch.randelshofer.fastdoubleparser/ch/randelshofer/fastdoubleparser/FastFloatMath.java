@@ -181,7 +181,7 @@ class FastFloatMath {
         //
         long exponent = (((152170L + 65536L) * power) >> 16) + FLOAT_EXPONENT_BIAS + 64;
         // We want the most significant bit of digits to be 1. Shift if needed.
-        int lz = Long.numberOfLeadingZeros(significand);
+        long lz = Long.numberOfLeadingZeros(significand);
         long shiftedSignificand = significand << lz;
         // We want the most significant 64 bits of the product. We know
         // this will be non-zero because the most significant bit of i is
@@ -197,7 +197,7 @@ class FastFloatMath {
         // We shift it so that it occupies 25 bits with a leading 1.
         long upperbit = upper >>> 63;
         long mantissa = upper >>> (upperbit + 38);
-        lz += (int) (1 ^ upperbit);
+        lz += 1 ^ upperbit;
         // Here we have mantissa < (1<<25).
         //assert mantissa < (1<<25);
 

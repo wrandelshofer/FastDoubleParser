@@ -881,7 +881,7 @@ class FastDoubleMath {
         //
         long exponent = (((152170L + 65536L) * power) >> 16) + DOUBLE_EXPONENT_BIAS + 64;
         // We want the most significant bit of digits to be 1. Shift if needed.
-        int lz = Long.numberOfLeadingZeros(significand);
+        long lz = Long.numberOfLeadingZeros(significand);
         long shiftedSignificand = significand << lz;
         // We want the most significant 64 bits of the product. We know
         // this will be non-zero because the most significant bit of digits is
@@ -898,7 +898,7 @@ class FastDoubleMath {
         // We shift it so that it occupies 54 bits with a leading 1.
         long upperbit = upper >>> 63;
         long mantissa = upper >>> (upperbit + 9);
-        lz += (int) (1 ^ upperbit);
+        lz += 1 ^ upperbit;
         // Here we have mantissa < (1<<54).
 
         // We have to round to even. The "to even" part
