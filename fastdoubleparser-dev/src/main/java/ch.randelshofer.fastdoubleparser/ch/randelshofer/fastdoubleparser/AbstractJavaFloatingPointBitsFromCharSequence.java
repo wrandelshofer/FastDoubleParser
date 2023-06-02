@@ -134,7 +134,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // Skip optional FloatTypeSuffix
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
+        if ((ch | 0x22) == 'f') { // ~ "fFdD"
             index++;
         }
 
@@ -228,7 +228,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
-            if (ch == 'x' || ch == 'X') {
+            if ((ch | 0x20) == 'x') {
                 return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
             }
         }
@@ -329,7 +329,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // Skip optional FloatTypeSuffix
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
+        if ((ch | 0x22) == 'f') { // ~ "fFdD"
             index++;
         }
 
