@@ -228,7 +228,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
-            if ((ch | 0x20) == 'x') {
+            if ((ch | 0x20) == 'x') {// equals ignore case
                 return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
             }
         }
