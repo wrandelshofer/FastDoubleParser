@@ -86,7 +86,7 @@ class FastFloatMath {
             // Convert the significand into a float.
             // The cast will round the significand if necessary.
             // We use Math.abs here, because we treat the significand as an unsigned long.
-            float d = Math.abs((float) significand);
+            float d = Math.abs((float) significand); // FIXME highest bit ignored
 
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that

@@ -162,7 +162,49 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
                 new NumberTestData("+0x1234567890.abcdefp-45", 0x1234567890.abcdefp-45f),
                 new NumberTestData("0x1234567890.abcdef1p-45", 0x1234567890.abcdef1p-45f),
                 new NumberTestData("0x1234567890.abcdef12p-45", 0x1234567890.abcdef12p-45f),
-                new NumberTestData("0x1234567890abcdef1234567890abcdef1234567890abcdef.1234567890abcdefp-45", Float.POSITIVE_INFINITY)
+                new NumberTestData("0x1234567890abcdef1234567890abcdef1234567890abcdef.1234567890abcdefp-45", Float.POSITIVE_INFINITY),
+
+                new NumberTestData("0x8000000000000000p0", 0x8000000000000000p0f),
+                new NumberTestData("0x8000000000000000p10", 0x8000000000000000p10f),
+                new NumberTestData("0x8000000000000000p-10", 0x8000000000000000p-10f),
+                new NumberTestData("-0x8000000000000000p0", -0x8000000000000000p0f),
+                new NumberTestData("-0x8000000000000000p10", -0x8000000000000000p10f),
+                new NumberTestData("-0x8000000000000000p-10", -0x8000000000000000p-10f),
+
+                new NumberTestData("0xffffffffffffffffp0", 0xffffffffffffffffp0f),
+                new NumberTestData("0xffffffffffffffffp10", 0xffffffffffffffffp10f),
+                new NumberTestData("0xffffffffffffffffp-10", 0xffffffffffffffffp-10f),
+                new NumberTestData("-0xffffffffffffffffp0", -0xffffffffffffffffp0f),
+                new NumberTestData("-0xffffffffffffffffp10", -0xffffffffffffffffp10f),
+                new NumberTestData("-0xffffffffffffffffp-10", -0xffffffffffffffffp-10f),
+
+                new NumberTestData("0xfeeeeeeeeeeeeeeep0", 0xfeeeeeeeeeeeeeeep0f),
+                new NumberTestData("0xfeeeeeeeeeeeeeeep10", 0xfeeeeeeeeeeeeeeep10f),
+                new NumberTestData("0xfeeeeeeeeeeeeeeep-10", 0xfeeeeeeeeeeeeeeep-10f),
+                new NumberTestData("-0xfeeeeeeeeeeeeeecp0", -0xfeeeeeeeeeeeeeecp0f),
+                new NumberTestData("-0xfeeeeeeeeeeeeeecp10", -0xfeeeeeeeeeeeeeecp10f),
+                new NumberTestData("-0xfeeeeeeeeeeeeeecp-10", -0xfeeeeeeeeeeeeeecp-10f),
+
+                new NumberTestData("0xfddddddddddddddddp0", 0xfddddddddddddddddp0f),
+                new NumberTestData("0xfddddddddddddddddp10", 0xfddddddddddddddddp10f),
+                new NumberTestData("0xfddddddddddddddddp-10", 0xfddddddddddddddddp-10f),
+                new NumberTestData("-0xfddddddddddddddddp0", -0xfddddddddddddddddp0f),
+                new NumberTestData("-0xfddddddddddddddddp10", -0xfddddddddddddddddp10f),
+                new NumberTestData("-0xfddddddddddddddddp-10", -0xfddddddddddddddddp-10f),
+
+                new NumberTestData("0xfeeeef0000000000p0", 0xfeeeef0000000000p0f),
+                new NumberTestData("0xfeeeef0000000000p10", 0xfeeeef0000000000p10f),
+                new NumberTestData("0xfeeeef0000000000p-10", 0xfeeeef0000000000p-10f),
+                new NumberTestData("-0xfeeeef0000000000p0", -0xfeeeef0000000000p0f),
+                new NumberTestData("-0xfeeeef0000000000p10", -0xfeeeef0000000000p10f),
+                new NumberTestData("-0xfeeeef0000000000p-10", -0xfeeeef0000000000p-10f),
+
+                new NumberTestData("0xfeeeee0000000000p0", 0xfeeeee0000000000p0f),
+                new NumberTestData("0xfeeeee0000000000p10", 0xfeeeee0000000000p10f),
+                new NumberTestData("0xfeeeee0000000000p-10", 0xfeeeee0000000000p-10f),
+                new NumberTestData("-0xfeeeee0000000000p0", -0xfeeeee0000000000p0f),
+                new NumberTestData("-0xfeeeee0000000000p10", -0xfeeeee0000000000p10f),
+                new NumberTestData("-0xfeeeee0000000000p-10", -0xfeeeee0000000000p-10f),
 
         );
     }

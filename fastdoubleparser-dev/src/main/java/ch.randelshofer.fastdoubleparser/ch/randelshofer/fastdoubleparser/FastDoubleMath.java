@@ -971,7 +971,7 @@ class FastDoubleMath {
             // Convert the significand into a double.
             // The cast will round the significand if necessary.
             // We use Math.abs here, because we treat the significand as an unsigned long.
-            double d = Math.abs((double) significand);
+            double d = Math.abs((double) significand);// FIXME highest bit ignored
 
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that

@@ -162,8 +162,56 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
                 new NumberTestData("0x1.234567890abcdefP123", 0x1.234567890abcdefp123),
                 new NumberTestData("+0x1234567890.abcdefp-45", 0x1234567890.abcdefp-45d),
                 new NumberTestData("0x1234567890.abcdef12p-45", 0x1234567890.abcdef12p-45),
-                new NumberTestData("0x1234567890abcdef1234567890abcdef1234567890abcdef.1234567890abcdefp-45", 0x1234567890abcdef1234567890abcdef1234567890abcdef.1234567890abcdefp-45)
+                new NumberTestData("0x1234567890abcdef1234567890abcdef1234567890abcdef.1234567890abcdefp-45", 0x1234567890abcdef1234567890abcdef1234567890abcdef.1234567890abcdefp-45),
 
+                new NumberTestData("0x8000000000000000p0", 0x8000000000000000p0),
+                new NumberTestData("0x8000000000000000p10", 0x8000000000000000p10),
+                new NumberTestData("0x8000000000000000p-10", 0x8000000000000000p-10),
+                new NumberTestData("-0x8000000000000000p0", -0x8000000000000000p0),
+                new NumberTestData("-0x8000000000000000p10", -0x8000000000000000p10),
+                new NumberTestData("-0x8000000000000000p-10", -0x8000000000000000p-10),
+
+                new NumberTestData("0xffffffffffffffffp0", 0xffffffffffffffffp0),
+                new NumberTestData("0xffffffffffffffffp10", 0xffffffffffffffffp10),
+                new NumberTestData("0xffffffffffffffffp-10", 0xffffffffffffffffp-10),
+                new NumberTestData("-0xffffffffffffffffp0", -0xffffffffffffffffp0),
+                new NumberTestData("-0xffffffffffffffffp10", -0xffffffffffffffffp10),
+                new NumberTestData("-0xffffffffffffffffp-10", -0xffffffffffffffffp-10),
+
+                new NumberTestData("0xfeeeeeeeeeeeeeeep0", 0xfeeeeeeeeeeeeeeep0),
+                new NumberTestData("0xfeeeeeeeeeeeeeeep10", 0xfeeeeeeeeeeeeeeep10),
+                new NumberTestData("0xfeeeeeeeeeeeeeeep-10", 0xfeeeeeeeeeeeeeeep-10),
+                new NumberTestData("-0xfeeeeeeeeeeeeeecp0", -0xfeeeeeeeeeeeeeecp0),
+                new NumberTestData("-0xfeeeeeeeeeeeeeecp10", -0xfeeeeeeeeeeeeeecp10),
+                new NumberTestData("-0xfeeeeeeeeeeeeeecp-10", -0xfeeeeeeeeeeeeeecp-10),
+
+                new NumberTestData("0xfddddddddddddddddp0", 0xfddddddddddddddddp0),
+                new NumberTestData("0xfddddddddddddddddp10", 0xfddddddddddddddddp10),
+                new NumberTestData("0xfddddddddddddddddp-10", 0xfddddddddddddddddp-10),
+                new NumberTestData("-0xfddddddddddddddddp0", -0xfddddddddddddddddp0),
+                new NumberTestData("-0xfddddddddddddddddp10", -0xfddddddddddddddddp10),
+                new NumberTestData("-0xfddddddddddddddddp-10", -0xfddddddddddddddddp-10),
+
+                new NumberTestData("0xfeeeef0000000000p0", 0xfeeeef0000000000p0),
+                new NumberTestData("0xfeeeef0000000000p10", 0xfeeeef0000000000p10),
+                new NumberTestData("0xfeeeef0000000000p-10", 0xfeeeef0000000000p-10),
+                new NumberTestData("-0xfeeeef0000000000p0", -0xfeeeef0000000000p0),
+                new NumberTestData("-0xfeeeef0000000000p10", -0xfeeeef0000000000p10),
+                new NumberTestData("-0xfeeeef0000000000p-10", -0xfeeeef0000000000p-10),
+
+                new NumberTestData("0xfeeeee0000000000p0", 0xfeeeee0000000000p0),
+                new NumberTestData("0xfeeeee0000000000p10", 0xfeeeee0000000000p10),
+                new NumberTestData("0xfeeeee0000000000p-10", 0xfeeeee0000000000p-10),
+                new NumberTestData("-0xfeeeee0000000000p0", -0xfeeeee0000000000p0),
+                new NumberTestData("-0xfeeeee0000000000p10", -0xfeeeee0000000000p10),
+                new NumberTestData("-0xfeeeee0000000000p-10", -0xfeeeee0000000000p-10),
+
+                new NumberTestData("0xeeeeee0000000000p0", 0xeeeeee0000000000p0),
+                new NumberTestData("0xeeeeee0000000000p10", 0xeeeeee0000000000p10),
+                new NumberTestData("0xeeeeee0000000000p-10", 0xeeeeee0000000000p-10),
+                new NumberTestData("-0xeeeeee0000000000p0", -0xeeeeee0000000000p0),
+                new NumberTestData("-0xeeeeee0000000000p10", -0xeeeeee0000000000p10),
+                new NumberTestData("-0xeeeeee0000000000p-10", -0xeeeeee0000000000p-10)
         );
     }
 
