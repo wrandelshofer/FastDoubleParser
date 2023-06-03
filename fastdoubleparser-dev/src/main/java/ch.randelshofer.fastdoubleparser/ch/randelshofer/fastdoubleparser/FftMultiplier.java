@@ -538,7 +538,7 @@ class FftMultiplier {
         if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }
-        if (b == a) {
+        if (a.equals(b)) {
             return square(b);
         }
 
