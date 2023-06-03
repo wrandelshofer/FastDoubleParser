@@ -122,4 +122,12 @@ abstract class AbstractNumberParser {
         return ch < 128 ? CHAR_TO_HEX_MAP[ch] : -1;
     }
 
+    protected static int checkBounds(int size, int offset, int length, int maxInputLength) {
+        if ((offset | length) < 0 // tricky way to test more negative values at once
+                || offset > size - length // compared difference to avoid overflow when addition used
+                || length > maxInputLength) {
+            throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
+        }
+        return offset + length;
+    }
 }
