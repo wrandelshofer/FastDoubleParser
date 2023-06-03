@@ -792,17 +792,16 @@ class FftMultiplier {
          * Used for the right-angle convolution.
          */
         void applyInverseWeights(ComplexVector weights) {
-            int offa = offset;
             int offw = weights.offset;
             double[] w = weights.a;
-            for (int i = 0; i < length; i++) {
+            int end = offset + length << 1;
+            for (int offa = offset; offa < end; offa += 2) {
                 // the following code is the same as: this.multiplyConjugate(i, weights[i]);
 
                 double real = a[offa + REAL];
                 double imag = a[offa + IMAG];
                 a[offa] = fma(real, w[offw + REAL], imag * w[offw + IMAG]);
                 a[offa + 1] = fma(-real, w[offw + IMAG], imag * w[offw + REAL]);
-                offa += 2;
                 offw += 2;
             }
         }
