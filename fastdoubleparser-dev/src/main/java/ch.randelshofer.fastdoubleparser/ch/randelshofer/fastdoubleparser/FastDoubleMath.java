@@ -4,7 +4,6 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fullMultiplication;
 
 /**
  * This class provides the mathematical functions needed by {@link JavaDoubleParser}.
@@ -886,8 +885,7 @@ class FastDoubleMath {
         // We want the most significant 64 bits of the product. We know
         // this will be non-zero because the most significant bit of digits is
         // 1.
-        FastIntegerMath.UInt128 product = fullMultiplication(shiftedSignificand, factorMantissa);
-        long upper = product.high;
+        long upper = Math.unsignedMultiplyHigh(shiftedSignificand, factorMantissa);
 
         // The computed 'product' is always sufficient.
         // Mathematical proof:
