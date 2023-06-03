@@ -427,6 +427,11 @@ class FastDoubleSwar {
         // we don't need to 'and' with 0x80…L here, because we 'and' this with ge_30 anyway.
         //le_37 &= 0x80_80_80_80_80_80_80_80L;
 
+        // Create a predicate for all bytes which are smaller than '0' or greater than 0x7F
+        long lt_00_gt_ff = (chunk | (chunk - 0x3030_3030_3030_3030L)) & 0x8080_8080_8080_8080L;
+        if (lt_00_gt_ff != 0) {
+            return -1;
+        }
 
         // If a character is greater than '9' then it must be greater equal 'a'
         // and smaller  'f'.
