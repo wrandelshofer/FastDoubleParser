@@ -25,7 +25,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
      * @return index after the optional white space
      */
     private static int skipWhitespace(byte[] str, int index, int endIndex) {
-        while (index < endIndex && (str[index] & 0xff) <= ' ') {
+        while (index < endIndex && (str[index] == ' ')) {
             index++;
         }
         return index;

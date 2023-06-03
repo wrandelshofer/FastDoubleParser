@@ -70,7 +70,8 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
                 new NumberTestData("cafebabe.1p2"),
                 new NumberTestData("0x123pa"),
                 new NumberTestData("0x1.2e7"),
-                new NumberTestData("0xp89")
+                new NumberTestData("0xp89"),
+                new NumberTestData("\u001f12\u001f")
         );
     }
 

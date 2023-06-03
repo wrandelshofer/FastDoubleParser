@@ -25,7 +25,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * @return index after the optional white space
      */
     private static int skipWhitespace(CharSequence str, int index, int endIndex) {
-        while (index < endIndex && str.charAt(index) <= ' ') {
+        while (index < endIndex && str.charAt(index) == ' ') {
             index++;
         }
         return index;
