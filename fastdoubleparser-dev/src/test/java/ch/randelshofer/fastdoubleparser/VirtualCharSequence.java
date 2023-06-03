@@ -35,9 +35,16 @@ public class VirtualCharSequence implements CharSequence {
                 && isIso8859_1(this.suffix) && isIso8859_1(new char[]{this.fill});
     }
 
-    private boolean isIso8859_1(char[] ch) {
-        for (int i = 0; i < ch.length; i++) {
-            if (ch[i] > 0xff) {
+    private static boolean isIso8859_1(char[] ch) {
+        int fours = ch.length / 4;
+        int i = 0;
+        while(i < fours) {
+            if ((ch[i++] | ch[i++] | ch[i++] | ch[i++]) > 0xff) {
+                return false;
+            }
+        }
+        while(i < ch.length) {
+            if (ch[i++] > 0xff) {
                 return false;
             }
         }
