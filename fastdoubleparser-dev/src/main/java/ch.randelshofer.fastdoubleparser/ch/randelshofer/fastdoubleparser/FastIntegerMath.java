@@ -138,24 +138,6 @@ class FastIntegerMath {
         }
     }
 
-    /**
-     * Computes {@code uint128 product = (uint64)x * (uint64)y}.
-     * <p>
-     * References:
-     * <dl>
-     *     <dt>Getting the high part of 64 bit integer multiplication</dt>
-     *     <dd><a href="https://stackoverflow.com/questions/28868367/getting-the-high-part-of-64-bit-integer-multiplication">
-     *         stackoverflow</a></dd>
-     * </dl>
-     *
-     * @param x uint64 factor x
-     * @param y uint64 factor y
-     * @return uint128 product of x and y
-     */
-    static UInt128 fullMultiplication(long x, long y) {//since Java 18
-        return new UInt128(Math.unsignedMultiplyHigh(x, y), x * y);
-    }
-
     static long unsignedMultiplyHigh(long x, long y) {//since Java 18
         return Math.unsignedMultiplyHigh(x, y);
     }
@@ -164,14 +146,5 @@ class FastIntegerMath {
         int mid = (from + to) >>> 1;// split in half
         mid = to - (((to - mid + 15) >> 4) << 4);// make numDigits of low a multiple of 16
         return mid;
-    }
-
-    static class UInt128 {
-        final long high, low;
-
-        private UInt128(long high, long low) {
-            this.high = high;
-            this.low = low;
-        }
     }
 }

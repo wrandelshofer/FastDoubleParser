@@ -10,13 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FastIntegerMathTest {
     @Test
-    public void testFullMultiplication() {
-        FastIntegerMath.UInt128 actual = FastIntegerMath.fullMultiplication(0x123456789ABCDEF0L, 0x10L);
-        assertEquals(1L, actual.high);
-        assertEquals(0x23456789abcdef00L, actual.low);
+    public void testUnsignedMultiplyHigh() {
+        long actualHigh = FastIntegerMath.unsignedMultiplyHigh(0x123456789ABCDEF0L, 0x10L);
+        assertEquals(1L, actualHigh);
 
-        actual = FastIntegerMath.fullMultiplication(0x123456789ABCDEF0L, -0x10L);
-        assertEquals(0x123456789abcdeeeL, actual.high);
-        assertEquals(0xdcba987654321100L, actual.low);
+        actualHigh = FastIntegerMath.unsignedMultiplyHigh(0x123456789ABCDEF0L, -0x10L);
+        assertEquals(0x123456789abcdeeeL, actualHigh);
     }
 }
