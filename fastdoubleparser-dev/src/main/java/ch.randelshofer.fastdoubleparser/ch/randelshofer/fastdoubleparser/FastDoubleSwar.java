@@ -163,6 +163,23 @@ class FastDoubleSwar {
         return chunk == 0x3030303030303030L;
     }
 
+    public static int parseEightDigitsUtf8(long chunk) {
+        // Subtract the character '0' from all characters.
+        long val = chunk - 0x3030303030303030L;
+
+        return parseBcd(val);
+    }
+
+    private static int parseBcd(long val) {
+        // The last 2 multiplications are independent of each other.
+        long mask = 0xff_000000ffL;
+        long mul1 = 100 + (100_0000L << 32);
+        long mul2 = 1 + (1_0000L << 32);
+        val = val * 10 + (val >>> 8);// same as: val = val * (1 + (10 << 8)) >>> 8;
+        val = (val & mask) * mul1 + (val >>> 16 & mask) * mul2 >>> 32;
+        return (int) val;
+    }
+
     public static int parseEightDigitsUtf16(long first, long second) {
         long fval = first - 0x0030_0030_0030_0030L;
         long sval = second - 0x0030_0030_0030_0030L;
@@ -299,13 +316,7 @@ class FastDoubleSwar {
             return -1;
         }
 
-        // The last 2 multiplications are independent of each other.
-        long mask = 0xff_000000ffL;
-        long mul1 = 100 + (100_0000L << 32);
-        long mul2 = 1 + (1_0000L << 32);
-        val = val * 10 + (val >>> 8);// same as: val = val * (1 + (10 << 8)) >>> 8;
-        val = (val & mask) * mul1 + (val >>> 16 & mask) * mul2 >>> 32;
-        return (int) val;
+        return parseBcd(val);
     }
 
     /**
