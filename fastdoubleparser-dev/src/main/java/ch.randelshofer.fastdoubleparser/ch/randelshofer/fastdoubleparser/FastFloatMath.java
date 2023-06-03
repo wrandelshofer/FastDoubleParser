@@ -86,19 +86,21 @@ class FastFloatMath {
             // Convert the significand into a float.
             // The cast will round the significand if necessary.
             // We use Math.abs here, because we treat the significand as an unsigned long.
-            float d = Math.abs((float) significand);
 
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = d * Math.scalb(1f, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            return significand * powerOfTwo(isNegative, power);
         } else {
             return Float.NaN;
         }
+    }
+
+    static float powerOfTwo(boolean isNegative, int exponent) {
+        int floatSign = isNegative ? 1 << 31 : 0;
+        int floatExponent = (exponent + FLOAT_EXPONENT_BIAS) << (FLOAT_SIGNIFICAND_WIDTH - 1);
+        int floatValue = floatSign | floatExponent;
+        return Float.intBitsToFloat(floatValue);
     }
 
     /**

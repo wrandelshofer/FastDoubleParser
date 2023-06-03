@@ -133,4 +133,11 @@ public class FastDoubleMathTest {
             value = value.multiply(five);
         }
     }
+
+    @Test
+    void powerOfTwo() {
+        for (int i = Double.MIN_EXPONENT; i < Double.MAX_EXPONENT; i++) {
+            assertEquals(Math.scalb(1d, i), FastDoubleMath.powerOfTwo(false, i));
+        }
+    }
 }

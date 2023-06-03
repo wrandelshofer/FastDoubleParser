@@ -966,23 +966,21 @@ class FastDoubleMath {
      */
     static double tryHexFloatToDoubleTruncated(boolean isNegative, long significand, long exponent, boolean isSignificandTruncated,
                                                long exponentOfTruncatedSignificand) {
-        int power = isSignificandTruncated ? (int) exponentOfTruncatedSignificand : (int) exponent;
+        long power = isSignificandTruncated ? exponentOfTruncatedSignificand : exponent;
         if (DOUBLE_MIN_EXPONENT_POWER_OF_TWO <= power && power <= DOUBLE_MAX_EXPONENT_POWER_OF_TWO) {
-            // Convert the significand into a double.
-            // The cast will round the significand if necessary.
-            // We use Math.abs here, because we treat the significand as an unsigned long.
-            double d = Math.abs((double) significand);
-
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = d * Math.scalb(1d, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            return significand * powerOfTwo(isNegative, power);
         } else {
             return Double.NaN;
         }
+    }
+
+    static double powerOfTwo(boolean isNegative, long exponent) {
+        long doubleSign = isNegative ? 1L << 63 : 0;
+        long doubleExponent = (exponent + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1);
+        long doubleValue = doubleSign | doubleExponent;
+        return Double.longBitsToDouble(doubleValue);
     }
 }
