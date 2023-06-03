@@ -701,29 +701,27 @@ class FftMultiplier {
         // Use a 2^n or 3*2^n transform, whichever is shorter
         int fftLen2 = 1 << (logFFTLen);   // rounded to 2^n
         int fftLen3 = fftLen2 * 3 / 4;   // rounded to 3*2^n
+        ComplexVector vec, weights;
         if (fftLen < fftLen3) {
-            fftLen = fftLen3;
-            ComplexVector vec = toFftVector(mag, fftLen, bitsPerPoint);
+            vec = toFftVector(mag, fftLen3, bitsPerPoint);
             ComplexVector[] roots2 = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
-            ComplexVector weights = getRootsOfUnity3(logFFTLen - 2);
             ComplexVector twiddles = getRootsOfUnity3(logFFTLen - 4);
+            weights = getRootsOfUnity3(logFFTLen - 2);
             vec.applyWeights(weights);
             fftMixedRadix(vec, roots2, twiddles);
             vec.squarePointwise();
             ifftMixedRadix(vec, roots2, twiddles);
-            vec.applyInverseWeights(weights);
-            return fromFftVector(vec, 1, bitsPerPoint);
         } else {
-            fftLen = fftLen2;
-            ComplexVector vec = toFftVector(mag, fftLen, bitsPerPoint);
-            ComplexVector[] roots = getRootsOfUnity2(logFFTLen);
-            vec.applyWeights(roots[logFFTLen]);
-            fft(vec, roots);
+            vec = toFftVector(mag, fftLen2, bitsPerPoint);
+            ComplexVector[] roots2 = getRootsOfUnity2(logFFTLen);
+            weights = roots2[logFFTLen];
+            vec.applyWeights(weights);
+            fft(vec, roots2);
             vec.squarePointwise();
-            ifft(vec, roots);
-            vec.applyInverseWeights(roots[logFFTLen]);
-            return fromFftVector(vec, 1, bitsPerPoint);
+            ifft(vec, roots2);
         }
+        vec.applyInverseWeights(weights);
+        return fromFftVector(vec, 1, bitsPerPoint);
     }
 
     /**
