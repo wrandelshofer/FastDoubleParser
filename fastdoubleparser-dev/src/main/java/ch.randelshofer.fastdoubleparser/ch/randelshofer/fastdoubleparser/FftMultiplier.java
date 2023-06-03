@@ -5,6 +5,8 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
 
@@ -47,7 +49,12 @@ class FftMultiplier {
     /**
      * for FFTs of length up to 2^19
      */
-    private static final int ROOTS_CACHE2_SIZE = 20;
+    static final int ROOTS2_CACHE_SIZE = 20;
+
+    private static final NavigableMap<Long, ComplexVector> FFT_POWER_OF_TEN_CACHE2 = new TreeMap<>();
+    private static final NavigableMap<Long, ComplexVector> FFT_POWER_OF_TEN_CACHE3 = new TreeMap<>();
+
+
     /**
      * The threshold value for using 3-way Toom-Cook multiplication.
      */
@@ -57,7 +64,7 @@ class FftMultiplier {
      * elements representing all (2^(k+2))-th roots between 0 and pi/2.
      * Used for FFT multiplication.
      */
-    private volatile static ComplexVector[] ROOTS2_CACHE = new ComplexVector[ROOTS_CACHE2_SIZE];
+    private volatile static ComplexVector[] ROOTS2_CACHE = new ComplexVector[ROOTS2_CACHE_SIZE];
     /**
      * Sets of complex roots of unity. The set at index k contains 3*2^k
      * elements representing all (3*2^(k+2))-th roots between 0 and pi/2.
@@ -535,6 +542,10 @@ class FftMultiplier {
      * performance when {@code a == b}.
      */
     static BigInteger multiply(BigInteger a, BigInteger b) {
+        return multiply(a, b, -1);
+    }
+
+    static BigInteger multiply(BigInteger a, BigInteger b, int powerOfTen) {
         if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }
@@ -551,7 +562,7 @@ class FftMultiplier {
         if (xlen > TOOM_COOK_THRESHOLD
                 && ylen > TOOM_COOK_THRESHOLD
                 && (xlen > FFT_THRESHOLD || ylen > FFT_THRESHOLD)) {
-            return multiplyFft(a, b);
+            return multiplyFft(a, b, powerOfTen);
         }
         return a.multiply(b);
     }
@@ -599,6 +610,9 @@ class FftMultiplier {
      * @return a*b
      */
     static BigInteger multiplyFft(BigInteger a, BigInteger b) {
+        return multiplyFft(a, b, -1);
+    }
+    private static BigInteger multiplyFft(BigInteger a, BigInteger b, int powerOfTen) {
         int signum = a.signum() * b.signum();
         byte[] aMag = (a.signum() < 0 ? a.negate() : a).toByteArray();
         byte[] bMag = (b.signum() < 0 ? b.negate() : b).toByteArray();
@@ -610,35 +624,61 @@ class FftMultiplier {
         // Use a 2^n or 3*2^n transform, whichever is shortest
         int fftLen2 = 1 << (logFFTLen);   // rounded to 2^n
         int fftLen3 = fftLen2 * 3 / 4;   // rounded to 3*2^n
+        ComplexVector aVec;
+        ComplexVector weights;
         if (fftLen < fftLen3 && logFFTLen > 3) {
-            ComplexVector[] roots2 = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
-            ComplexVector weights = getRootsOfUnity3(logFFTLen - 2);
+            ComplexVector[] roots = getRootsOfUnity2(logFFTLen - 2);   // roots for length fftLen/3 which is a power of two
+            weights = getRootsOfUnity3(logFFTLen - 2);
             ComplexVector twiddles = getRootsOfUnity3(logFFTLen - 4);
-            ComplexVector aVec = toFftVector(aMag, fftLen3, bitsPerPoint);
+
+            aVec = toFftVector(aMag, fftLen3, bitsPerPoint);
             aVec.applyWeights(weights);
-            fftMixedRadix(aVec, roots2, twiddles);
-            ComplexVector bVec = toFftVector(bMag, fftLen3, bitsPerPoint);
-            bVec.applyWeights(weights);
-            fftMixedRadix(bVec, roots2, twiddles);
+            fftMixedRadix(aVec, roots, twiddles);
+
+            ComplexVector bVec = null;
+            if (powerOfTen != -1) {
+                bVec = FFT_POWER_OF_TEN_CACHE3.get(cacheFftIndex(powerOfTen, fftLen3));
+            }
+            if (bVec == null) {
+                bVec = toFftVector(bMag, fftLen3, bitsPerPoint);
+                bVec.applyWeights(weights);
+                fftMixedRadix(bVec, roots, twiddles);
+                if (powerOfTen != -1) {
+                    FFT_POWER_OF_TEN_CACHE3.put(cacheFftIndex(powerOfTen, fftLen3), bVec);
+                }
+            }
             aVec.multiplyPointwise(bVec);
-            ifftMixedRadix(aVec, roots2, twiddles);
-            aVec.applyInverseWeights(weights);
-            return fromFftVector(aVec, signum, bitsPerPoint);
+            ifftMixedRadix(aVec, roots, twiddles);
         } else {
             ComplexVector[] roots = getRootsOfUnity2(logFFTLen);
-            ComplexVector aVec = toFftVector(aMag, fftLen2, bitsPerPoint);
-            aVec.applyWeights(roots[logFFTLen]);
+            weights = roots[logFFTLen];
+            aVec = toFftVector(aMag, fftLen2, bitsPerPoint);
+            aVec.applyWeights(weights);
             fft(aVec, roots);
-            ComplexVector bVec = toFftVector(bMag, fftLen2, bitsPerPoint);
-            bVec.applyWeights(roots[logFFTLen]);
-            fft(bVec, roots);
+
+            ComplexVector bVec = null;
+            if (powerOfTen != -1) {
+                bVec = FFT_POWER_OF_TEN_CACHE2.get(cacheFftIndex(powerOfTen, fftLen2));
+            }
+            if (bVec == null) {
+                bVec = toFftVector(bMag, fftLen2, bitsPerPoint);
+                bVec.applyWeights(weights);
+                fft(bVec, roots);
+                if (powerOfTen != -1) {
+                    FFT_POWER_OF_TEN_CACHE2.put(cacheFftIndex(powerOfTen, fftLen2), bVec);// somewhere else index computation?
+                }
+            }
+
             aVec.multiplyPointwise(bVec);
             ifft(aVec, roots);
-            aVec.applyInverseWeights(roots[logFFTLen]);
-            return fromFftVector(aVec, signum, bitsPerPoint);
         }
+        aVec.applyInverseWeights(weights);
+        return fromFftVector(aVec, signum, bitsPerPoint);
     }
 
+    private static long cacheFftIndex(int power, int fftLength) {
+        return power + fftLength * 4_294_967_296L;
+    }
     /**
      * Returns a BigInteger whose value is {@code (this<sup>2</sup>)}.
      *

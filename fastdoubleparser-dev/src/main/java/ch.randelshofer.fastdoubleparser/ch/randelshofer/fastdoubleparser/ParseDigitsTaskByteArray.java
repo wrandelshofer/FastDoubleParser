@@ -78,8 +78,7 @@ class ParseDigitsTaskByteArray {
         BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
 
-        //high = high.multiply(powersOfTen.get(to - mid));
-        high = FftMultiplier.multiply(high, powersOfTen.get(to - mid));
+        high = FftMultiplier.multiply(high, powersOfTen.get(to - mid), to - mid);
         return low.add(high);
     }
 }
