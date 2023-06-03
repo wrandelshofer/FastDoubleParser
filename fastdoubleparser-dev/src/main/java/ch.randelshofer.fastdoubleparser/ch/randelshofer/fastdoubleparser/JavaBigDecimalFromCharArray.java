@@ -339,7 +339,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
                 fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
                 integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen);
             } else {
-                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, null);
+                integerPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, integerPartIndex, decimalPointIndex);
             }
         } else {
             integerPart = BigInteger.ZERO;
@@ -356,7 +356,7 @@ final class JavaBigDecimalFromCharArray extends AbstractNumberParser {
                 fillPowersOfNFloor16Recursive(powersOfTen, decimalPointIndex + 1, exponentIndicatorIndex);
                 fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, powersOfTen);
             } else {
-                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, null);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, decimalPointIndex + 1, exponentIndicatorIndex);
             }
             // If the integer part is not 0, we combine it with the fraction part.
             if (integerPart.signum() == 0) {
