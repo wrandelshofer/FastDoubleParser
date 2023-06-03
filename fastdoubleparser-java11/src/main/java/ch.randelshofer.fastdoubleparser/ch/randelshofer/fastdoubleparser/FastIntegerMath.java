@@ -171,6 +171,34 @@ class FastIntegerMath {
                 (middle << 32) | (p00 & 0xffffffffL));
     }
 
+
+    /**
+     * Computes {@code uint128 product = (uint64)x * (uint64)y}.
+     * <p>
+     * References:
+     * <dl>
+     *     <dt>Getting the high part of 64 bit integer multiplication</dt>
+     *     <dd><a href="https://stackoverflow.com/questions/28868367/getting-the-high-part-of-64-bit-integer-multiplication">
+     *         stackoverflow</a></dd>
+     * </dl>
+     *
+     * @param x uint64 factor x
+     * @param y uint64 factor y
+     * @return uint128 product of x and y
+     */
+    static long unsignedMultiplyHigh(long x, long y) {//before Java 18
+        long x0 = x & 0xffffffffL, x1 = x >>> 32;
+        long y0 = y & 0xffffffffL, y1 = y >>> 32;
+        long p11 = x1 * y1, p01 = x0 * y1;
+        long p10 = x1 * y0, p00 = x0 * y0;
+
+        // 64-bit product + two 32-bit values
+        long middle = p10 + (p00 >>> 32) + (p01 & 0xffffffffL);
+
+        // 64-bit product + two 32-bit values
+        return p11 + (middle >>> 32) + (p01 >>> 32);
+    }
+
     static int splitFloor16(int from, int to) {
         int mid = (from + to) >>> 1;// split in half
         mid = to - (((to - mid + 15) >> 4) << 4);// make numDigits of low a multiple of 16

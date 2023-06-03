@@ -156,6 +156,10 @@ class FastIntegerMath {
         return new UInt128(Math.unsignedMultiplyHigh(x, y), x * y);
     }
 
+    static long unsignedMultiplyHigh(long x, long y) {//since Java 18
+        return Math.unsignedMultiplyHigh(x, y);
+    }
+
     static int splitFloor16(int from, int to) {
         int mid = (from + to) >>> 1;// split in half
         mid = to - (((to - mid + 15) >> 4) << 4);// make numDigits of low a multiple of 16
