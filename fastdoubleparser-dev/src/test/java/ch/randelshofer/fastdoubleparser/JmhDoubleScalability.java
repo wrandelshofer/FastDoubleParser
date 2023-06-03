@@ -78,7 +78,7 @@ public class JmhDoubleScalability {
 
     @Setup(Level.Trial)
     public void setUp() {
-        str = repeat("7", digits);
+        str = repeat('7', digits);
     }
 
     @Benchmark

@@ -81,7 +81,7 @@ public class JmhJavaDoubleFromCharSequenceScalability {
 
     @Setup(Level.Trial)
     public void setUp() {
-        str = repeat("7", digits - 2);
+        str = repeat('7', digits - 2);
     }
 
     @Benchmark

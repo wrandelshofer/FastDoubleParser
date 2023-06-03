@@ -73,7 +73,7 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
     public void setUp() {
         String str =
                 "-"
-                        + repeat("0", Math.max(0, digits - 646456993))
+                        + repeat('0', Math.max(0, digits - 646456993))
                         + repeat("1234567890", (Math.min(646456993, digits) + 9) / 10).substring(0, Math.min(digits, 646456993))
                         + "e"
                         + (Integer.MIN_VALUE + 1);
