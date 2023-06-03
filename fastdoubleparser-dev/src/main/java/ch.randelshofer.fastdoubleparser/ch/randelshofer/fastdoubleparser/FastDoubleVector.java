@@ -35,8 +35,10 @@ import static jdk.incubator.vector.VectorOperators.*;
 class FastDoubleVector {
     private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16_SHIFTS = IntVector.fromArray(IntVector.SPECIES_256,
+    private static final IntVector POWERS_OF_16_SHIFTS_BE = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
+    private static final LongVector POWERS_OF_16_SHIFTS_LE = LongVector.fromArray(LongVector.SPECIES_512,
+            new long[]{16, 20, 24, 28, 0, 4, 8, 12}, 0);
 
     /**
      * Tries to parse eight digits at once using the
@@ -156,9 +158,9 @@ class FastDoubleVector {
         }
         return vec
                 .sub((short) ('a' - '0' - 10), gt9Msk)
-                .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
-                .reduceLanesToLong(ADD) & 0xffffffffL;
+                .castShape(LongVector.SPECIES_512, 0)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_LE)
+                .reduceLanesToLong(ADD);
     }
 
     /**
@@ -182,7 +184,7 @@ class FastDoubleVector {
         return vec
                 .sub((short) ('a' - '0' - 10), gt9Msk)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
@@ -207,7 +209,7 @@ class FastDoubleVector {
         return vec
                 .sub((byte) ('a' - '0' - 10), gt9Msk)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 }
