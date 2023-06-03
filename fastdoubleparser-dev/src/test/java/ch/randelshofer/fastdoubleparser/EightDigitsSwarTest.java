@@ -92,12 +92,16 @@ public class EightDigitsSwarTest extends AbstractEightDigitsTest {
             assertEquals(expected, actual);
         }
 
-        actual = FastDoubleSwar.tryToParseEightHexDigits(s.getBytes(StandardCharsets.UTF_8), offset);
+        testHex(s.getBytes(StandardCharsets.UTF_8), offset, expected);
+    }
+
+    @Override
+    void testHex(byte[] b, int offset, long expected) {
+        long actual = FastDoubleSwar.tryToParseEightHexDigits(b, offset);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {
             assertEquals(expected, actual);
         }
-
     }
 }

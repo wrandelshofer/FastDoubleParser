@@ -62,6 +62,18 @@ class FastDoubleVector {
         return FastDoubleVector.tryToParseEightDigitsUtf16(first, second);
     }
 
+    public static long tryToParseEightHexDigits(CharSequence str, int offset) {
+        long first = (long) str.charAt(offset) << 48
+                | (long) str.charAt(offset + 1) << 32
+                | (long) str.charAt(offset + 2) << 16
+                | (long) str.charAt(offset + 3);
+        long second = (long) str.charAt(offset + 4) << 48
+                | (long) str.charAt(offset + 5) << 32
+                | (long) str.charAt(offset + 6) << 16
+                | (long) str.charAt(offset + 7);
+        return FastDoubleVector.tryToParseEightHexDigitsUtf16(first, second);
+    }
+
     /**
      * Tries to parse eight decimal digits from a char array using the
      * Java Vector API.

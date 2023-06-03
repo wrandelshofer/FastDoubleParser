@@ -12,9 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
     @Override
     void testDec(String s, int offset, int expected) {
+        int actual = FastDoubleVector.tryToParseEightDigits(s, offset);
+        assertEquals(expected, actual);
+
         char[] chars = s.toCharArray();
 
-        int actual = FastDoubleVector.tryToParseEightDigitsUtf16(chars, offset);
+        actual = FastDoubleVector.tryToParseEightDigitsUtf16(chars, offset);
         assertEquals(expected, actual);
 
 
@@ -59,23 +62,30 @@ public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
 
     @Override
     void testHex(String s, int offset, long expected) {
-        char[] chars = s.toCharArray();
-        long actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(chars, offset);
+        long actual = FastDoubleVector.tryToParseEightHexDigits(s, offset);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {
             assertEquals(expected, actual);
         }
 
-        long first = (long) chars[offset + 0]
-                | (long) chars[offset + 1] << 16
-                | (long) chars[offset + 2] << 32
-                | (long) chars[offset + 3] << 48;
+        char[] chars = s.toCharArray();
+        actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(chars, offset);
+        if (expected < 0) {
+            assertTrue(actual < 0);
+        } else {
+            assertEquals(expected, actual);
+        }
 
-        long second = (long) chars[offset + 4]
-                | (long) chars[offset + 5] << 16
-                | (long) chars[offset + 6] << 32
-                | (long) chars[offset + 7] << 48;
+        long first = (long) chars[offset + 0] << 48
+                | (long) chars[offset + 1] << 32
+                | (long) chars[offset + 2] << 16
+                | (long) chars[offset + 3];
+
+        long second = (long) chars[offset + 4] << 48
+                | (long) chars[offset + 5] << 32
+                | (long) chars[offset + 6] << 16
+                | (long) chars[offset + 7];
         actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(first, second);
         if (expected < 0) {
             assertTrue(actual < 0);
@@ -83,12 +93,16 @@ public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
             assertEquals(expected, actual);
         }
 
-        actual = FastDoubleVector.tryToParseEightHexDigitsUtf8(s.getBytes(StandardCharsets.UTF_8), offset);
+        testHex(s.getBytes(StandardCharsets.UTF_8), offset, expected);
+    }
+
+    @Override
+    void testHex(byte[] b, int offset, long expected) {
+        long actual = FastDoubleVector.tryToParseEightHexDigitsUtf8(b, offset);
         if (expected < 0) {
             assertTrue(actual < 0);
         } else {
             assertEquals(expected, actual);
         }
-
     }
 }
