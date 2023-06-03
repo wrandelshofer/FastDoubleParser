@@ -31,4 +31,7 @@ abstract class AbstractFloatValueParser extends AbstractNumberParser {
      */
     final static int MAX_EXPONENT_NUMBER = 1024;
 
+    protected static int checkFloatBounds(int size, int offset, int length) {
+        return checkBounds(size, offset, length, MAX_INPUT_LENGTH);
+    }
 }
