@@ -5,8 +5,9 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
 
@@ -51,8 +52,8 @@ class FftMultiplier {
      */
     static final int ROOTS2_CACHE_SIZE = 20;
 
-    private static final NavigableMap<Long, ComplexVector> FFT_POWER_OF_TEN_CACHE2 = new TreeMap<>();
-    private static final NavigableMap<Long, ComplexVector> FFT_POWER_OF_TEN_CACHE3 = new TreeMap<>();
+    private static final Map<Long, ComplexVector> FFT_POWER_OF_TEN_CACHE2 = new ConcurrentHashMap<>();
+    private static final Map<Long, ComplexVector> FFT_POWER_OF_TEN_CACHE3 = new ConcurrentHashMap<>();
 
 
     /**
@@ -64,7 +65,7 @@ class FftMultiplier {
      * elements representing all (2^(k+2))-th roots between 0 and pi/2.
      * Used for FFT multiplication.
      */
-    private final static AtomicReferenceArray<ComplexVector> ROOTS2_CACHE = new AtomicReferenceArray<>(ROOTS_CACHE2_SIZE);
+    private final static AtomicReferenceArray<ComplexVector> ROOTS2_CACHE = new AtomicReferenceArray<>(ROOTS2_CACHE_SIZE);
     /**
      * Sets of complex roots of unity. The set at index k contains 3*2^k
      * elements representing all (3*2^(k+2))-th roots between 0 and pi/2.
@@ -357,7 +358,7 @@ class FftMultiplier {
     private static ComplexVector[] getRootsOfUnity2(int logN) {
         ComplexVector[] roots = new ComplexVector[logN + 1];
         for (int i = logN; i >= 0; i -= 2) {
-            if (i < ROOTS_CACHE2_SIZE) {
+            if (i < ROOTS2_CACHE_SIZE) {
                 if (ROOTS2_CACHE.get(i) == null) {
                     ROOTS2_CACHE.set(i, calculateRootsOfUnity(1 << i));
                 }
