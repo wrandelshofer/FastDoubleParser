@@ -11,6 +11,7 @@ import org.junit.jupiter.api.TestFactory;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.MANTISSA_128;
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.MANTISSA_64;
@@ -138,6 +139,17 @@ public class FastDoubleMathTest {
     void powerOfTwo() {
         for (int i = Double.MIN_EXPONENT; i < Double.MAX_EXPONENT; i++) {
             assertEquals(Math.scalb(1d, i), FastDoubleMath.powerOfTwo(false, i));
+        }
+    }
+
+    @Test
+    void scalb() {
+        Random r = new Random(0);
+        for (int j = 0; j < 1000; j++) {
+            double d = r.nextDouble();
+            for (int i = Double.MIN_EXPONENT; i < Double.MAX_EXPONENT; i++) {
+                assertEquals(Math.scalb(d, i), FastDoubleMath.scalb(d, i));
+            }
         }
     }
 }

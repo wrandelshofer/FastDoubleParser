@@ -977,6 +977,10 @@ class FastDoubleMath {
         }
     }
 
+    static double scalb(double number, long exponent) {
+        return number * Double.longBitsToDouble((exponent + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1));
+    }
+
     static double scalb(boolean isNegative, double number, long exponent) {
         return number * powerOfTwo(isNegative, exponent);
     }

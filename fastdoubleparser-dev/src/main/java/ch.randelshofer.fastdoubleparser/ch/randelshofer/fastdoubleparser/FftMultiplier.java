@@ -980,8 +980,8 @@ class FftMultiplier {
             int ii = imagIdx(idxa);
             double real = a[ri];
             double imag = a[ii];
-            a[ri] = Math.scalb(real, n);
-            a[ii] = Math.scalb(imag, n);
+            a[ri] = FastDoubleMath.scalb(real, n);
+            a[ii] = FastDoubleMath.scalb(imag, n);
         }
     }
 
