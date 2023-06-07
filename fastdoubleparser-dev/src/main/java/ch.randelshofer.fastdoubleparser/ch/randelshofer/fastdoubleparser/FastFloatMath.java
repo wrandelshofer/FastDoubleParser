@@ -90,10 +90,13 @@ class FastFloatMath {
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            return significand * powerOfTwo(isNegative, power);
+            return scalb(significand, isNegative, power);
         } else {
             return Float.NaN;
         }
+    }
+    static float scalb(long number, boolean isNegative, int exponent) {
+        return number * powerOfTwo(isNegative, exponent);
     }
 
     static float powerOfTwo(boolean isNegative, int exponent) {

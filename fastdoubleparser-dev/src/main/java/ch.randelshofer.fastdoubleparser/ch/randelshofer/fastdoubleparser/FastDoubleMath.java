@@ -971,10 +971,14 @@ class FastDoubleMath {
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            return significand * powerOfTwo(isNegative, power);
+            return scalb(isNegative, significand, power);
         } else {
             return Double.NaN;
         }
+    }
+
+    static double scalb(boolean isNegative, double number, long exponent) {
+        return number * powerOfTwo(isNegative, exponent);
     }
 
     static double powerOfTwo(boolean isNegative, long exponent) {
