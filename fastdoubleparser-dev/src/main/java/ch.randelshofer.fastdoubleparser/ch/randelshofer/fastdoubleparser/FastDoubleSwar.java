@@ -411,7 +411,7 @@ class FastDoubleSwar {
         // (This does not have an impact on decimal digits, which is very handy!).
         // Subtract character '0' (0x30) from each of the eight characters
         long vec = (chunk | 0x20_20_20_20_20_20_20_20L) - 0x30_30_30_30_30_30_30_30L;
-        long lt0 = (chunk - 0x30_30_30_30_30_30_30_30L) & 0x80_80_80_80_80_80_80_80L;
+        long lt0 = ((chunk - 0x30_30_30_30_30_30_30_30L) | chunk) & 0x80_80_80_80_80_80_80_80L;
 
         // Create a predicate for all bytes which are greater than '9'-'0' (0x09).
         // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
@@ -427,12 +427,6 @@ class FastDoubleSwar {
         long le_37 = 0x37_37_37_37_37_37_37_37L + (vec ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
         // we don't need to 'and' with 0x80…L here, because we 'and' this with ge_30 anyway.
         //le_37 &= 0x80_80_80_80_80_80_80_80L;
-
-        // Create a predicate for all bytes which are smaller than '0' or greater than 0x7F
-        long lt_00_gt_ff = (chunk | (chunk - 0x3030_3030_3030_3030L)) & 0x8080_8080_8080_8080L;
-        if (lt_00_gt_ff != 0) {
-            return -1;
-        }
 
         // If a character is greater than '9' then it must be greater equal 'a'
         // and smaller  'f'.
