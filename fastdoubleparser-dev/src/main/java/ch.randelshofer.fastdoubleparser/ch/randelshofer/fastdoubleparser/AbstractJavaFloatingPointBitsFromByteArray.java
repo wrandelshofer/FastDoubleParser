@@ -277,7 +277,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             int hexValue = lookupHex(ch);
             if (hexValue >= 0) {
                 significand = (significand << 4) | hexValue;// This might overflow, we deal with it later.
-            } else if (hexValue == AbstractFloatValueParser.DECIMAL_POINT_CLASS) {
+            } else if (hexValue == DECIMAL_POINT_CLASS) {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
                 /*
