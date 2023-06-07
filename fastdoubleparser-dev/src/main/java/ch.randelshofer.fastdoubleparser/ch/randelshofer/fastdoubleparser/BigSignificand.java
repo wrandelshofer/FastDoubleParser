@@ -75,7 +75,12 @@ class BigSignificand {
     }
 
     public BigInteger toBigInteger() {
-        return new BigInteger(x);
+        byte[] y = x;
+        if (y[0] < 0) {
+            y = new byte[x.length + 1];
+            System.arraycopy(x, 0, y,1, x.length);
+        }
+        return new BigInteger(y);
     }
 
     private void x(int i, int value) {
