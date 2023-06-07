@@ -97,7 +97,7 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
 
         if ((numDigits & 1) != 0) {
             char chLow = str[from++];
-            int valueLow = AbstractFloatValueParser.CHAR_TO_HEX_MAP[chLow];
+            int valueLow = AbstractFloatValueParser.lookupHex(chLow);
             bytes[index++] = (byte) valueLow;
             illegalDigits = valueLow < 0;
         }
@@ -105,8 +105,8 @@ class JavaBigIntegerFromCharArray extends AbstractNumberParser {
         for (; from < prerollLimit; from += 2) {
             char chHigh = str[from];
             char chLow = str[from + 1];
-            int valueHigh = chHigh >= 128 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[chHigh];
-            int valueLow = chLow >= 128 ? AbstractFloatValueParser.OTHER_CLASS : AbstractFloatValueParser.CHAR_TO_HEX_MAP[chLow];
+            int valueHigh = AbstractFloatValueParser.lookupHex(chHigh);
+            int valueLow = AbstractFloatValueParser.lookupHex(chLow);
             bytes[index++] = (byte) (valueHigh << 4 | valueLow);
             illegalDigits |= valueHigh < 0 || valueLow < 0;
         }
