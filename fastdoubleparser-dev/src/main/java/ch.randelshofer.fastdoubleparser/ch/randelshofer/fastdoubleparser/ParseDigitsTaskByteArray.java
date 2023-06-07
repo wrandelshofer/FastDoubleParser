@@ -74,7 +74,7 @@ class ParseDigitsTaskByteArray {
         }
 
         // Recursion case: Split large sequences up into two parts. The lower part is a multiple of 16 digits.
-        int mid = splitFloor16(from, to);
+        int mid = splitFloor16(numDigits, to);
         BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
         BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
 
