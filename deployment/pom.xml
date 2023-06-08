@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ch.randelshofer</groupId>
   <artifactId>fastdoubleparser</artifactId>
-  <version>0.8.0</version>
+  <version>0.10.0</version>
   <packaging>jar</packaging>
 
   <name>ch.randelshofer:fastdoubleparser</name>
@@ -13,7 +13,7 @@
   <licenses>
     <license>
       <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <url>https://github.com/wrandelshofer/FastDoubleParser/blob/9a3ccae38254c9bf84b5e6a218a47675bf80ed9f/LICENSE</url>
       <distribution>repo</distribution>
     </license>
   </licenses>

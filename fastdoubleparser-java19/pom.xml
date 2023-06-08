@@ -21,15 +21,15 @@
     <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparser</testSourceDirectory>
     <resources>
       <resource>
-        <directory>${basedir}/src/main/java</directory>
+        <directory>${basedir}/src/main/resources/java</directory>
+      </resource>
+      <resource>
+        <directory>${project.build.directory}/generated-resources/java</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}/../fastdoubleparser-dev/src/main/resources/ch.randelshofer.fastdoubleparser</directory>
       </resource>
     </resources>
-    <testResources>
-      <testResource>
-        <directory>${basedir}/src/test/java</directory>
-      </testResource>
-    </testResources>
-
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>

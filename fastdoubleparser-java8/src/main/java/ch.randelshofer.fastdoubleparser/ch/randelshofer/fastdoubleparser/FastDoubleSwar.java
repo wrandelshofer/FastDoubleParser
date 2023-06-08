@@ -14,12 +14,8 @@ package ch.randelshofer.fastdoubleparser;
  *     <dt>Leslie Lamport, Multiple Byte Processing with Full-Word Instructions</dt>
  *     <dd><a href="https://lamport.azurewebsites.net/pubs/multiple-byte.pdf">azurewebsites.net</a></dd>
  *
- *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
- *     Apache License 2.0 or Boost Software License.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
- *
  *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
- *     Apache License 2.0.</dt>
+ *     <a href="https://github.com/fastfloat/fast_float/blob/cc1e01e9eee74128e48d51488a6b1df4a767a810/LICENSE-MIT">MIT License</a>.</dt>
  *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
  *
  *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second,

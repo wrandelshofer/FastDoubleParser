@@ -1,0 +1,61 @@
+This file contains the PGP&GPG keys of various FastDoubleParser developers.
+Please don't use them for email unless you have to. Their main
+purpose is code signing.
+
+FastDoubleParser users: pgp < KEYS
+FastDoubleParser developers:
+        (pgpk -ll <your name> && pgpk -xa <your name>) >> this file.
+      or
+        (gpg --fingerprint --list-sigs <your name>
+             && gpg --armor --export <your name>) >> this file.
+
+FastDoubleParser developers: please ensure that your key is also available via the
+PGP keyservers (such as pgpkeys.mit.edu).
+
+
+pub   rsa3072 2021-04-03 [SC] [expires: 2031-04-01]
+      6EAD 752B 3E2B 38E8 E223  6D7B A932 1EDA A5CB 3202
+uid           [ultimate] Werner Randelshofer <werner.randelshofer@bluewin.ch>
+sig 3        A9321EDAA5CB3202 2021-04-03  Werner Randelshofer <werner.randelshofer@bluewin.ch>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mQGNBGBoC2ABDACyCWLqqAo9NeThE90hBoYomtgLci5I8+7PxSYeQfzUYjXzZcnh
+6d/zHaeC0zxGhT2LNe5i3p2e36xSeFDobjG2Il/nv+4jFCgbn3TZ2hEingPuPsg5
+isodOXHBSY9iHPTKInpiu+J79MWP9GVZ6GeOOgQaNSrNN3uDE1w3rukB2SrXGdfT
+/6YZIOtwWZVzc2m9lalPmOAyI4KLI/s37C8Ozfv3c+Bx11WRVzWVpBTo94fU4DPu
+Yzkx2Wxuc4TT5k6bQJI/GHi36M7xkUauXhkRCNvBz+LFVcFjtsv6S37L6RZib6mz
+jZTW+iyD4h66gqzg3hSRxv4YzHgR/Os26Br2ioZNzH6hJFtNktR4oN/2kydmj5Od
+WYjvdMmd/dMbZheZE3f8sziUKCyvWMIddnHAM81uDTXgWcMgYSa3npOGZhfk41z+
+w9o2f1kXIfdurqlA1n8np07PLw5Rfpjvbs7EZxPTJwcc1enaNyL64fb+YIUtFrcW
+Dt1zUMEDkbcZL1UAEQEAAbQ0V2VybmVyIFJhbmRlbHNob2ZlciA8d2VybmVyLnJh
+bmRlbHNob2ZlckBibHVld2luLmNoPokB1AQTAQgAPgIbAwULCQgHAgYVCgkICwIE
+FgIDAQIeAQIXgBYhBG6tdSs+Kzjo4iNte6kyHtqlyzICBQJgaA0gBQkSzATAAAoJ
+EKkyHtqlyzICv4wL/14Q5+HH7odJ6+Owe22fR5k5zTcop7FJL16vx9I6aY66NSZQ
+xYJFQl2eq/ukGFSzukVCpxKRnZYTatRiWf0rFLb3Q+TEAaaOhEgQ4rO9PcctYlqe
+yC7m/UMrv/mMizOGYzG4eco3V0jFYCWrat3KjGMumm8n8vZpQXizxFwnVHtF15o3
+Y7vajCkyi47RI1Dwth71UorTSoryGJUMHAk0jKV5SZZjCDrYBc4vib2b0Qqxjonw
+r/ug5h+R+c7Ho1I2KiAasT5UEL1R6VcEekgTkB7n8U24eh7u/HeRJA35sFxJOQ+8
+5Tf5ROs5E/lbjGGiVTX4YIErbe92w44NdsloQHdTBIOUQtIPuLWDuXvmBrkxYoYa
+pij0ERT3Np52iZ3X8X4dCDMH5hNK+LeCGTLqnLsXoUt+biUyDQzSRttrhNgvjW8o
+gMkHLG6XZGoERDm4g0u39tU4qoxauYREdBa5IDyBRJeAltsTFQGOh07sfIXVs9xd
+tNuQoz4UNVsaU3hu87kBjQRgaAtgAQwA9dZFGqc0/6pUKDUsT+2hMh0z5mISLc+x
+6v4wbAqiEcBE9uoKf0LniRfVeehmuJpiUPgOf3TyxNbxeWiFuJELZbnrYztAeRE6
+6Zxk6i2Mv+207fdlj3mhphdEWh4f/0AJa2PAmiwlcxq1O3VJ/Wfn3huCqIU5cmqn
+mGKH9LPaW1aJBxWl9+x6mmPVySxpTaQRrnNnumZf9K5lwGEsccvpkLP7J1Nlv7HL
+O8oliPCInEMcsrVqfiKU/bybxNW1wzPJxp8LNLaCNxuLNl4RCp7tPQuZgjcoCnz+
+JwcxnmNGI+FKqSsFXBZyNTWiQJuaFUQa0QON/+Qj3p+OyW15f+FfLjHI/BkNAi4n
+cNeeazAwuLCMJGMS+dLarHMbbAKLaH0UI062ch3Aq2Sa3io1gU6vYHvoKNMNfYdN
+woGX85EkzX6A9fm9jBviios1RLkpfO70MoxpWjl/rwHG57GOItWZ7O53ebs6HrFP
+dUYQs0Gz/lj+BaQPwDcMxADfYtGnYMepABEBAAGJAbwEGAEIACYWIQRurXUrPis4
+6OIjbXupMh7apcsyAgUCYGgLYAIbDAUJA8JnAAAKCRCpMh7apcsyAj39DACMEaGs
+skfZBBbF9BHklmN9OHbGKK4qfwY6f3Pl+QEC4m2y5Uaxgx4n0SJZ/p4YdVopRj07
+cdVYEkqJC31co0XPvfbjyBfhcH1BXkKQiYAZMUTqc+ILGHrY/vzP27Je+vck6M+n
+tQ/2rBBiPtD6Bj2RcuXupr6MiGavF5U5vzLUkYm49Oq2Wi5gIuBF8+6ipjnzrVl4
+HqGUlFEt8RK3W4I/ZWTJBlwxaIWoAIfkE54FtSqN4dY+LoNllMKbzjFBemXfZXHA
+FEH9cjNh5EvFKm53ff8X+WNgodiVaH+qv2VMZZngEtmj2Y94v5x5z+Q3vcoGH6FU
+dLjefYm5uwEhhBsTyz8gyBmoj8cBBnw3DZexyOPLGDj/3FSimww0HXf8RIR7Msc5
+GGMLXqSZ4WVZM59pFsqjmqfgl+C8WYWMLAt7sXJGuyl2LQoAtR5gpkPZqA0wQiIX
+e7/RgIs6TpqdS4uLh52KzW7VUXqywr+qH53RFujkS0KijW96LbblENk54Kk=
+=rtCH
+-----END PGP PUBLIC KEY BLOCK-----

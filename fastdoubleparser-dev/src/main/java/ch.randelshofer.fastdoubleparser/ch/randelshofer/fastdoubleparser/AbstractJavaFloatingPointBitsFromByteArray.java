@@ -133,7 +133,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // Skip optional FloatTypeSuffix
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
+        if ((ch | 0x22) == 'f') { // ~ "fFdD"
             index++;
         }
 
@@ -228,7 +228,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
-            if (ch == 'x' || ch == 'X') {
+            if ((ch | 0x20) == 'x') {// equals ignore case
                 return parseHexFloatingPointLiteral(str, index + 1, offset, endIndex, isNegative);
             }
         }
@@ -331,7 +331,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // Skip optional FloatTypeSuffix
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
+        if ((ch | 0x22) == 'f') { // ~ "fFdD"
             index++;
         }
 
