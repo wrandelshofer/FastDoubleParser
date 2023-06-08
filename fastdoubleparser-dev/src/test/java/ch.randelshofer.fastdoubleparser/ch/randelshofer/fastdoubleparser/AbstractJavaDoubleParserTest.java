@@ -172,6 +172,7 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
     protected List<NumberTestData> createDataForIllegalHexStrings() {
         return Arrays.asList(
                 new NumberTestData("0xäp2"),
+                new NumberTestData("0x/äp2"),
                 new NumberTestData("0x0.1234567äp0")
         );
     }

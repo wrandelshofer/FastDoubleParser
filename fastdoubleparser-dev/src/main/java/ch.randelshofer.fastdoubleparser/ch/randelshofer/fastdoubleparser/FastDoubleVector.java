@@ -189,23 +189,34 @@ class FastDoubleVector {
     /**
      * Tries to parse eight hex digits from a byte array using the
      * Java vector API.
+     * <p>
+     * We use the following approach by Daniel Lemire:
+     * <pre>
+     * uint32_t convertone(uint8_t c) {
+     *   return (c & 0xF) + 9 * (c >> 6);
+     * }
+     * </pre>
+     * <p>
+     * References:
+     * <dl>
+     *     <dt>Daniel Lemire. Parsing short hexadecimal strings efficiently.</dt>
+     *     <dd><a href="https://lemire.me/blog/2019/04/17/parsing-short-hexadecimal-strings-efficiently/">lemire.me</a></dd>
+     * </dl>
      *
      * @param a      contains 8 ascii characters
      * @param offset the offset of the first character in {@code a}
      *               returns a negative value if {@code value} does not contain 8 digits
      */
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
-        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        VectorMask<Byte> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0'))
-                .and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
+        ByteVector c = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset);
+        ByteVector lowerCase = c.or((byte) 0x20);
+        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9')).xor(
+                lowerCase.compare(UNSIGNED_GE, 'a').and(lowerCase.compare(UNSIGNED_LE, 'f'))
+        ).allTrue()) {
+            return -1;
         }
-        return vec
-                .sub((byte) ('a' - '0' - 10), gt9Msk)
+        return c.and((byte) 0xf)
+                .add(c.lanewise(LSHR, 6).mul((byte) 9))
                 .castShape(IntVector.SPECIES_256, 0)
                 .lanewise(LSHL, POWERS_OF_16_SHIFTS)
                 .reduceLanesToLong(ADD) & 0xffffffffL;

@@ -7,6 +7,8 @@ package ch.randelshofer.fastdoubleparser;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,7 +63,25 @@ public abstract class AbstractEightDigitsTest {
         );
     }
 
+    @TestFactory
+    public List<DynamicNode> dynamicTestsAllEightHexDigitsLiterals() {
+        List<DynamicNode> tests = new ArrayList<>();
+        for (int i = 0; i < 256; i++) {
+            final char c = (char) i;
+            boolean isValidHexChar = !((c < '0' || c > '9') && (c < 'A' || c > 'F') && (c < 'a' || c > 'f'));
+            byte[] a = new byte[8];
+            Arrays.fill(a, (byte) c);
+            tests.add(dynamicTest(String.format("u+%04x", i) + (Character.isISOControl(c) ? "" : " '" + c + "'"), () -> testHex(a, 0,
+                    isValidHexChar ? Long.valueOf(new String(a, StandardCharsets.UTF_8), 16) : -1)));
+
+        }
+        return tests;
+    }
+
+
     abstract void testDec(String s, int offset, int expected);
 
     abstract void testHex(String s, int offset, long expected);
+
+    abstract void testHex(byte[] b, int offset, long expected);
 }
