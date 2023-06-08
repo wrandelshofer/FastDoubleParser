@@ -28,7 +28,7 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots --errors package
       - name: Performance Test [0,1)
-        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main
+        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main fastdoubleparserdemo/data/mesh.txt
       - name: Performance Test canada.txt
         run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main fastdoubleparserdemo/data/canada.txt
       - name: Performance Test canada_hex.txt
