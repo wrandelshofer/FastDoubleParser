@@ -145,7 +145,14 @@ public abstract class AbstractBigIntegerParserTest {
                 new NumberTestDataSupplier("x, radix 33", () -> new NumberTestData("x, radix 33", "x", 33, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier("y, radix 34", () -> new NumberTestData("y, radix 34", "y", 34, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier("z, radix 35", () -> new NumberTestData("z, radix 35", "z", 35, "*", NumberFormatException.class)),
-                new NumberTestDataSupplier("_, radix 35", () -> new NumberTestData("_, radix 35", "_", 36, "*", NumberFormatException.class))
+                new NumberTestDataSupplier("_, radix 35", () -> new NumberTestData("_, radix 35", "_", 36, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("/, radix 16", () -> new NumberTestData("/, radix 16", "/", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("/**8, radix 16", () -> new NumberTestData("/**8, radix 16", "////////", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier(":**8, radix 16", () -> new NumberTestData(":**8, radix 16", "::::::::", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("@**8, radix 16", () -> new NumberTestData("@**8, radix 16", "@@@@@@@@", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("G**8, radix 16", () -> new NumberTestData("G**8, radix 16", "GGGGGGGG", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("`**8, radix 16", () -> new NumberTestData("`**8, radix 16", "````````", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("g**8, radix 16", () -> new NumberTestData("g**8, radix 16", "gggggggg", 16, "*", NumberFormatException.class))
         );
     }
 
