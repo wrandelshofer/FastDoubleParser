@@ -171,16 +171,15 @@ class FastDoubleVector {
      * returns a negative value if {@code a} does not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
-                .sub((short) '0');
-        VectorMask<Short> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
+        ShortVector c = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset);
+        ShortVector lowerCase = c.or((short) 0x20);
+        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
+                .or(lowerCase.compare(UNSIGNED_GE, 'a').and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .allTrue()) {
+            return -1;
         }
-        return vec
-                .sub((short) ('a' - '0' - 10), gt9Msk)
+        return c.and((byte) 0xf)
+                .add(c.lanewise(LSHR, 6).mul((byte) 9))
                 .castShape(IntVector.SPECIES_256, 0)
                 .lanewise(LSHL, POWERS_OF_16_SHIFTS)
                 .reduceLanesToLong(ADD) & 0xffffffffL;

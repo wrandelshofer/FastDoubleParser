@@ -405,6 +405,9 @@ class FastDoubleSwar {
      * returns a negative value if the two longs do not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
+        if (((first | second) & 0xff00_ff00_ff00_ff00L) != 0) {
+            return -1;
+        }
         long f = first * 0x0000_0000_0001_0100L;
         long s = second * 0x0000_0000_0001_0100L;
         long utf8Bytes = (f & 0xffff_0000_0000_0000L)

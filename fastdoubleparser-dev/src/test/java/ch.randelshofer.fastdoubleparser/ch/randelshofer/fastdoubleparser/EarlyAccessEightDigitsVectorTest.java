@@ -95,4 +95,14 @@ public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
             assertEquals(expected, actual);
         }
     }
+
+    @Override
+    void testHex(char[] b, int offset, long expected) {
+        long actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(b, offset);
+        if (expected < 0) {
+            assertTrue(actual < 0);
+        } else {
+            assertEquals(expected, actual);
+        }
+    }
 }
