@@ -45,7 +45,7 @@ class FastDoubleSwar {
     private final static VarHandle readLongBE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
     private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
-            .withByteAlignment(2);
+            .withBitAlignment(16);
 
     public static int countUpToEightDigitsUtf8(long chunk) {
         long val = chunk - 0x3030303030303030L;
