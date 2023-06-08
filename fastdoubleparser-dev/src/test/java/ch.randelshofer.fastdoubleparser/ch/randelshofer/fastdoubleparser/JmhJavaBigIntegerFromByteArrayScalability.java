@@ -15,33 +15,35 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 /**
  * Benchmarks for selected integer strings.
  * <pre>
- * # JMH version: 1.35
- * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+29-2280
+ * # JMH version: 1.36
+ * # VM version: JDK 21-ea, OpenJDK 64-Bit Server VM, 21-ea+24-2086
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *        (digits)  Mode  Cnt     _        Score             Error  Units
- * dec           1  avgt    4     _        3.895 ±           0.051  ns/op
- * dec          10  avgt    4     _       13.073 ±           1.012  ns/op
- * dec         100  avgt    4     _      417.791 ±           7.421  ns/op
- * dec        1000  avgt    4     _     4713.890 ±          95.678  ns/op
- * dec       10000  avgt    4     _   159283.207 ±        5076.778  ns/op
- * dec      100000  avgt    4     _  5148743.967 ±      269250.312  ns/op
- * dec     1000000  avgt    4     _ 82326733.043 ±      988263.342  ns/op
- * dec    10000000  avgt    4    1_359363201.768 ±   306440228.295  ns/op
- * dec   100000000  avgt    4   22_241605723.500 ±  1486815357.018  ns/op
- * dec   646456993  avgt    4  202_298930337.000 ± 10730148276.875  ns/op
- * dec  1292782621  avgt    4  197_858301116.000 ±  5372926664.595  ns/op
- * hex           1  avgt    4     _       15.576 ±           0.693  ns/op
- * hex          10  avgt    4     _       27.551 ±           9.898  ns/op
- * hex         100  avgt    4     _      121.339 ±           7.258  ns/op
- * hex        1000  avgt    4     _     1043.819 ±          28.706  ns/op
- * hex       10000  avgt    4     _    10741.632 ±         258.920  ns/op
- * hex      100000  avgt    4     _   112710.224 ±        2946.230  ns/op
- * hex     1000000  avgt    4     _  1145607.433 ±       37200.668  ns/op
- * hex    10000000  avgt    4     _ 12940545.545 ±      182941.922  ns/op
- * hex   100000000  avgt    4     _133010989.979 ±     9262778.811  ns/op
- * hex   646456993  avgt    4     _786577513.250 ±    86855481.927  ns/op
- * hex  1292782621  avgt    4     _881336008.671 ±   248831282.555  ns/op
+ * Benchm (digits)  Mode  Cnt             Score   Error  Units
+ * dec           1  avgt    2             3.830          ns/op
+ * dec          10  avgt    2            12.742          ns/op
+ * dec         100  avgt    2           490.141          ns/op
+ * dec        1000  avgt    2          4702.757          ns/op
+ * dec       10000  avgt    2        155614.143          ns/op
+ * dec      100000  avgt    2       5090985.731          ns/op
+ * dec     1000000  avgt    2      80625344.892          ns/op
+ * dec    10000000  avgt    2    1298521324.813          ns/op
+ * dec   100000000  avgt    2   21618066446.000          ns/op
+ * dec   646456993  avgt    2  193819477092.000          ns/op
+ * dec  1292782621  avgt    2  216033005512.000          ns/op
+ * hex           1  avgt    2            16.569          ns/op
+ * hex          10  avgt    2            26.783          ns/op
+ * hex         100  avgt    2           139.187          ns/op
+ * hex        1000  avgt    2          1217.598          ns/op
+ * hex       10000  avgt    2         12751.188          ns/op
+ * hex      100000  avgt    2        128000.498          ns/op
+ * hex     1000000  avgt    2       1272110.362          ns/op
+ * hex    10000000  avgt    2      13750114.163          ns/op
+ * hex   100000000  avgt    2     193441331.309          ns/op
+ * hex   646456993  avgt    2    1036792579.470          ns/op
+ * hex  1292782621  avgt    2     991057402.000          ns/op
+ *
+ * Process finished with exit code 0
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -57,8 +59,8 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
         //,"-XX:+PrintAssembly"
 
 })
-@Measurement(iterations = 4)
-@Warmup(iterations = 4)
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
