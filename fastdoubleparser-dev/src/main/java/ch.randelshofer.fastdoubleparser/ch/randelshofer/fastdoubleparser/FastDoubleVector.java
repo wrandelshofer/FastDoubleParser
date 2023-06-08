@@ -210,9 +210,9 @@ class FastDoubleVector {
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
         ByteVector c = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset);
         ByteVector lowerCase = c.or((byte) 0x20);
-        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9')).xor(
-                lowerCase.compare(UNSIGNED_GE, 'a').and(lowerCase.compare(UNSIGNED_LE, 'f'))
-        ).allTrue()) {
+        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
+                .or(lowerCase.compare(UNSIGNED_GE, 'a').and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .allTrue()) {
             return -1;
         }
         return c.and((byte) 0xf)
