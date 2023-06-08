@@ -379,8 +379,7 @@ class FastDoubleSwar {
      * returns a negative value if the two longs do not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
-        long highBytes = (first | second) & 0xff80ff80_ff80ff80L;
-        if (highBytes != 0L) {
+        if (((first | second) & 0xff80ff80_ff80ff80L) != 0) {
             return -1L;
         }
         long utf8Bytes = (Long.compress(first, 0x00ff00ff_00ff00ffL) << 32)

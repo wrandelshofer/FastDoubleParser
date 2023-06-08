@@ -64,7 +64,7 @@ public abstract class AbstractEightDigitsTest {
     }
 
     @TestFactory
-    public List<DynamicNode> dynamicTestsAllEightHexDigitsLiterals() {
+    public List<DynamicNode> dynamicTestsAllEightHexDigitsLiteralsUtf8() {
         List<DynamicNode> tests = new ArrayList<>();
         for (int i = 0; i < 256; i++) {
             final char c = (char) i;
@@ -78,10 +78,27 @@ public abstract class AbstractEightDigitsTest {
         return tests;
     }
 
+    @TestFactory
+    public List<DynamicNode> dynamicTestsAllEightHexDigitsLiteralsUtf16() {
+        List<DynamicNode> tests = new ArrayList<>();
+        for (int i = 0; i < 1 << 10; i++) {// we only test the first 1024 chars
+            final char c = (char) i;
+            boolean isValidHexChar = !((c < '0' || c > '9') && (c < 'A' || c > 'F') && (c < 'a' || c > 'f'));
+            char[] a = new char[8];
+            Arrays.fill(a, c);
+            tests.add(dynamicTest(String.format("u+%04x", i) + (Character.isISOControl(c) ? "" : " '" + c + "'"), () -> testHex(a, 0,
+                    isValidHexChar ? Long.valueOf(new String(a), 16) : -1)));
+
+        }
+        return tests;
+    }
+
 
     abstract void testDec(String s, int offset, int expected);
 
     abstract void testHex(String s, int offset, long expected);
+
+    abstract void testHex(char[] b, int offset, long expected);
 
     abstract void testHex(byte[] b, int offset, long expected);
 }
