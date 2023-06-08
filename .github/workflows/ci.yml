@@ -27,7 +27,7 @@ jobs:
         run: echo JAVA_HOME=$JAVA_HOME
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots --errors package
-      - name: Performance Test [0,1)
+      - name: Performance Test mesh.txt
         run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main fastdoubleparserdemo/data/mesh.txt
       - name: Performance Test canada.txt
         run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main fastdoubleparserdemo/data/canada.txt
