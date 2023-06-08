@@ -60,8 +60,8 @@ import java.util.concurrent.TimeUnit;
         "--enable-preview"
         //,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/EightDigitsJmh.*"
 })
-@Measurement(iterations = 4)
-@Warmup(iterations = 4)
+@Measurement(iterations = 1)
+@Warmup(iterations = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)

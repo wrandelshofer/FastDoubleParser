@@ -199,7 +199,7 @@ class FastDoubleVector {
      * <p>
      * References:
      * <dl>
-     *     <dt>Daniel Lemire. Parsing short hexadecimal strings efficiently</dt>
+     *     <dt>Daniel Lemire. Parsing short hexadecimal strings efficiently.</dt>
      *     <dd><a href="https://lemire.me/blog/2019/04/17/parsing-short-hexadecimal-strings-efficiently/">lemire.me</a></dd>
      * </dl>
      *
@@ -215,7 +215,8 @@ class FastDoubleVector {
         ).allTrue()) {
             return -1;
         }
-        return c.and((byte) 0xf).add(c.lanewise(LSHR, 6).mul((byte) 9))
+        return c.and((byte) 0xf)
+                .add(c.lanewise(LSHR, 6).mul((byte) 9))
                 .castShape(IntVector.SPECIES_256, 0)
                 .lanewise(LSHL, POWERS_OF_16_SHIFTS)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
