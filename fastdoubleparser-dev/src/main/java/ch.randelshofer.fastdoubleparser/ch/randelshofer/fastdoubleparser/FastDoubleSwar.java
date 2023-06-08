@@ -50,7 +50,18 @@ class FastDoubleSwar {
     public static int countUpToEightDigitsUtf8(long chunk) {
         long val = chunk - 0x3030303030303030L;
         long predicate = ((chunk + 0x4646464646464646L) | val) & 0x8080808080808080L;
-        return predicate == 0L ? 8 : Long.numberOfTrailingZeros(predicate) >> 3;
+        return predicate == 0L ? 8 : Long.numberOfLeadingZeros(predicate) >> 3;
+    }
+
+    public static int countUpToFourDigitsUtf16(long chunk) {
+        long val = chunk - 0x0030_0030_0030_0030L;
+        long predicate = ((chunk + 0x0046_0046_0046_0046L) | val) & 0xff80_ff80_ff80_ff80L;
+        return predicate == 0L ? 4 : Long.numberOfLeadingZeros(predicate) >> 4;
+    }
+
+    public static int countUpToEightDigitsUtf16(long first, long second) {
+        int digits = countUpToFourDigitsUtf16(first);
+        return digits < 4 ? digits : 4 + countUpToFourDigitsUtf16(second);
     }
 
     /**
