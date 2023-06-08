@@ -35,8 +35,10 @@ import static jdk.incubator.vector.VectorOperators.*;
 class FastDoubleVector {
     private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16_SHIFTS = IntVector.fromArray(IntVector.SPECIES_256,
+    private static final IntVector POWERS_OF_16_SHIFTS_BE = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
+    private static final LongVector POWERS_OF_16_SHIFTS_LE = LongVector.fromArray(LongVector.SPECIES_512,
+            new long[]{16, 20, 24, 28, 0, 4, 8, 12}, 0);
 
     /**
      * Tries to parse eight digits at once using the
@@ -143,21 +145,21 @@ class FastDoubleVector {
      * @return the parsed value or -1
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
-        ShortVector vec = LongVector.zero(LongVector.SPECIES_128)
+        ShortVector c = LongVector.zero(LongVector.SPECIES_128)
                 .withLane(0, first)
                 .withLane(1, second)
-                .reinterpretAsShorts()
-                .sub((short) '0');
-        VectorMask<Short> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
+                .reinterpretAsShorts();
+        ShortVector lowerCase = c.or((short) 0x20);
+        VectorMask<Short> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
+        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
+                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .allTrue()) {
+            return -1;
         }
-        return vec
-                .sub((short) ('a' - '0' - 10), gt9Msk)
+        return lowerCase.sub((byte) '0')
+                .sub((byte) ('a' - '0' - 10), ge_a)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
@@ -173,34 +175,22 @@ class FastDoubleVector {
     public static long tryToParseEightHexDigitsUtf16(char[] a, int offset) {
         ShortVector c = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset);
         ShortVector lowerCase = c.or((short) 0x20);
+        VectorMask<Short> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
         if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
-                .or(lowerCase.compare(UNSIGNED_GE, 'a').and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
                 .allTrue()) {
             return -1;
         }
-        return c.and((byte) 0xf)
-                .add(c.lanewise(LSHR, 6).mul((byte) 9))
+        return lowerCase.sub((byte) '0')
+                .sub((byte) ('a' - '0' - 10), ge_a)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
     /**
      * Tries to parse eight hex digits from a byte array using the
      * Java vector API.
-     * <p>
-     * We use the following approach by Daniel Lemire:
-     * <pre>
-     * uint32_t convertone(uint8_t c) {
-     *   return (c & 0xF) + 9 * (c >> 6);
-     * }
-     * </pre>
-     * <p>
-     * References:
-     * <dl>
-     *     <dt>Daniel Lemire. Parsing short hexadecimal strings efficiently.</dt>
-     *     <dd><a href="https://lemire.me/blog/2019/04/17/parsing-short-hexadecimal-strings-efficiently/">lemire.me</a></dd>
-     * </dl>
      *
      * @param a      contains 8 ascii characters
      * @param offset the offset of the first character in {@code a}
@@ -209,15 +199,16 @@ class FastDoubleVector {
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
         ByteVector c = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset);
         ByteVector lowerCase = c.or((byte) 0x20);
+        VectorMask<Byte> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
         if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
-                .or(lowerCase.compare(UNSIGNED_GE, 'a').and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
                 .allTrue()) {
             return -1;
         }
-        return c.and((byte) 0xf)
-                .add(c.lanewise(LSHR, 6).mul((byte) 9))
+        return lowerCase.sub((byte) '0')
+                .sub((byte) ('a' - '0' - 10), ge_a)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 }

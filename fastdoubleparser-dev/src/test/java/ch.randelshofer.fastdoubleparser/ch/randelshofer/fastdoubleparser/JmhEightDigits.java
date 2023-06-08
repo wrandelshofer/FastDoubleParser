@@ -17,41 +17,42 @@ import java.util.concurrent.TimeUnit;
  * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 19+36-2238
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
  *
- * Benchmark(eightDigitsCharSequence)  Mode  Cnt  Score   Error  Units
- * 01ByteArrayDecScalar       12345678  avgt   16  6.478 ± 0.038  ns/op
- * 01ByteArrayDecScalar       12345x78  avgt   16  5.098 ± 0.011  ns/op
- * 01ByteArrayDecScalarMul10  12345678  avgt   16  5.648 ± 0.011  ns/op
- * 01ByteArrayDecScalarMul10  12345x78  avgt   16  4.600 ± 0.046  ns/op
- * 01ByteArrayDecScalarL      12345678  avgt    4  7.333 ± 0.180  ns/op
- * 01ByteArrayDecScalarL      12345x78  avgt    4  5.324 ± 0.070  ns/op
- * 01ByteArrayDecScalarMul10L 12345678  avgt    4  6.672 ± 0.067  ns/op
- * 01ByteArrayDecScalarMul10L 12345x78  avgt    4  5.042 ± 0.167  ns/op
- * 02StringDecScalar          12345678  avgt   16  7.316 ± 0.072  ns/op
- * 02StringDecScalar          12345x78  avgt   16  5.840 ± 0.236  ns/op
- * 03CharArrayDecScalar       12345678  avgt   16  6.274 ± 0.027  ns/op
- * 03CharArrayDecScalar       12345x78  avgt   16  4.742 ± 0.028  ns/op
+ * Benchmark                   (eightDigitsCharSequence)  Mode  Cnt  Score   Error  Units
+ * 01ByteArrayDecScalar                         12345678  avgt    2  6.006          ns/op
+ * 01ByteArrayDecScalar                         12345x78  avgt    2  4.989          ns/op
+ * 01ByteArrayDecScalarL                        12345678  avgt    2  6.822          ns/op
+ * 01ByteArrayDecScalarL                        12345x78  avgt    2  5.616          ns/op
+ * 01ByteArrayDecScalarMul10                    12345678  avgt    2  5.604          ns/op
+ * 01ByteArrayDecScalarMul10                    12345x78  avgt    2  4.669          ns/op
+ * 01ByteArrayDecScalarMul10L                   12345678  avgt    2  6.086          ns/op
+ * 01ByteArrayDecScalarMul10L                   12345x78  avgt    2  4.777          ns/op
  *
- * 11ByteArrayDecSwar         12345678  avgt   16  2.026 ± 0.011  ns/op
- * 11ByteArrayDecSwar         12345x78  avgt   16  1.229 ± 0.008  ns/op
- * 12CharArrayDecSwar         12345678  avgt   16  2.528 ± 0.019  ns/op
- * 12CharArrayDecSwar         12345x78  avgt   16  2.073 ± 0.020  ns/op
- * 13StringDecSwar            12345678  avgt   16  3.740 ± 0.013  ns/op
- * 13StringDecSwar            12345x78  avgt   16  3.131 ± 0.014  ns/op
- * 14ByteArrayHexSwar         12345678  avgt    4  2.782 ± 0.027  ns/op
- * 14ByteArrayHexSwar         12345x78  avgt    4  1.901 ± 0.022  ns/op
- * 15CharArrayHexSwar         12345678  avgt    4  4.637 ± 0.123  ns/op
- * 15CharArrayHexSwar         12345x78  avgt    4  3.638 ± 0.039  ns/op
+ * 02StringDecScalar                            12345678  avgt    2  7.808          ns/op
+ * 02StringDecScalar                            12345x78  avgt    2  6.977          ns/op
+ * 03CharArrayDecScalar                         12345678  avgt    2  6.404          ns/op
+ * 03CharArrayDecScalar                         12345x78  avgt    2  5.330          ns/op
  *
- * 21ByteArrayDecVector       12345678  avgt   16  2.845 ± 0.055  ns/op
- * 21ByteArrayDecVector       12345x78  avgt   16  1.460 ± 0.007  ns/op
- * 22CharArrayDecVector       12345678  avgt   16  2.701 ± 0.018  ns/op
- * 22CharArrayDecVector       12345x78  avgt   16  1.300 ± 0.012  ns/op
- * 23StringDecVector          12345678  avgt   16  5.055 ± 0.047  ns/op
- * 23StringDecVector          12345x78  avgt   16  3.277 ± 0.011  ns/op
- * 24ByteArrayHexVector       12345678  avgt   16  3.919 ± 0.036  ns/op
- * 24ByteArrayHexVector       12345x78  avgt   16  1.630 ± 0.010  ns/op
- * 25CharArrayHexVector       12345678  avgt   16  3.607 ± 0.177  ns/op
- * 25CharArrayHexVector       12345x78  avgt   16  1.373 ± 0.024  ns/op
+ * 11ByteArrayDecSwar                           12345678  avgt    2  1.995          ns/op
+ * 11ByteArrayDecSwar                           12345x78  avgt    2  0.966          ns/op
+ * 12CharArrayDecSwar                           12345678  avgt    2  2.921          ns/op
+ * 12CharArrayDecSwar                           12345x78  avgt    2  1.660          ns/op
+ * 13StringDecSwar                              12345678  avgt    2  4.204          ns/op
+ * 13StringDecSwar                              12345x78  avgt    2  3.232          ns/op
+ * 14ByteArrayHexSwar                           12345678  avgt    2  4.056          ns/op
+ * 14ByteArrayHexSwar                           12345x78  avgt    2  2.072          ns/op
+ * 15CharArrayHexSwar                           12345678  avgt    2  5.296          ns/op
+ * 15CharArrayHexSwar                           12345x78  avgt    2  4.081          ns/op
+ *
+ * 21ByteArrayDecVector                         12345678  avgt    2  2.562          ns/op
+ * 21ByteArrayDecVector                         12345x78  avgt    2  1.380          ns/op
+ * 22CharArrayDecVector                         12345678  avgt    2  2.513          ns/op
+ * 22CharArrayDecVector                         12345x78  avgt    2  1.182          ns/op
+ * 23StringDecVector                            12345678  avgt    2  4.740          ns/op
+ * 23StringDecVector                            12345x78  avgt    2  2.963          ns/op
+ * 24ByteArrayHexVector                         12345678  avgt    2  4.202          ns/op
+ * 24ByteArrayHexVector                         12345x78  avgt    2  2.711          ns/op
+ * 25CharArrayHexVector                         12345678  avgt    2  4.061          ns/op
+ * 25CharArrayHexVector                         12345x78  avgt    2  2.485          ns/op
  *
  * Process finished with exit code 0
  * </pre>
@@ -60,8 +61,8 @@ import java.util.concurrent.TimeUnit;
         "--enable-preview"
         //,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/EightDigitsJmh.*"
 })
-@Measurement(iterations = 1)
-@Warmup(iterations = 1)
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
