@@ -18,7 +18,6 @@
         <module name="fastdoubleparser-java19" />
         <module name="FastDoubleParser-Java8" />
         <module name="FastDoubleParser-Java19" />
-        <module name="FastDoubleParserDemo" />
         <module name="fastdoubleparserdemo-Java17" />
         <module name="FastDoubleParser-Java17" />
         <module name="fastdoubleparserdemo-Java19" />
@@ -40,6 +39,7 @@
       <module name="FastDoubleParser" target="20" />
       <module name="FastDoubleParser (1)" target="20" />
       <module name="FastDoubleParser-JavaEarlyAccess" target="20" />
+      <module name="FastDoubleParserDemo" target="19" />
       <module name="FastDoubleParserDemo-JavaEarlyAccess" target="20" />
     </bytecodeTargetLevel>
   </component>

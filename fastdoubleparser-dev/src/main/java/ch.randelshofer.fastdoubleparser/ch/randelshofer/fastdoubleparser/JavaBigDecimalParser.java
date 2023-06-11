@@ -70,7 +70,7 @@ import java.math.BigInteger;
  * <p>
  * Character lengths accepted by {@link BigInteger#BigInteger(String)}:
  * <ul>
- *     <li>{@code Significand}: 1 to 1,292,782,621 decimal digits.
+ *     <li>{@code BigDecimalString}: {@link Integer#MAX_VALUE} - 4.
  * <p>
  *     The resulting value must fit into {@code 2^31 - 1} bits. The decimal
  *     representation of the value {@code 2^31 - 1} has 646,456,993 digits.
@@ -85,10 +85,6 @@ import java.math.BigInteger;
  *     <li>{@code BigDecimalString}: 1 to 1,292,782,621+4+10=1,292,782,635
  *     characters,
  *     e.g. "-1.234567890....12345E-2147483647".</li>
- * </ul>
- * Maximal input length supported by this parser:
- * <ul>
- *     <li>{@code BigDecimalString}: 1,292,782,635 characters.</li>
  * </ul>
  * <p>
  * References:
