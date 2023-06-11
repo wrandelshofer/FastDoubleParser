@@ -194,7 +194,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * otherwise, {@code -1L}.
      */
     public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
-        final int endIndex = checkFloatBounds(str.length(), offset, length);
+        final int endIndex = checkBounds(str.length(), offset, length);
 
         // Skip leading whitespace
         // -------------------

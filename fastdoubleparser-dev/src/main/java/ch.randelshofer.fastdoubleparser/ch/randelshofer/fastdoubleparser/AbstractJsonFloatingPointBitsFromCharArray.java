@@ -28,7 +28,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
      * otherwise, {@code -1L}.
      */
     public final long parseNumber(char[] str, int offset, int length) {
-        final int endIndex = AbstractFloatValueParser.checkFloatBounds(str.length, offset, length);
+        final int endIndex = AbstractFloatValueParser.checkBounds(str.length, offset, length);
         int index = offset;
         char ch = charAt(str, index, endIndex);
 

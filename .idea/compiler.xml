@@ -37,7 +37,6 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FastDoubleParser" target="20" />
-      <module name="fastdoubleparser" target="20" />
       <module name="FastDoubleParser (1)" target="20" />
       <module name="FastDoubleParser-JavaEarlyAccess" target="20" />
       <module name="FastDoubleParserDemo" target="19" />

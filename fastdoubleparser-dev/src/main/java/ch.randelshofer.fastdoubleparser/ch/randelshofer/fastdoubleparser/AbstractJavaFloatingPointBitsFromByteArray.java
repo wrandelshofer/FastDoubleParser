@@ -194,7 +194,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
      * otherwise, {@code -1L}.
      */
     public long parseFloatingPointLiteral(byte[] str, int offset, int length) {
-        final int endIndex = checkFloatBounds(str.length, offset, length);
+        final int endIndex = checkBounds(str.length, offset, length);
 
         // Skip leading whitespace
         // -------------------

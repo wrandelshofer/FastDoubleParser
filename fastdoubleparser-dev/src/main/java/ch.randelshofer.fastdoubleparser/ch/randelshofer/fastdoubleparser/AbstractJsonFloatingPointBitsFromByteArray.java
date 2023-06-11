@@ -28,7 +28,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
      * otherwise, {@code -1L}.
      */
     public final long parseNumber(byte[] str, int offset, int length) {
-        final int endIndex = checkFloatBounds(str.length, offset, length);
+        final int endIndex = checkBounds(str.length, offset, length);
         int index = offset;
         byte ch = charAt(str, index, endIndex);
 

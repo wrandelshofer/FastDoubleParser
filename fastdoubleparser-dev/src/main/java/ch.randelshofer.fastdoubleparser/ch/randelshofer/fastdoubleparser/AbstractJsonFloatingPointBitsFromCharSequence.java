@@ -28,7 +28,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
      * otherwise, {@code -1L}.
      */
     public final long parseNumber(CharSequence str, int offset, int length) {
-        final int endIndex = checkFloatBounds(str.length(), offset, length);
+        final int endIndex = checkBounds(str.length(), offset, length);
         int index = offset;
         char ch = charAt(str, index, endIndex);
 

@@ -122,12 +122,36 @@ abstract class AbstractNumberParser {
         return ch < 128 ? CHAR_TO_HEX_MAP[ch] : -1;
     }
 
+    /**
+     * Checks the bounds and returns the end index (exclusive) of the data in the array.
+     *
+     * @param size           length of array (Must be in the range from 0 to max length of
+     *                       a Java array. This value is not checked, because this is an internal API!)
+     * @param offset         start-index of data into array (Must be non-negative and smaller than size)
+     * @param length         length of data (Must be non-negative and smaller than size - offset)
+     * @param maxInputLength maximal input length that can yield a legal value
+     * @return offset + length
+     */
     protected static int checkBounds(int size, int offset, int length, int maxInputLength) {
-        if ((offset | length) < 0 // tricky way to test more negative values at once
-                || offset > size - length // compared difference to avoid overflow when addition used
-                || length > maxInputLength) {
+        if (length > maxInputLength) {
+            throw new NumberFormatException(AbstractNumberParser.VALUE_EXCEEDS_LIMITS);
+        }
+        return checkBounds(size, offset, length);
+    }
+
+    /**
+     * Checks the bounds and returns the end index (exclusive) of the data in the array.
+     *
+     * @param size   length of array (Must be in the range from 0 to max length of
+     *               a Java array. This value is not checked, because this is an internal API!)
+     * @param offset start-index of data into array (Must be non-negative and smaller than size)
+     * @param length length of data (Must be non-negative and smaller than size - offset)
+     * @return offset + length
+     */
+    protected static int checkBounds(int size, int offset, int length) {
+        if ((offset | length | size - length - offset) < 0) { // tricky way of testing multiple negative values at once
             throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
         }
-        return offset + length;
+        return length + offset;
     }
 }
