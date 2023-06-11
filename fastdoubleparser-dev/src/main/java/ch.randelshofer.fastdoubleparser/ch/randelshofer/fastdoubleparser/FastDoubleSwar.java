@@ -163,13 +163,6 @@ class FastDoubleSwar {
         return chunk == 0x3030303030303030L;
     }
 
-    public static int parseEightDigitsUtf16(long first, long second) {
-        long fval = first - 0x0030_0030_0030_0030L;
-        long sval = second - 0x0030_0030_0030_0030L;
-        return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
-                + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
-    }
-
     public static int readIntBE(byte[] a, int offset) {
         return (int) readIntBE.get(a, offset);
     }
@@ -407,38 +400,46 @@ class FastDoubleSwar {
         // The following code is based on the technique presented in the paper
         // by Leslie Lamport.
 
-        // We can convert upper case characters to lower case by setting the 0x20 bit.
-        // (This does not have an impact on decimal digits, which is very handy!).
-        // Subtract character '0' (0x30) from each of the eight characters
-        long vec = (chunk | 0x20_20_20_20_20_20_20_20L) - 0x30_30_30_30_30_30_30_30L;
-
-        // Create a predicate for all bytes which are greater than '9'-'0' (0x09).
+        // Create a predicate for all bytes which are greeter than '0' (0x30), where 0x30-0x1=0x2f;
         // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
-        long gt_09 = vec + (0x09_09_09_09_09_09_09_09L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        gt_09 &= 0x80_80_80_80_80_80_80_80L;
+        long ge_0 = chunk + (0x2f_2f_2f_2f_2f_2f_2f_2fL ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
+        // We don't need to 'and' with 0x80…L here, because we do it in the if-statement below.
+        //ge_0 &= 0x80_80_80_80_80_80_80_80L;
 
-        // Create a predicate for all bytes which are greater or equal 'a'-'0' (0x30).
-        // The predicate is true if the hsb of a byte is set.
-        long ge_30 = vec + (0x30303030_30303030L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        ge_30 &= 0x80_80_80_80_80_80_80_80L;
+        // Create a predicate for all bytes which are smaller or equal than '9' (0x39), where 0x39 + 0x1 = 0x3a
+        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        long le_9 = 0x3a_3a_3a_3a_3a_3a_3a_3aL + (chunk ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
+        // We don't need to 'and' with 0x80…L here, because we do it in the if-statement below.
+        //le_9 &= 0x80_80_80_80_80_80_80_80L;
 
-        // Create a predicate for all bytes which are smaller equal than 'f'-'0' (0x37).
-        long le_37 = 0x37_37_37_37_37_37_37_37L + (vec ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        // we don't need to 'and' with 0x80…L here, because we 'and' this with ge_30 anyway.
-        //le_37 &= 0x80_80_80_80_80_80_80_80L;
+        // Convert upper case characters to lower case by setting the 0x20 bit.
+        long lowerCaseChunk = chunk | 0x20_20_20_20_20_20_20_20L;
 
+        // Create a predicate for all bytes which are greater or equal than 'a' (0x61), where 0x61 - 0x1 = 0x60
+        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        long ge_a = lowerCaseChunk + (0x60_60_60_60_60_60_60_60L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
+        // We must 'and' with 0x80…L, because we need the proper predicate bits further below in the code.
+        ge_a &= 0x80_80_80_80_80_80_80_80L;
 
-        // If a character is greater than '9' then it must be greater equal 'a'
-        // and smaller  'f'.
-        if (gt_09 != (ge_30 & le_37)) {
+        // Create a predicate for all bytes which are smaller or equal than 'f' (0x66), where 0x66 + 0x1 = 0x67
+        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
+        long le_f = 0x67_67_67_67_67_67_67_67L + (lowerCaseChunk ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
+        // We don't need to 'and' with 0x80…L here, because we do it in the if-statement below.
+        //le_f &= 0x80_80_80_80_80_80_80_80L;
+
+        // A character must either be in the range from '0' to '9' or in the range from 'a' to 'f'
+        if ((((ge_0 & le_9) ^ (ge_a & le_f)) & 0x80_80_80_80_80_80_80_80L) != 0x80_80_80_80_80_80_80_80L) {
             return -1;
         }
 
         // Expand the predicate to a byte mask
-        long gt_09mask = (gt_09 >>> 7) * 0xffL;
+        long ge_a_mask = (ge_a >>> 7) * 0xffL;
 
-        // Subtract 'a'-'0'+10 (0x27) from all bytes that are greater than 0x09.
-        long v = vec & ~gt_09mask | vec - (0x27272727_27272727L & gt_09mask);
+        // Subtract character '0' (0x30) from each of the eight characters
+        long vec = lowerCaseChunk - 0x30_30_30_30_30_30_30_30L;
+
+        // Subtract 'a' - '0' + 10 = (0x27) from all bytes that are greater equal 'a'
+        long v = vec & ~ge_a_mask | vec - (0x27272727_27272727L & ge_a_mask);
 
         // Compact all nibbles
         return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19

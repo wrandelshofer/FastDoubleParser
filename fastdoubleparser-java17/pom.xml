@@ -69,7 +69,8 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/generated-test-sources/java</outputDirectory>
+              <outputDirectory>${project.build.directory}/generated-test-sources/java/ch.randelshofer.fastdoubleparser
+              </outputDirectory>
               <resources>
                 <resource>
                   <directory>${basedir}/../fastdoubleparser-dev/src/test/java</directory>
