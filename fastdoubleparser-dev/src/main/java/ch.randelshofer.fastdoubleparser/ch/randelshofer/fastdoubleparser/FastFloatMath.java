@@ -105,7 +105,7 @@ class FastFloatMath {
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = d * Math.scalb(1f, power);
+            d = Math.scalb(d, power);
             if (isNegative) {
                 d = -d;
             }

@@ -41,12 +41,12 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class JmhJavaDoubleFromByteArrayEmpirical {
     @Param({
-            "0"
-            , "365"
-            , "10.1"
-            , "-1.2345678901234568E-121"
-            , "-0.29235596393453456"
-            , "0x123.456789abcdep123"
+            //  "0"
+            //  , "365"
+            //  , "10.1"
+            //  , "-1.2345678901234568E-121"
+            //  , "-0.29235596393453456"
+            "0x123.456789abcdep123"
     })
     public String str;
     private byte[] byteArray;
