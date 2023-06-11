@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main-Dev canada" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="/Library/Java/JavaVirtualMachines/zulu-20.jdk/Contents/Home" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="fastdoubleparserdemo-dev" />
     <option name="PROGRAM_PARAMETERS" value="--markdown data/canada.txt" />

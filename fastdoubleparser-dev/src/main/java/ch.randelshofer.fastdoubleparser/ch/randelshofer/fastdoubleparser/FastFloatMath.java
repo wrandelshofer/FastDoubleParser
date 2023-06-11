@@ -6,7 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.DOUBLE_MIN_EXPONENT_POWER_OF_TEN;
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.MANTISSA_64;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fullMultiplication;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.unsignedMultiplyHigh;
 
 /**
  * This class complements {@link FastDoubleMath} with methods for
@@ -42,9 +42,9 @@ class FastFloatMath {
 
     }
 
-    static float decFloatLiteralToFloat(boolean isNegative, long significand, int exponent,
-                                        boolean isSignificandTruncated,
-                                        int exponentOfTruncatedSignificand) {
+    static float tryDecFloatToFloatTruncated(boolean isNegative, long significand, int exponent,
+                                             boolean isSignificandTruncated,
+                                             int exponentOfTruncatedSignificand) {
         if (significand == 0) {
             return isNegative ? -0.0f : 0.0f;
         }
@@ -78,24 +78,35 @@ class FastFloatMath {
         return result;
     }
 
-    static float hexFloatLiteralToFloat(boolean isNegative, long significand, int exponent,
-                                        boolean isSignificandTruncated,
-                                        int exponentOfTruncatedSignificand) {
+    /**
+     * Tries to compute {@code significand * 2^exponent} exactly using a fast
+     * algorithm; and if {@code isNegative} is true, negate the result;
+     * the significand can be truncated.
+     *
+     * @param isNegative                     true if the sign is negative
+     * @param significand                    the significand (unsigned long, uint64)
+     * @param exponent                       the exponent number (the power)
+     * @param isSignificandTruncated         true if significand has been truncated
+     * @param exponentOfTruncatedSignificand the exponent number of the truncated significand
+     * @return the double value,
+     * or {@link Double#NaN} if the fast path failed.
+     */
+    static float tryHexFloatToFloatTruncated(boolean isNegative, long significand, int exponent,
+                                             boolean isSignificandTruncated,
+                                             int exponentOfTruncatedSignificand) {
         int power = isSignificandTruncated ? exponentOfTruncatedSignificand : exponent;
         if (FLOAT_MIN_EXPONENT_POWER_OF_TWO <= power && power <= FLOAT_MAX_EXPONENT_POWER_OF_TWO) {
             // Convert the significand into a float.
             // The cast will round the significand if necessary.
-            // We use Math.abs here, because we treat the significand as an unsigned long.
-            float d = Math.abs((float) significand);
+            // The significand is an unsigned long, however the cast treats it like a signed number.
+            // So, if the significand is negative, we have to add 1<<64 to the number.
+            float d = (float) significand + (significand < 0 ? 0x1p64f : 0);
 
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = d * Math.scalb(1f, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            d = Math.scalb(d, power);
+            return isNegative ? -d : d;
         } else {
             return Float.NaN;
         }
@@ -111,6 +122,12 @@ class FastFloatMath {
      * [{@value FastDoubleMath#DOUBLE_MIN_EXPONENT_POWER_OF_TEN},
      * {@value FastDoubleMath#DOUBLE_MAX_EXPONENT_POWER_OF_TEN}]
      * interval: the caller is responsible for this check.
+     * <p>
+     * References:
+     * <dl>
+     *     <dt>Noble Mushtak, Daniel Lemire. (2023) Fast Number Parsing Without Fallback.</dt>
+     *     <dd><a href="https://arxiv.org/pdf/2212.06644.pdf">arxiv.org</a></dd>
+     * </dl>
      *
      * @param isNegative  whether the number is negative
      * @param significand uint64 the significand
@@ -184,14 +201,12 @@ class FastFloatMath {
         int lz = Long.numberOfLeadingZeros(significand);
         long shiftedSignificand = significand << lz;
         // We want the most significant 64 bits of the product. We know
-        // this will be non-zero because the most significant bit of i is
-        // 1.
-        FastIntegerMath.UInt128 product = fullMultiplication(shiftedSignificand, factorMantissa);
-        long upper = product.high;
+        // this will be non-zero because the most significant bit of shiftedSignificand is 1.
+        long upper = unsignedMultiplyHigh(shiftedSignificand, factorMantissa);
 
         // The computed 'product' is always sufficient.
         // Mathematical proof:
-        // Noble Mushtak and Daniel Lemire, Fast Number Parsing Without Fallback (to appear)
+        // Noble Mushtak and Daniel Lemire, Fast Number Parsing Without Fallback.
 
         // The final mantissa should be 24 bits with a leading 1.
         // We shift it so that it occupies 25 bits with a leading 1.

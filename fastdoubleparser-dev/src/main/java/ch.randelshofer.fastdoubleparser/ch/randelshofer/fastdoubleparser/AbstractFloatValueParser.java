@@ -23,12 +23,21 @@ package ch.randelshofer.fastdoubleparser;
  * </dl>
  */
 abstract class AbstractFloatValueParser extends AbstractNumberParser {
+    /**
+     * This is the maximal input length that a Java array can have.
+     */
     public final static int MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
+
+    /**
+     * This is the smallest non-negative number that has 19 decimal digits.
+     */
     final static long MINIMAL_NINETEEN_DIGIT_INTEGER = 1000_00000_00000_00000L;
+
     /**
      * The decimal exponent of a double has a range of -324 to +308.
      * The hexadecimal exponent of a double has a range of -1022 to +1023.
      */
     final static int MAX_EXPONENT_NUMBER = 1024;
+
 
 }
