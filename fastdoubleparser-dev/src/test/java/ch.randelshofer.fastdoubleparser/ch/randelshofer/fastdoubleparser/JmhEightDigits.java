@@ -9,6 +9,8 @@ import org.openjdk.jmh.annotations.*;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.lookupHex;
+
 
 /**
  * Benchmarks for selected floating point strings.
@@ -31,6 +33,10 @@ import java.util.concurrent.TimeUnit;
  * 02StringDecScalar                            12345x78  avgt    2  6.977          ns/op
  * 03CharArrayDecScalar                         12345678  avgt    2  6.404          ns/op
  * 03CharArrayDecScalar                         12345x78  avgt    2  5.330          ns/op
+ * 04ByteArrayHexScalar                         12345678  avgt    2  4.633          ns/op
+ * 04ByteArrayHexScalar                         12345x78  avgt    2  3.889          ns/op
+ * 05CharArrayHexScalar                         12345678  avgt    2  6.233          ns/op
+ * 05CharArrayHexScalar                         12345x78  avgt    2  5.639          ns/op
  *
  * 11ByteArrayDecSwar                           12345678  avgt    2  1.995          ns/op
  * 11ByteArrayDecSwar                           12345x78  avgt    2  0.966          ns/op
@@ -78,13 +84,100 @@ public class JmhEightDigits {
         eightDigitsByteArray = eightDigitsCharSequence.getBytes(StandardCharsets.UTF_8);
     }
 
+    /*
+        @Benchmark
+        public int m01ByteArrayDecScalar() {
+            int value = 0;
+            for (int i = 0; i < eightDigitsByteArray.length; i++) {
+                byte ch = eightDigitsByteArray[i];
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                } else {
+                    return -1;
+                }
+            }
+            return value;
+        }
+
+        @Benchmark
+        public int m01ByteArrayDecScalarMul10() {
+            int value = 0;
+            for (int i = 0; i < eightDigitsByteArray.length; i++) {
+                byte ch = eightDigitsByteArray[i];
+                if (isDigit(ch)) {
+                    value = mul10(value) + ch - '0';
+                } else {
+                    return -1;
+                }
+            }
+            return value;
+        }
+
+        @Benchmark
+        public long m01ByteArrayDecScalarL() {
+            long value = 0;
+            for (int i = 0; i < eightDigitsByteArray.length; i++) {
+                byte ch = eightDigitsByteArray[i];
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                } else {
+                    return -1;
+                }
+            }
+            return value;
+        }
+
+        @Benchmark
+        public long m01ByteArrayDecScalarMul10L() {
+            long value = 0;
+            for (int i = 0; i < eightDigitsByteArray.length; i++) {
+                byte ch = eightDigitsByteArray[i];
+                if (isDigit(ch)) {
+                    value = mul10L(value) + ch - '0';
+                } else {
+                    return -1;
+                }
+            }
+            return value;
+        }
+
+
+        @Benchmark
+        public int m02StringDecScalar() {
+            int value = 0;
+            for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
+                char ch = eightDigitsCharSequence.charAt(i);
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                } else {
+                    return -1;
+                }
+            }
+            return value;
+        }
+
+        @Benchmark
+        public int m03CharArrayDecScalar() {
+            int value = 0;
+            for (int i = 0; i < eightDigitsCharArray.length; i++) {
+                char ch = eightDigitsCharArray[i];
+                if (isDigit(ch)) {
+                    value = value * 10 + ch - '0';
+                } else {
+                    return -1;
+                }
+            }
+            return value;
+        }
+    */
     @Benchmark
-    public int m01ByteArrayDecScalar() {
+    public int m04ByteArrayHexScalar() {
         int value = 0;
         for (int i = 0; i < eightDigitsByteArray.length; i++) {
             byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
+            int h = lookupHex(ch);
+            if (h >= 0) {
+                value = value << 4 + h;
             } else {
                 return -1;
             }
@@ -93,69 +186,13 @@ public class JmhEightDigits {
     }
 
     @Benchmark
-    public int m01ByteArrayDecScalarMul10() {
-        int value = 0;
-        for (int i = 0; i < eightDigitsByteArray.length; i++) {
-            byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = mul10(value) + ch - '0';
-            } else {
-                return -1;
-            }
-        }
-        return value;
-    }
-
-    @Benchmark
-    public long m01ByteArrayDecScalarL() {
-        long value = 0;
-        for (int i = 0; i < eightDigitsByteArray.length; i++) {
-            byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
-            } else {
-                return -1;
-            }
-        }
-        return value;
-    }
-
-    @Benchmark
-    public long m01ByteArrayDecScalarMul10L() {
-        long value = 0;
-        for (int i = 0; i < eightDigitsByteArray.length; i++) {
-            byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = mul10L(value) + ch - '0';
-            } else {
-                return -1;
-            }
-        }
-        return value;
-    }
-
-
-    @Benchmark
-    public int m02StringDecScalar() {
-        int value = 0;
-        for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
-            char ch = eightDigitsCharSequence.charAt(i);
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
-            } else {
-                return -1;
-            }
-        }
-        return value;
-    }
-
-    @Benchmark
-    public int m03CharArrayDecScalar() {
+    public int m05CharArrayHexScalar() {
         int value = 0;
         for (int i = 0; i < eightDigitsCharArray.length; i++) {
             char ch = eightDigitsCharArray[i];
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
+            int h = lookupHex(ch);
+            if (h >= 0) {
+                value = value << 4 + h;
             } else {
                 return -1;
             }
@@ -163,54 +200,56 @@ public class JmhEightDigits {
         return value;
     }
 
-    @Benchmark
-    public int m11ByteArrayDecSwar() {
-        return FastDoubleSwar.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
-    }
+    /*
+        @Benchmark
+        public int m11ByteArrayDecSwar() {
+            return FastDoubleSwar.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
+        }
 
-    @Benchmark
-    public int m12CharArrayDecSwar() {
-        return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharArray, 0);
-    }
+        @Benchmark
+        public int m12CharArrayDecSwar() {
+            return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharArray, 0);
+        }
 
-    @Benchmark
-    public int m13StringDecSwar() {
-        return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharSequence, 0);
-    }
+        @Benchmark
+        public int m13StringDecSwar() {
+            return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharSequence, 0);
+        }
 
-    @Benchmark
-    public long m14ByteArrayHexSwar() {
-        return FastDoubleSwar.tryToParseEightHexDigits(eightDigitsByteArray, 0);
-    }
-
+        @Benchmark
+        public long m14ByteArrayHexSwar() {
+            return FastDoubleSwar.tryToParseEightHexDigits(eightDigitsByteArray, 0);
+        }
+    */
     @Benchmark
     public long m15CharArrayHexSwar() {
         return FastDoubleSwar.tryToParseEightHexDigits(eightDigitsCharArray, 0);
     }
 
+    /*
 
-    @Benchmark
-    public int m21ByteArrayDecVector() {
-        return FastDoubleVector.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
-    }
+        @Benchmark
+        public int m21ByteArrayDecVector() {
+            return FastDoubleVector.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
+        }
 
-    @Benchmark
-    public int m22CharArrayDecVector() {
-        return FastDoubleVector.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
-    }
-
-
-    @Benchmark
-    public int m23StringDecVector() {
-        return FastDoubleVector.tryToParseEightDigits(eightDigitsCharSequence, 0);
-    }
+        @Benchmark
+        public int m22CharArrayDecVector() {
+            return FastDoubleVector.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
+        }
 
 
-    @Benchmark
-    public long m24ByteArrayHexVector() {
-        return FastDoubleVector.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
-    }
+        @Benchmark
+        public int m23StringDecVector() {
+            return FastDoubleVector.tryToParseEightDigits(eightDigitsCharSequence, 0);
+        }
 
+
+        @Benchmark
+        public long m24ByteArrayHexVector() {
+            return FastDoubleVector.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
+        }
+    */
     @Benchmark
     public long m25CharArrayHexVector() {
         return FastDoubleVector.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
