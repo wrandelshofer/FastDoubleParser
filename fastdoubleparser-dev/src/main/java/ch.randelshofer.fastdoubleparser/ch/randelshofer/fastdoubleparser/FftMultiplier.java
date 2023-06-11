@@ -216,11 +216,11 @@ class FftMultiplier {
                 // omega = 1
 
                 //    a0 = a[i];
-                //    a1 = a[i + 1];
+                //    a1 = a[i + IMAG];
                 //    a[i] += a1;
-                //    a[i + 1] = a0 - a1;
+                //    a[i + IMAG] = a0 - a1;
                 a.copyInto(i, a0);
-                a.copyInto(i + 1, a1);
+                a.copyInto(i + ComplexVector.IMAG, a1);
                 a.add(i, a1);
                 a0.subtractInto(a1, a, i + 1);
             }
@@ -735,8 +735,8 @@ class FftMultiplier {
          * A complex number in an FFT double[] vector occupies 2^1 array elements.
          */
         private final static int COMPLEX_SIZE_SHIFT = 1;
-        private final static int IMAG = 1;
-        private final static int REAL = 0;
+        final static int IMAG = 1;
+        final static int REAL = 0;
         /**
          * This arrays contains complex numbers.
          * <p>
@@ -801,7 +801,7 @@ class FftMultiplier {
                 double real = a[offa + REAL];
                 double imag = a[offa + IMAG];
                 a[offa] = fma(real, w[offw + REAL], imag * w[offw + IMAG]);
-                a[offa + 1] = fma(-real, w[offw + IMAG], imag * w[offw + REAL]);
+                a[offa + IMAG] = fma(-real, w[offw + IMAG], imag * w[offw + REAL]);
                 offw += 2;
             }
         }
@@ -946,7 +946,7 @@ class FftMultiplier {
         void set(int idxa, double real, double imag) {
             int idx = realIdx(idxa);
             a[idx] = real;
-            a[idx + 1] = imag;
+            a[idx + IMAG] = imag;
         }
 
         /**
