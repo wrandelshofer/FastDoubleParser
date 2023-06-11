@@ -39,35 +39,47 @@ import java.util.concurrent.TimeUnit;
         //"-XX:+LogCompilation",
         //"-XX:+PrintAssembly"
 })
-@Measurement(iterations = 4)
-@Warmup(iterations = 2)
+@Measurement(iterations = 4, time = 1)
+@Warmup(iterations = 2, time = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
 public class JmhScalb {
     double d;
-    int scaleFactor;
+    float f;
+    long i;
+    int scaleFactorD;
+
+    int scaleFactorF;
 
     @Setup
     public void prepare() {
         Random rng = new Random();
         d = rng.nextDouble();
-        scaleFactor = rng.nextInt(Double.MIN_EXPONENT, Double.MAX_EXPONENT);
+        i = (long)(d * 120423423423L);
+        f = (float) d;
+        scaleFactorD = rng.nextInt(Double.MIN_EXPONENT, Double.MAX_EXPONENT);
+        scaleFactorF = rng.nextInt(Float.MIN_EXPONENT, Float.MAX_EXPONENT);
     }
 
     @Benchmark
     public double mMathScalb() {
-        return Math.scalb(d, scaleFactor);
+        return Math.scalb(d, scaleFactorD);
     }
 
     @Benchmark
     public double mMathScalb1() {
-        return d * Math.scalb(1, scaleFactor);
+        return d * Math.scalb(1, scaleFactorD);
     }
 
     @Benchmark
     public double mCustomScalb() {
-        return customScalb(d, scaleFactor);
+        return customScalb(d, scaleFactorD);
+    }
+
+    @Benchmark
+    public double mCustomScalbLong() {
+        return customScalbLong(d, scaleFactorD);
     }
 
     public static final int DOUBLE_EXPONENT_BIAS = 1023;
@@ -76,7 +88,51 @@ public class JmhScalb {
      */
     public static final int DOUBLE_SIGNIFICAND_WIDTH = 53;
 
+    // very strange that this is 30x slower than its sibling customScalbLong
     static double customScalb(double number, int scaleFactor) {
         return number * Double.longBitsToDouble((scaleFactor + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1));
+    }
+
+    static double customScalbLong(double number, long scaleFactor) {
+        return number * Double.longBitsToDouble((scaleFactor + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1));
+    }
+
+    @Benchmark
+    public double mMathScalbFloat() {
+        return Math.scalb(f, scaleFactorF);
+    }
+
+    @Benchmark
+    public double mCustomScalbFloat() {
+        return customScalbInt(f, scaleFactorF);
+    }
+
+    @Benchmark
+    public double mCustomScalbFloat2() {
+        return customScalbInt2(i, true, scaleFactorF);
+    }
+
+    static float customScalbInt(float number, int scaleFactor) {
+        return number * Float.intBitsToFloat((scaleFactor + FLOAT_EXPONENT_BIAS) << (FLOAT_SIGNIFICAND_WIDTH - 1));
+    }
+
+    // significand is not converted to float before
+    static float customScalbInt2(long number, boolean isNegative, int exponent) {
+        return number * powerOfTwo(isNegative, exponent);
+    }
+    /**
+     * Bias used in the exponent of a float.
+     */
+    private static final int FLOAT_EXPONENT_BIAS = 127;
+    /**
+     * The number of bits in the significand, including the implicit bit.
+     */
+    private static final int FLOAT_SIGNIFICAND_WIDTH = 24;
+
+    static float powerOfTwo(boolean isNegative, int exponent) {
+        int floatSign = isNegative ? 1 << 31 : 0;
+        int floatExponent = (exponent + FLOAT_EXPONENT_BIAS) << (FLOAT_SIGNIFICAND_WIDTH - 1);
+        int floatValue = floatSign | floatExponent;
+        return Float.intBitsToFloat(floatValue);
     }
 }

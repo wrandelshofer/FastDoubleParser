@@ -163,7 +163,7 @@ public class FastDoubleMathTest {
         for (int j = 0; j < 1000; j++) {
             double d = r.nextDouble();
             for (int i = Double.MIN_EXPONENT; i < Double.MAX_EXPONENT; i++) {
-                assertEquals(Math.scalb(d, i), FastDoubleMath.scalb(d, i));
+                assertEquals(Math.scalb(d, i), JmhScalb.customScalbLong(d, i));
             }
         }
     }

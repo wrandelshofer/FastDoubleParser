@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -67,5 +68,16 @@ public class FastFloatMathTest {
     public void testTryHexFloatToFloat(boolean isNegative, long significand, int power, float expected) {
         float actual = FastFloatMath.tryHexFloatToFloatTruncated(isNegative, significand, power, false, power);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void scalb() {
+        Random r = new Random(0);
+        for (int j = 0; j < 1000; j++) {
+            float f = r.nextFloat();
+            for (int i = Float.MIN_EXPONENT; i < Float.MAX_EXPONENT; i++) {
+                assertEquals(Math.scalb(f, i), JmhScalb.customScalbInt(f, i));
+            }
+        }
     }
 }
