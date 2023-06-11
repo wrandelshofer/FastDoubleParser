@@ -22,7 +22,7 @@ class JavaBigIntegerFromByteArray extends AbstractBigIntegerParser {
      * @return the parsed value (always non-null)
      * @throws NumberFormatException if parsing fails
      */
-    public BigInteger parseBigIntegerLiteral(byte[] str, int offset, int length, int radix)
+    public BigInteger parseBigIntegerString(byte[] str, int offset, int length, int radix)
             throws NumberFormatException {
         try {
             final int endIndex = AbstractNumberParser.checkBounds(str.length, offset, length);

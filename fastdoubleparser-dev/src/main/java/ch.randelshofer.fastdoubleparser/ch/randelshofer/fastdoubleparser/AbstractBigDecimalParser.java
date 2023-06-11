@@ -5,7 +5,6 @@
 package ch.randelshofer.fastdoubleparser;
 
 public abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubleparser.AbstractNumberParser {
-    protected final static int MAX_INPUT_LENGTH = 1_292_782_635;
 
     /**
      * Threshold on the number of input characters for selecting the
@@ -36,21 +35,17 @@ public abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubl
     /**
      * See {@link JavaBigDecimalParser}.
      */
-    protected final static int MAX_DIGIT_COUNT = 1_292_782_621;
+    protected final static int MAX_DIGITS_WITHOUT_LEADING_ZEROS = 646_456_993;
 
     protected static boolean hasManyDigits(int length) {
         return length >= MANY_DIGITS_THRESHOLD;
-    }
-
-    protected static int checkBigDecimalBounds(int size, int offset, int length) {
-        return checkBounds(size, offset, length, MAX_INPUT_LENGTH);
     }
 
     protected static void checkParsedBigDecimalBounds(boolean illegal, int index, int endIndex, int digitCount, long exponent) {
         if (illegal || index < endIndex) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
-        if (exponent <= Integer.MIN_VALUE || exponent > Integer.MAX_VALUE || digitCount > MAX_DIGIT_COUNT) {
+        if (exponent <= Integer.MIN_VALUE || exponent > Integer.MAX_VALUE || digitCount > MAX_DIGITS_WITHOUT_LEADING_ZEROS) {
             throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
         }
     }

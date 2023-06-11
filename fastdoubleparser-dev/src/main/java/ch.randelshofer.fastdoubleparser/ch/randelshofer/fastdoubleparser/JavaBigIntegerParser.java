@@ -15,7 +15,7 @@ import java.math.BigInteger;
  * Formal specification of the grammar:
  * <blockquote>
  * <dl>
- * <dt><i>BigIntegerLiteral:</i></dt>
+ * <dt><i>BigIntegerString:</i></dt>
  * <dd><i>[Sign] Digits</i></dd>
  * </dl>
  * <dl>
@@ -40,10 +40,12 @@ import java.math.BigInteger;
  * <p>
  * Character lengths accepted by {@link BigInteger#BigInteger(String)}:
  * <ul>
- *     <li>{@code BigIntegerLiteral}: {@link Integer#MAX_VALUE} - 4.
- * <p>
+ *     <li>{@code BigIntegerString}: {@link Integer#MAX_VALUE} - 4.
+ *     <p>
  *     If the significand consists only of zero digits, the length is
  *     only limited by the maximal supported length of a Java array.
+ *     </li>
+ *     <li>{@code radix=10}
  *     <p>
  *     If the significand contains at least one non-zero digit,
  *     the length is limited to {@code index of first non-zero digit + 646_456_993}.
@@ -52,12 +54,22 @@ import java.math.BigInteger;
  *     Therefore an input String can only contain up to that many significant
  *     digits - the remaining digits must be leading zeroes.
  *     </li>
+ *     <li>{@code radix=16}
+ *     <p>
+ *     If the significand contains at least one non-zero digit,
+ *     the length is limited to {@code index of first non-zero digit + 536_870_912}.
+ *     This is because the resulting value must fit into {@code 2^31 - 1} bits. The hexa-decimal
+ *     representation of the value {@code 2^31 - 1} needs 536,870,912 digits.
+ *     Therefore an input String can only contain up to that many significant
+ *     digits - the remaining digits must be leading zeroes.
+ *     </li>
  * </ul>
- * Maximal input length supported by this parser:
- * <ul>
- *     <li>{@code BigIntegerLiteral}: {@link Integer#MAX_VALUE} - 4.</li>
- * </ul>
- */
+ * <p>
+ * References:
+ * <dl>
+ *     <dt>Java SE 17 &amp; JDK 17, JavaDoc, Class BigInteger</dt>
+ *     <dd><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigInteger.html#%3Cinit%3E(java.lang.String,int)">docs.oracle.com</a></dd>
+ * </dl> */
 public class JavaBigIntegerParser {
 
     private static final JavaBigIntegerFromByteArray BYTE_ARRAY_PARSER = new JavaBigIntegerFromByteArray();
@@ -81,7 +93,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), 10);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerString(str, 0, str.length(), 10);
     }
 
     /**
@@ -94,7 +106,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str, int radix) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, 0, str.length(), radix);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerString(str, 0, str.length(), radix);
     }
 
     /**
@@ -109,11 +121,11 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str, int offset, int length) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, 10);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerString(str, offset, length, 10);
     }
 
     /**
-     * Parses a {@code BigIntegerLiteral} from a {@link CharSequence} and converts it
+     * Parses a {@code BigIntegerString} from a {@link CharSequence} and converts it
      * into a {@link BigInteger} value.
      *
      * @param str    the string to be parsed
@@ -126,7 +138,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(CharSequence str, int offset, int length, int radix) {
-        return CHAR_SEQUENCE_PARSER.parseBigIntegerLiteral(str, offset, length, radix);
+        return CHAR_SEQUENCE_PARSER.parseBigIntegerString(str, offset, length, radix);
     }
 
     /**
@@ -138,7 +150,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10);
+        return BYTE_ARRAY_PARSER.parseBigIntegerString(str, 0, str.length, 10);
     }
 
     /**
@@ -151,11 +163,11 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str, int radix) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix);
+        return BYTE_ARRAY_PARSER.parseBigIntegerString(str, 0, str.length, radix);
     }
 
     /**
-     * Parses a {@code BigIntegerLiteral} from a {@code byte}-Array and converts it
+     * Parses a {@code BigIntegerString} from a {@code byte}-Array and converts it
      * into a {@link BigInteger} value.
      * <p>
      * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
@@ -170,11 +182,11 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str, int offset, int length) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10);
+        return BYTE_ARRAY_PARSER.parseBigIntegerString(str, offset, length, 10);
     }
 
     /**
-     * Parses a {@code BigIntegerLiteral} from a {@code byte}-Array and converts it
+     * Parses a {@code BigIntegerString} from a {@code byte}-Array and converts it
      * into a {@link BigInteger} value.
      * <p>
      * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
@@ -190,7 +202,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(byte[] str, int offset, int length, int radix) {
-        return BYTE_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix);
+        return BYTE_ARRAY_PARSER.parseBigIntegerString(str, offset, length, radix);
     }
 
     /**
@@ -202,7 +214,7 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, 10);
+        return CHAR_ARRAY_PARSER.parseBigIntegerString(str, 0, str.length, 10);
     }
 
     /**
@@ -215,11 +227,11 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str, int radix) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, 0, str.length, radix);
+        return CHAR_ARRAY_PARSER.parseBigIntegerString(str, 0, str.length, radix);
     }
 
     /**
-     * Parses a {@code BigIntegerLiteral} from a {@code char}-Array and converts it
+     * Parses a {@code BigIntegerString} from a {@code char}-Array and converts it
      * into a {@link BigInteger} value.
      * <p>
      * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
@@ -234,11 +246,11 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str, int offset, int length) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, 10);
+        return CHAR_ARRAY_PARSER.parseBigIntegerString(str, offset, length, 10);
     }
 
     /**
-     * Parses a {@code BigIntegerLiteral} from a {@code char}-Array and converts it
+     * Parses a {@code BigIntegerString} from a {@code char}-Array and converts it
      * into a {@link BigInteger} value.
      * <p>
      * See {@link JsonDoubleParser} for the syntax of {@code FloatingPointLiteral}.
@@ -254,6 +266,6 @@ public class JavaBigIntegerParser {
      * @throws NumberFormatException    if the string can not be parsed successfully
      */
     public static BigInteger parseBigInteger(char[] str, int offset, int length, int radix) {
-        return CHAR_ARRAY_PARSER.parseBigIntegerLiteral(str, offset, length, radix);
+        return CHAR_ARRAY_PARSER.parseBigIntegerString(str, offset, length, radix);
     }
 }

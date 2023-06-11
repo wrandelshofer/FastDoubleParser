@@ -18,7 +18,7 @@ class JavaBigIntegerFromCharSequence extends AbstractBigIntegerParser {
      * @return result (always non-null)
      * @throws NumberFormatException if parsing fails
      */
-    public BigInteger parseBigIntegerLiteral(CharSequence str, int offset, int length, int radix)
+    public BigInteger parseBigIntegerString(CharSequence str, int offset, int length, int radix)
             throws NumberFormatException {
         try {
             int size = str.length();

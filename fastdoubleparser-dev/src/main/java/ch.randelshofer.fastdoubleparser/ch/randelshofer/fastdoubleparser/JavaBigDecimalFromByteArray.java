@@ -38,7 +38,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
      */
     public BigDecimal parseBigDecimalString(byte[] str, int offset, int length) {
         try {
-            final int endIndex = checkBigDecimalBounds(str.length, offset, length);
+            final int endIndex = checkBounds(str.length, offset, length);
             if (hasManyDigits(length)) {
                 return parseBigDecimalStringWithManyDigits(str, offset, length);
             }
@@ -122,9 +122,9 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
             } else {
                 exponentIndicatorIndex = endIndex;
             }
+            illegal |= digitCount == 0;
             checkParsedBigDecimalBounds(illegal, index, endIndex, digitCount, exponent);
-
-            if (digitCount <= 18) {
+            if (digitCount < 19) {
                 return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
             }
             return valueOfBigDecimalString(str, integerPartIndex, decimalPointIndex, decimalPointIndex + 1, exponentIndicatorIndex, isNegative, (int) exponent);
@@ -197,16 +197,16 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
             }
         }
 
-        final int digitCount;
+        final int digitCountWithoutLeadingZeros;
         final int significandEndIndex = index;
         long exponent;
         if (decimalPointIndex < 0) {
-            digitCount = significandEndIndex - nonZeroIntegerPartIndex;
+            digitCountWithoutLeadingZeros = significandEndIndex - nonZeroIntegerPartIndex;
             decimalPointIndex = significandEndIndex;
             nonZeroFractionalPartIndex = significandEndIndex;
             exponent = 0;
         } else {
-            digitCount = nonZeroIntegerPartIndex == decimalPointIndex
+            digitCountWithoutLeadingZeros = nonZeroIntegerPartIndex == decimalPointIndex
                     ? significandEndIndex - nonZeroFractionalPartIndex
                     : significandEndIndex - nonZeroIntegerPartIndex - 1;
             exponent = decimalPointIndex - significandEndIndex + 1;
@@ -237,9 +237,10 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
         } else {
             exponentIndicatorIndex = endIndex;
         }
-        checkParsedBigDecimalBounds(illegal, index, endIndex, digitCount, exponent);
+        illegal |= integerPartIndex == decimalPointIndex && decimalPointIndex == exponentIndicatorIndex;
+        checkParsedBigDecimalBounds(illegal, index, endIndex, digitCountWithoutLeadingZeros, exponent);
 
-    return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
+        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
         );
     }
 

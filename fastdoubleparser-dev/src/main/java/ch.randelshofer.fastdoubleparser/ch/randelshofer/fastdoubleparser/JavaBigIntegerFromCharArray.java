@@ -17,7 +17,7 @@ class JavaBigIntegerFromCharArray extends AbstractBigIntegerParser {
      * @return result (always non-null)
      * @throws NumberFormatException if parsing fails
      */
-    public BigInteger parseBigIntegerLiteral(char[] str, int offset, int length, int radix)
+    public BigInteger parseBigIntegerString(char[] str, int offset, int length, int radix)
             throws NumberFormatException {
         try {
             final int endIndex = AbstractNumberParser.checkBounds(str.length, offset, length);
