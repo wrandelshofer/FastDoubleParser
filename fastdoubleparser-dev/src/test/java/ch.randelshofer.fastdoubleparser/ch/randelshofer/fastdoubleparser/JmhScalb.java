@@ -23,8 +23,9 @@ import java.util.concurrent.TimeUnit;
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchmark              Mode  Cnt   Score   Error  Units
- * JmhScalb.mCustomScalb  avgt    4  34.212 ± 0.368  ns/op
- * JmhScalb.mMathScalb    avgt    4   2.255 ± 0.578  ns/op
+ * JmhScalb.mCustomScalb  avgt    4  34.201 ± 0.610  ns/op
+ * JmhScalb.mMathScalb    avgt    4   1.892 ± 0.449  ns/op
+ * JmhScalb.mMathScalb1   avgt    4   1.333 ± 0.024  ns/op
  * </pre>
  */
 
@@ -57,6 +58,11 @@ public class JmhScalb {
     @Benchmark
     public double mMathScalb() {
         return Math.scalb(d, scaleFactor);
+    }
+
+    @Benchmark
+    public double mMathScalb1() {
+        return d * Math.scalb(1, scaleFactor);
     }
 
     @Benchmark

@@ -842,7 +842,7 @@ class FastDoubleMath {
             } else {
                 d = d * DOUBLE_POWERS_OF_TEN[power];
             }
-            return (isNegative) ? -d : d;
+            return isNegative ? -d : d;
         }
 
 
@@ -981,10 +981,7 @@ class FastDoubleMath {
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
             d = Math.scalb(d, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            return isNegative ? -d : d;
         } else {
             return Double.NaN;
         }

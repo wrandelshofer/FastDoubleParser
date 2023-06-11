@@ -106,10 +106,7 @@ class FastFloatMath {
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
             d = Math.scalb(d, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            return isNegative ? -d : d;
         } else {
             return Float.NaN;
         }
