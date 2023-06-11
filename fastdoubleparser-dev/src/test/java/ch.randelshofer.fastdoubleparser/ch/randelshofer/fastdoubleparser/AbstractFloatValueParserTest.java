@@ -197,7 +197,7 @@ public abstract class AbstractFloatValueParserTest {
 
     protected List<NumberTestData> createDataWithVeryLongInputStrings() {
         return Arrays.asList(
-                new NumberTestData("too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 3), AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
+                new NumberTestData("too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 4), 0, Integer.MAX_VALUE - 3, 0, Integer.MAX_VALUE - 3, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("significand with maximal number of zero digits in integer part", new VirtualCharSequence('0', Integer.MAX_VALUE - 4), 0d),
                 new NumberTestData("significand with maximal number of zero digits in fraction part", new VirtualCharSequence(".", '0', Integer.MAX_VALUE - 4), 0d),
                 new NumberTestData("significand with maximal number of zero digits in significand and decimal point at char 1024", new VirtualCharSequence("", 1024, ".", "", '0', Integer.MAX_VALUE - 4), 0d)

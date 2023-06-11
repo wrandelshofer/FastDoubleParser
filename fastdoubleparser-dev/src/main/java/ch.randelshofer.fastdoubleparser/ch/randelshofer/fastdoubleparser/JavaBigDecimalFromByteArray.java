@@ -237,7 +237,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
         } else {
             exponentIndicatorIndex = endIndex;
         }
-        checkParsedBigDecimalBounds(illegal, index, endIndex, exponentIndicatorIndex - integerPartIndex, exponent);
+        checkParsedBigDecimalBounds(illegal, index, endIndex, digitCount, exponent);
 
     return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
         );

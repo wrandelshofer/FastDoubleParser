@@ -40,17 +40,22 @@ import java.math.BigInteger;
  * <p>
  * Character lengths accepted by {@link BigInteger#BigInteger(String)}:
  * <ul>
- *     <li>{@code Significand}: 1 to 1,292,782,621 decimal digits.
+ *     <li>{@code BigIntegerLiteral}: {@link Integer#MAX_VALUE} - 4.
  * <p>
- *     The resulting value must fit into {@code 2^31 - 1} bits. The decimal
- *     representation of the value {@code 2^31 - 1} has 646,456,993 digits.
+ *     If the significand consists only of zero digits, the length is
+ *     only limited by the maximal supported length of a Java array.
+ *     <p>
+ *     If the significand contains at least one non-zero digit,
+ *     the length is limited to {@code index of first non-zero digit + 646_456_993}.
+ *     This is because the resulting value must fit into {@code 2^31 - 1} bits. The decimal
+ *     representation of the value {@code 2^31 - 1} needs 646,456,993 digits.
  *     Therefore an input String can only contain up to that many significant
  *     digits - the remaining digits must be leading zeroes.
  *     </li>
  * </ul>
  * Maximal input length supported by this parser:
  * <ul>
- *     <li>{@code BigIntegerLiteral}: 1,292,782,621 + 1 = 1,292,782,622 characters.</li>
+ *     <li>{@code BigIntegerLiteral}: {@link Integer#MAX_VALUE} - 4.</li>
  * </ul>
  */
 public class JavaBigIntegerParser {

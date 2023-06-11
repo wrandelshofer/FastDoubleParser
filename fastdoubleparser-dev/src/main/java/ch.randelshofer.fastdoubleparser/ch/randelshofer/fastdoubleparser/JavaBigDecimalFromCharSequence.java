@@ -8,9 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
 import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharSequence.RECURSION_THRESHOLD;
 
 
@@ -239,7 +237,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
         } else {
             exponentIndicatorIndex = endIndex;
         }
-        checkParsedBigDecimalBounds(illegal, index, endIndex, exponentIndicatorIndex - integerPartIndex, exponent);
+        checkParsedBigDecimalBounds(illegal, index, endIndex, digitCount, exponent);
 
         return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent);
     }

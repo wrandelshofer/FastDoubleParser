@@ -236,7 +236,7 @@ public abstract class AbstractBigIntegerParserTest {
                 new NumberTestDataSupplier("'0' ** 1292782622", () -> new NumberTestData(new VirtualCharSequence('0', 1_292_782_621 + 1), BigInteger.ZERO)),
                 new NumberTestDataSupplier("'9' ** 1292782622", () -> new NumberTestData(new VirtualCharSequence('9', 1_292_782_621 + 1), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class)),
                 new NumberTestDataSupplier("'8' ** 646_456_993", () -> new NumberTestData(new VirtualCharSequence('8', 646_456_993), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class)),
-                new NumberTestDataSupplier("max input length: '0' ** 1292782621", () -> new NumberTestData(new VirtualCharSequence('0', 1_292_782_621), BigInteger.ZERO)),
+                new NumberTestDataSupplier("max input length: '0' ** (1<<31)-4", () -> new NumberTestData(new VirtualCharSequence('0', Integer.MAX_VALUE - 4), BigInteger.ZERO)),
                 new NumberTestDataSupplier("max input length: '0' ** 1292782620, '7'", () -> new NumberTestData(new VirtualCharSequence("", 0, "", "7", '0', 1_292_782_621), BigInteger.valueOf(7))),
                 new NumberTestDataSupplier("'9806543217' ** 1000", () -> new NumberTestData(repeat("9806543217", 1_000), new BigInteger(repeat("9806543217", 1_000), 10))),
                 new NumberTestDataSupplier("max input length: '0'**1291782620,'1','0'**100_000", () -> new NumberTestData(

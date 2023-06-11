@@ -21,7 +21,8 @@ class JavaBigIntegerFromCharSequence extends AbstractBigIntegerParser {
     public BigInteger parseBigIntegerLiteral(CharSequence str, int offset, int length, int radix)
             throws NumberFormatException {
         try {
-            final int endIndex = checkBigIntegerBounds(str.length(), offset, length);
+            int size = str.length();
+            final int endIndex = AbstractNumberParser.checkBounds(size, offset, length);
 
             // Parse optional sign
             // -------------------

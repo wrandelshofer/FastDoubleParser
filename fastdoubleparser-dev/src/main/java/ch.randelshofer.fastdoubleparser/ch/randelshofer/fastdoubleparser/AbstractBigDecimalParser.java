@@ -47,7 +47,7 @@ public abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubl
     }
 
     protected static void checkParsedBigDecimalBounds(boolean illegal, int index, int endIndex, int digitCount, long exponent) {
-        if (illegal || index < endIndex || digitCount == 0) {
+        if (illegal || index < endIndex) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
         if (exponent <= Integer.MIN_VALUE || exponent > Integer.MAX_VALUE || digitCount > MAX_DIGIT_COUNT) {

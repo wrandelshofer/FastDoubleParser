@@ -20,7 +20,7 @@ class JavaBigIntegerFromCharArray extends AbstractBigIntegerParser {
     public BigInteger parseBigIntegerLiteral(char[] str, int offset, int length, int radix)
             throws NumberFormatException {
         try {
-            final int endIndex = checkBigIntegerBounds(str.length, offset, length);
+            final int endIndex = AbstractNumberParser.checkBounds(str.length, offset, length);
 
             // Parse optional sign
             // -------------------
