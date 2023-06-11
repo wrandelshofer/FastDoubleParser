@@ -26,7 +26,7 @@ class BigSignificand {
         }
         int numLongs = (int) ((numBits + 63) >>> 6) + 1;
         numInts = numLongs << 1;
-        int numBytes = numInts << 2;
+        int numBytes = numLongs << 3;
         x = new byte[numBytes];
         firstNonZeroInt = numInts;
     }

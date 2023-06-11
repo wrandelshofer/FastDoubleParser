@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fullMultiplication;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.unsignedMultiplyHigh;
 
 /**
  * This class provides the mathematical functions needed by {@link JavaDoubleParser}.
@@ -811,6 +811,12 @@ class FastDoubleMath {
      * We assume that power is in the
      * [{@value #DOUBLE_MIN_EXPONENT_POWER_OF_TEN}, {@value #DOUBLE_MAX_EXPONENT_POWER_OF_TEN}]
      * interval: the caller is responsible for this check.
+     * <p>
+     * References:
+     * <dl>
+     *     <dt>Noble Mushtak, Daniel Lemire. (2023) Fast Number Parsing Without Fallback.</dt>
+     *     <dd><a href="https://arxiv.org/pdf/2212.06644.pdf">arxiv.org</a></dd>
+     * </dl>
      *
      * @param isNegative  whether the number is negative
      * @param significand uint64 the significand
@@ -836,7 +842,7 @@ class FastDoubleMath {
             } else {
                 d = d * DOUBLE_POWERS_OF_TEN[power];
             }
-            return (isNegative) ? -d : d;
+            return isNegative ? -d : d;
         }
 
 
@@ -884,15 +890,12 @@ class FastDoubleMath {
         int lz = Long.numberOfLeadingZeros(significand);
         long shiftedSignificand = significand << lz;
         // We want the most significant 64 bits of the product. We know
-        // this will be non-zero because the most significant bit of digits is
-        // 1.
-        FastIntegerMath.UInt128 product = fullMultiplication(shiftedSignificand, factorMantissa);
-        long upper = product.high;
+        // this will be non-zero because the most significant bit of shiftedSignificand is 1.
+        long upper = unsignedMultiplyHigh(shiftedSignificand, factorMantissa);
 
         // The computed 'product' is always sufficient.
         // Mathematical proof:
-        // Noble Mushtak and Daniel Lemire, Fast Number Parsing Without Fallback (to appear)
-
+        // Noble Mushtak and Daniel Lemire, Fast Number Parsing Without Fallback.
 
         // The final mantissa should be 53 bits with a leading 1.
         // We shift it so that it occupies 54 bits with a leading 1.
@@ -957,7 +960,7 @@ class FastDoubleMath {
      * the significand can be truncated.
      *
      * @param isNegative                     true if the sign is negative
-     * @param significand                    the significand
+     * @param significand                    the significand (unsigned long, uint64)
      * @param exponent                       the exponent number (the power)
      * @param isSignificandTruncated         true if significand has been truncated
      * @param exponentOfTruncatedSignificand the exponent number of the truncated significand
@@ -970,17 +973,15 @@ class FastDoubleMath {
         if (DOUBLE_MIN_EXPONENT_POWER_OF_TWO <= power && power <= DOUBLE_MAX_EXPONENT_POWER_OF_TWO) {
             // Convert the significand into a double.
             // The cast will round the significand if necessary.
-            // We use Math.abs here, because we treat the significand as an unsigned long.
-            double d = Math.abs((double) significand);
+            // The significand is an unsigned long, however the cast treats it like a signed long.
+            // So, if the significand is negative, we have to add 1<<64 to the number.
+            double d = (double) significand + (significand < 0 ? 0x1p64 : 0);
 
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = d * Math.scalb(1d, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            d = Math.scalb(d, power);
+            return isNegative ? -d : d;
         } else {
             return Double.NaN;
         }
