@@ -197,10 +197,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
      * otherwise, {@code -1L}.
      */
     public long parseFloatingPointLiteral(char[] str, int offset, int length) {
-        final int endIndex = offset + length;
-        if (offset < 0 || endIndex < offset || endIndex > str.length || length > MAX_INPUT_LENGTH) {
-            throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
-        }
+        final int endIndex = checkFloatBounds(str.length, offset, length);
 
         // Skip leading whitespace
         // -------------------

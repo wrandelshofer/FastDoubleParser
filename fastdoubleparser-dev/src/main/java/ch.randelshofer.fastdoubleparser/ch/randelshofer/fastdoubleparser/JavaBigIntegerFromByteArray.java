@@ -10,20 +10,7 @@ import java.util.Map;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOf10Floor16;
 
-class JavaBigIntegerFromByteArray extends AbstractNumberParser {
-    public final static int MAX_INPUT_LENGTH = 1_292_782_622;
-
-
-    /**
-     * The resulting value must fit into {@code 2^31 - 1} bits.
-     * The decimal representation of {@code 2^31 - 1} has 646,456,993 digits.
-     */
-    private static final int MAX_DECIMAL_DIGITS = 646_456_993;
-    /**
-     * The resulting value must fit into {@code 2^31 - 1} bits.
-     * The hexadecimal representation of {@code 2^31 - 1} has 536870912 digits.
-     */
-    private static final int MAX_HEX_DIGITS = 536870912;
+class JavaBigIntegerFromByteArray extends AbstractBigIntegerParser {
 
     /**
      * Parses a {@code BigIntegerLiteral} as specified in {@link JavaBigIntegerParser}.
@@ -38,10 +25,8 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
     public BigInteger parseBigIntegerLiteral(byte[] str, int offset, int length, int radix)
             throws NumberFormatException {
         try {
-            final int endIndex = offset + length;
-            if (offset < 0 || endIndex < offset || endIndex > str.length || length > MAX_INPUT_LENGTH) {
-                throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
-            }
+            final int endIndex = checkBigIntegerBounds(str.length, offset, length);
+
             // Parse optional sign
             // -------------------
             int index = offset;
@@ -71,7 +56,7 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
 
     private BigInteger parseDecDigits(byte[] str, int from, int to, boolean isNegative) {
         int numDigits = to - from;
-        if (numDigits > 18) {
+        if (hasManyDigits(numDigits)) {
             return parseManyDecDigits(str, from, to, isNegative);
         }
         int preroll = from + (numDigits & 7);
@@ -94,9 +79,7 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
         if (numDigits <= 0) {
             return BigInteger.ZERO;
         }
-        if (numDigits > MAX_HEX_DIGITS) {
-            throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
-        }
+        checkHexBigIntegerBounds(numDigits);
         byte[] bytes = new byte[((numDigits + 1) >> 1) + 1];
         int index = 1;
         boolean illegalDigits = false;
@@ -131,9 +114,7 @@ class JavaBigIntegerFromByteArray extends AbstractNumberParser {
     private BigInteger parseManyDecDigits(byte[] str, int from, int to, boolean isNegative) {
         from = skipZeroes(str, from, to);
         int numDigits = to - from;
-        if (numDigits > MAX_DECIMAL_DIGITS) {
-            throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
-        }
+        checkDecBigIntegerBounds(numDigits);
         Map<Integer, BigInteger> powersOfTen = fillPowersOf10Floor16(from, to);
         BigInteger result = ParseDigitsTaskByteArray.parseDigitsRecursive(str, from, to, powersOfTen);
         return isNegative ? result.negate() : result;

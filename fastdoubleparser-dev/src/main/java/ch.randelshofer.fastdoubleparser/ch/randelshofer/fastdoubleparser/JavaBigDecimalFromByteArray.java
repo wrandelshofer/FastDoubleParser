@@ -15,39 +15,7 @@ import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskByteArray.RECURSIO
 /**
  * Parses a {@code double} from a {@code byte} array.
  */
-final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
-    public final static int MAX_INPUT_LENGTH = 1_292_782_635;
-
-    /**
-     * Threshold on the number of input characters for selecting the
-     * algorithm optimised for few digits in the significand vs. the algorithm for many
-     * digits in the significand.
-     * <p>
-     * Set this to {@link Integer#MAX_VALUE} if you only want to use
-     * the algorithm optimised for few digits in the significand.
-     * <p>
-     * Set this to {@code 0} if you only want to use the algorithm for
-     * long inputs.
-     * <p>
-     * Rationale for choosing a specific threshold value:
-     * We speculate that we only need to use the algorithm for large inputs
-     * if there is zero chance, that we can parse the input with the algorithm
-     * for small inputs.
-     * <pre>
-     * optional significant sign = 1
-     * 18 significant digits = 18
-     * optional decimal point in significant = 1
-     * optional exponent = 1
-     * optional exponent sign = 1
-     * 10 exponent digits = 10
-     * </pre>
-     */
-    public static final int MANY_DIGITS_THRESHOLD = 1 + 18 + 1 + 1 + 1 + 10;
-    private final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
-    /**
-     * See {@link JavaBigDecimalParser}.
-     */
-    private final static int MAX_DIGIT_COUNT = 1_292_782_621;
+final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
 
     /**
      * Creates a new instance.
@@ -70,7 +38,8 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
      */
     public BigDecimal parseBigDecimalString(byte[] str, int offset, int length) {
         try {
-            if (length >= MANY_DIGITS_THRESHOLD) {
+            final int endIndex = checkBigDecimalBounds(str.length, offset, length);
+            if (hasManyDigits(length)) {
                 return parseBigDecimalStringWithManyDigits(str, offset, length);
             }
             long significand = 0L;
@@ -78,7 +47,6 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
             int decimalPointIndex = -1;
             final int exponentIndicatorIndex;
 
-            final int endIndex = offset + length;
             int index = offset;
             byte ch = charAt(str, index, endIndex);
             boolean illegal = false;
@@ -154,15 +122,7 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
             } else {
                 exponentIndicatorIndex = endIndex;
             }
-            if (illegal || index < endIndex
-                    || digitCount == 0
-                    || digitCount > MAX_DIGIT_COUNT) {
-                throw new NumberFormatException(SYNTAX_ERROR);
-            }
-            if (exponent <= Integer.MIN_VALUE
-                    || exponent > Integer.MAX_VALUE) {
-                throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
-            }
+            checkParsedBigDecimalBounds(illegal, index, endIndex, digitCount, exponent);
 
             if (digitCount <= 18) {
                 return new BigDecimal(isNegative ? -significand : significand).scaleByPowerOfTen((int) exponent);
@@ -179,9 +139,6 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
      * Parses a big decimal string that has many digits.
      */
     BigDecimal parseBigDecimalStringWithManyDigits(byte[] str, int offset, int length) {
-        if (length > MAX_INPUT_LENGTH) {
-            throw new NumberFormatException(SYNTAX_ERROR);
-        }
         final int integerPartIndex;
         final int nonZeroIntegerPartIndex;
         int decimalPointIndex = -1;
@@ -280,18 +237,9 @@ final class JavaBigDecimalFromByteArray extends AbstractNumberParser {
         } else {
             exponentIndicatorIndex = endIndex;
         }
-        if (illegal || index < endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
-        }
-        if (exponentIndicatorIndex - integerPartIndex == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
-        }
-        if (exponent < Integer.MIN_VALUE
-                || exponent > Integer.MAX_VALUE
-                || digitCount > MAX_DIGIT_COUNT) {
-            throw new NumberFormatException(VALUE_EXCEEDS_LIMITS);
-        }
-        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
+        checkParsedBigDecimalBounds(illegal, index, endIndex, exponentIndicatorIndex - integerPartIndex, exponent);
+
+    return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
         );
     }
 
