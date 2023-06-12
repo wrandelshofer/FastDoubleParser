@@ -6,10 +6,6 @@ package ch.randelshofer.fastdoubleparser;
 
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -58,8 +54,6 @@ public class JmhFftMultiplierFft3 {
      */
     // @formatter:off
     @Benchmark
-    public void _warmUp(Blackhole blackhole) { run(Fft3Algorithm.A2_IS_ZERO, blackhole); }
-    @Benchmark
     public void a2isZero(Blackhole blackhole) { run(Fft3Algorithm.A2_IS_ZERO, blackhole); }
     @Benchmark
     public void original(Blackhole blackhole) { run(Fft3Algorithm.ORIGINAL, blackhole); }
@@ -91,14 +85,14 @@ public class JmhFftMultiplierFft3 {
     public void sumsReused2Var(Blackhole blackhole) { run(Fft3Algorithm.SUMS_REUSED_2VAR, blackhole); }
     // @formatter:on
 
-    private enum Fft3Algorithm {
+    enum Fft3Algorithm {
         A2_IS_ZERO {
             @Override
             void fft3(FftMultiplier.ComplexVector a0, FftMultiplier.ComplexVector a1, FftMultiplier.ComplexVector a2, int sign, double scale) {
                 double omegaImag = sign * -0.5 * Math.sqrt(3);   // imaginary part of omega for n=3: sin(sign*(-2)*pi*1/3)
                 for (int i = 0; i < a0.length(); i++) {
                     double c = -omegaImag * a1.imag(i);
-                    double d =  omegaImag * a1.real(i);
+                    double d = omegaImag * a1.real(i);
 
                     double e = 0.5 * a1.real(i);
                     double f = 0.5 * a1.imag(i);
@@ -505,12 +499,5 @@ public class JmhFftMultiplierFft3 {
 
         @SuppressWarnings("SameParameterValue")
         abstract void fft3(FftMultiplier.ComplexVector a0, FftMultiplier.ComplexVector a1, FftMultiplier.ComplexVector a2, int sign, double scale);
-    }
-
-    public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder()
-                .include(JmhFftMultiplierFft3.class.getSimpleName())
-                .build();
-        new Runner(opt).run();
     }
 }
