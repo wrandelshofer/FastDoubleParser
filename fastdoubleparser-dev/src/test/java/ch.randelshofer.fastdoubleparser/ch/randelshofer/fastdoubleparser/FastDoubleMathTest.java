@@ -148,4 +148,22 @@ public class FastDoubleMathTest {
             value = value.multiply(five);
         }
     }
+
+    @TestFactory
+    public List<DynamicNode> dynamicTestsFastScalb() {
+        return Arrays.asList(
+                dynamicTest("3, 5", () -> testFastScalb(3, 5)),
+                dynamicTest("3, -5", () -> testFastScalb(3, -5)),
+                dynamicTest("-3, 5", () -> testFastScalb(-3, 5)),
+                dynamicTest("-3, -5", () -> testFastScalb(-3, -5)),
+                dynamicTest("min number, min scaleFactor", () -> testFastScalb(Double.MIN_VALUE, Double.MIN_EXPONENT)),
+                dynamicTest("min number, max scaleFactor", () -> testFastScalb(Double.MIN_VALUE, Double.MAX_EXPONENT)),
+                dynamicTest("max number, min scaleFactor", () -> testFastScalb(Double.MAX_VALUE, Double.MIN_EXPONENT)),
+                dynamicTest("max number, min scaleFactor", () -> testFastScalb(Double.MAX_VALUE, Double.MAX_EXPONENT))
+        );
+    }
+
+    void testFastScalb(double number, int scaleFactor) {
+        assertEquals(Math.scalb(number, scaleFactor), FastDoubleMath.fastScalb(number, scaleFactor));
+    }
 }

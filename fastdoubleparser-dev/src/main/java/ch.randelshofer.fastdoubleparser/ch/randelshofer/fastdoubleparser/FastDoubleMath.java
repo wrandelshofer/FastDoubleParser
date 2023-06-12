@@ -965,7 +965,7 @@ class FastDoubleMath {
      */
     static double tryHexFloatToDoubleTruncated(boolean isNegative, long significand, long exponent, boolean isSignificandTruncated,
                                                long exponentOfTruncatedSignificand) {
-        int power = isSignificandTruncated ? (int) exponentOfTruncatedSignificand : (int) exponent;
+        long power = isSignificandTruncated ? exponentOfTruncatedSignificand : exponent;
         if (DOUBLE_MIN_EXPONENT_POWER_OF_TWO <= power && power <= DOUBLE_MAX_EXPONENT_POWER_OF_TWO) {
             // Convert the significand into a double.
             // The cast will round the significand if necessary.
@@ -976,10 +976,24 @@ class FastDoubleMath {
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = Math.scalb(d, power);
+            d = fastScalb(d, power);
             return isNegative ? -d : d;
         } else {
             return Double.NaN;
         }
+    }
+
+    /**
+     * This is a faster alternative to {@link Math#scalb(double, int)}.
+     * <p>
+     * This method only works if scaleFactor is within the range of {@link Double#MIN_EXPONENT}
+     * through {@link Double#MAX_EXPONENT} (inclusive), so that we do not underflow or overflow.
+     *
+     * @param number      a double number
+     * @param scaleFactor the scale factor
+     * @return number × 2<sup>scaleFactor</sup>
+     */
+    static double fastScalb(double number, long scaleFactor) {
+        return number * Double.longBitsToDouble((scaleFactor + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1));
     }
 }

@@ -6,6 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
 
+import static ch.randelshofer.fastdoubleparser.FastDoubleMath.fastScalb;
 import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
 
 /**
@@ -979,8 +980,8 @@ class FftMultiplier {
             int ii = imagIdx(idxa);
             double real = a[ri];
             double imag = a[ii];
-            a[ri] = Math.scalb(real, n);
-            a[ii] = Math.scalb(imag, n);
+            a[ri] = fastScalb(real, n);
+            a[ii] = fastScalb(imag, n);
         }
     }
 
