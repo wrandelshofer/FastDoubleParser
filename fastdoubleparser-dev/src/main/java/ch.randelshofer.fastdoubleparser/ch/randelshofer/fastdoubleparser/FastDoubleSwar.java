@@ -19,12 +19,8 @@ import java.nio.ByteOrder;
  *     <dt>Leslie Lamport, Multiple Byte Processing with Full-Word Instructions</dt>
  *     <dd><a href="https://lamport.azurewebsites.net/pubs/multiple-byte.pdf">azurewebsites.net</a></dd>
  *
- *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
- *     <a href="https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE">Apache License 2.0</a>.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
- *
  *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
- *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-APACHE">Apache License 2.0</a>.</dt>
+ *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-MIT">MIT License</a>.</dt>
  *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
  *
  *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second,
