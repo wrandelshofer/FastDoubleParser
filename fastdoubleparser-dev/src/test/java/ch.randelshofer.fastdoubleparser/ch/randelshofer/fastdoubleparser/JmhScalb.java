@@ -15,17 +15,13 @@ import java.util.concurrent.TimeUnit;
  * # VM version: JDK 20, OpenJDK 64-Bit Server VM, 20+36-2344
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  * </pre>
- * (str)  Mode  Cnt    Score   Error  Units
- * 0x123.456789abcdep123  avgt    2  368.869          ns/op
- * <pre>
- * # JMH version: 1.28
- * # VM version: JDK 16, OpenJDK 64-Bit Server VM, 16+36-2231
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
- *
- * Benchmark              Mode  Cnt   Score   Error  Units
- * JmhScalb.mCustomScalb  avgt    4  34.201 ± 0.610  ns/op
- * JmhScalb.mMathScalb    avgt    4   1.892 ± 0.449  ns/op
- * JmhScalb.mMathScalb1   avgt    4   1.333 ± 0.024  ns/op
+ * Benchmark                    Mode  Cnt  Score   Error  Units
+ * JmhScalb.mCustomScalbDouble  avgt    4  0.694 ± 0.124  ns/op
+ * JmhScalb.mCustomScalbFloat   avgt    4  0.632 ± 0.080  ns/op
+ * JmhScalb.mMathScalbDouble    avgt    4  1.859 ± 0.268  ns/op
+ * JmhScalb.mMathScalbDouble1   avgt    4  1.647 ± 0.172  ns/op
+ * JmhScalb.mMathScalbFloat     avgt    4  1.968 ± 0.072  ns/op
+ * JmhScalb.mMathScalbFloat1    avgt    4  1.170 ± 0.103  ns/op
  * </pre>
  */
 
@@ -39,44 +35,76 @@ import java.util.concurrent.TimeUnit;
         //"-XX:+LogCompilation",
         //"-XX:+PrintAssembly"
 })
-@Measurement(iterations = 4)
-@Warmup(iterations = 2)
+@Measurement(iterations = 4, time = 1)
+@Warmup(iterations = 2, time = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
 public class JmhScalb {
-    double d;
-    int scaleFactor;
-
-    @Setup
-    public void prepare() {
-        Random rng = new Random();
-        d = rng.nextDouble();
-        scaleFactor = rng.nextInt(Double.MIN_EXPONENT, Double.MAX_EXPONENT);
-    }
-
-    @Benchmark
-    public double mMathScalb() {
-        return Math.scalb(d, scaleFactor);
-    }
-
-    @Benchmark
-    public double mMathScalb1() {
-        return d * Math.scalb(1, scaleFactor);
-    }
-
-    @Benchmark
-    public double mCustomScalb() {
-        return customScalb(d, scaleFactor);
-    }
-
     public static final int DOUBLE_EXPONENT_BIAS = 1023;
     /**
      * The number of bits in the significand, including the implicit bit.
      */
     public static final int DOUBLE_SIGNIFICAND_WIDTH = 53;
+    /**
+     * Bias used in the exponent of a float.
+     */
+    private static final int FLOAT_EXPONENT_BIAS = 127;
+    /**
+     * The number of bits in the significand, including the implicit bit.
+     */
+    private static final int FLOAT_SIGNIFICAND_WIDTH = 24;
+    double d;
+    float f;
+    long i;
+    int scaleFactorD;
+    int scaleFactorF;
 
-    static double customScalb(double number, int scaleFactor) {
-        return number * Double.longBitsToDouble((scaleFactor + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1));
+    static double customScalbDouble(double number, int scaleFactor) {
+        return number * Double.longBitsToDouble((long) (scaleFactor + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1));
+    }
+
+    static float customScalbFloat(float number, int scaleFactor) {
+        return number * Float.intBitsToFloat((scaleFactor + FLOAT_EXPONENT_BIAS) << (FLOAT_SIGNIFICAND_WIDTH - 1));
+    }
+
+    @Setup
+    public void prepare() {
+        Random rng = new Random();
+        d = rng.nextDouble();
+        i = (long) (d * 120423423423L);
+        f = (float) d;
+        scaleFactorD = rng.nextInt(Double.MIN_EXPONENT, Double.MAX_EXPONENT);
+        scaleFactorF = rng.nextInt(Float.MIN_EXPONENT, Float.MAX_EXPONENT);
+    }
+
+    @Benchmark
+    public double mMathScalbDouble() {
+        return Math.scalb(d, scaleFactorD);
+    }
+
+    @Benchmark
+    public double mMathScalbDouble1() {
+        return d * Math.scalb(1d, scaleFactorD);
+    }
+
+    @Benchmark
+    public double mCustomScalbDouble() {
+        return customScalbDouble(d, scaleFactorD);
+    }
+
+    @Benchmark
+    public float mMathScalbFloat() {
+        return Math.scalb(f, scaleFactorF);
+    }
+
+    @Benchmark
+    public float mMathScalbFloat1() {
+        return f * Math.scalb(1f, scaleFactorF);
+    }
+
+    @Benchmark
+    public float mCustomScalbFloat() {
+        return customScalbFloat(f, scaleFactorF);
     }
 }
