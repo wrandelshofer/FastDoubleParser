@@ -7,7 +7,6 @@ package ch.randelshofer.fastdoubleparser;
 import org.openjdk.jmh.annotations.*;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
@@ -15,37 +14,20 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.35
- * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20-ea+22-1594
+ * # JMH version: 1.36
+ * # VM version: JDK 20.0.1, OpenJDK 64-Bit Server VM, 20.0.1+9-29
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- *      (digits)  Mode  Cnt              Score   Error  Units
- * f    _   _ 10  avgt    2   _   _   _ 18.488          ns/op
- * f    _   _100  avgt    2   _   _   _254.483          ns/op
- * f    _  1_000  avgt    2   _   _  5_485.980          ns/op
- * f    _ 10_000  avgt    2   _   _139_287.776          ns/op
- * f    _100_000  avgt    2   _  2_620_321.357          ns/op
- * f   1_000_000  avgt    2   _ 69_274_168.383          ns/op
- * f  10_000_000  avgt    2  1_952_061_947.250          ns/op
- *
- * # Benchmark: ch.randelshofer.fastdoubleparser.JavaBigDecimalFromCharSequenceScalabilityJmh.f
- * # Parameters: (digits = 1292782621)
- *
- * </pre>
- * <pre>
- * # JMH version: 1.35
- * # VM version: JDK 1.8.0_281, Java HotSpot(TM) 64-Bit Server VM, 25.281-b09
- * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
- *
- * Java 8 does not have method {@link BigInteger#parallelMultiply}.
- *
- *      (digits)  Mode  Cnt      _   _  Score   Error  Units
- * f    _   _ 10  avgt    2      _   _ 32.109          ns/op
- * f    _   _100  avgt    2      _   _431.013          ns/op
- * f    _  1_000  avgt    2      _  6_552.813          ns/op
- * f    _ 10_000  avgt    2      _166_715.977          ns/op
- * f    _100_000  avgt    2     4_821_497.950          ns/op
- * f   1_000_000  avgt    2   143_244_763.043          ns/op
+ *     (digits)  Mode  Cnt            Score   Error  Units
+ * f          1  avgt    2           11.791          ns/op
+ * f         10  avgt    2           19.076          ns/op
+ * f        100  avgt    2          277.271          ns/op
+ * f       1000  avgt    2         5422.912          ns/op
+ * f      10000  avgt    2       180604.928          ns/op
+ * f     100000  avgt    2      5534607.161          ns/op
+ * f    1000000  avgt    2     86172567.073          ns/op
+ * f   10000000  avgt    2   1411668617.188          ns/op
+ * f  100000000  avgt    2  23719563715.500          ns/op
  * </pre>
  */
 
@@ -57,8 +39,8 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
         //, "-XX:-PrintInlining"
 
 })
-@Measurement(iterations = 1)
-@Warmup(iterations = 0)
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -66,15 +48,15 @@ public class JmhJavaBigDecimalFromCharSequenceScalability {
 
 
     @Param({
-            //"1"
-            //  "10"
-            //  , "100"
-            //  , "1000"
-            //  , "10000"
-            //  , "100000"
-            //  , "1000000"
-            //  , "10000000"
-            // "100000000"
+            "1"
+            , "10"
+            , "100"
+            , "1000"
+            , "10000"
+            , "100000"
+            , "1000000"
+            , "10000000"
+            , "100000000"
             // , "646391315"// The maximal number non-zero digits in the significand
     })
     public int digits;

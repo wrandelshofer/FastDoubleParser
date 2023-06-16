@@ -147,6 +147,8 @@ public abstract class AbstractBigIntegerParserTest {
                 new NumberTestDataSupplier("z, radix 35", () -> new NumberTestData("z, radix 35", "z", 35, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier("_, radix 35", () -> new NumberTestData("_, radix 35", "_", 36, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier("/, radix 16", () -> new NumberTestData("/, radix 16", "/", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("Ł, radix 16", () -> new NumberTestData("Ł, radix 16", "Ł", 16, "*", NumberFormatException.class)),
+                new NumberTestDataSupplier("Ł**8, radix 16", () -> new NumberTestData("Ł**8, radix 16", "ŁŁŁŁŁŁŁŁ", 16, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier("/**8, radix 16", () -> new NumberTestData("/**8, radix 16", "////////", 16, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier(":**8, radix 16", () -> new NumberTestData(":**8, radix 16", "::::::::", 16, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier("@**8, radix 16", () -> new NumberTestData("@**8, radix 16", "@@@@@@@@", 16, "*", NumberFormatException.class)),
