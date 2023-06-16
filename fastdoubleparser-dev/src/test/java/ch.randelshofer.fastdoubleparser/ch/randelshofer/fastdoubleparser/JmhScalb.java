@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
  * JmhScalb.mMathScalbFloat1                  avgt    4  1.146 ± 0.141  ns/op
  * </pre>
  */
-
 @Fork(value = 1, jvmArgsAppend = {
         "-XX:+UnlockExperimentalVMOptions", "--add-modules", "jdk.incubator.vector",
         "--enable-preview",
