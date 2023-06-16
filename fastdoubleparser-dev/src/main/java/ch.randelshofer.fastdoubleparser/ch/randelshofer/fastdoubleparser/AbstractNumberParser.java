@@ -50,9 +50,7 @@ abstract class AbstractNumberParser {
         for (char ch = 'a'; ch <= 'f'; ch++) {
             CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'a' + 10);
         }
-        for (char ch = '.'; ch <= '.'; ch++) {
-            CHAR_TO_HEX_MAP[ch] = DECIMAL_POINT_CLASS;
-        }
+        CHAR_TO_HEX_MAP['.'] = DECIMAL_POINT_CLASS;
     }
 
     /**
@@ -111,6 +109,8 @@ abstract class AbstractNumberParser {
      * Looks the character up in the {@link #CHAR_TO_HEX_MAP} returns
      * a value &lt; 0 if the character is not in the map.
      * <p>
+     * Returns -1 if the character code is &gt; 255.
+     * <p>
      * Returns -4 if the character is a decimal point.
      *
      * @param ch a character
@@ -118,7 +118,9 @@ abstract class AbstractNumberParser {
      */
     protected static int lookupHex(char ch) {
         // The branchy code is faster than the branch-less code.
-        // Branch-less code: return CHAR_TO_HEX_MAP[ch & 127] | (127 - ch) >> 31;
+        // Branch-less code: return CHAR_TO_HEX_MAP[ch & 0xff] | (127 - ch) >> 31;
+        // Branch-less code: return CHAR_TO_HEX_MAP[(ch|((127-ch)>>31))&0xff];
+        // Branch-less code: return CHAR_TO_HEX_MAP[ch<128?ch:0];
         return ch < 128 ? CHAR_TO_HEX_MAP[ch] : -1;
     }
 
