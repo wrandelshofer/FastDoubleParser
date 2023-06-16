@@ -134,7 +134,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // Skip optional FloatTypeSuffix
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
+        if ((ch | 0x22) == 'f') { // ~ "fFdD"
             index++;
         }
 
@@ -194,10 +194,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * otherwise, {@code -1L}.
      */
     public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
-        final int endIndex = offset + length;
-        if (offset < 0 || endIndex < offset || endIndex > str.length() || length > MAX_INPUT_LENGTH) {
-            throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
-        }
+        final int endIndex = checkBounds(str.length(), offset, length);
 
         // Skip leading whitespace
         // -------------------
@@ -228,7 +225,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
-            if (ch == 'x' || ch == 'X') {
+            if ((ch | 0x20) == 'x') {// equals ignore case
                 return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
             }
         }
@@ -329,7 +326,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         // Skip optional FloatTypeSuffix
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
-        if (ch == 'd' | ch == 'D' | ch == 'f' | ch == 'F') {
+        if ((ch | 0x22) == 'f') { // ~ "fFdD"
             index++;
         }
 
