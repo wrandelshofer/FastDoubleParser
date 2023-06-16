@@ -68,4 +68,23 @@ public class FastFloatMathTest {
         float actual = FastFloatMath.tryHexFloatToFloatTruncated(isNegative, significand, power, false, power);
         assertEquals(expected, actual);
     }
+
+    @TestFactory
+    public List<DynamicNode> dynamicTestsFastScalb() {
+        return Arrays.asList(
+                dynamicTest("3, 5", () -> testFastScalb(3, 5)),
+                dynamicTest("3, -5", () -> testFastScalb(3, -5)),
+                dynamicTest("-3, 5", () -> testFastScalb(-3, 5)),
+                dynamicTest("-3, -5", () -> testFastScalb(-3, -5)),
+                dynamicTest("min number, min scaleFactor", () -> testFastScalb(Float.MIN_VALUE, Float.MIN_EXPONENT)),
+                dynamicTest("min number, max scaleFactor", () -> testFastScalb(Float.MIN_VALUE, Float.MAX_EXPONENT)),
+                dynamicTest("max number, min scaleFactor", () -> testFastScalb(Float.MAX_VALUE, Float.MIN_EXPONENT)),
+                dynamicTest("max number, min scaleFactor", () -> testFastScalb(Float.MAX_VALUE, Float.MAX_EXPONENT))
+        );
+    }
+
+    void testFastScalb(float number, int scaleFactor) {
+        assertEquals(Math.scalb(number, scaleFactor), FastFloatMath.fastScalb(number, scaleFactor));
+    }
+
 }

@@ -32,11 +32,11 @@ So that it is immediately clear under which license you use the code. For exampl
 Some code *in* this project is derived from the following projects:
 
 - [fast_float](https://github.com/fastfloat/fast_float), licensed
-  under [Apache 2.0 License](https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-APACHE)
+  under [MIT License](https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-MIT)
 - [bigint](https://github.com/tbuktu/bigint/tree/floatfft), licensed
   under [BSD 2-clause License](https://github.com/tbuktu/bigint/blob/617c8cd8a7c5e4fb4d919c6a4d11e2586107f029/LICENSE)
 
-The code is marked as such.
+The corresponding code is marked as such.
 
 If you redistribute code, you must follow the terms of all involved licenses.
 

@@ -20,6 +20,7 @@ public abstract class AbstractEightDigitsTest {
         return Arrays.asList(
                 dynamicTest("1234567x", () -> testDec("1234567x", 0, -1)),
                 dynamicTest("x7654321", () -> testDec("x7654321", 0, -1)),
+                dynamicTest("1234Ł678", () -> testDec("1234Ł678", 0, -1)),
                 dynamicTest("123456/7", () -> testDec("123456/7", 0, -1)),
                 dynamicTest("7/654321", () -> testDec("7/654321", 0, -1)),
                 dynamicTest("12345:67", () -> testDec("12345:67", 0, -1)),

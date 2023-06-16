@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * m                      10.1  avgt    4  12.221 ± 1.717  ns/op
  * m  -1.2345678901234568E-121  avgt    4  27.247 ± 0.221  ns/op
  * m      -0.29235596393453456  avgt    4  19.884 ± 0.300  ns/op
- * m     0x123.456789abcdep123  avgt    4  24.011 ± 2.031  ns/op
+ * m     0x123.456789abcdep123  avgt    4  22.941 ± 0.275  ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -41,12 +41,12 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class JmhJavaDoubleFromByteArrayEmpirical {
     @Param({
-            //  "0"
-            //  , "365"
-            //  , "10.1"
-            //  , "-1.2345678901234568E-121"
-            //  , "-0.29235596393453456"
-            "0x123.456789abcdep123"
+            "0"
+            , "365"
+            , "10.1"
+            , "-1.2345678901234568E-121"
+            , "-0.29235596393453456"
+            , "0x123.456789abcdep123"
     })
     public String str;
     private byte[] byteArray;
