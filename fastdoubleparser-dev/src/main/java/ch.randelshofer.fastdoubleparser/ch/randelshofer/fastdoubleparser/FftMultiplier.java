@@ -539,6 +539,8 @@ class FftMultiplier {
         if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }
+        // Squaring is slightly faster than multiplication.
+        // We check for identity here and not for equality, because an equality check of big integers is very expensive.
         if (b == a) {
             return square(b);
         }
