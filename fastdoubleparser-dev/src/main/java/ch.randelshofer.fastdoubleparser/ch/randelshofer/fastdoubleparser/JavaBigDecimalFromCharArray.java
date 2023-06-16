@@ -6,6 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Map;
 import java.util.NavigableMap;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
@@ -271,6 +272,7 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
         int fractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
         int integerDigitsCount = decimalPointIndex - integerPartIndex;
         NavigableMap<Integer, BigInteger> powersOfTen = null;
+        Map<Integer, BigInteger> powersOfFive;
 
         // Parse the significand
         // ---------------------
@@ -283,9 +285,10 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
             if (integerDigitsCount > RECURSION_THRESHOLD) {
                 powersOfTen = createPowersOfTenFloor16Map();
                 fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
-                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen);
+                powersOfFive = createPowersOfFive(powersOfTen);
+                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen, powersOfFive);
             } else {
-                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, null);
+                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, null, null);
             }
         } else {
             integerPart = BigInteger.ZERO;
@@ -300,9 +303,10 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
                 fillPowersOfNFloor16Recursive(powersOfTen, decimalPointIndex + 1, exponentIndicatorIndex);
-                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, powersOfTen);
+                powersOfFive = createPowersOfFive(powersOfTen);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, powersOfTen, powersOfFive);
             } else {
-                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, null);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, null, null);
             }
             // If the integer part is not 0, we combine it with the fraction part.
             if (integerPart.signum() == 0) {

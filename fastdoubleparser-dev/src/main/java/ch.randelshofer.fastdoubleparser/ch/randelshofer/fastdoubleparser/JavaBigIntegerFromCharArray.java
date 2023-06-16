@@ -7,6 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import java.math.BigInteger;
 import java.util.Map;
 
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfFive;
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOf10Floor16;
 
 class JavaBigIntegerFromCharArray extends AbstractBigIntegerParser {
@@ -111,7 +112,8 @@ class JavaBigIntegerFromCharArray extends AbstractBigIntegerParser {
         int numDigits = to - from;
         checkDecBigIntegerBounds(numDigits);
         Map<Integer, BigInteger> powersOfTen = fillPowersOf10Floor16(from, to);
-        BigInteger result = ParseDigitsTaskCharArray.parseDigitsRecursive(str, from, to, powersOfTen);
+        Map<Integer, BigInteger> powersOfFive = createPowersOfFive(powersOfTen);
+        BigInteger result = ParseDigitsTaskCharArray.parseDigitsRecursive(str, from, to, powersOfTen, powersOfFive);
         return isNegative ? result.negate() : result;
     }
 
