@@ -57,7 +57,7 @@ class FastIntegerMath {
             if (floorN == n) {
                 return floorEntry.getValue();
             } else {
-                return FftMultiplier.multiply(floorEntry.getValue(), computePowerOfTen(powersOfTen, n - floorN));
+                return FftMultiplier.multiply(floorEntry.getValue(), computePowerOfTen(powersOfTen, n - floorN), n - floorN);
             }
         }
         return FIVE.pow(n).shiftLeft(n);
@@ -80,7 +80,7 @@ class FastIntegerMath {
             diffValue = computeTenRaisedByNFloor16Recursive(powersOfTen, diff);
             powersOfTen.put(diff, diffValue);
         }
-        return FftMultiplier.multiply(floorValue, diffValue);
+        return FftMultiplier.multiply(floorValue, diffValue, diff);
     }
 
     static NavigableMap<Integer, BigInteger> createPowersOfTenFloor16Map() {
