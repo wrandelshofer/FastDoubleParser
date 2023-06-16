@@ -34,7 +34,7 @@ class ParseDigitsTaskCharSequence {
      * recursive algorithm. We speculate that we break even somewhere at twice
      * the threshold value.
      */
-    public static final int RECURSION_THRESHOLD = 400;
+    public static int RECURSION_THRESHOLD = 400;
 
 
     /**
