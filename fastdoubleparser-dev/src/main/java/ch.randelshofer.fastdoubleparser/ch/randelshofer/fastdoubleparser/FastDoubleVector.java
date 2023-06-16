@@ -17,12 +17,8 @@ import static jdk.incubator.vector.VectorOperators.*;
  *     <dt>Leslie Lamport, Multiple Byte Processing with Full-Word Instructions</dt>
  *     <dd><a href="https://lamport.azurewebsites.net/pubs/multiple-byte.pdf">azurewebsites.net</a></dd>
  *
- *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
- *     <a href="https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE">Apache License 2.0</a>.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
- *
  *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
- *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-APACHE">Apache License 2.0</a>.</dt>
+ *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-MIT">MIT License</a>.</dt>
  *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
  *
  *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second,
@@ -35,8 +31,10 @@ import static jdk.incubator.vector.VectorOperators.*;
 class FastDoubleVector {
     private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
-    private static final IntVector POWERS_OF_16_SHIFTS = IntVector.fromArray(IntVector.SPECIES_256,
+    private static final IntVector POWERS_OF_16_SHIFTS_BE = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{28, 24, 20, 16, 12, 8, 4, 0}, 0);
+    private static final LongVector POWERS_OF_16_SHIFTS_LE = LongVector.fromArray(LongVector.SPECIES_512,
+            new long[]{16, 20, 24, 28, 0, 4, 8, 12}, 0);
 
     /**
      * Tries to parse eight digits at once using the
@@ -143,21 +141,21 @@ class FastDoubleVector {
      * @return the parsed value or -1
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
-        ShortVector vec = LongVector.zero(LongVector.SPECIES_128)
+        ShortVector c = LongVector.zero(LongVector.SPECIES_128)
                 .withLane(0, first)
                 .withLane(1, second)
-                .reinterpretAsShorts()
-                .sub((short) '0');
-        VectorMask<Short> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
+                .reinterpretAsShorts();
+        ShortVector lowerCase = c.or((short) 0x20);
+        VectorMask<Short> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
+        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
+                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .allTrue()) {
+            return -1;
         }
-        return vec
-                .sub((short) ('a' - '0' - 10), gt9Msk)
+        return lowerCase.sub((byte) '0')
+                .sub((byte) ('a' - '0' - 10), ge_a)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
@@ -171,18 +169,18 @@ class FastDoubleVector {
      * returns a negative value if {@code a} does not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(char[] a, int offset) {
-        ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
-                .sub((short) '0');
-        VectorMask<Short> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0')).and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
+        ShortVector c = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset);
+        ShortVector lowerCase = c.or((short) 0x20);
+        VectorMask<Short> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
+        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
+                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .allTrue()) {
+            return -1;
         }
-        return vec
-                .sub((short) ('a' - '0' - 10), gt9Msk)
+        return lowerCase.sub((byte) '0')
+                .sub((byte) ('a' - '0' - 10), ge_a)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 
@@ -195,19 +193,18 @@ class FastDoubleVector {
      *               returns a negative value if {@code value} does not contain 8 digits
      */
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
-        ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
-                .sub((byte) '0');
-        VectorMask<Byte> gt9Msk;
-        // With an unsigned gt we only need to check for > 'f' - '0'
-        if (vec.compare(UNSIGNED_GT, 'f' - '0').anyTrue()
-                || (gt9Msk = vec.compare(UNSIGNED_GT, '9' - '0'))
-                .and(vec.compare(UNSIGNED_LT, 'a' - '0')).anyTrue()) {
-            return -1L;
+        ByteVector c = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset);
+        ByteVector lowerCase = c.or((byte) 0x20);
+        VectorMask<Byte> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
+        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
+                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
+                .allTrue()) {
+            return -1;
         }
-        return vec
-                .sub((byte) ('a' - '0' - 10), gt9Msk)
+        return lowerCase.sub((byte) '0')
+                .sub((byte) ('a' - '0' - 10), ge_a)
                 .castShape(IntVector.SPECIES_256, 0)
-                .lanewise(LSHL, POWERS_OF_16_SHIFTS)
+                .lanewise(LSHL, POWERS_OF_16_SHIFTS_BE)
                 .reduceLanesToLong(ADD) & 0xffffffffL;
     }
 }
