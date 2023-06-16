@@ -34,6 +34,7 @@ public class JmhMultiplyByPowerOfFiveAndShiftMultiplier {
     public int bits;
     private BigInteger a;
     private BigInteger b;
+    public int zeroes;
 
     @Setup(Level.Trial)
     public void setUp() {
@@ -50,7 +51,7 @@ public class JmhMultiplyByPowerOfFiveAndShiftMultiplier {
 
         // set for b rightmost zeroes like 10^n has
         final double lg5 = Math.log(5) / Math.log(2);
-        int zeroes = (int) (length / (lg5 + 1));
+        zeroes = (int) (length / (lg5 + 1));
         for (int i = 0; i < zeroes; i++) {
             bytesB[length - 1 - i] = 0;
         }
@@ -68,11 +69,11 @@ public class JmhMultiplyByPowerOfFiveAndShiftMultiplier {
 
     @Benchmark
     public void optimized(Blackhole blackhole) {
-        blackhole.consume(multiply(a, b));
+        blackhole.consume(multiply(a, b, zeroes * 8));
     }
 
     // early identical copy of existing method FftMultiplier.multiply() to imitate real performance gain
-    static BigInteger multiply(BigInteger a, BigInteger b) {
+    static BigInteger multiply(BigInteger a, BigInteger b, int shift) {
         if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }
@@ -88,7 +89,6 @@ public class JmhMultiplyByPowerOfFiveAndShiftMultiplier {
                 && (xlen > FFT_THRESHOLD || ylen > FFT_THRESHOLD)) {
             throw new IllegalStateException("should not be tested here");
         }
-        int shift = b.getLowestSetBit();
         return a.multiply(b.shiftRight(shift)).shiftLeft(shift);
     }
 
