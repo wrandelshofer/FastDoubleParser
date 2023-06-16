@@ -66,7 +66,7 @@ class ParseDigitsTaskCharArray {
      * We achieve better performance by performing multiplications of long bit sequences
      * in the frequencey domain.
      */
-    static BigInteger parseDigitsRecursive(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
+    static BigInteger parseDigitsRecursive(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, Map<Integer, BigInteger> powersOfFive) {
         int numDigits = to - from;
 
         // Base case: Short sequences can be parsed iteratively.
@@ -76,10 +76,15 @@ class ParseDigitsTaskCharArray {
 
         // Recursion case: Split large sequences up into two parts. The lower part is a multiple of 16 digits.
         int mid = splitFloor16(from, to);
-        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
-        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
+        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen, powersOfFive);
+        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen, powersOfFive);
 
-        high = FftMultiplier.multiply(high, powersOfTen.get(to - mid));
+        int n = to - mid;
+        if (FastIntegerMath.usePowerOfFiveAndShift(n)) {
+            high = FftMultiplier.multiply(high, powersOfFive.get(n)).shiftLeft(n);
+        } else {
+            high = FftMultiplier.multiply(high, powersOfTen.get(n));
+        }
         return low.add(high);
     }
 }

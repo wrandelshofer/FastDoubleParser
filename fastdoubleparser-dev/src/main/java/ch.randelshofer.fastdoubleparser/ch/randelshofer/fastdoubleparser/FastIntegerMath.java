@@ -7,10 +7,16 @@ package ch.randelshofer.fastdoubleparser;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
 class FastIntegerMath {
+
+    private static final int USE_POWER_OF_FIVE_AND_SHIFT_MIN_THRESHOLD = 800; // stated by benchmark results
+
+    private static final int USE_POWER_OF_FIVE_AND_SHIFT_MAX_THRESHOLD = FftMultiplier.FFT_THRESHOLD;
+
     public static final BigInteger FIVE = BigInteger.valueOf(5);
     final static BigInteger TEN_POW_16 = BigInteger.valueOf(10_000_000_000_000_000L);
     final static BigInteger FIVE_POW_16 = BigInteger.valueOf(152_587_890_625L);
@@ -89,6 +95,22 @@ class FastIntegerMath {
         powersOfTen.put(0, BigInteger.ONE);
         powersOfTen.put(16, TEN_POW_16);
         return powersOfTen;
+    }
+    static boolean usePowerOfFiveAndShift(int n) {
+        return n > USE_POWER_OF_FIVE_AND_SHIFT_MIN_THRESHOLD && n < USE_POWER_OF_FIVE_AND_SHIFT_MAX_THRESHOLD;
+    }
+
+    static Map<Integer, BigInteger> createPowersOfFive(Map<Integer, BigInteger> powersOfTen) {
+        Map<Integer, BigInteger> powersOfFive = new TreeMap<>();
+        for (Entry<Integer, BigInteger> entry : powersOfTen.entrySet()) {
+            int exponent = entry.getKey();
+            if (usePowerOfFiveAndShift(exponent)) {
+                BigInteger powerOfTen = entry.getValue();
+                BigInteger powerOfFive = powerOfTen.shiftRight(exponent);
+                powersOfFive.put(exponent, powerOfFive);
+            }
+        }
+        return powersOfFive;
     }
 
     public static long estimateNumBits(long numDecimalDigits) {

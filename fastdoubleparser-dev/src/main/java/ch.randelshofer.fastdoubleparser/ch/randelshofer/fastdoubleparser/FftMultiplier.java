@@ -35,7 +35,7 @@ class FftMultiplier {
      * the mag arrays is greater than this threshold, then FFT
      * multiplication will be used.
      */
-    private static final int FFT_THRESHOLD = 33220;
+    static final int FFT_THRESHOLD = 33220;
     /**
      * This constant limits {@code mag.length} of BigIntegers to the supported
      * range.
