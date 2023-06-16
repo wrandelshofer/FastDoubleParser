@@ -6,6 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
 
+import static ch.randelshofer.fastdoubleparser.FastDoubleMath.fastScalb;
 import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
 
 /**
@@ -538,6 +539,8 @@ class FftMultiplier {
         if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }
+        // Squaring is slightly faster than multiplication.
+        // We check for identity here and not for equality, because an equality check of big integers is very expensive.
         if (b == a) {
             return square(b);
         }
@@ -979,8 +982,8 @@ class FftMultiplier {
             int ii = imagIdx(idxa);
             double real = a[ri];
             double imag = a[ii];
-            a[ri] = Math.scalb(real, n);
-            a[ii] = Math.scalb(imag, n);
+            a[ri] = fastScalb(real, n);
+            a[ii] = fastScalb(imag, n);
         }
     }
 
