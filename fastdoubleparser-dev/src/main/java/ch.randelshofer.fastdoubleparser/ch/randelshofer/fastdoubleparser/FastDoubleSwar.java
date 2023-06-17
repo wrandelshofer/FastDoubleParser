@@ -71,7 +71,7 @@ class FastDoubleSwar {
         // We check if '0' <= c && c <= '9'.
         // We take advantage of the fact that char is an unsigned numeric type:
         // subtracted values wrap around.
-        return (char) (c - '0') < 10;
+        return '0' <= c && c <= '9';
     }
 
     public static boolean isEightDigits(byte[] a, int offset) {
