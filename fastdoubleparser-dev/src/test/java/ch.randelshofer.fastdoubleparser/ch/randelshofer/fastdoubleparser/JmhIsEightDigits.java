@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  * optimized3  avgt   10  5.274 ± 0.028  ns/op
  * original    avgt   10  5.677 ± 0.026  ns/op
  *
- * Process finished with exit code 0
  *
  * Process finished with exit code 0
  * </pre>
