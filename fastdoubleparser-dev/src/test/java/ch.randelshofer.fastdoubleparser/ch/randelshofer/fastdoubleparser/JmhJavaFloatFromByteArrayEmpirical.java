@@ -13,26 +13,26 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.35
- * # VM version: JDK 19, OpenJDK 64-Bit Server VM, 19+36-2238
+ * # VM version: JDK 20.0.1, OpenJDK 64-Bit Server VM, 20.0.1+9-29
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
- * tryToReadEightDigits
- *              (str)  Mode  Cnt    Score   Error  Units
- * m                0  avgt    2    4.997          ns/op
- * m              365  avgt    2   12.126          ns/op
- * m             10.1  avgt    2   14.257          ns/op
- * m        3.1415927  avgt    2   21.029          ns/op
- * m    1.6162552E-35  avgt    2   28.545          ns/op
- * m  0x1.57bd4ep-116  avgt    2  370.203          ns/op
+ * FastDoubleSwar.isDigits() with return '0' <= c && c <= '9';
+ * Benchmark                              (str)  Mode  Cnt    Score   Error  Units
+ * JmhJavaFloatFromByteArray.m                0  avgt    4    4.613 ± 0.399  ns/op
+ * JmhJavaFloatFromByteArray.m              365  avgt    4    8.795 ± 0.330  ns/op
+ * JmhJavaFloatFromByteArray.m             10.1  avgt    4   12.456 ± 0.290  ns/op
+ * JmhJavaFloatFromByteArray.m        3.1415927  avgt    4   16.972 ± 2.539  ns/op
+ * JmhJavaFloatFromByteArray.m    1.6162552E-35  avgt    4   22.124 ± 0.188  ns/op
+ * JmhJavaFloatFromByteArray.m  0x1.57bd4ep-116  avgt    4  365.855 ± 6.610  ns/op
  *
- * tryToReadFourDigits
- * Benchmark    (str)  Mode  Cnt    Score   Error  Units
- * m                0  avgt    2    4.951          ns/op
- * m              365  avgt    2   12.300          ns/op
- * m             10.1  avgt    2   14.440          ns/op
- * m        3.1415927  avgt    2   20.244          ns/op
- * m    1.6162552E-35  avgt    2   26.573          ns/op
- * m  0x1.57bd4ep-116  avgt    2  363.786          ns/op
+ * FastDoubleSwar.isDigits() with return (char) (c - '0') < 10;
+ * Benchmark                              (str)  Mode  Cnt    Score   Error  Units
+ * JmhJavaFloatFromByteArray.m                0  avgt    4    4.684 ± 0.568  ns/op
+ * JmhJavaFloatFromByteArray.m              365  avgt    4    9.394 ± 0.108  ns/op
+ * JmhJavaFloatFromByteArray.m             10.1  avgt    4   12.212 ± 0.090  ns/op
+ * JmhJavaFloatFromByteArray.m        3.1415927  avgt    4   16.951 ± 2.436  ns/op
+ * JmhJavaFloatFromByteArray.m    1.6162552E-35  avgt    4   23.245 ± 0.235  ns/op
+ * JmhJavaFloatFromByteArray.m  0x1.57bd4ep-116  avgt    4  363.210 ± 4.485  ns/op
  * </pre>
  * <pre>
  * # JMH version: 1.28
@@ -54,12 +54,12 @@ import java.util.concurrent.TimeUnit;
         //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/FastDoubleParser.*"
 
 })
-@Measurement(iterations = 2)
+@Measurement(iterations = 4)
 @Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaFloatFromByteArray {
+public class JmhJavaFloatFromByteArrayEmpirical {
 
 
     @Param({
