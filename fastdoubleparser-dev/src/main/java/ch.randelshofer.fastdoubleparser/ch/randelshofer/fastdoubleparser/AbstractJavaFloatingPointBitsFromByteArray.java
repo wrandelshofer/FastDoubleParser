@@ -77,9 +77,10 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         byte ch = 0;
         for (; index < endIndex; index++) {
             ch = str[index];
-            if (FastDoubleSwar.isDigit(ch)) {
+            char digit = (char) (ch - '0');
+            if (digit < 10) {
                 // This might overflow, we deal with it later.
-                significand = 10 * significand + ch - '0';
+                significand = 10 * significand + digit;
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
