@@ -171,7 +171,10 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
     protected List<NumberTestData> createDataForIllegalHexStrings() {
         return Arrays.asList(
                 new NumberTestData("0xäp2"),
-                new NumberTestData("0x0.1234567äp0")
+                new NumberTestData("0x/äp2"),
+                new NumberTestData("0x0.1234567äp0"),
+                new NumberTestData("0x0.Łp0"),//LATIN CAPITAL LETTER L WITH STROKE U+0141 must not be confused with 'A' U+0041
+                new NumberTestData("0x0.Ł1234567p0")//LATIN CAPITAL LETTER L WITH STROKE U+0141 must not be confused with 'A' U+0041
         );
     }
 
