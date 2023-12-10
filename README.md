@@ -8,7 +8,7 @@ This project provides parsers for `double`, `float`, `BigDecimal` and `BigIntege
 The `double` and `float` parsers are optimised for speed for the most common inputs.
 The `BigDecimal` and `BigInteger` parsers are optimised for speed on all inputs.
 
-The code in this project contains optimised versions for Java SE 1.8, 11, 17, 19 and 20.
+The code in this project contains optimised versions for Java SE 1.8, 11, 17, and 21.
 The code is released in a single multi-release jar, which contains the code for all these versions
 except 20.
 
@@ -351,13 +351,13 @@ JDKs, you **also need** to install the following items:
 - OpenJDK SE 8
 - OpenJDK SE 11
 - OpenJDK SE 17
-- OpenJDK SE 19
+- OpenJDK SE 21
 
 When you clone the code repository from github. you can choose from the following branches:
 
 - `main` Aims to contain only working code.
 - `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
-  that are included in Java 20.
+  that are included in Java 21.
 
 ## Command sequence with Java SE 20 on macOS:
 
@@ -370,47 +370,42 @@ java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -
 java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main FastDoubleParserDemo/data/canada.txt   
 ```
 
-## Command sequence with Java SE 8, 11, 17, 19 and 20 and Maven 3.8.6 on macOS:
+## Command sequence with Java SE 8, 11, 17, and 21, and Maven 3.8.6 on macOS:
 
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
 cd FastDoubleParser
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home 
 mvn clean
 mvn package
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-20.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home 
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home 
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.8.jdk/Contents/Home
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_281.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-8.jdk/Contents/Home
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 ```
 
-## IntelliJ IDEA with Java SE 8, 11, 17, 19 and 20 on macOS
+## IntelliJ IDEA with Java SE 8, 11, 17, 21 on macOS
 
 Prerequisites:
 
-1. Install the following Java SDKs: 8, 11, 17, 19 and 20.
-   _If you do not need to edit the code, you only need to install the Java 20 SDK._
+1. Install the following Java SDKs: 8, 11, 17, 21.
+   _If you do not need to edit the code, you only need to install the Java 21 SDK._
 2. Install IntelliJ IDEA
 
 Steps:
@@ -434,7 +429,7 @@ Steps:
 11. _You can skip this step, if you do not want to edit the code._
     For each module in the right pane of the dialog, select the **Dependencies** tab.
     Specify the corresponding **Module SDK** for modules which have a name that ends in
-    **-Java8**, **-Java11**, **-Java17**, **-Java19**.
+    **-Java8**, **-Java11**, **-Java17**, **-Java21**.
     Do not change modules with other name endings - they must stay on the Java 20 SDK.
 
 12. From the main menu, choose **Build > Build Project**
@@ -446,7 +441,7 @@ The majority of the code is located in the module named **fastdoubleparser-dev**
 and **fastdoubleparserdemo-dev**.
 The code in these modules uses early access features of the Java 20 SDK.
 
-Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java19**
+Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java21**
 contain deltas of the **-dev** modules.
 
 The delta code is located in the **source** and **test** folders of the module.
