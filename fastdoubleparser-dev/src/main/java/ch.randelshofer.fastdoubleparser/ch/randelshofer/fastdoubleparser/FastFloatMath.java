@@ -105,11 +105,8 @@ class FastFloatMath {
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = d * Math.scalb(1f, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            d = fastScalb(d, power);
+            return isNegative ? -d : d;
         } else {
             return Float.NaN;
         }
@@ -268,5 +265,19 @@ class FastFloatMath {
         int bits = (int) (mantissa | real_exponent << (FLOAT_SIGNIFICAND_WIDTH - 1)
                 | (isNegative ? 1L << 31 : 0));
         return Float.intBitsToFloat(bits);
+    }
+
+    /**
+     * This is a faster alternative to {@link Math#scalb(float, int)}.
+     * <p>
+     * This method only works if scaleFactor is within the range of {@link Float#MIN_EXPONENT}
+     * through {@link Float#MAX_EXPONENT} (inclusive), so that we do not underflow or overflow.
+     *
+     * @param number      a double number
+     * @param scaleFactor the scale factor
+     * @return number × 2<sup>scaleFactor</sup>
+     */
+    static float fastScalb(float number, int scaleFactor) {
+        return number * Float.intBitsToFloat((scaleFactor + FLOAT_EXPONENT_BIAS) << (FLOAT_SIGNIFICAND_WIDTH - 1));
     }
 }

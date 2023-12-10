@@ -16,34 +16,32 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
  * Benchmarks for selected integer strings.
  * <pre>
  * # JMH version: 1.36
- * # VM version: JDK 21-ea, OpenJDK 64-Bit Server VM, 21-ea+24-2086
+ * # VM version: JDK 20.0.1, OpenJDK 64-Bit Server VM, 20.0.1+9-29
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchm (digits)  Mode  Cnt             Score   Error  Units
- * dec           1  avgt    2             3.830          ns/op
- * dec          10  avgt    2            12.742          ns/op
- * dec         100  avgt    2           490.141          ns/op
- * dec        1000  avgt    2          4702.757          ns/op
- * dec       10000  avgt    2        155614.143          ns/op
- * dec      100000  avgt    2       5090985.731          ns/op
- * dec     1000000  avgt    2      80625344.892          ns/op
- * dec    10000000  avgt    2    1298521324.813          ns/op
- * dec   100000000  avgt    2   21618066446.000          ns/op
- * dec   646456993  avgt    2  193819477092.000          ns/op
- * dec  1292782621  avgt    2  216033005512.000          ns/op
- * hex           1  avgt    2            16.569          ns/op
- * hex          10  avgt    2            26.783          ns/op
- * hex         100  avgt    2           139.187          ns/op
- * hex        1000  avgt    2          1217.598          ns/op
- * hex       10000  avgt    2         12751.188          ns/op
- * hex      100000  avgt    2        128000.498          ns/op
- * hex     1000000  avgt    2       1272110.362          ns/op
- * hex    10000000  avgt    2      13750114.163          ns/op
- * hex   100000000  avgt    2     193441331.309          ns/op
- * hex   646456993  avgt    2    1036792579.470          ns/op
- * hex  1292782621  avgt    2     991057402.000          ns/op
- *
- * Process finished with exit code 0
+ * dec           1  avgt    2             3.680          ns/op
+ * dec          10  avgt    2            12.361          ns/op
+ * dec         100  avgt    2           431.519          ns/op
+ * dec        1000  avgt    2          4977.846          ns/op
+ * dec       10000  avgt    2        163831.957          ns/op
+ * dec      100000  avgt    2       5049386.248          ns/op
+ * dec     1000000  avgt    2      82252012.578          ns/op
+ * dec    10000000  avgt    2    1324055596.563          ns/op
+ * dec   100000000  avgt    2   22332371526.500          ns/op
+ * dec   646456993  avgt    2  215099259679.000          ns/op
+ * dec  1292782621  avgt    2  203881980399.500          ns/op
+ * hex           1  avgt    2            15.152          ns/op
+ * hex          10  avgt    2            25.678          ns/op
+ * hex         100  avgt    2           128.800          ns/op
+ * hex        1000  avgt    2          1159.016          ns/op
+ * hex       10000  avgt    2         12142.790          ns/op
+ * hex      100000  avgt    2        121737.021          ns/op
+ * hex     1000000  avgt    2       1187255.022          ns/op
+ * hex    10000000  avgt    2      13449359.673          ns/op
+ * hex   100000000  avgt    2     138010985.767          ns/op
+ * hex   646456993  avgt    2     768771154.365          ns/op
+ * hex  1292782621  avgt    2     817279028.308          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {

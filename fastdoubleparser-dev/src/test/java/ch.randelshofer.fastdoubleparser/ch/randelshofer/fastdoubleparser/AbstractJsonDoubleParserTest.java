@@ -179,7 +179,7 @@ public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValuePar
 
     protected List<NumberTestData> createDataWithVeryLongInputStrings() {
         return Arrays.asList(
-                new NumberTestData("too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 3), AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class)
+                new NumberTestData("too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 4), 0, Integer.MAX_VALUE - 3, 0, Integer.MAX_VALUE - 3, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class)
         );
     }
 

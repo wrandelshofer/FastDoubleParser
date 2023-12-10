@@ -19,12 +19,8 @@ import java.nio.ByteOrder;
  *     <dt>Leslie Lamport, Multiple Byte Processing with Full-Word Instructions</dt>
  *     <dd><a href="https://lamport.azurewebsites.net/pubs/multiple-byte.pdf">azurewebsites.net</a></dd>
  *
- *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
- *     <a href="https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE">Apache License 2.0</a>.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
- *
  *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
- *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-APACHE">Apache License 2.0</a>.</dt>
+ *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-MIT">MIT License</a>.</dt>
  *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
  *
  *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second,
@@ -45,7 +41,7 @@ class FastDoubleSwar {
     private final static VarHandle readLongBE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.BIG_ENDIAN);
     private final static ValueLayout.OfLong CHAR_ALIGNED_LONG = ValueLayout.OfLong.JAVA_LONG
-            .withByteAlignment(2);
+            .withBitAlignment(16);
 
     public static int countUpToEightDigitsUtf8(long chunk) {
         long val = chunk - 0x3030303030303030L;
@@ -161,13 +157,6 @@ class FastDoubleSwar {
 
     public static boolean isEightZeroesUtf8(long chunk) {
         return chunk == 0x3030303030303030L;
-    }
-
-    public static int parseEightDigitsUtf16(long first, long second) {
-        long fval = first - 0x0030_0030_0030_0030L;
-        long sval = second - 0x0030_0030_0030_0030L;
-        return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
-                + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
     }
 
     public static int readIntBE(byte[] a, int offset) {

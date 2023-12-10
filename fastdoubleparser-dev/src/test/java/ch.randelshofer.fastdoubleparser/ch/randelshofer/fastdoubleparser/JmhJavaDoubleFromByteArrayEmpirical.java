@@ -13,15 +13,15 @@ import java.util.concurrent.TimeUnit;
  * Benchmarks for selected floating point strings.
  * <pre>
  * # JMH version: 1.36
- * # VM version: JDK 20-ea, OpenJDK 64-Bit Server VM, 20+36-2344
+ * # VM version: JDK 20, OpenJDK 64-Bit Server VM, 20+36-2344
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *                       (str)  Mode  Cnt   Score   Error  Units
- * m                         0  avgt    2   4.152          ns/op
- * m                       365  avgt    2   9.607          ns/op
- * m                      10.1  avgt    2  12.775          ns/op
- * m  -1.2345678901234568E-121  avgt    2  26.888          ns/op
- * m      -0.29235596393453456  avgt    2  19.709          ns/op
- * m     0x123.456789abcdep123  avgt    2  24.223          ns/op
+ * m                         0  avgt    4   4.057 ± 0.126  ns/op
+ * m                       365  avgt    4   9.017 ± 0.093  ns/op
+ * m                      10.1  avgt    4  12.221 ± 1.717  ns/op
+ * m  -1.2345678901234568E-121  avgt    4  27.247 ± 0.221  ns/op
+ * m      -0.29235596393453456  avgt    4  19.884 ± 0.300  ns/op
+ * m     0x123.456789abcdep123  avgt    4  22.941 ± 0.275  ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
         //"-XX:+LogCompilation",
         //"-XX:+PrintAssembly"
 })
-@Measurement(iterations = 2)
+@Measurement(iterations = 4)
 @Warmup(iterations = 2)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)

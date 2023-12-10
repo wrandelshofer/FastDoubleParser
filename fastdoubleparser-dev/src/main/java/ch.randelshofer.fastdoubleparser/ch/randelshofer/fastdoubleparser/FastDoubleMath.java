@@ -11,12 +11,8 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.unsignedMultiplyH
  * <p>
  * References:
  * <dl>
- *     <dt>Daniel Lemire, fast_double_parser, 4x faster than strtod.
- *     <a href="https://github.com/lemire/fast_double_parser/blob/07d9189a8fb815fe800cb15ca022e7a07093236e/LICENSE">Apache License 2.0</a>.</dt>
- *     <dd><a href="https://github.com/lemire/fast_double_parser">github.com</a></dd>
- *
  *     <dt>Daniel Lemire, fast_float number parsing library: 4x faster than strtod.
- *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-APACHE">Apache License 2.0</a>.</dt>
+ *     <a href="https://github.com/fastfloat/fast_float/blob/dc88f6f882ac7eb8ec3765f633835cb76afa0ac2/LICENSE-MIT">MIT License</a>.</dt>
  *     <dd><a href="https://github.com/fastfloat/fast_float">github.com</a></dd>
  *
  *     <dt>Daniel Lemire, Number Parsing at a Gigabyte per Second,
@@ -842,7 +838,7 @@ class FastDoubleMath {
             } else {
                 d = d * DOUBLE_POWERS_OF_TEN[power];
             }
-            return (isNegative) ? -d : d;
+            return isNegative ? -d : d;
         }
 
 
@@ -969,7 +965,7 @@ class FastDoubleMath {
      */
     static double tryHexFloatToDoubleTruncated(boolean isNegative, long significand, long exponent, boolean isSignificandTruncated,
                                                long exponentOfTruncatedSignificand) {
-        int power = isSignificandTruncated ? (int) exponentOfTruncatedSignificand : (int) exponent;
+        long power = isSignificandTruncated ? exponentOfTruncatedSignificand : exponent;
         if (DOUBLE_MIN_EXPONENT_POWER_OF_TWO <= power && power <= DOUBLE_MAX_EXPONENT_POWER_OF_TWO) {
             // Convert the significand into a double.
             // The cast will round the significand if necessary.
@@ -980,13 +976,24 @@ class FastDoubleMath {
             // Scale the significand by the power.
             // This only works if power is within the supported range, so that
             // we do not underflow or overflow.
-            d = d * Math.scalb(1d, power);
-            if (isNegative) {
-                d = -d;
-            }
-            return d;
+            d = fastScalb(d, power);
+            return isNegative ? -d : d;
         } else {
             return Double.NaN;
         }
+    }
+
+    /**
+     * This is a faster alternative to {@link Math#scalb(double, int)}.
+     * <p>
+     * This method only works if scaleFactor is within the range of {@link Double#MIN_EXPONENT}
+     * through {@link Double#MAX_EXPONENT} (inclusive), so that we do not underflow or overflow.
+     *
+     * @param number      a double number
+     * @param scaleFactor the scale factor
+     * @return number × 2<sup>scaleFactor</sup>
+     */
+    static double fastScalb(double number, long scaleFactor) {
+        return number * Double.longBitsToDouble((scaleFactor + DOUBLE_EXPONENT_BIAS) << (DOUBLE_SIGNIFICAND_WIDTH - 1));
     }
 }

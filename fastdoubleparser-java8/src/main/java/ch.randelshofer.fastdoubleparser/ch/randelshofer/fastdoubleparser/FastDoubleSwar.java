@@ -147,13 +147,6 @@ class FastDoubleSwar {
         return chunk == 0x3030303030303030L;
     }
 
-    public static int parseEightDigitsUtf16(long first, long second) {
-        long fval = first - 0x0030_0030_0030_0030L;
-        long sval = second - 0x0030_0030_0030_0030L;
-        return (int) (sval * 0x03e8_0064_000a_0001L >>> 48)
-                + (int) (fval * 0x03e8_0064_000a_0001L >>> 48) * 10000;
-    }
-
     public static int readIntBE(byte[] a, int offset) {
         return ((a[offset] & 0xff) << 24)
                 | ((a[offset + 1] & 0xff) << 16)
