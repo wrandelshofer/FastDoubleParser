@@ -287,7 +287,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
                 fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
                 integerPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen);
             } else {
-                integerPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, null);
+                integerPart = ParseDigitsTaskByteArray.parseDigitsIterative(str, integerPartIndex, decimalPointIndex);
             }
         } else {
             integerPart = BigInteger.ZERO;
