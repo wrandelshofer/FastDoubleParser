@@ -168,9 +168,9 @@
           <systemPropertyVariables>
             <enableLongRunningTests>false</enableLongRunningTests>
           </systemPropertyVariables>
-          <argLine>-Xmx20g</argLine>
+          <argLine>-Xmx18g</argLine>
           <parallel>classesAndMethods</parallel>
-          <forkCount>4</forkCount>
+          <forkCount>3</forkCount>
         </configuration>
       </plugin>
       <plugin>

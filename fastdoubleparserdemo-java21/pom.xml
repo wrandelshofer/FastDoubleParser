@@ -16,7 +16,7 @@
     <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
-  <name>fastdoubleparserdemo-Java19</name>
+  <name>fastdoubleparserdemo-Java21</name>
 
   <build>
     <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparserdemo</sourceDirectory>

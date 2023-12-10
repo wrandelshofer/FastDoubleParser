@@ -50,7 +50,7 @@
     <moduleSet>
       <useAllReactorProjects>true</useAllReactorProjects>
       <includes>
-        <include>ch.randelshofer:fastdoubleparserdemo-java19</include>
+          <include>ch.randelshofer:fastdoubleparserdemo-fastdoubleparser-java21</include>
       </includes>
       <binaries>
         <outputDirectory>META-INF/versions/19</outputDirectory>
