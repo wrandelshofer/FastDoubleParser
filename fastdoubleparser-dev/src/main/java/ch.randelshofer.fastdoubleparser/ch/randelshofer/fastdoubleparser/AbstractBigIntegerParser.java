@@ -3,7 +3,8 @@
  * Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
-public abstract class AbstractBigIntegerParser extends AbstractNumberParser {
+
+abstract class AbstractBigIntegerParser extends AbstractNumberParser {
 
     /**
      * The resulting value must fit into {@code 2^31 - 1} bits.
@@ -30,7 +31,7 @@ public abstract class AbstractBigIntegerParser extends AbstractNumberParser {
      * recursive algorithm. We speculate that we break even somewhere at twice
      * the threshold value.
      */
-    public static final int RECURSION_THRESHOLD = 400;
+    static final int RECURSION_THRESHOLD = 400;
 
     protected static boolean hasManyDigits(int length) {
         return length > 18;

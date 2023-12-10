@@ -61,7 +61,7 @@
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
-    <revision>0.10.0</revision>
+    <revision>1.0.0</revision>
     <license.url>
       https://github.com/wrandelshofer/FastDoubleParser/blob/9a3ccae38254c9bf84b5e6a218a47675bf80ed9f/LICENSE
     </license.url>

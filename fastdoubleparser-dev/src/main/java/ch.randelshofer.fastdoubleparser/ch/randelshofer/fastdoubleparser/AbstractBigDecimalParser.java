@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-public abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubleparser.AbstractNumberParser {
+abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubleparser.AbstractNumberParser {
 
     /**
      * Threshold on the number of input characters for selecting the
@@ -45,7 +45,7 @@ public abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubl
      * recursive algorithm. We speculate that we break even somewhere at twice
      * the threshold value.
      */
-    public static final int RECURSION_THRESHOLD = 400;
+    static final int RECURSION_THRESHOLD = 400;
 
 
     protected final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
