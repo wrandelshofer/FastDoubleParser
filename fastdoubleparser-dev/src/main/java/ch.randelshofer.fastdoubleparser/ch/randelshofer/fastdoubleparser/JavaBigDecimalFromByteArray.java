@@ -304,7 +304,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
                 fillPowersOfNFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex);
                 fractionalPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen);
             } else {
-                fractionalPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, null);
+                fractionalPart = ParseDigitsTaskByteArray.parseDigitsIterative(str, nonZeroFractionalPartIndex, exponentIndicatorIndex);
             }
             // If the integer part is not 0, we combine it with the fraction part.
             if (integerPart.signum() == 0) {
