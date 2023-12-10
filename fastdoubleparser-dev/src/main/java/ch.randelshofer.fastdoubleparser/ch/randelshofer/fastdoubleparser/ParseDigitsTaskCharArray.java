@@ -20,27 +20,13 @@ class ParseDigitsTaskCharArray {
     private ParseDigitsTaskCharArray() {
     }
 
-    /**
-     * Threshold on the number of digits for selecting the
-     * recursive algorithm instead of the iterative algorithm.
-     * <p>
-     * Set this to {@link Integer#MAX_VALUE} if you only want to use the
-     * iterative algorithm.
-     * <p>
-     * Set this to {@code 0} if you only want to use the recursive algorithm.
-     * <p>
-     * Rationale for choosing a specific threshold value:
-     * The iterative algorithm has a smaller constant overhead than the
-     * recursive algorithm. We speculate that we break even somewhere at twice
-     * the threshold value.
-     */
-    static final int RECURSION_THRESHOLD = 400;
-
 
     /**
      * Parses digits in quadratic time O(N<sup>2</sup>).
      */
     static BigInteger parseDigitsIterative(char[] str, int from, int to) {
+        assert str != null : "str==null";
+
         int numDigits = to - from;
 
         BigSignificand bigSignificand = new BigSignificand(FastIntegerMath.estimateNumBits(numDigits));
@@ -66,18 +52,21 @@ class ParseDigitsTaskCharArray {
      * We achieve better performance by performing multiplications of long bit sequences
      * in the frequencey domain.
      */
-    static BigInteger parseDigitsRecursive(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen) {
+    static BigInteger parseDigitsRecursive(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, int recursionThreshold) {
+        assert str != null : "str==null";
+        assert powersOfTen != null : "powersOfTen==null";
+
         int numDigits = to - from;
 
         // Base case: Short sequences can be parsed iteratively.
-        if (numDigits <= RECURSION_THRESHOLD) {
+        if (numDigits <= recursionThreshold) {
             return parseDigitsIterative(str, from, to);
         }
 
         // Recursion case: Split large sequences up into two parts. The lower part is a multiple of 16 digits.
         int mid = splitFloor16(from, to);
-        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen);
-        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen);
+        BigInteger high = parseDigitsRecursive(str, from, mid, powersOfTen, recursionThreshold);
+        BigInteger low = parseDigitsRecursive(str, mid, to, powersOfTen, recursionThreshold);
 
         high = FftMultiplier.multiply(high, powersOfTen.get(to - mid));
         return low.add(high);

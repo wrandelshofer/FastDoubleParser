@@ -115,7 +115,7 @@ class JavaBigIntegerFromByteArray extends AbstractBigIntegerParser {
         int numDigits = to - from;
         checkDecBigIntegerBounds(numDigits);
         Map<Integer, BigInteger> powersOfTen = fillPowersOf10Floor16(from, to);
-        BigInteger result = ParseDigitsTaskByteArray.parseDigitsRecursive(str, from, to, powersOfTen);
+        BigInteger result = ParseDigitsTaskByteArray.parseDigitsRecursive(str, from, to, powersOfTen, RECURSION_THRESHOLD);
         return isNegative ? result.negate() : result;
     }
 

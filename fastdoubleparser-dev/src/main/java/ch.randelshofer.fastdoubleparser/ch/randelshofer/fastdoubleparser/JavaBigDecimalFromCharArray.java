@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.util.NavigableMap;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
-import static ch.randelshofer.fastdoubleparser.ParseDigitsTaskCharArray.RECURSION_THRESHOLD;
 
 
 /**
@@ -266,9 +265,10 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
      * @param exponent                   the exponent value
      * @return the parsed big decimal
      */
-    private BigDecimal valueOfBigDecimalString(char[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
+    BigDecimal valueOfBigDecimalString(char[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
         int integerExponent = exponentIndicatorIndex - decimalPointIndex - 1;
         int fractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
+        int nonZeroFractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
         int integerDigitsCount = decimalPointIndex - integerPartIndex;
         NavigableMap<Integer, BigInteger> powersOfTen = null;
 
@@ -283,9 +283,9 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
             if (integerDigitsCount > RECURSION_THRESHOLD) {
                 powersOfTen = createPowersOfTenFloor16Map();
                 fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
-                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen);
+                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen, RECURSION_THRESHOLD);
             } else {
-                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, null);
+                integerPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, integerPartIndex, decimalPointIndex);
             }
         } else {
             integerPart = BigInteger.ZERO;
@@ -295,14 +295,14 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
         // The recursive algorithm needs a map with powers of ten, if we have more than RECURSION_THRESHOLD digits.
         if (fractionDigitsCount > 0) {
             BigInteger fractionalPart;
-            if (fractionDigitsCount > RECURSION_THRESHOLD) {
+            if (nonZeroFractionDigitsCount > RECURSION_THRESHOLD) {
                 if (powersOfTen == null) {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
                 fillPowersOfNFloor16Recursive(powersOfTen, decimalPointIndex + 1, exponentIndicatorIndex);
-                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, powersOfTen);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, powersOfTen, RECURSION_THRESHOLD);
             } else {
-                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, null);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, decimalPointIndex + 1, exponentIndicatorIndex);
             }
             // If the integer part is not 0, we combine it with the fraction part.
             if (integerPart.signum() == 0) {

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static ch.randelshofer.fastdoubleparser.AbstractBigDecimalParser.RECURSION_THRESHOLD;
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -252,17 +253,26 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestDataSupplier("significand with 40 digits in integer part and exponent", () -> new NumberTestData("-1234567890123456789012345678901234567890e887799", BigDecimal::new)),
                 new NumberTestDataSupplier("no significand but exponent 40 digits", () -> new NumberTestData("-e12345678901234567890123456789012345678901234567890", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
                 new NumberTestDataSupplier("significand with 40 digits in fraction part and exponent", () -> new NumberTestData("-.1234567890123456789012345678901234567890e-887799", BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 40 digits in integer and fraction part together and exponent", () -> new NumberTestData("-123456789012345678901234567890.1234567890e887799", BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 40 digits in integer and fraction part together and exponent", () -> new NumberTestData("-123456789012345678901234567890.1234567890e887799", BigDecimal::new))
 
-                new NumberTestDataSupplier("significand with 127 integer digits (below recursion threshold)", () -> new NumberTestData("significand with 127 integer digits (below recursion threshold)", new VirtualCharSequence('7', 127), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 128 integer digits (above recursion threshold)", () -> new NumberTestData("significand with 128 integer digits (above recursion threshold)", new VirtualCharSequence('7', 128), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 127 fraction digits (below recursion threshold)", () -> new NumberTestData("significand with 127 fraction digits (below recursion threshold)", new VirtualCharSequence(".", '7', 128), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 128 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 128 fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', 129), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1023 integer digits (above recursion threshold)", () -> new NumberTestData("significand with 1023 integer digits (above recursion threshold)", new VirtualCharSequence('7', 1023), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1024 integer digits (above recursion threshold)", () -> new NumberTestData("significand with 1024 integer digits (above recursion threshold)", new VirtualCharSequence('7', 2048), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1023 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 1023 fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', 1024), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 1024 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 1024 fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', 1025), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 2048 integer digits, 4096 fraction digits (above recursion threshold)", () -> new NumberTestData("significand with 2048 integer digits, 4096 fraction digits (above recursion threshold)", new VirtualCharSequence("", 2048, ".", "", '7', 2048 + 4096 + 1), BigDecimal::new))
+        );
+    }
+
+    /**
+     * White-box tests for the following methods:
+     * <ul>
+     *     <li>{@link JavaBigDecimalFromByteArray#valueOfBigDecimalString(byte[], int, int, int, int, boolean, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharArray#valueOfBigDecimalString(char[], int, int, int, int, boolean, int)}</li>
+     *     <li>{@link JavaBigDecimalFromCharSequence#valueOfBigDecimalString(CharSequence, int, int, int, int, boolean, int)}</li>
+     * </ul>
+     */
+    protected List<NumberTestDataSupplier> createTestDataForInputClassesInMethodValueOfBigDecimalString() {
+        return Arrays.asList(
+                new NumberTestDataSupplier("significand with " + (RECURSION_THRESHOLD) + " integer digits (below recursion threshold)", () -> new NumberTestData("significand with " + (RECURSION_THRESHOLD) + " integer digits (below recursion threshold)", new VirtualCharSequence('7', RECURSION_THRESHOLD), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with " + (RECURSION_THRESHOLD + 1) + " integer digits (above recursion threshold)", () -> new NumberTestData("significand with " + (RECURSION_THRESHOLD + 1) + " integer digits (above recursion threshold)", new VirtualCharSequence('7', RECURSION_THRESHOLD + 1), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with " + (RECURSION_THRESHOLD) + " fraction digits (below recursion threshold)", () -> new NumberTestData("significand with " + (RECURSION_THRESHOLD) + " fraction digits (below recursion threshold)", new VirtualCharSequence(".", '7', RECURSION_THRESHOLD), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with " + (RECURSION_THRESHOLD + 1) + " fraction digits (above recursion threshold)", () -> new NumberTestData("significand with " + (RECURSION_THRESHOLD + 1) + " fraction digits (above recursion threshold)", new VirtualCharSequence(".", '7', RECURSION_THRESHOLD + 1), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with " + (RECURSION_THRESHOLD + 1) + " integer digits, " + (RECURSION_THRESHOLD + 1) + " fraction digits (above recursion threshold)", () -> new NumberTestData("significand with " + (RECURSION_THRESHOLD + 1) + " integer digits, " + (RECURSION_THRESHOLD + 1) + " fraction digits (above recursion threshold)", new VirtualCharSequence("", RECURSION_THRESHOLD + 1, ".", "", '7', RECURSION_THRESHOLD + 1 + RECURSION_THRESHOLD + 1 + 1), BigDecimal::new))
         );
     }
 
@@ -292,6 +302,7 @@ public abstract class AbstractBigDecimalParserTest {
         list.addAll(createDataForIllegalCroppedStrings());
         list.addAll(createTestDataForInputClassesInMethodParseBigDecimalString());
         list.addAll(createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits());
+        list.addAll(createTestDataForInputClassesInMethodValueOfBigDecimalString());
         return list;
     }
 

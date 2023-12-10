@@ -536,6 +536,9 @@ class FftMultiplier {
      * performance when {@code a == b}.
      */
     static BigInteger multiply(BigInteger a, BigInteger b) {
+        assert a != null : "a==null";
+        assert b != null : "b==null";
+
         if (b.signum() == 0 || a.signum() == 0) {
             return BigInteger.ZERO;
         }

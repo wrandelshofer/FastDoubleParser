@@ -16,6 +16,21 @@ public abstract class AbstractBigIntegerParser extends AbstractNumberParser {
      * The hexadecimal representation of {@code 2^31 - 1} bits has 536,870,912 digits.
      */
     private static final int MAX_HEX_DIGITS = 536_870_912;
+    /**
+     * Threshold on the number of digits for selecting the
+     * recursive algorithm instead of the iterative algorithm.
+     * <p>
+     * Set this to {@link Integer#MAX_VALUE} if you only want to use the
+     * iterative algorithm.
+     * <p>
+     * Set this to {@code 0} if you only want to use the recursive algorithm.
+     * <p>
+     * Rationale for choosing a specific threshold value:
+     * The iterative algorithm has a smaller constant overhead than the
+     * recursive algorithm. We speculate that we break even somewhere at twice
+     * the threshold value.
+     */
+    public static final int RECURSION_THRESHOLD = 400;
 
     protected static boolean hasManyDigits(int length) {
         return length > 18;

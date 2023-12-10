@@ -31,6 +31,23 @@ public abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubl
      * </pre>
      */
     public static final int MANY_DIGITS_THRESHOLD = 1 + 18 + 1 + 1 + 1 + 10;
+    /**
+     * Threshold on the number of digits for selecting the
+     * recursive algorithm instead of the iterative algorithm.
+     * <p>
+     * Set this to {@link Integer#MAX_VALUE} if you only want to use the
+     * iterative algorithm.
+     * <p>
+     * Set this to {@code 0} if you only want to use the recursive algorithm.
+     * <p>
+     * Rationale for choosing a specific threshold value:
+     * The iterative algorithm has a smaller constant overhead than the
+     * recursive algorithm. We speculate that we break even somewhere at twice
+     * the threshold value.
+     */
+    public static final int RECURSION_THRESHOLD = 400;
+
+
     protected final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
     /**
      * See {@link JavaBigDecimalParser}.
