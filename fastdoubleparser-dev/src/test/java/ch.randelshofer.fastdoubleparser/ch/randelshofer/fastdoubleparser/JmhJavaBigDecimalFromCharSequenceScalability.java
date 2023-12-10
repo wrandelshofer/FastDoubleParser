@@ -9,25 +9,25 @@ import org.openjdk.jmh.annotations.*;
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
-import static ch.randelshofer.fastdoubleparser.Strings.repeat;
+import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
 
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.36
- * # VM version: JDK 20.0.1, OpenJDK 64-Bit Server VM, 20.0.1+9-29
+ * # JMH version: 1.37
+ * # VM version: JDK 21.0.1, OpenJDK 64-Bit Server VM, 21.0.1+12-LTS
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  *     (digits)  Mode  Cnt            Score   Error  Units
- * f          1  avgt    2           11.791          ns/op
- * f         10  avgt    2           19.076          ns/op
- * f        100  avgt    2          277.271          ns/op
- * f       1000  avgt    2         5422.912          ns/op
- * f      10000  avgt    2       180604.928          ns/op
- * f     100000  avgt    2      5534607.161          ns/op
- * f    1000000  avgt    2     86172567.073          ns/op
- * f   10000000  avgt    2   1411668617.188          ns/op
- * f  100000000  avgt    2  23719563715.500          ns/op
+ * m          1  avgt                11.760          ns/op
+ * m         10  avgt                24.240          ns/op
+ * m        100  avgt               641.794          ns/op
+ * m       1000  avgt              6619.499          ns/op
+ * m      10000  avgt            220716.603          ns/op
+ * m     100000  avgt           5959907.182          ns/op
+ * m    1000000  avgt         112629492.933          ns/op
+ * m   10000000  avgt        1719489749.000          ns/op
+ * m  100000000  avgt       28698919868.000          ns/op
  * </pre>
  */
 
@@ -39,8 +39,8 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
         //, "-XX:-PrintInlining"
 
 })
-@Measurement(iterations = 2)
-@Warmup(iterations = 2)
+@Measurement(iterations = 1)
+@Warmup(iterations = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
@@ -57,28 +57,21 @@ public class JmhJavaBigDecimalFromCharSequenceScalability {
             , "1000000"
             , "10000000"
             , "100000000"
-            // , "646391315"// The maximal number non-zero digits in the significand
+            // , "646391315"// The maximal number of non-zero digits in the significand
     })
     public int digits;
-    private String integerPart;
-    private String fractionalPart;
+    private String input;
 
     @Setup(Level.Trial)
     public void setUp() {
-        String str = repeat("9806543217", (digits + 9) / 10).substring(0, digits);
-        integerPart = str;
-        fractionalPart = ("." + str);
+        StringBuilder str = repeatStringBuilder("9", digits + 1);
+        str.setCharAt(digits / 3, '.');
+        input = str.toString();
     }
 
-
-    //   @Benchmark
-    //   public BigDecimal i() {
-    //       return JavaBigDecimalParser.parseBigDecimal(integerPart);
-    //   }
-
     @Benchmark
-    public BigDecimal f() {
-        return JavaBigDecimalParser.parseBigDecimal(fractionalPart);
+    public BigDecimal m() {
+        return JavaBigDecimalParser.parseBigDecimal(input);
     }
 
 }

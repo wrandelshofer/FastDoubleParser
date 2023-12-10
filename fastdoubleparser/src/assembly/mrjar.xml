@@ -78,5 +78,23 @@
         </unpackOptions>
       </binaries>
     </moduleSet>
+    <moduleSet>
+      <useAllReactorProjects>true</useAllReactorProjects>
+      <includes>
+        <include>ch.randelshofer:fastdoubleparser-java22</include>
+      </includes>
+      <binaries>
+        <outputDirectory>META-INF/versions/22</outputDirectory>
+        <unpack>true</unpack>
+        <includeDependencies>false</includeDependencies>
+        <unpackOptions>
+          <includes>
+            <include>**/FastDoubleSwar*.class</include>
+            <include>**/FastIntegerMath*.class</include>
+            <include>module-info.class</include>
+          </includes>
+        </unpackOptions>
+      </binaries>
+    </moduleSet>
   </moduleSets>
 </assembly>

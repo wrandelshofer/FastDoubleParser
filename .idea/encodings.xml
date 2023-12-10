@@ -20,6 +20,9 @@
     <file url="file://$PROJECT_DIR$/fastdoubleparser-java21/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparser-java21/src/main/resources/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparser-java21/target/generated-resources/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fastdoubleparser-java22/src/main/java/ch.randelshofer.fastdoubleparser" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fastdoubleparser-java22/src/main/resources/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fastdoubleparser-java22/target/generated-resources/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparser-java8/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparser-java8/src/main/java/ch.randelshofer.fastdoubleparser" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparser-java8/src/main/resources" charset="UTF-8" />
@@ -44,6 +47,8 @@
     <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java21/src/main/java/ch.randelshofer.fastdoubleparserdemo" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java21/src/main/javademo" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java21/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java22/src/main/java/ch.randelshofer.fastdoubleparserdemo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java22/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java8/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java8/src/main/java/ch.randelshofer.fastdoubleparserdemo" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fastdoubleparserdemo-java8/src/main/resources" charset="UTF-8" />

@@ -7,7 +7,6 @@ package ch.randelshofer.fastdoubleparser;
 import org.openjdk.jmh.annotations.*;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
@@ -15,20 +14,21 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.37
- * # VM version: JDK 21-ea, OpenJDK 64-Bit Server VM, 21-ea+20-1677
+ * # JMH version: 1.36
+ * # VM version: JDK 21.0.1, OpenJDK 64-Bit Server VM, 21.0.1+12-LTS
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  *     (digits)  Mode  Cnt            Score   Error  Units
- * m          1  avgt                10.688          ns/op
- * m         10  avgt                19.903          ns/op
- * m        100  avgt               551.403          ns/op
- * m       1000  avgt              5999.290          ns/op
- * m      10000  avgt            221929.429          ns/op
- * m     100000  avgt           5881864.021          ns/op
- * m    1000000  avgt         110878102.879          ns/op
- * m   10000000  avgt        1649224533.143          ns/op
- * m  100000000  avgt       25932859264.000          ns/op
+ * m          1  avgt                10.308          ns/op
+ * m         10  avgt                24.749          ns/op
+ * m        100  avgt               613.224          ns/op
+ * m       1000  avgt              6165.444          ns/op
+ * m      10000  avgt            239438.010          ns/op
+ * m     100000  avgt           6018666.187          ns/op
+ * m    1000000  avgt         111243026.244          ns/op
+ * m   10000000  avgt        1716885616.500          ns/op
+ * m  100000000  avgt       27710988748.000          ns/op
+ *
  * </pre>
  */
 
@@ -45,7 +45,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaBigDecimalFromByteArrayScalability {
+public class JmhJavaBigDecimalFromCharArrayScalability {
     @Param({
             "1"
             , "10"
@@ -60,13 +60,14 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
     })
 
     public int digits;
-    private byte[] input;
+    private char[] input;
 
     @Setup(Level.Trial)
     public void setUp() {
         StringBuilder str = repeatStringBuilder("9", digits + 1);
         str.setCharAt(digits / 3, '.');
-        input = str.toString().getBytes(StandardCharsets.UTF_8);
+        input = new char[str.length()];
+        str.getChars(0, str.length(), input, 0);
     }
 
 
@@ -75,3 +76,14 @@ public class JmhJavaBigDecimalFromByteArrayScalability {
         return JavaBigDecimalParser.parseBigDecimal(input);
     }
 }
+
+
+
+
+
+
+
+
+
+
+

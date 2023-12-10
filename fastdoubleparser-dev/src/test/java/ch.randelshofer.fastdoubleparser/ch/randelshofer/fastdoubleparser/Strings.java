@@ -5,11 +5,15 @@
 package ch.randelshofer.fastdoubleparser;
 
 public class Strings {
-    public static String repeat(String str, int count) {
+    public static StringBuilder repeatStringBuilder(String str, int count) {
         StringBuilder b = new StringBuilder(str.length() * count);
         while (count-- > 0) {
             b.append(str);
         }
-        return b.toString();
+        return b;
+    }
+
+    public static String repeat(String str, int count) {
+        return repeatStringBuilder(str, count).toString();
     }
 }

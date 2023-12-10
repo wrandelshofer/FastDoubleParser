@@ -128,148 +128,85 @@ The computation times are given for a Mac mini 2018 with Intel(R) Core(TM) i7-87
 
 Most input lines look like this: `0.4011441469603171`.
 
-MacBook Pro (2023),
-CPU: Apple M2 Max,
-OS: Mac OS X, 13.4.1, 12 processors available
+Mac Mini (2018)<br>
+CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
+OS: Mac OS X, 14.1.2, 12 processors available<br>
+VM: Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22-ea+27-2262<br>
 
-| Method                      |    MB/s | stdev | Mfloats/s |   ns/f | speedup | JDK   |
-|-----------------------------|--------:|------:|----------:|-------:|--------:|-------|
-| java.lang.Double            |  117.09 | 3.9 % |      6.72 | 148.79 |    1.00 | 21-ea |
-| java.lang.Float             |  109.61 | 8.5 % |      6.29 | 158.95 |    1.00 | 21-ea |
-| java.math.BigDecimal        |  255.19 | 4.1 % |     14.65 |  68.27 |    1.00 | 21-ea |
-| JavaDoubleParser String     |  626.50 | 3.5 % |     35.96 |  27.81 |    5.35 | 21-ea |
-| JavaDoubleParser char[]     |  931.24 | 3.1 % |     53.45 |  18.71 |    7.95 | 21-ea |
-| JavaDoubleParser byte[]     |  970.42 | 1.8 % |     55.70 |  17.95 |    8.29 | 21-ea |
-| JsonDoubleParser String     |  649.27 | 4.1 % |     37.27 |  26.83 |    5.54 | 21-ea |
-| JsonDoubleParser char[]     | 1017.07 | 3.8 % |     58.38 |  17.13 |    8.69 | 21-ea |
-| JsonDoubleParser byte[]     | 1011.07 | 2.3 % |     58.03 |  17.23 |    8.63 | 21-ea |
-| JavaFloatParser  String     |  667.52 | 4.1 % |     38.31 |  26.10 |    6.09 | 21-ea |
-| JavaFloatParser  char[]     |  973.80 | 2.6 % |     55.89 |  17.89 |    8.88 | 21-ea |
-| JavaFloatParser  byte[]     | 1006.72 | 2.2 % |     57.78 |  17.31 |    9.18 | 21-ea |
-| JavaBigDecimalParser String |  872.42 | 3.7 % |     50.08 |  19.97 |    3.42 | 21-ea |
-| JavaBigDecimalParser char[] | 1023.17 | 5.8 % |     58.73 |  17.03 |    4.01 | 21-ea |
-| JavaBigDecimalParser byte[] | 1015.23 | 4.3 % |     58.27 |  17.16 |    3.98 | 21-ea |
+| Method                      |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK   |
+|-----------------------------|-------:|-------:|----------:|-------:|--------:|-------|
+| java.lang.Double            |  81.46 | 13.5 % |      4.68 | 213.85 |    1.00 | 22-ea |
+| java.lang.Float             |  87.58 | 12.2 % |      5.03 | 198.93 |    1.00 | 22-ea |
+| java.math.BigDecimal        | 162.20 | 15.5 % |      9.31 | 107.41 |    1.00 | 22-ea |
+| JavaDoubleParser String     | 435.82 | 26.2 % |     25.02 |  39.97 |    5.35 | 22-ea |
+| JavaDoubleParser char[]     | 575.63 | 27.2 % |     33.04 |  30.26 |    7.07 | 22-ea |
+| JavaDoubleParser byte[]     | 646.53 | 22.8 % |     37.11 |  26.95 |    7.94 | 22-ea |
+| JsonDoubleParser String     | 477.30 | 29.7 % |     27.40 |  36.50 |    5.86 | 22-ea |
+| JsonDoubleParser char[]     | 562.24 | 27.3 % |     32.27 |  30.99 |    6.90 | 22-ea |
+| JsonDoubleParser byte[]     | 591.25 | 26.3 % |     33.94 |  29.47 |    7.26 | 22-ea |
+| JavaFloatParser  String     | 447.03 | 28.0 % |     25.66 |  38.97 |    5.10 | 22-ea |
+| JavaFloatParser  char[]     | 654.79 | 26.1 % |     37.59 |  26.61 |    7.48 | 22-ea |
+| JavaFloatParser  byte[]     | 651.75 | 28.0 % |     37.41 |  26.73 |    7.44 | 22-ea |
+| JavaBigDecimalParser String | 471.37 | 30.4 % |     27.06 |  36.96 |    2.91 | 22-ea |
+| JavaBigDecimalParser char[] | 596.18 | 28.5 % |     34.22 |  29.22 |    3.68 | 22-ea |
+| JavaBigDecimalParser byte[] | 559.08 | 26.3 % |     32.09 |  31.16 |    3.45 | 22-ea |
 
-Mac Mini (2018),
-CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz,
-OS: Mac OS X, 13.4.1, 12 processors available
-
-| Method                      |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK    |
-|-----------------------------|-------:|-------:|----------:|-------:|--------:|--------|
-| java.lang.Double            |  90.27 |  2.6 % |      5.18 | 192.99 |    1.00 | 20.0.1 |
-| java.lang.Float             |  94.81 |  3.1 % |      5.44 | 183.75 |    1.00 | 20.0.1 |
-| java.math.BigDecimal        | 175.94 |  5.1 % |     10.10 |  99.02 |    1.00 | 20.0.1 |
-| JavaDoubleParser String     | 529.71 | 15.5 % |     30.41 |  32.89 |    5.87 | 20.0.1 |
-| JavaDoubleParser char[]     | 692.80 |  4.1 % |     39.77 |  25.15 |    7.67 | 20.0.1 |
-| JavaDoubleParser byte[]     | 719.80 |  9.4 % |     41.32 |  24.20 |    7.97 | 20.0.1 |
-| JsonDoubleParser String     | 397.93 | 12.0 % |     22.84 |  43.78 |    4.41 | 20.0.1 |
-| JsonDoubleParser char[]     | 634.79 | 12.2 % |     36.44 |  27.44 |    7.03 | 20.0.1 |
-| JsonDoubleParser byte[]     | 678.56 |  3.4 % |     38.95 |  25.67 |    7.52 | 20.0.1 |
-| JavaFloatParser  String     | 462.01 | 15.6 % |     26.52 |  37.71 |    4.87 | 20.0.1 |
-| JavaFloatParser  char[]     | 715.02 | 13.5 % |     41.04 |  24.37 |    7.54 | 20.0.1 |
-| JavaFloatParser  byte[]     | 730.54 | 10.6 % |     41.93 |  23.85 |    7.71 | 20.0.1 |
-| JavaBigDecimalParser String | 518.90 | 17.4 % |     29.78 |  33.57 |    2.95 | 20.0.1 |
-| JavaBigDecimalParser char[] | 668.01 |  5.5 % |     38.34 |  26.08 |    3.80 | 20.0.1 |
-| JavaBigDecimalParser byte[] | 636.84 | 12.3 % |     36.55 |  27.36 |    3.62 | 20.0.1 |
 
 ### The data file `canada.txt`
 
 This file contains numbers in the range from -128 to +128.
 Most input lines look like this: `52.038048000000117`.
 
-MacBook Pro (2023)
-CPU: Apple M2 Max
-OS: Mac OS X, 13.4.1, 12 processors available
+Mac Mini (2018)<br>
+CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
+OS: Mac OS X, 14.1.2, 12 processors available<br>
+VM: Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22-ea+27-2262<br>
 
-| Method                      |    MB/s | stdev | Mfloats/s |   ns/f | speedup | JDK   |
-|-----------------------------|--------:|------:|----------:|-------:|--------:|-------|
-| java.lang.Double            |   98.31 | 1.0 % |      5.65 | 177.00 |    1.00 | 21-ea |
-| java.lang.Float             |  108.96 | 1.4 % |      6.26 | 159.71 |    1.00 | 21-ea |
-| java.math.BigDecimal        |  378.73 | 2.8 % |     21.76 |  45.95 |    1.00 | 21-ea |
-| JavaDoubleParser String     |  548.16 | 1.6 % |     31.50 |  31.75 |    5.58 | 21-ea |
-| JavaDoubleParser char[]     |  930.17 | 2.8 % |     53.45 |  18.71 |    9.46 | 21-ea |
-| JavaDoubleParser byte[]     |  900.13 | 2.3 % |     51.73 |  19.33 |    9.16 | 21-ea |
-| JsonDoubleParser String     |  546.09 | 3.7 % |     31.38 |  31.87 |    5.55 | 21-ea |
-| JsonDoubleParser char[]     |  814.65 | 3.2 % |     46.82 |  21.36 |    8.29 | 21-ea |
-| JsonDoubleParser byte[]     |  951.72 | 2.5 % |     54.69 |  18.28 |    9.68 | 21-ea |
-| JavaFloatParser  String     |  556.85 | 3.9 % |     32.00 |  31.25 |    5.11 | 21-ea |
-| JavaFloatParser  char[]     |  962.34 | 2.4 % |     55.30 |  18.08 |    8.83 | 21-ea |
-| JavaFloatParser  byte[]     |  961.54 | 2.2 % |     55.26 |  18.10 |    8.82 | 21-ea |
-| JavaBigDecimalParser String |  796.59 | 2.8 % |     45.78 |  21.84 |    2.10 | 21-ea |
-| JavaBigDecimalParser char[] | 1157.88 | 5.0 % |     66.54 |  15.03 |    3.06 | 21-ea |
-| JavaBigDecimalParser byte[] | 1122.34 | 6.6 % |     64.50 |  15.50 |    2.96 | 21-ea |
-
-Mac Mini (2018)
-CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-OS: Mac OS X, 13.4.1, 12 processors available
-
-| Method                      |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK    |
-|-----------------------------|-------:|-------:|----------:|-------:|--------:|--------|
-| java.lang.Double            |  78.95 |  4.3 % |      4.54 | 220.41 |    1.00 | 20.0.1 |
-| java.lang.Float             |  93.71 |  3.2 % |      5.39 | 185.70 |    1.00 | 20.0.1 |
-| java.math.BigDecimal        | 319.11 |  2.7 % |     18.34 |  54.53 |    1.00 | 20.0.1 |
-| JavaDoubleParser String     | 365.79 | 10.0 % |     21.02 |  47.57 |    4.63 | 20.0.1 |
-| JavaDoubleParser char[]     | 597.98 | 14.8 % |     34.36 |  29.10 |    7.57 | 20.0.1 |
-| JavaDoubleParser byte[]     | 659.34 |  2.7 % |     37.89 |  26.39 |    8.35 | 20.0.1 |
-| JsonDoubleParser String     | 369.28 | 10.4 % |     21.22 |  47.12 |    4.68 | 20.0.1 |
-| JsonDoubleParser char[]     | 567.69 | 10.8 % |     32.62 |  30.65 |    7.19 | 20.0.1 |
-| JsonDoubleParser byte[]     | 665.41 |  4.3 % |     38.24 |  26.15 |    8.43 | 20.0.1 |
-| JavaFloatParser  String     | 360.22 | 10.0 % |     20.70 |  48.31 |    3.84 | 20.0.1 |
-| JavaFloatParser  char[]     | 646.58 | 12.4 % |     37.16 |  26.91 |    6.90 | 20.0.1 |
-| JavaFloatParser  byte[]     | 683.14 |  2.9 % |     39.26 |  25.47 |    7.29 | 20.0.1 |
-| JavaBigDecimalParser String | 426.62 | 11.0 % |     24.52 |  40.79 |    1.34 | 20.0.1 |
-| JavaBigDecimalParser char[] | 671.93 | 15.8 % |     38.61 |  25.90 |    2.11 | 20.0.1 |
-| JavaBigDecimalParser byte[] | 732.53 |  4.9 % |     42.10 |  23.76 |    2.30 | 20.0.1 |
-
+| Method                      |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK   |
+|-----------------------------|-------:|-------:|----------:|-------:|--------:|-------|
+| java.lang.Double            |  75.94 | 11.6 % |      4.36 | 229.15 |    1.00 | 22-ea |
+| java.lang.Float             |  88.58 | 12.1 % |      5.09 | 196.46 |    1.00 | 22-ea |
+| java.math.BigDecimal        | 282.91 | 21.8 % |     16.26 |  61.51 |    1.00 | 22-ea |
+| JavaDoubleParser String     | 339.05 | 21.9 % |     19.48 |  51.32 |    4.46 | 22-ea |
+| JavaDoubleParser char[]     | 530.43 | 23.2 % |     30.48 |  32.81 |    6.98 | 22-ea |
+| JavaDoubleParser byte[]     | 582.90 | 22.0 % |     33.50 |  29.85 |    7.68 | 22-ea |
+| JsonDoubleParser String     | 331.53 | 22.0 % |     19.05 |  52.49 |    4.37 | 22-ea |
+| JsonDoubleParser char[]     | 485.24 | 23.9 % |     27.89 |  35.86 |    6.39 | 22-ea |
+| JsonDoubleParser byte[]     | 594.52 | 28.2 % |     34.17 |  29.27 |    7.83 | 22-ea |
+| JavaFloatParser  String     | 318.42 | 24.7 % |     18.30 |  54.65 |    3.59 | 22-ea |
+| JavaFloatParser  char[]     | 498.41 | 34.0 % |     28.64 |  34.91 |    5.63 | 22-ea |
+| JavaFloatParser  byte[]     | 544.61 | 31.2 % |     31.30 |  31.95 |    6.15 | 22-ea |
+| JavaBigDecimalParser String | 353.76 | 29.3 % |     20.33 |  49.19 |    1.25 | 22-ea |
+| JavaBigDecimalParser char[] | 512.00 | 35.9 % |     29.42 |  33.99 |    1.81 | 22-ea |
+| JavaBigDecimalParser byte[] | 524.35 | 32.1 % |     30.13 |  33.19 |    1.85 | 22-ea |
 
 
 ### The data file `mesh.txt`
 
 This file contains input lines like `1749`, and `0.539081215858`.
 
-MacBook Pro (2023)
-CPU: Apple M2 Max
-OS: Mac OS X, 13.4.1, 12 processors available
+Mac Mini (2018)<br>
+CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
+OS: Mac OS X, 14.1.2, 12 processors available<br>
+VM: Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22-ea+27-2262<br>
 
-| Method                      |   MB/s | stdev | Mfloats/s |  ns/f | speedup | JDK   |
-|-----------------------------|-------:|------:|----------:|------:|--------:|-------|
-| java.lang.Double            | 290.80 | 4.1 % |     39.61 | 25.24 |    1.00 | 21-ea |
-| java.lang.Float             | 120.65 | 2.5 % |     16.44 | 60.84 |    1.00 | 21-ea |
-| java.math.BigDecimal        | 274.28 | 7.2 % |     37.36 | 26.76 |    1.00 | 21-ea |
-| JavaDoubleParser String     | 473.30 | 2.0 % |     64.48 | 15.51 |    1.63 | 21-ea |
-| JavaDoubleParser char[]     | 684.24 | 4.3 % |     93.21 | 10.73 |    2.35 | 21-ea |
-| JavaDoubleParser byte[]     | 691.81 | 3.9 % |     94.24 | 10.61 |    2.38 | 21-ea |
-| JsonDoubleParser String     | 491.06 | 2.6 % |     66.90 | 14.95 |    1.69 | 21-ea |
-| JsonDoubleParser char[]     | 703.86 | 2.2 % |     95.88 | 10.43 |    2.42 | 21-ea |
-| JsonDoubleParser byte[]     | 732.64 | 1.9 % |     99.81 | 10.02 |    2.52 | 21-ea |
-| JavaFloatParser  String     | 454.21 | 4.4 % |     61.88 | 16.16 |    3.76 | 21-ea |
-| JavaFloatParser  char[]     | 625.43 | 3.4 % |     85.20 | 11.74 |    5.18 | 21-ea |
-| JavaFloatParser  byte[]     | 546.98 | 2.4 % |     74.51 | 13.42 |    4.53 | 21-ea |
-| JavaBigDecimalParser String | 557.09 | 6.9 % |     75.89 | 13.18 |    2.03 | 21-ea |
-| JavaBigDecimalParser char[] | 765.37 | 3.6 % |    104.26 |  9.59 |    2.79 | 21-ea |
-| JavaBigDecimalParser byte[] | 745.62 | 3.1 % |    101.57 |  9.85 |    2.72 | 21-ea |
-
-Mac Mini (2018)
-CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-OS: Mac OS X, 13.4.1, 12 processors available
-
-| Method                      |   MB/s |  stdev | Mfloats/s |  ns/f | speedup | JDK |
-|-----------------------------|-------:|-------:|----------:|------:|--------:|-----|
-| java.lang.Double            | 160.78 | 21.1 % |     21.90 | 45.66 |    1.00 | 20  |
-| java.lang.Float             |  83.57 | 15.8 % |     11.38 | 87.84 |    1.00 | 20  |
-| java.math.BigDecimal        | 167.68 | 25.0 % |     22.84 | 43.78 |    1.00 | 20  |
-| JavaDoubleParser String     | 224.29 | 28.1 % |     30.55 | 32.73 |    1.40 | 20  |
-| JavaDoubleParser char[]     | 332.82 | 38.2 % |     45.34 | 22.06 |    2.07 | 20  |
-| JavaDoubleParser byte[]     | 381.87 | 39.7 % |     52.02 | 19.22 |    2.38 | 20  |
-| JsonDoubleParser String     | 231.77 | 38.3 % |     31.57 | 31.67 |    1.44 | 20  |
-| JsonDoubleParser char[]     | 359.96 | 38.8 % |     49.04 | 20.39 |    2.24 | 20  |
-| JsonDoubleParser byte[]     | 415.99 |  4.5 % |     56.67 | 17.65 |    2.59 | 20  |
-| JavaFloatParser  String     | 244.35 | 20.3 % |     33.29 | 30.04 |    2.92 | 20  |
-| JavaFloatParser  char[]     | 378.61 |  4.4 % |     51.58 | 19.39 |    4.53 | 20  |
-| JavaFloatParser  byte[]     | 421.33 | 20.8 % |     57.40 | 17.42 |    5.04 | 20  |
-| JavaBigDecimalParser String | 296.23 | 21.6 % |     40.36 | 24.78 |    1.77 | 20  |
-| JavaBigDecimalParser char[] | 420.40 | 25.3 % |     57.27 | 17.46 |    2.51 | 20  |
-| JavaBigDecimalParser byte[] | 413.61 |  3.9 % |     56.34 | 17.75 |    2.47 | 20  |
+| Method                      |   MB/s |  stdev | Mfloats/s |  ns/f | speedup | JDK   |
+|-----------------------------|-------:|-------:|----------:|------:|--------:|-------|
+| java.lang.Double            | 201.28 | 27.3 % |     27.42 | 36.47 |    1.00 | 22-ea |
+| java.lang.Float             | 100.54 | 22.1 % |     13.70 | 73.01 |    1.00 | 22-ea |
+| java.math.BigDecimal        | 225.28 | 27.4 % |     30.69 | 32.58 |    1.00 | 22-ea |
+| JavaDoubleParser String     | 293.61 | 36.1 % |     40.00 | 25.00 |    1.46 | 22-ea |
+| JavaDoubleParser char[]     | 411.18 | 33.1 % |     56.01 | 17.85 |    2.04 | 22-ea |
+| JavaDoubleParser byte[]     | 446.62 | 29.7 % |     60.84 | 16.44 |    2.22 | 22-ea |
+| JsonDoubleParser String     | 299.41 | 30.3 % |     40.79 | 24.52 |    1.49 | 22-ea |
+| JsonDoubleParser char[]     | 417.52 | 26.2 % |     56.88 | 17.58 |    2.07 | 22-ea |
+| JsonDoubleParser byte[]     | 433.78 | 25.4 % |     59.09 | 16.92 |    2.16 | 22-ea |
+| JavaFloatParser  String     | 256.30 | 27.4 % |     34.92 | 28.64 |    2.55 | 22-ea |
+| JavaFloatParser  char[]     | 378.07 | 30.4 % |     51.50 | 19.42 |    3.76 | 22-ea |
+| JavaFloatParser  byte[]     | 348.58 | 25.6 % |     47.49 | 21.06 |    3.47 | 22-ea |
+| JavaBigDecimalParser String | 296.15 | 28.1 % |     40.34 | 24.79 |    1.31 | 22-ea |
+| JavaBigDecimalParser char[] | 407.31 | 29.6 % |     55.49 | 18.02 |    1.81 | 22-ea |
+| JavaBigDecimalParser byte[] | 405.13 | 31.1 % |     55.19 | 18.12 |    1.80 | 22-ea |
 
 
 ### The data file `canada_hex.txt`
@@ -277,20 +214,21 @@ OS: Mac OS X, 13.4.1, 12 processors available
 This file contains numbers in the range from -128 to +128 in hexadecimal notation.
 Most input lines look like this: `-0x1.09219008205fcp6`.
 
-Mac Mini (2018)
-CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-OS: Mac OS X, 13.4.1, 12 processors available
+Mac Mini (2018)<br>
+CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
+OS: Mac OS X, 14.1.2, 12 processors available<br>
+VM: Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22-ea+27-2262<br>
 
-| Method                  |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK    |
-|-------------------------|-------:|-------:|----------:|-------:|--------:|--------|
-| java.lang.Double        |  38.52 |  2.5 % |      2.11 | 473.44 |    1.00 | 20.0.1 |
-| java.lang.Float         |  37.81 |  3.2 % |      2.07 | 482.31 |    1.00 | 20.0.1 |
-| JavaDoubleParser String | 395.68 | 11.1 % |     21.70 |  46.09 |   10.27 | 20.0.1 |
-| JavaDoubleParser char[] | 572.07 | 10.4 % |     31.37 |  31.88 |   14.85 | 20.0.1 |
-| JavaDoubleParser byte[] | 682.38 |  9.1 % |     37.41 |  26.73 |   17.71 | 20.0.1 |
-| JavaFloatParser  String | 402.73 |  9.9 % |     22.08 |  45.29 |   10.65 | 20.0.1 |
-| JavaFloatParser  char[] | 521.99 |  8.4 % |     28.62 |  34.94 |   13.80 | 20.0.1 |
-| JavaFloatParser  byte[] | 692.74 |  9.0 % |     37.98 |  26.33 |   18.32 | 20.0.1 |
+| Method                  |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK   |
+|-------------------------|-------:|-------:|----------:|-------:|--------:|-------|
+| java.lang.Double        |  37.49 |  8.7 % |      2.06 | 486.53 |    1.00 | 22-ea |
+| java.lang.Float         |  37.82 |  6.8 % |      2.07 | 482.29 |    1.00 | 22-ea |
+| JavaDoubleParser String | 364.94 | 19.6 % |     20.01 |  49.98 |    9.74 | 22-ea |
+| JavaDoubleParser char[] | 545.30 | 21.7 % |     29.90 |  33.45 |   14.55 | 22-ea |
+| JavaDoubleParser byte[] | 666.52 | 19.6 % |     36.55 |  27.36 |   17.78 | 22-ea |
+| JavaFloatParser  String | 375.92 | 18.9 % |     20.61 |  48.52 |    9.94 | 22-ea |
+| JavaFloatParser  char[] | 542.13 | 21.5 % |     29.72 |  33.64 |   14.34 | 22-ea |
+| JavaFloatParser  byte[] | 660.81 | 19.6 % |     36.23 |  27.60 |   17.47 | 22-ea |
 
 ### Comparison with C version
 
@@ -314,11 +252,11 @@ on the same computer:
     abseil                      :   467.27 MB/s (+/- 9.0 %)    22.27 Mfloat/s      44.90 ns/f 
     fastfloat                   :   880.79 MB/s (+/- 6.6 %)    41.98 Mfloat/s      23.82 ns/f 
 
-    OpenJDK 20+36-2344
-    java.lang.Double            :    93.97 MB/s (+/- 5.0 %)     5.39 Mfloat/s     185.43 ns/f     1.00 speedup
-    JavaDoubleParser String     :   534.52 MB/s (+/-11.2 %)    30.67 Mfloat/s      32.60 ns/f     5.69 speedup
-    JavaDoubleParser char[]     :   620.86 MB/s (+/- 9.9 %)    35.63 Mfloat/s      28.07 ns/f     6.61 speedup
-    JavaDoubleParser byte[]     :   724.91 MB/s (+/- 5.7 %)    41.60 Mfloat/s      24.04 ns/f     7.71 speedup
+    Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22-ea+27-2262
+    java.lang.Double            :    88.13 MB/s (+/- 5.2 %)     5.06 Mfloat/s     197.70 ns/f     1.00 speedup
+    JavaDoubleParser String     :   557.46 MB/s (+/- 4.1 %)    31.99 Mfloat/s      31.26 ns/f     6.33 speedup
+    JavaDoubleParser char[]     :   609.25 MB/s (+/-16.9 %)    34.97 Mfloat/s      28.60 ns/f     6.91 speedup
+    JavaDoubleParser byte[]     :   716.19 MB/s (+/- 3.9 %)    41.10 Mfloat/s      24.33 ns/f     8.13 speedup
 
 '
 
@@ -331,33 +269,34 @@ on the same computer:
     abseil                      :   411.11 MB/s (+/- 7.3 %)    23.63 Mfloat/s      42.33 ns/f 
     fastfloat                   :   741.32 MB/s (+/- 5.3 %)    42.60 Mfloat/s      23.47 ns/f 
 
-    OpenJDK 20+36-2344
-    java.lang.Double            :    82.56 MB/s (+/- 4.4 %)     4.74 Mfloat/s     210.76 ns/f     1.00 speedup
-    JavaDoubleParser String     :   366.27 MB/s (+/- 9.7 %)    21.05 Mfloat/s      47.51 ns/f     4.44 speedup
-    JavaDoubleParser char[]     :   571.76 MB/s (+/-11.4 %)    32.86 Mfloat/s      30.43 ns/f     6.93 speedup
-    JavaDoubleParser byte[]     :   622.03 MB/s (+/- 7.5 %)    35.75 Mfloat/s      27.98 ns/f     7.53 speedup
+    Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22-ea+27-2262
+    java.lang.Double            :    76.39 MB/s (+/- 8.0 %)     4.39 Mfloat/s     227.79 ns/f     1.00 speedup
+    JavaDoubleParser String     :   369.85 MB/s (+/-13.2 %)    21.25 Mfloat/s      47.05 ns/f     4.84 speedup
+    JavaDoubleParser char[]     :   549.88 MB/s (+/-15.3 %)    31.60 Mfloat/s      31.65 ns/f     7.20 speedup
+    JavaDoubleParser byte[]     :   645.33 MB/s (+/-13.9 %)    37.08 Mfloat/s      26.97 ns/f     8.45 speedup
 
 # Building and running the code
 
 This project requires **at least** the items below to build it from source:
 
 - Maven 3.8.6
-- OpenJDK SE 20
+- OpenJDK SE 22
 
 This project contains optimised code for various JDK versions.
 If you intend to assess the fitness and/or performance of this project for all supported
-JDKs, you **also need** to install the following items:
+JDKs, you **also need to** install the following items:
 
 - OpenJDK SE 8
 - OpenJDK SE 11
 - OpenJDK SE 17
 - OpenJDK SE 21
+- OpenJDK SE 22
 
 When you clone the code repository from github. you can choose from the following branches:
 
 - `main` Aims to contain only working code.
 - `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
-  that are included in Java 21.
+  that are included in Java 22.
 
 ## Command sequence with Java SE 20 on macOS:
 
@@ -370,14 +309,19 @@ java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -
 java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main FastDoubleParserDemo/data/canada.txt   
 ```
 
-## Command sequence with Java SE 8, 11, 17, and 21, and Maven 3.8.6 on macOS:
+## Command sequence with Java SE 8, 11, 17, 21, and 22, and Maven 3.8.6 on macOS:
 
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
 cd FastDoubleParser
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-22.jdk/Contents/Home 
 mvn clean
 mvn package
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-22.jdk/Contents/Home 
+java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home 
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
@@ -400,12 +344,12 @@ java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/tar
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 ```
 
-## IntelliJ IDEA with Java SE 8, 11, 17, 21 on macOS
+## IntelliJ IDEA with Java SE 8, 11, 17, 21, 22 on macOS
 
 Prerequisites:
 
-1. Install the following Java SDKs: 8, 11, 17, 21.
-   _If you do not need to edit the code, you only need to install the Java 21 SDK._
+1. Install the following Java SDKs: 8, 11, 17, 21, 22.
+   _If you do not need to edit the code, you only need to install the Java 22 SDK._
 2. Install IntelliJ IDEA
 
 Steps:
@@ -441,7 +385,7 @@ The majority of the code is located in the module named **fastdoubleparser-dev**
 and **fastdoubleparserdemo-dev**.
 The code in these modules uses early access features of the Java 20 SDK.
 
-Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java21**
+Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java21**, **-Java22**
 contain deltas of the **-dev** modules.
 
 The delta code is located in the **source** and **test** folders of the module.

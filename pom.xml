@@ -43,12 +43,14 @@
     <module>fastdoubleparser-java11</module>
     <module>fastdoubleparser-java17</module>
     <module>fastdoubleparser-java21</module>
+    <module>fastdoubleparser-java22</module>
     <module>fastdoubleparser-dev</module>
     <module>fastdoubleparser</module>
     <module>fastdoubleparserdemo-java8</module>
     <module>fastdoubleparserdemo-java11</module>
     <module>fastdoubleparserdemo-java17</module>
     <module>fastdoubleparserdemo-java21</module>
+    <module>fastdoubleparserdemo-java22</module>
     <module>fastdoubleparserdemo-dev</module>
     <module>fastdoubleparserdemo</module>
   </modules>
@@ -373,19 +375,19 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.9.2</version>
+      <version>5.10.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
-      <version>1.36</version>
+      <version>1.37</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-generator-annprocess</artifactId>
-      <version>1.36</version>
+      <version>1.37</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
