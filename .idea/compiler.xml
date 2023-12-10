@@ -7,7 +7,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="fastdoubleparserdemo-java19" />
         <module name="fastdoubleparserdemo" />
         <module name="fastdoubleparser-dev" />
         <module name="fastdoubleparserdemo-Java8" />
@@ -15,8 +14,8 @@
         <module name="fastdoubleparserdemo-java17" />
         <module name="fastdoubleparserdemo-Java11" />
         <module name="fastdoubleparser-java17" />
-        <module name="fastdoubleparser-java19" />
         <module name="FastDoubleParser-Java8" />
+        <module name="fastdoubleparserdemo-java21" />
         <module name="FastDoubleParser-Java19" />
         <module name="fastdoubleparserdemo-Java17" />
         <module name="FastDoubleParser-Java17" />
@@ -33,11 +32,13 @@
         <module name="FastDoubleParserDemo-Java11" />
         <module name="fastdoubleparserdemo-java8" />
         <module name="FastDoubleParserDemo-Java17" />
+        <module name="fastdoubleparser-java21" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FastDoubleParser" target="20" />
       <module name="FastDoubleParser (1)" target="20" />
+      <module name="fastdoubleparser-java19" target="19" />
       <module name="FastDoubleParser-JavaEarlyAccess" target="20" />
       <module name="FastDoubleParserDemo" target="19" />
       <module name="FastDoubleParserDemo-JavaEarlyAccess" target="20" />
@@ -72,7 +73,7 @@
       <module name="fastdoubleparserdemo-dev" options="" />
       <module name="fastdoubleparserdemo-java11" options="" />
       <module name="fastdoubleparserdemo-java17" options="" />
-      <module name="fastdoubleparserdemo-java19" options="" />
+      <module name="fastdoubleparserdemo-java21" options="" />
       <module name="fastdoubleparserdemo-java8" options="" />
     </option>
   </component>

@@ -63,10 +63,10 @@
     <moduleSet>
       <useAllReactorProjects>true</useAllReactorProjects>
       <includes>
-        <include>ch.randelshofer:fastdoubleparser-java19</include>
+        <include>ch.randelshofer:fastdoubleparser-java21</include>
       </includes>
       <binaries>
-        <outputDirectory>META-INF/versions/19</outputDirectory>
+        <outputDirectory>META-INF/versions/21</outputDirectory>
         <unpack>true</unpack>
         <includeDependencies>false</includeDependencies>
         <unpackOptions>

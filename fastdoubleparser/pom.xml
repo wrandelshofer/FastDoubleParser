@@ -84,7 +84,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-sources-from-fastdoubleparser-java19</id>
+              <id>copy-sources-from-fastdoubleparser-java21</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -94,7 +94,7 @@
               <resources>
                 <resource>
                   <directory>
-                    ${basedir}/../fastdoubleparser-java19/src/main/java
+                      ${basedir}/../fastdoubleparser-java21/src/main/java
                   </directory>
                 </resource>
               </resources>

@@ -7,7 +7,7 @@ We deploy the following files:
 
 - fastdoubleparser/target/fastdoubleparser-x.y.z.jar
 - fastdoubleparser/target/fastdoubleparser-x.y.z-sources.jar
-- fastdoubleparser-java9/target/fastdoubleparser-java19-x.y.z-sources.jar
+- fastdoubleparser-java9/target/fastdoubleparser-java21-x.y.z-sources.jar
 
 
 All files must be signed with GPG. We create a bundle.jar file, which we then
@@ -15,7 +15,7 @@ can upload to the nexus repository manager.
 
 ```shell
 cp ../fastdoubleparser/target/*.jar .
-cp ../fastdoubleparser-java19/target/*javadoc.jar fastdoubleparser-0.10.0-javadoc.jar
+cp ../fastdoubleparser-java21/target/*javadoc.jar fastdoubleparser-0.10.0-javadoc.jar
 rm -rf META-INF
 mkdir META-INF 
 cp ../LICENSE META-INF

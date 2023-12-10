@@ -42,13 +42,13 @@
     <module>fastdoubleparser-java8</module>
     <module>fastdoubleparser-java11</module>
     <module>fastdoubleparser-java17</module>
-    <module>fastdoubleparser-java19</module>
+    <module>fastdoubleparser-java21</module>
     <module>fastdoubleparser-dev</module>
     <module>fastdoubleparser</module>
     <module>fastdoubleparserdemo-java8</module>
     <module>fastdoubleparserdemo-java11</module>
     <module>fastdoubleparserdemo-java17</module>
-    <module>fastdoubleparserdemo-java19</module>
+    <module>fastdoubleparserdemo-java21</module>
     <module>fastdoubleparserdemo-dev</module>
     <module>fastdoubleparserdemo</module>
   </modules>
