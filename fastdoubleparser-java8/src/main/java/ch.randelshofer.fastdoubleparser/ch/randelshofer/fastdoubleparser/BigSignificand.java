@@ -71,10 +71,10 @@ class BigSignificand {
     }
 
     public BigInteger toBigInteger() {
-        byte[] bytes = new byte[x.length << 2];
+        byte[] bytes = new byte[(x.length + 1) << 2];
         IntBuffer buf = ByteBuffer.wrap(bytes).asIntBuffer();
         for (int i = 0; i < x.length; i++) {
-            buf.put(i, x[i]);
+            buf.put(i + 1, x[i]);
         }
         return new BigInteger(bytes);
     }

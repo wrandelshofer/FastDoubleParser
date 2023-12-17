@@ -75,7 +75,7 @@ class BigSignificand {
     }
 
     public BigInteger toBigInteger() {
-        return new BigInteger(x);
+        return new BigInteger(x[0] > 0 ? 1 : -1, x);
     }
 
     private void x(int i, int value) {
