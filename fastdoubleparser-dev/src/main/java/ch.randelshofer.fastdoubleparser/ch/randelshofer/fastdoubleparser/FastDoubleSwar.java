@@ -75,7 +75,7 @@ class FastDoubleSwar {
     }
 
     public static boolean isEightDigits(byte[] a, int offset) {
-        return isEightDigitsUtf8((long) readLongLE(a, offset));
+        return isEightDigitsUtf8(readLongLE(a, offset));
     }
 
     /**
@@ -254,7 +254,7 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 digits
      */
     public static int tryToParseEightDigitsUtf8(byte[] a, int offset) {
-        return tryToParseEightDigitsUtf8((long) readLongLE(a, offset));
+        return tryToParseEightDigitsUtf8(readLongLE(a, offset));
     }
 
     /**
@@ -327,8 +327,6 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 hex digits
      */
     public static long tryToParseEightHexDigits(char[] chars, int offset) {
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
         long first = (long) chars[offset] << 48
                 | (long) chars[offset + 1] << 32
                 | (long) chars[offset + 2] << 16
@@ -375,12 +373,27 @@ class FastDoubleSwar {
      * returns a negative value if the two longs do not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
+        // Long.compress is faster on Intel x64 but slower on Apple Silicon than the code below
+        /*
         long highBytes = (first | second) & 0xff80ff80_ff80ff80L;
         if (highBytes != 0L) {
             return -1L;
         }
         long utf8Bytes = (Long.compress(first, 0x00ff00ff_00ff00ffL) << 32)
                 | Long.compress(second, 0x00ff00ff_00ff00ffL);
+        return tryToParseEightHexDigitsUtf8(utf8Bytes);
+        */
+
+
+        if (((first | second) & 0xff80_ff80_ff80_ff80L) != 0) {
+            return -1;
+        }
+        long f = first * 0x0000_0000_0001_0100L;
+        long s = second * 0x0000_0000_0001_0100L;
+        long utf8Bytes = (f & 0xffff_0000_0000_0000L)
+                | ((f & 0xffff_0000L) << 16)
+                | ((s & 0xffff_0000_0000_0000L) >>> 32)
+                | ((s & 0xffff_0000L) >>> 16);
         return tryToParseEightHexDigitsUtf8(utf8Bytes);
     }
 
@@ -438,7 +451,12 @@ class FastDoubleSwar {
         long v = vec & ~ge_a_mask | vec - (0x27272727_27272727L & ge_a_mask);
 
         // Compact all nibbles
-        return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19
+        //return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19, Long.comporess is faster on Intel x64 but slower on Apple Silicon
+        long v2 = v | v >>> 4;
+        long v3 = v2 & 0x00ff00ff_00ff00ffL;
+        long v4 = v3 | v3 >>> 8;
+        long v5 = ((v4 >>> 16) & 0xffff_0000L) | v4 & 0xffffL;
+        return v5;
     }
 
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")
@@ -496,8 +514,9 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             byte ch = str[from];
-            success &= isDigit(ch);
-            result = 10 * (result) + ch - '0';
+            int digit = (char) (ch - '0');
+            success &= digit < 10;
+            result = 10 * (result) + digit;
         }
         return success ? result : -1;
     }
@@ -507,8 +526,9 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             char ch = str[from];
-            success &= isDigit(ch);
-            result = 10 * (result) + ch - '0';
+            int digit = (char) (ch - '0');
+            success &= digit < 10;
+            result = 10 * (result) + digit;
         }
         return success ? result : -1;
     }
@@ -518,8 +538,9 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             char ch = str.charAt(from);
-            success &= isDigit(ch);
-            result = 10 * (result) + ch - '0';
+            int digit = (char) (ch - '0');
+            success &= digit < 10;
+            result = 10 * (result) + digit;
         }
         return success ? result : -1;
     }

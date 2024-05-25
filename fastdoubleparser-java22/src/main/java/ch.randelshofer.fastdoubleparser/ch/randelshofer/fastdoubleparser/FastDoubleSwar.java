@@ -321,8 +321,6 @@ class FastDoubleSwar {
      * returns a negative value if {@code value} does not contain 8 hex digits
      */
     public static long tryToParseEightHexDigits(char[] chars, int offset) {
-        // Performance: We extract the chars in two steps so that we
-        //              can benefit from out of order execution in the CPU.
         long first = (long) chars[offset] << 48
                 | (long) chars[offset + 1] << 32
                 | (long) chars[offset + 2] << 16
@@ -369,12 +367,15 @@ class FastDoubleSwar {
      * returns a negative value if the two longs do not contain 8 hex digits
      */
     public static long tryToParseEightHexDigitsUtf16(long first, long second) {
-        long highBytes = (first | second) & 0xff80ff80_ff80ff80L;
-        if (highBytes != 0L) {
-            return -1L;
+        if (((first | second) & 0xff80_ff80_ff80_ff80L) != 0) {
+            return -1;
         }
-        long utf8Bytes = (Long.compress(first, 0x00ff00ff_00ff00ffL) << 32)
-                | Long.compress(second, 0x00ff00ff_00ff00ffL);
+        long f = first * 0x0000_0000_0001_0100L;
+        long s = second * 0x0000_0000_0001_0100L;
+        long utf8Bytes = (f & 0xffff_0000_0000_0000L)
+                | ((f & 0xffff_0000L) << 16)
+                | ((s & 0xffff_0000_0000_0000L) >>> 32)
+                | ((s & 0xffff_0000L) >>> 16);
         return tryToParseEightHexDigitsUtf8(utf8Bytes);
     }
 
@@ -432,7 +433,12 @@ class FastDoubleSwar {
         long v = vec & ~ge_a_mask | vec - (0x27272727_27272727L & ge_a_mask);
 
         // Compact all nibbles
-        return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19
+        //return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19
+        long v2 = v | v >>> 4;
+        long v3 = v2 & 0x00ff00ff_00ff00ffL;
+        long v4 = v3 | v3 >>> 8;
+        long v5 = ((v4 >>> 16) & 0xffff_0000L) | v4 & 0xffffL;
+        return v5;
     }
 
     @SuppressWarnings("IntegerMultiplicationImplicitCastToLong")

@@ -62,9 +62,10 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         boolean illegal = false;
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
-            if (FastDoubleSwar.isDigit(ch)) {
+            int digit = (char) (ch - '0');
+            if (digit < 10) {
                 // This might overflow, we deal with it later.
-                significand = 10 * significand + ch - '0';
+                significand = 10 * significand + digit;
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
@@ -102,14 +103,16 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
             if (isExponentNegative || ch == '+') {
                 ch = charAt(str, ++index, endIndex);
             }
-            illegal |= !FastDoubleSwar.isDigit(ch);
+            int digit = (char) (ch - '0');
+            illegal |= digit >= 10;
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + ch - '0';
+                    expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
-            } while (FastDoubleSwar.isDigit(ch));
+                digit = (char) (ch - '0');
+            } while (digit < 10);
             if (isExponentNegative) {
                 expNumber = -expNumber;
             }

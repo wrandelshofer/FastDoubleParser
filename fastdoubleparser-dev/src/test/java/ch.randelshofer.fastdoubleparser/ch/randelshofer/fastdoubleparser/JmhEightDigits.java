@@ -4,7 +4,17 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
@@ -15,50 +25,53 @@ import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.lookupHex;
 /**
  * Benchmarks for selected floating point strings.
  * <pre>
- * # JMH version: 1.35
- * # VM version: JDK 19-ea, OpenJDK 64-Bit Server VM, 19+36-2238
+ * # JMH version: 1.37
+ * VM version: JDK 22.0.1, OpenJDK 64-Bit Server VM, 22.0.1+8-16
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz SIMD-256
  *
- * Benchmark                   (eightDigitsCharSequence)  Mode  Cnt  Score   Error  Units
- * 01ByteArrayDecScalar                         12345678  avgt    2  6.006          ns/op
- * 01ByteArrayDecScalar                         12345x78  avgt    2  4.989          ns/op
- * 01ByteArrayDecScalarL                        12345678  avgt    2  6.822          ns/op
- * 01ByteArrayDecScalarL                        12345x78  avgt    2  5.616          ns/op
- * 01ByteArrayDecScalarMul10                    12345678  avgt    2  5.604          ns/op
- * 01ByteArrayDecScalarMul10                    12345x78  avgt    2  4.669          ns/op
- * 01ByteArrayDecScalarMul10L                   12345678  avgt    2  6.086          ns/op
- * 01ByteArrayDecScalarMul10L                   12345x78  avgt    2  4.777          ns/op
- *
- * 02StringDecScalar                            12345678  avgt    2  7.808          ns/op
- * 02StringDecScalar                            12345x78  avgt    2  6.977          ns/op
- * 03CharArrayDecScalar                         12345678  avgt    2  6.404          ns/op
- * 03CharArrayDecScalar                         12345x78  avgt    2  5.330          ns/op
- * 04ByteArrayHexScalar                         12345678  avgt    2  4.633          ns/op
- * 04ByteArrayHexScalar                         12345x78  avgt    2  3.889          ns/op
- * 05CharArrayHexScalar                         12345678  avgt    2  6.233          ns/op
- * 05CharArrayHexScalar                         12345x78  avgt    2  5.639          ns/op
- *
- * 11ByteArrayDecSwar                           12345678  avgt    2  1.995          ns/op
- * 11ByteArrayDecSwar                           12345x78  avgt    2  0.966          ns/op
- * 12CharArrayDecSwar                           12345678  avgt    2  2.921          ns/op
- * 12CharArrayDecSwar                           12345x78  avgt    2  1.660          ns/op
- * 13StringDecSwar                              12345678  avgt    2  4.204          ns/op
- * 13StringDecSwar                              12345x78  avgt    2  3.232          ns/op
- * 14ByteArrayHexSwar                           12345678  avgt    2  4.056          ns/op
- * 14ByteArrayHexSwar                           12345x78  avgt    2  2.072          ns/op
- * 15CharArrayHexSwar                           12345678  avgt    2  5.296          ns/op
- * 15CharArrayHexSwar                           12345x78  avgt    2  4.081          ns/op
- *
- * 21ByteArrayDecVector                         12345678  avgt    2  2.562          ns/op
- * 21ByteArrayDecVector                         12345x78  avgt    2  1.380          ns/op
- * 22CharArrayDecVector                         12345678  avgt    2  2.513          ns/op
- * 22CharArrayDecVector                         12345x78  avgt    2  1.182          ns/op
- * 23StringDecVector                            12345678  avgt    2  4.740          ns/op
- * 23StringDecVector                            12345x78  avgt    2  2.963          ns/op
- * 24ByteArrayHexVector                         12345678  avgt    2  4.202          ns/op
- * 24ByteArrayHexVector                         12345x78  avgt    2  2.711          ns/op
- * 25CharArrayHexVector                         12345678  avgt    2  4.061          ns/op
- * 25CharArrayHexVector                         12345x78  avgt    2  2.485          ns/op
+ * Benchmark                                               (eightDigitsCharSequence)  Mode  Cnt   Score   Error  Units
+ * JmhEightDigits.m01ByteArrayDecScalarL                                    12345678  avgt    2   7.037          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarL                                    12345x78  avgt    2   5.966          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarMul10                                12345678  avgt    2  13.816          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarMul10                                12345x78  avgt    2   4.808          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarMul10L                               12345678  avgt    2   6.620          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarMul10L                               12345x78  avgt    2   5.705          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitCall                      12345678  avgt    2   5.753          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitCall                      12345x78  avgt    2   4.777          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitCallBranchfree            12345678  avgt    2   5.784          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitCallBranchfree            12345x78  avgt    2   7.159          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitInlined                   12345678  avgt    2   6.669          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitInlined                   12345x78  avgt    2   5.197          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitInlinedBranchfree         12345678  avgt    2   6.138          ns/op
+ * JmhEightDigits.m01ByteArrayDecScalarWithIsDigitInlinedBranchfree         12345x78  avgt    2   6.925          ns/op
+ * JmhEightDigits.m02StringDecScalar                                        12345678  avgt    2   7.011          ns/op
+ * JmhEightDigits.m02StringDecScalar                                        12345x78  avgt    2   5.997          ns/op
+ * JmhEightDigits.m03CharArrayDecScalar                                     12345678  avgt    2   6.916          ns/op
+ * JmhEightDigits.m03CharArrayDecScalar                                     12345x78  avgt    2   5.100          ns/op
+ * JmhEightDigits.m04ByteArrayHexScalar                                     12345678  avgt    2   4.253          ns/op
+ * JmhEightDigits.m04ByteArrayHexScalar                                     12345x78  avgt    2   4.366          ns/op
+ * JmhEightDigits.m05CharArrayHexScalar                                     12345678  avgt    2   5.416          ns/op
+ * JmhEightDigits.m05CharArrayHexScalar                                     12345x78  avgt    2   5.073          ns/op
+ * JmhEightDigits.m11ByteArrayDecSwar                                       12345678  avgt    2   2.017          ns/op
+ * JmhEightDigits.m11ByteArrayDecSwar                                       12345x78  avgt    2   0.867          ns/op
+ * JmhEightDigits.m12CharArrayDecSwar                                       12345678  avgt    2   2.525          ns/op
+ * JmhEightDigits.m12CharArrayDecSwar                                       12345x78  avgt    2   1.388          ns/op
+ * JmhEightDigits.m13StringDecSwar                                          12345678  avgt    2   3.900          ns/op
+ * JmhEightDigits.m13StringDecSwar                                          12345x78  avgt    2   3.038          ns/op
+ * JmhEightDigits.m14ByteArrayHexSwar                                       12345678  avgt    2   3.468          ns/op
+ * JmhEightDigits.m14ByteArrayHexSwar                                       12345x78  avgt    2   2.064          ns/op
+ * JmhEightDigits.m15CharArrayHexSwar                                       12345678  avgt    2   5.274          ns/op
+ * JmhEightDigits.m15CharArrayHexSwar                                       12345x78  avgt    2   3.952          ns/op
+ * JmhEightDigits.m21ByteArrayDecVector                                     12345678  avgt    2   2.544          ns/op
+ * JmhEightDigits.m21ByteArrayDecVector                                     12345x78  avgt    2   1.334          ns/op
+ * JmhEightDigits.m22CharArrayDecVector                                     12345678  avgt    2   2.425          ns/op
+ * JmhEightDigits.m22CharArrayDecVector                                     12345x78  avgt    2   1.156          ns/op
+ * JmhEightDigits.m23StringDecVector                                        12345678  avgt    2   4.686          ns/op
+ * JmhEightDigits.m23StringDecVector                                        12345x78  avgt    2   2.895          ns/op
+ * JmhEightDigits.m24ByteArrayHexVector                                     12345678  avgt    2   4.061          ns/op
+ * JmhEightDigits.m24ByteArrayHexVector                                     12345x78  avgt    2   2.512          ns/op
+ * JmhEightDigits.m25CharArrayHexVector                                     12345678  avgt    2   4.040          ns/op
+ * JmhEightDigits.m25CharArrayHexVector                                     12345x78  avgt    2   2.508          ns/op
  *
  * Process finished with exit code 0
  * </pre>
@@ -85,8 +98,8 @@ public class JmhEightDigits {
     }
 
 
-    @Benchmark
-    public int m01ByteArrayDecScalar() {
+    //@Benchmark
+    public int m01ByteArrayDecScalarWithIsDigitCall() {
         int value = 0;
         for (int i = 0; i < eightDigitsByteArray.length; i++) {
             byte ch = eightDigitsByteArray[i];
@@ -99,13 +112,54 @@ public class JmhEightDigits {
         return value;
     }
 
+    //@Benchmark
+    public int m01ByteArrayDecScalarWithIsDigitInlined() {
+        int value = 0;
+        for (int i = 0; i < eightDigitsByteArray.length; i++) {
+            byte ch = eightDigitsByteArray[i];
+            int digit = (char) (ch - '0');
+            if (digit < 10) {
+                value = value * 10 + digit;
+            } else {
+                return -1;
+            }
+        }
+        return value;
+    }
+
     @Benchmark
+    public int m01ByteArrayDecScalarWithIsDigitCallBranchfree() {
+        int value = 0;
+        boolean success = true;
+        for (int i = 0; i < eightDigitsByteArray.length; i++) {
+            byte ch = eightDigitsByteArray[i];
+            success &= isDigit(ch);
+            value = value * 10 + ch - '0';
+        }
+        return success ? value : -1;
+    }
+
+    @Benchmark
+    public int m01ByteArrayDecScalarWithIsDigitInlinedBranchfree() {
+        int value = 0;
+        boolean failed = false;
+        for (int i = 0; i < eightDigitsByteArray.length; i++) {
+            byte ch = eightDigitsByteArray[i];
+            int digit = (char) (ch - '0');
+            failed |= digit > 9;
+            value = value * 10 + digit;
+        }
+        return failed ? -1 : value;
+    }
+
+    //@Benchmark
     public int m01ByteArrayDecScalarMul10() {
         int value = 0;
         for (int i = 0; i < eightDigitsByteArray.length; i++) {
             byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = mul10(value) + ch - '0';
+            char digit = (char) (ch - '0');
+            if (digit < 10) {
+                value = mul10(value) + digit;
             } else {
                 return -1;
             }
@@ -113,13 +167,14 @@ public class JmhEightDigits {
         return value;
     }
 
-    @Benchmark
+    //@Benchmark
     public long m01ByteArrayDecScalarL() {
         long value = 0;
         for (int i = 0; i < eightDigitsByteArray.length; i++) {
             byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
+            char digit = (char) (ch - '0');
+            if (digit < 10) {
+                value = value * 10 + digit;
             } else {
                 return -1;
             }
@@ -127,13 +182,14 @@ public class JmhEightDigits {
         return value;
     }
 
-    @Benchmark
+    //@Benchmark
     public long m01ByteArrayDecScalarMul10L() {
         long value = 0;
         for (int i = 0; i < eightDigitsByteArray.length; i++) {
             byte ch = eightDigitsByteArray[i];
-            if (isDigit(ch)) {
-                value = mul10L(value) + ch - '0';
+            char digit = (char) (ch - '0');
+            if (digit < 10) {
+                value = mul10L(value) + digit;
             } else {
                 return -1;
             }
@@ -142,13 +198,14 @@ public class JmhEightDigits {
     }
 
 
-    @Benchmark
+    //@Benchmark
     public int m02StringDecScalar() {
         int value = 0;
         for (int i = 0, n = eightDigitsCharSequence.length(); i < n; i++) {
             char ch = eightDigitsCharSequence.charAt(i);
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
+            char digit = (char) (ch - '0');
+            if (digit < 10) {
+                value = value * 10 + digit;
             } else {
                 return -1;
             }
@@ -156,13 +213,14 @@ public class JmhEightDigits {
         return value;
     }
 
-    @Benchmark
+    //@Benchmark
     public int m03CharArrayDecScalar() {
         int value = 0;
         for (int i = 0; i < eightDigitsCharArray.length; i++) {
             char ch = eightDigitsCharArray[i];
-            if (isDigit(ch)) {
-                value = value * 10 + ch - '0';
+            char digit = (char) (ch - '0');
+            if (digit < 10) {
+                value = value * 10 + digit;
             } else {
                 return -1;
             }
@@ -170,7 +228,7 @@ public class JmhEightDigits {
         return value;
     }
 
-    @Benchmark
+    //@Benchmark
     public int m04ByteArrayHexScalar() {
         int value = 0;
         for (int i = 0; i < eightDigitsByteArray.length; i++) {
@@ -185,7 +243,7 @@ public class JmhEightDigits {
         return value;
     }
 
-    @Benchmark
+    //@Benchmark
     public int m05CharArrayHexScalar() {
         int value = 0;
         for (int i = 0; i < eightDigitsCharArray.length; i++) {
@@ -201,55 +259,55 @@ public class JmhEightDigits {
     }
 
 
-    @Benchmark
+    //@Benchmark
     public int m11ByteArrayDecSwar() {
         return FastDoubleSwar.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
     }
 
-    @Benchmark
+    //@Benchmark
     public int m12CharArrayDecSwar() {
         return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharArray, 0);
     }
 
-    @Benchmark
+    //@Benchmark
     public int m13StringDecSwar() {
         return FastDoubleSwar.tryToParseEightDigits(eightDigitsCharSequence, 0);
     }
 
-    @Benchmark
+    //@Benchmark
     public long m14ByteArrayHexSwar() {
         return FastDoubleSwar.tryToParseEightHexDigits(eightDigitsByteArray, 0);
     }
 
-    @Benchmark
+    //@Benchmark
     public long m15CharArrayHexSwar() {
         return FastDoubleSwar.tryToParseEightHexDigits(eightDigitsCharArray, 0);
     }
 
 
-    @Benchmark
+    //@Benchmark
     public int m21ByteArrayDecVector() {
         return FastDoubleVector.tryToParseEightDigitsUtf8(eightDigitsByteArray, 0);
     }
 
-    @Benchmark
+    //@Benchmark
     public int m22CharArrayDecVector() {
         return FastDoubleVector.tryToParseEightDigitsUtf16(eightDigitsCharArray, 0);
     }
 
 
-    @Benchmark
+    //@Benchmark
     public int m23StringDecVector() {
         return FastDoubleVector.tryToParseEightDigits(eightDigitsCharSequence, 0);
     }
 
 
-    @Benchmark
+    //@Benchmark
     public long m24ByteArrayHexVector() {
         return FastDoubleVector.tryToParseEightHexDigitsUtf8(eightDigitsByteArray, 0);
     }
 
-    @Benchmark
+    //@Benchmark
     public long m25CharArrayHexVector() {
         return FastDoubleVector.tryToParseEightHexDigitsUtf16(eightDigitsCharArray, 0);
     }

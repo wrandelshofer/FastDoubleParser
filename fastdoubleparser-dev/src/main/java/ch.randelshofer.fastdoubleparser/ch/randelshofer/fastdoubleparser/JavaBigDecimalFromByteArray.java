@@ -8,7 +8,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 
 
 
@@ -66,9 +68,10 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
             integerPartIndex = index;
             for (; index < endIndex; index++) {
                 ch = str[index];
-                if (FastDoubleSwar.isDigit(ch)) {
+                int digit = (char) (ch - '0');
+                if (digit < 10) {
                     // This might overflow, we deal with it later.
-                    significand = 10 * (significand) + ch - '0';
+                    significand = 10 * (significand) + digit;
                 } else if (ch == '.') {
                     illegal |= decimalPointIndex >= 0;
                     decimalPointIndex = index;
@@ -107,14 +110,16 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
                 if (isExponentNegative || ch == '+') {
                     ch = charAt(str, ++index, endIndex);
                 }
-                illegal |= !FastDoubleSwar.isDigit(ch);
+                int digit = (char) (ch - '0');
+                illegal |= digit >= 10;
                 do {
                     // Guard against overflow
                     if (expNumber < MAX_EXPONENT_NUMBER) {
-                        expNumber = 10 * (expNumber) + ch - '0';
+                        expNumber = 10 * (expNumber) + digit;
                     }
                     ch = charAt(str, ++index, endIndex);
-                } while (FastDoubleSwar.isDigit(ch));
+                    digit = (char) (ch - '0');
+                } while (digit < 10);
                 if (isExponentNegative) {
                     expNumber = -expNumber;
                 }
@@ -222,14 +227,16 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
             if (isExponentNegative || ch == '+') {
                 ch = charAt(str, ++index, endIndex);
             }
-            illegal = !FastDoubleSwar.isDigit(ch);
+            int digit = (char) (ch - '0');
+            illegal |= digit >= 10;
             do {
                 // Guard against overflow
                 if (expNumber < MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * (expNumber) + ch - '0';
+                    expNumber = 10 * (expNumber) + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
-            } while (FastDoubleSwar.isDigit(ch));
+                digit = (char) (ch - '0');
+            } while (digit < 10);
             if (isExponentNegative) {
                 expNumber = -expNumber;
             }
