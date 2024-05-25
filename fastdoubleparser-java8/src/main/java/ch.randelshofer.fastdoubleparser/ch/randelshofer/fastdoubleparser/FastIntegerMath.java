@@ -151,9 +151,17 @@ class FastIntegerMath {
         return p11 + (middle >>> 32) + (p01 >>> 32);
     }
 
+    /**
+     * Finds middle of range with upper range half rounded up to multiple of 16.
+     *
+     * @param from start of range (inclusive)
+     * @param to   end of range (exclusive)
+     * @return middle of range with upper range half rounded up to multiple of 16
+     */
     static int splitFloor16(int from, int to) {
-        int mid = (from + to) >>> 1;// split in half
-        mid = to - (((to - mid + 15) >> 4) << 4);// make numDigits of low a multiple of 16
-        return mid;
+        // divide length by 2 as we want the middle, round up range half to multiples of 16
+        int range = (((to - from + 31) >>> 5) << 4);
+        return to - range;
     }
+
 }
