@@ -10,7 +10,7 @@ import java.math.BigInteger;
 import java.nio.ByteOrder;
 
 /**
- * A mutable significand with a fixed number of bits.
+ * A mutable non-negative significand with a fixed number of bits.
  */
 class BigSignificand {
     private static final long LONG_MASK = 0xffffffffL;
@@ -20,6 +20,11 @@ class BigSignificand {
     private final byte[] x;
     private int firstNonZeroInt;
 
+    /**
+     * Creates a new instance with the specified number in bits.
+     *
+     * @param numBits the number of bits in range {@literal [0, Integer.MAX_VALUE)}.
+     */
     public BigSignificand(long numBits) {
         if (numBits <= 0 || numBits >= Integer.MAX_VALUE) {
             throw new IllegalArgumentException("numBits=" + numBits);
@@ -74,6 +79,10 @@ class BigSignificand {
         }
     }
 
+    /**
+     * Converts the BigSignificand to a BigInteger.
+     * @return a new BigInteger instance
+     */
     public BigInteger toBigInteger() {
         return new BigInteger(x);
     }
