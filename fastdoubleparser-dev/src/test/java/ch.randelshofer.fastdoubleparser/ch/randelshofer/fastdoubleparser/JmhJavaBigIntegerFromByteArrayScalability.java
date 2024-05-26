@@ -4,7 +4,18 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -15,33 +26,33 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 /**
  * Benchmarks for selected integer strings.
  * <pre>
- * # JMH version: 1.36
- * # VM version: JDK 20.0.1, OpenJDK 64-Bit Server VM, 20.0.1+9-29
+ * # JMH version: 1.37
+ * # VM version: JDK 22.0.1, OpenJDK 64-Bit Server VM, 22.0.1+8-16
  * # Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
  *
  * Benchm (digits)  Mode  Cnt             Score   Error  Units
- * dec           1  avgt    2             3.680          ns/op
- * dec          10  avgt    2            12.361          ns/op
- * dec         100  avgt    2           431.519          ns/op
- * dec        1000  avgt    2          4977.846          ns/op
- * dec       10000  avgt    2        163831.957          ns/op
- * dec      100000  avgt    2       5049386.248          ns/op
- * dec     1000000  avgt    2      82252012.578          ns/op
- * dec    10000000  avgt    2    1324055596.563          ns/op
- * dec   100000000  avgt    2   22332371526.500          ns/op
- * dec   646456993  avgt    2  215099259679.000          ns/op
- * dec  1292782621  avgt    2  203881980399.500          ns/op
- * hex           1  avgt    2            15.152          ns/op
- * hex          10  avgt    2            25.678          ns/op
- * hex         100  avgt    2           128.800          ns/op
- * hex        1000  avgt    2          1159.016          ns/op
- * hex       10000  avgt    2         12142.790          ns/op
- * hex      100000  avgt    2        121737.021          ns/op
- * hex     1000000  avgt    2       1187255.022          ns/op
- * hex    10000000  avgt    2      13449359.673          ns/op
- * hex   100000000  avgt    2     138010985.767          ns/op
- * hex   646456993  avgt    2     768771154.365          ns/op
- * hex  1292782621  avgt    2     817279028.308          ns/op
+ * dec           1  avgt    2             3.293          ns/op
+ * dec          10  avgt    2            12.156          ns/op
+ * dec         100  avgt    2           432.232          ns/op
+ * dec        1000  avgt    2          4651.616          ns/op
+ * dec       10000  avgt    2        154486.359          ns/op
+ * dec      100000  avgt    2       4868793.278          ns/op
+ * dec     1000000  avgt    2      76263104.519          ns/op
+ * dec    10000000  avgt    2    1245637131.889          ns/op
+ * dec   100000000  avgt    2   20964403409.000          ns/op
+ * dec   646456993  avgt    2  204480626006.500          ns/op
+ * dec  1292782621  avgt    2  190675819095.500          ns/op
+ * hex           1  avgt    2            11.364          ns/op
+ * hex          10  avgt    2            23.503          ns/op
+ * hex         100  avgt    2            90.966          ns/op
+ * hex        1000  avgt    2           747.841          ns/op
+ * hex       10000  avgt    2          7732.226          ns/op
+ * hex      100000  avgt    2         78843.403          ns/op
+ * hex     1000000  avgt    2        759255.965          ns/op
+ * hex    10000000  avgt    2       8093226.726          ns/op
+ * hex   100000000  avgt    2     112561508.910          ns/op
+ * hex   646456993  avgt    2     567704136.418          ns/op
+ * hex  1292782621  avgt    2     508893087.985          ns/op
  * </pre>
  */
 @Fork(value = 1, jvmArgsAppend = {

@@ -403,55 +403,50 @@ class FastDoubleSwar {
         // The following code is based on the technique presented in the paper
         // by Leslie Lamport.
 
-        // Create a predicate for all bytes which are greeter than '0' (0x30), where 0x30-0x1=0x2f;
-        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
-        long ge_0 = chunk + (0x2f_2f_2f_2f_2f_2f_2f_2fL ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        // We don't need to 'and' with 0x80…L here, because we do it in the if-statement below.
-        //ge_0 &= 0x80_80_80_80_80_80_80_80L;
+        // The predicates are true if the hsb of a byte is set.
 
-        // Create a predicate for all bytes which are smaller or equal than '9' (0x39), where 0x39 + 0x1 = 0x3a
-        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
-        long le_9 = 0x3a_3a_3a_3a_3a_3a_3a_3aL + (chunk ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        // We don't need to 'and' with 0x80…L here, because we do it in the if-statement below.
-        //le_9 &= 0x80_80_80_80_80_80_80_80L;
+        // Create a predicate for all bytes which are less than '0'
+        long lt_0 = chunk - 0x30_30_30_30_30_30_30_30L;
+        lt_0 &= 0x80_80_80_80_80_80_80_80L;
 
-        // Convert upper case characters to lower case by setting the 0x20 bit.
-        long lowerCaseChunk = chunk | 0x20_20_20_20_20_20_20_20L;
+        // Create a predicate for all bytes which are greater than '9'
+        long gt_9 = chunk + (0x39_39_39_39_39_39_39_39L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
+        gt_9 &= 0x80_80_80_80_80_80_80_80L;
 
-        // Create a predicate for all bytes which are greater or equal than 'a' (0x61), where 0x61 - 0x1 = 0x60
-        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
-        long ge_a = lowerCaseChunk + (0x60_60_60_60_60_60_60_60L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        // We must 'and' with 0x80…L, because we need the proper predicate bits further below in the code.
+        // We can convert upper case characters to lower case by setting the 0x20 bit.
+        // (This does not have an impact on decimal digits, which is very handy!).
+        // Subtract character '0' (0x30) from each of the eight characters
+        long vec = (chunk | 0x20_20_20_20_20_20_20_20L) - 0x30_30_30_30_30_30_30_30L;
+
+        // Create a predicate for all bytes which are greater or equal than 'a'-'0' (0x30).
+        long ge_a = vec + (0x30_30_30_30_30_30_30_30L ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
         ge_a &= 0x80_80_80_80_80_80_80_80L;
 
-        // Create a predicate for all bytes which are smaller or equal than 'f' (0x66), where 0x66 + 0x1 = 0x67
-        // The predicate is true if the hsb of a byte is set: (predicate & 0x80) != 0.
-        long le_f = 0x67_67_67_67_67_67_67_67L + (lowerCaseChunk ^ 0x7f_7f_7f_7f_7f_7f_7f_7fL);
-        // We don't need to 'and' with 0x80…L here, because we do it in the if-statement below.
+        // Create a predicate for all bytes which are less or equal than 'f'-'0' (0x37).
+        long le_f = vec - 0x37_37_37_37_37_37_37_37L;
+        // we don't need to 'and' with 0x80…L here, because we 'and' this with ge_a anyway.
         //le_f &= 0x80_80_80_80_80_80_80_80L;
 
-        // A character must either be in the range from '0' to '9' or in the range from 'a' to 'f'
-        if ((((ge_0 & le_9) ^ (ge_a & le_f)) & 0x80_80_80_80_80_80_80_80L) != 0x80_80_80_80_80_80_80_80L) {
+        // If a character is less than '0' or greater than '9' then it must be greater or equal than 'a' and less or equal then 'f'.
+        if (((lt_0 | gt_9) != (ge_a & le_f))) {
             return -1;
         }
 
         // Expand the predicate to a byte mask
-        long ge_a_mask = (ge_a >>> 7) * 0xffL;
+        long gt_9mask = (gt_9 >>> 7) * 0xffL;
 
-        // Subtract character '0' (0x30) from each of the eight characters
-        long vec = lowerCaseChunk - 0x30_30_30_30_30_30_30_30L;
-
-        // Subtract 'a' - '0' + 10 = (0x27) from all bytes that are greater equal 'a'
-        long v = vec & ~ge_a_mask | vec - (0x27272727_27272727L & ge_a_mask);
+        // Subtract 'a'-'0'+10 (0x27) from all bytes that are greater than 0x09.
+        long v = vec & ~gt_9mask | vec - (0x27272727_27272727L & gt_9mask);
 
         // Compact all nibbles
-        //return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19
+        //return Long.compress(v, 0x0f0f0f0f_0f0f0f0fL);// since Java 19, Long.comporess is faster on Intel x64 but slower on Apple Silicon
         long v2 = v | v >>> 4;
         long v3 = v2 & 0x00ff00ff_00ff00ffL;
         long v4 = v3 | v3 >>> 8;
         long v5 = ((v4 >>> 16) & 0xffff_0000L) | v4 & 0xffffL;
         return v5;
     }
+
 
     public static int tryToParseFourDigits(char[] a, int offset) {
         long first = a[offset]
