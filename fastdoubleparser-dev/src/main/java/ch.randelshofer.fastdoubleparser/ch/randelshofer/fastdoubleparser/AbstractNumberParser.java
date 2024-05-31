@@ -38,6 +38,7 @@ abstract class AbstractNumberParser {
      * to check for byte values {@literal <} 0 before accessing this array.
      */
     static final byte[] CHAR_TO_HEX_MAP = new byte[256];
+    static final short[] CHAR_TO_HEX_MAP2 = new short[256];
 
     static {
         Arrays.fill(CHAR_TO_HEX_MAP, OTHER_CLASS);
@@ -51,6 +52,10 @@ abstract class AbstractNumberParser {
             CHAR_TO_HEX_MAP[ch] = (byte) (ch - 'a' + 10);
         }
         CHAR_TO_HEX_MAP['.'] = DECIMAL_POINT_CLASS;
+        for (int i = 0; i < 256; i++) {
+            byte value = CHAR_TO_HEX_MAP[i];
+            CHAR_TO_HEX_MAP2[i] = value < 0 ? value : (short) (value << 4);
+        }
     }
 
     /**
@@ -101,10 +106,13 @@ abstract class AbstractNumberParser {
      * @param ch a character
      * @return the hex value or a value &lt; 0.
      */
-    protected static int lookupHex(byte ch) {
+    protected static byte lookupHex(byte ch) {
         return CHAR_TO_HEX_MAP[ch & 0xff];
     }
 
+    protected static int lookupHex2(byte high, byte low) {
+        return CHAR_TO_HEX_MAP2[high & 0xff] | CHAR_TO_HEX_MAP[low & 0xff];
+    }
     /**
      * Looks the character up in the {@link #CHAR_TO_HEX_MAP} returns
      * a value &lt; 0 if the character is not in the map.
@@ -116,7 +124,7 @@ abstract class AbstractNumberParser {
      * @param ch a character
      * @return the hex value or a value &lt; 0.
      */
-    protected static int lookupHex(char ch) {
+    protected static byte lookupHex(char ch) {
         // The branchy code is faster than the branch-less code.
         // Branch-less code: return CHAR_TO_HEX_MAP[ch & 0xff] | (127 - ch) >> 31;
         // Branch-less code: return CHAR_TO_HEX_MAP[(ch|((127-ch)>>31))&0xff];
@@ -124,6 +132,9 @@ abstract class AbstractNumberParser {
         return ch < 128 ? CHAR_TO_HEX_MAP[ch] : -1;
     }
 
+    protected static int lookupHex2(char high, char low) {
+        return (high | low) < 128 ? CHAR_TO_HEX_MAP2[high] | CHAR_TO_HEX_MAP[low] : -1;
+    }
     /**
      * Checks the bounds and returns the end index (exclusive) of the data in the array.
      *

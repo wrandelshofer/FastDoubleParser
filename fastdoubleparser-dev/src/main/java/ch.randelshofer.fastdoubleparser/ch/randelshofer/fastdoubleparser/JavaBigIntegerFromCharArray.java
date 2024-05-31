@@ -81,18 +81,15 @@ class JavaBigIntegerFromCharArray extends AbstractBigIntegerParser {
 
         if ((numDigits & 1) != 0) {
             char chLow = str[from++];
-            int valueLow = lookupHex(chLow);
-            bytes[index++] = (byte) valueLow;
+            byte valueLow = lookupHex(chLow);
+            bytes[index++] = valueLow;
             illegalDigits = valueLow < 0;
         }
         int prerollLimit = from + ((to - from) & 7);
         for (; from < prerollLimit; from += 2) {
-            char chHigh = str[from];
-            char chLow = str[from + 1];
-            int valueHigh = lookupHex(chHigh);
-            int valueLow = lookupHex(chLow);
-            bytes[index++] = (byte) (valueHigh << 4 | valueLow);
-            illegalDigits |= valueHigh < 0 || valueLow < 0;
+            int value = lookupHex2(str[from], str[from + 1]);
+            bytes[index++] = (byte) value;
+            illegalDigits |= value < 0;
         }
         for (; from < to; from += 8, index += 4) {
             long value = FastDoubleSwar.tryToParseEightHexDigits(str, from);
