@@ -783,6 +783,14 @@ class FftMultiplier {
             a[imagIdx(idxa)] += c.imag;
         }
 
+        void addReal(int idxa, double real) {
+            a[realIdx(idxa)] += real;
+        }
+
+        void addImag(int idxa, double imag) {
+            a[imagIdx(idxa)] += imag;
+        }
+
         void addInto(int idxa, ComplexVector c, int idxc, MutableComplex destination) {
             destination.real = a[realIdx(idxa)] + c.real(idxc);
             destination.imag = a[imagIdx(idxa)] + c.imag(idxc);
@@ -987,6 +995,20 @@ class FftMultiplier {
             double imag = a[ii];
             a[ri] = fastScalb(real, n);
             a[ii] = fastScalb(imag, n);
+        }
+
+        public void scale(double scale) {
+            for (int i = 0; i < length << COMPLEX_SIZE_SHIFT; i++) {
+                a[i] *= scale;
+            }
+        }
+        public int length() {
+            return length;
+        }
+
+        @Override
+        public String toString() {
+            return "V=" + length;
         }
     }
 
