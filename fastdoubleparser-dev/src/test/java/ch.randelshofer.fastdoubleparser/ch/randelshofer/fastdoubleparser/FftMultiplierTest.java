@@ -31,17 +31,17 @@ public class FftMultiplierTest {
                         "2147483647",
                         "9223372036854775807")),
                 dynamicTest("'3','0'**84 * '4','0'**84", () -> shouldMultiplyFft(
-                        "3" + repeat("0", 84),
-                        "4" + repeat("0", 84))),
+                        "3" + repeat('0', 84),
+                        "4" + repeat('0', 84))),
                 dynamicTest("'-','3','0'**84 * '4','0'**84", () -> shouldMultiplyFft(
-                        "-3" + repeat("0", 84),
-                        "4" + repeat("0", 84))),
+                        "-3" + repeat('0', 84),
+                        "4" + repeat('0', 84))),
                 dynamicTest("'-','3','0'**84 * '-','4','0'**84", () -> shouldMultiplyFft(
-                        "-3" + repeat("0", 84),
-                        "-4" + repeat("0", 84))),
+                        "-3" + repeat('0', 84),
+                        "-4" + repeat('0', 84))),
                 dynamicTest("'3','0'**100_000 * '4','0'**100_000", () -> shouldMultiplyFft(
-                        "3" + repeat("0", 100_000),
-                        "4" + repeat("0", 100_000)))
+                        "3" + repeat('0', 100_000),
+                        "4" + repeat('0', 100_000)))
         );
     }
 
@@ -140,16 +140,16 @@ public class FftMultiplierTest {
     public List<DynamicTest> dynamicTestsSquare() {
         return Arrays.asList(
                 dynamicTest("'3','0'**84", () -> shouldSquare(
-                        "3" + repeat("0", 84)
+                        "3" + repeat('0', 84)
                 )),
                 dynamicTest("'-','3','0'**84", () -> shouldSquare(
-                        "-3" + repeat("0", 84)
+                        "-3" + repeat('0', 84)
                 )),
                 dynamicTest("'-','3','0'**84", () -> shouldSquare(
-                        "-3" + repeat("0", 84)
+                        "-3" + repeat('0', 84)
                 )),
                 dynamicTest("'3','0'**100_000", () -> shouldSquare(
-                        "3" + repeat("0", 100_000)
+                        "3" + repeat('0', 100_000)
                 ))
         );
 

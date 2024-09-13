@@ -135,12 +135,15 @@ public abstract class AbstractBigDecimalParserTest {
                 new NumberTestDataSupplier("min exponent", () -> new NumberTestData("1e" + (Integer.MIN_VALUE + 1), BigDecimal.ONE.scaleByPowerOfTen(Integer.MIN_VALUE + 1))),
                 new NumberTestDataSupplier("max exponent", () -> new NumberTestData("1e" + Integer.MAX_VALUE, BigDecimal.ONE.scaleByPowerOfTen(Integer.MAX_VALUE))),
 
-                new NumberTestDataSupplier("8.99...99e68", () -> new NumberTestData("8." + (repeat("9", 19)) + "e68", new BigDecimal("8." + (repeat("9", 19)) + "e68"))),
+                new NumberTestDataSupplier("8.99...99e68", () -> new NumberTestData("8." + (repeat('9', 19)) + "e68", new BigDecimal("8." + (repeat('9', 19)) + "e68"))),
                 new NumberTestDataSupplier("103203303403503603703803903.122232425262728292", () -> new NumberTestData("103203303403503603703803903.122232425262728292", new BigDecimal("103203303403503603703803903.122232425262728292"))),
                 new NumberTestDataSupplier("122232425262728292.103203303403503603703803903", () -> new NumberTestData("122232425262728292.103203303403503603703803903", new BigDecimal("122232425262728292.103203303403503603703803903"))),
                 new NumberTestDataSupplier("-103203303403503603703803903.122232425262728292e6789", () -> new NumberTestData("-103203303403503603703803903.122232425262728292e6789", new BigDecimal("-103203303403503603703803903.122232425262728292e6789"))),
                 new NumberTestDataSupplier("122232425262728292.103203303403503603703803903e-6789", () -> new NumberTestData("122232425262728292.103203303403503603703803903e-6789", new BigDecimal("122232425262728292.103203303403503603703803903e-6789"))),
-                new NumberTestDataSupplier("-122232425262728292.103203303403503603703803903e-6789", () -> new NumberTestData("-122232425262728292.103203303403503603703803903e-6789", new BigDecimal("-122232425262728292.103203303403503603703803903e-6789")))
+                new NumberTestDataSupplier("-122232425262728292.103203303403503603703803903e-6789", () -> new NumberTestData("-122232425262728292.103203303403503603703803903e-6789", new BigDecimal("-122232425262728292.103203303403503603703803903e-6789"))),
+                new NumberTestDataSupplier("-11000.0..0(652 fractional digits)",
+                        () -> new NumberTestData("-11000." + repeat('0', 652),
+                                new BigDecimal("-11000." + repeat('0', 652))))
         );
     }
 
@@ -239,16 +242,16 @@ public abstract class AbstractBigDecimalParserTest {
      */
     protected List<NumberTestDataSupplier> createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits() {
         return Arrays.asList(
-                new NumberTestDataSupplier("illegal only negative sign", () -> new NumberTestData("-" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
-                new NumberTestDataSupplier("illegal only positive sign", () -> new NumberTestData("+" + repeat("\000", 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
+                new NumberTestDataSupplier("illegal only negative sign", () -> new NumberTestData("-" + repeat('\000', 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
+                new NumberTestDataSupplier("illegal only positive sign", () -> new NumberTestData("+" + repeat('\000', 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
 
 
                 new NumberTestDataSupplier("significand with 40 zeroes in integer part", () -> new NumberTestData("significand with 40 zeroes in integer part", repeat("0", 40), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 40 zeroes in fraction part", () -> new NumberTestData("." + repeat("0", 40), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 40 zeroes in fraction part", () -> new NumberTestData("." + repeat('0', 40), BigDecimal::new)),
 
-                new NumberTestDataSupplier("significand with 10 leading zeros and 30 digits in integer part", () -> new NumberTestData("significand with 10 leading zeros and 30 digits in integer part", repeat("0", 10) + repeat("9", 30), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 10 leading zeros and 30 digits in fraction part", () -> new NumberTestData("." + repeat("0", 10) + repeat("9", 30), BigDecimal::new)),
-                new NumberTestDataSupplier("significand with 10 leading zeros and 30 digits in integer part and in fraction part", () -> new NumberTestData("significand with 10 leading zeros and 30 digits in integer part and in fraction part", repeat("0", 10) + repeat("9", 30) + "." + repeat("0", 10) + repeat("9", 30), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 10 leading zeros and 30 digits in integer part", () -> new NumberTestData("significand with 10 leading zeros and 30 digits in integer part", repeat('0', 10) + repeat('9', 30), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 10 leading zeros and 30 digits in fraction part", () -> new NumberTestData("." + repeat('0', 10) + repeat('9', 30), BigDecimal::new)),
+                new NumberTestDataSupplier("significand with 10 leading zeros and 30 digits in integer part and in fraction part", () -> new NumberTestData("significand with 10 leading zeros and 30 digits in integer part and in fraction part", repeat('0', 10) + repeat("9", 30) + "." + repeat("0", 10) + repeat("9", 30), BigDecimal::new)),
 
                 new NumberTestDataSupplier("significand with 40 digits in integer part and exponent", () -> new NumberTestData("-1234567890123456789012345678901234567890e887799", BigDecimal::new)),
                 new NumberTestDataSupplier("no significand but exponent 40 digits", () -> new NumberTestData("-e12345678901234567890123456789012345678901234567890", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),

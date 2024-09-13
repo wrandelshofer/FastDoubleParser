@@ -97,12 +97,12 @@ public class JmhJavaBigIntegerFromByteArrayScalability {
     @Setup(Level.Trial)
     public void setUp() {
         String str = "-"
-                + repeat("0", Math.max(0, digits - 646456993))
+                + repeat('0', Math.max(0, digits - 646456993))
                 + repeat("1234567890", (Math.min(646456993, digits) + 9) / 10).substring(0, Math.min(digits, 646456993));
 
         decLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
         str = "-"
-                + repeat("0", Math.max(0, digits - 536870912))
+                + repeat('0', Math.max(0, digits - 536870912))
                 + repeat("12b4c6d7e0", (Math.min(536870912, digits) + 9) / 10).substring(0, Math.min(digits, 536870912));
 
         hexLiteral = str.getBytes(StandardCharsets.ISO_8859_1);
