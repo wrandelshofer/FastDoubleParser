@@ -141,8 +141,8 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
      * Parses a big decimal string that has many digits.
      */
     BigDecimal parseBigDecimalStringWithManyDigits(char[] str, int offset, int length) {
-        final int nonZeroIntegerPartIndex;
         final int integerPartIndex;
+        final int nonZeroIntegerPartIndex;
         int nonZeroFractionalPartIndex = -1;
         int decimalPointIndex = -1;
         final int exponentIndicatorIndex;
@@ -164,7 +164,9 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
 
         // Count digits of significand
         // -----------------
+        // skip leading zeroes
         integerPartIndex = index;
+        // swarLimit: We can process blocks of eight chars with SWAR, we must process the remaining chars individually.
         int swarLimit = Math.min(endIndex - 8, 1 << 30);
         while (index < swarLimit && FastDoubleSwar.isEightZeroes(str, index)) {
             index += 8;
@@ -244,9 +246,9 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
         illegal |= integerPartIndex == decimalPointIndex && decimalPointIndex == exponentIndicatorIndex;
         checkParsedBigDecimalBounds(illegal, index, endIndex, digitCountWithoutLeadingZeros, exponent);
 
-        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent);
+        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
+        );
     }
-
 
     /**
      * Parses a big decimal string after we have identified the parts of the significand,
@@ -273,8 +275,7 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
      * @return the parsed big decimal
      */
     BigDecimal valueOfBigDecimalString(char[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
-        int integerExponent = exponentIndicatorIndex - decimalPointIndex - 1;
-        int fractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
+        int fractionDigitsCount = exponentIndicatorIndex - decimalPointIndex - 1;
         int nonZeroFractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
         int integerDigitsCount = decimalPointIndex - integerPartIndex;
         NavigableMap<Integer, BigInteger> powersOfTen = null;
@@ -306,16 +307,16 @@ final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
                 if (powersOfTen == null) {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
-                fillPowersOfNFloor16Recursive(powersOfTen, decimalPointIndex + 1, exponentIndicatorIndex);
-                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, decimalPointIndex + 1, exponentIndicatorIndex, powersOfTen, RECURSION_THRESHOLD);
+                fillPowersOfNFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen, RECURSION_THRESHOLD);
             } else {
-                fractionalPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, decimalPointIndex + 1, exponentIndicatorIndex);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, nonZeroFractionalPartIndex, exponentIndicatorIndex);
             }
-            // If the integer part is not 0, we combine it with the fraction part.
+            // If the integer part is 0, we can just use the fractional part.
             if (integerPart.signum() == 0) {
                 significand = fractionalPart;
             } else {
-                BigInteger integerFactor = computePowerOfTen(powersOfTen, integerExponent);
+                BigInteger integerFactor = computePowerOfTen(powersOfTen, fractionDigitsCount);
                 significand = FftMultiplier.multiply(integerPart, integerFactor).add(fractionalPart);
             }
         } else {

@@ -38,8 +38,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
      */
     public BigDecimal parseBigDecimalString(CharSequence str, int offset, int length) {
         try {
-            int size = str.length();
-            final int endIndex = checkBounds(size, offset, length);
+            final int endIndex = checkBounds(str.length(), offset, length);
             if (hasManyDigits(length)) {
                 return parseBigDecimalStringWithManyDigits(str, offset, length);
             }
@@ -137,7 +136,6 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
             nfe.initCause(e);
             throw nfe;
         }
-
     }
 
     /**
@@ -146,8 +144,8 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
     BigDecimal parseBigDecimalStringWithManyDigits(CharSequence str, int offset, int length) {
         final int integerPartIndex;
         final int nonZeroIntegerPartIndex;
-        int decimalPointIndex = -1;
         int nonZeroFractionalPartIndex = -1;
+        int decimalPointIndex = -1;
         final int exponentIndicatorIndex;
 
         final int endIndex = offset + length;
@@ -169,7 +167,9 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
         // -----------------
         // skip leading zeroes
         integerPartIndex = index;
-        while (index < endIndex - 8 && FastDoubleSwar.isEightZeroes(str, index)) {
+        // swarLimit: We can process blocks of eight chars with SWAR, we must process the remaining chars individually.
+        int swarLimit = Math.min(endIndex - 8, 1 << 30);
+        while (index < swarLimit && FastDoubleSwar.isEightZeroes(str, index)) {
             index += 8;
         }
         while (index < endIndex && str.charAt(index) == '0') {
@@ -177,7 +177,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
         }
         // Count digits of integer part
         nonZeroIntegerPartIndex = index;
-        while (index < endIndex - 8 && FastDoubleSwar.isEightDigits(str, index)) {
+        while (index < swarLimit && FastDoubleSwar.isEightDigits(str, index)) {
             index += 8;
         }
         while (index < endIndex && FastDoubleSwar.isDigit(ch = str.charAt(index))) {
@@ -186,7 +186,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
         if (ch == '.') {
             decimalPointIndex = index++;
             // skip leading zeroes
-            while (index < endIndex - 8 && FastDoubleSwar.isEightZeroes(str, index)) {
+            while (index < swarLimit && FastDoubleSwar.isEightZeroes(str, index)) {
                 index += 8;
             }
             while (index < endIndex && str.charAt(index) == '0') {
@@ -194,7 +194,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
             }
             nonZeroFractionalPartIndex = index;
             // Count digits of fraction part
-            while (index < endIndex - 8 && FastDoubleSwar.isEightDigits(str, index)) {
+            while (index < swarLimit && FastDoubleSwar.isEightDigits(str, index)) {
                 index += 8;
             }
             while (index < endIndex && FastDoubleSwar.isDigit(ch = str.charAt(index))) {
@@ -312,6 +312,7 @@ final class JavaBigDecimalFromCharSequence extends AbstractBigDecimalParser {
             } else {
                 fractionalPart = ParseDigitsTaskCharSequence.parseDigitsIterative(str, nonZeroFractionalPartIndex, exponentIndicatorIndex);
             }
+            // If the integer part is 0, we can just use the fractional part.
             if (integerPart.signum() == 0) {
                 significand = fractionalPart;
             } else {
