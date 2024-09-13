@@ -1,6 +1,6 @@
 /*
  * @(#)JsonDoubleParser.java
- * Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 

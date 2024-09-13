@@ -1,12 +1,20 @@
 /*
  * @(#)FastDoubleVector.java
- * Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.
+ * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 
-import jdk.incubator.vector.*;
+import jdk.incubator.vector.ByteVector;
+import jdk.incubator.vector.IntVector;
+import jdk.incubator.vector.LongVector;
+import jdk.incubator.vector.ShortVector;
+import jdk.incubator.vector.VectorMask;
 
-import static jdk.incubator.vector.VectorOperators.*;
+import static jdk.incubator.vector.VectorOperators.ADD;
+import static jdk.incubator.vector.VectorOperators.LSHL;
+import static jdk.incubator.vector.VectorOperators.UNSIGNED_GE;
+import static jdk.incubator.vector.VectorOperators.UNSIGNED_GT;
+import static jdk.incubator.vector.VectorOperators.UNSIGNED_LE;
 
 /**
  * This class provides methods for parsing multiple characters at once using

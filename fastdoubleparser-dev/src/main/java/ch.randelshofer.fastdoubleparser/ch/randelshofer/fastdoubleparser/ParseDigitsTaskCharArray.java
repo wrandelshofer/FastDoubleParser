@@ -1,6 +1,6 @@
 /*
- * @(#)java
- * Copyright © 2023 Werner Randelshofer, Switzerland. MIT License.
+ * @(#)ParseDigitsTaskCharArray.java
+ * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 
