@@ -371,7 +371,7 @@ on the same computer:
 
 This project requires **at least** the items below to build it from source:
 
-- Maven 3.8.6
+- Maven 3.9.8
 - OpenJDK SE 22
 
 This project contains optimised code for various JDK versions.
