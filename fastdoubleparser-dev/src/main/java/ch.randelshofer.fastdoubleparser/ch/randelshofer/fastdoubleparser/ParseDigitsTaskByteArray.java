@@ -11,7 +11,7 @@ import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 /**
- * Parses digits in exponential time O(e^n).
+ * Parses digits.
  */
 class ParseDigitsTaskByteArray {
     /**

@@ -11,7 +11,7 @@ import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 
 /**
- * Parses digits in exponential time O(e^n).
+ * Parses digits.
  */
 class ParseDigitsTaskCharArray {
     /**
@@ -50,7 +50,7 @@ class ParseDigitsTaskCharArray {
      * <p>
      * A conventional recursive algorithm would require O(N<sup>1.5</sup>).
      * We achieve better performance by performing multiplications of long bit sequences
-     * in the frequencey domain.
+     * in the frequency domain.
      */
     static BigInteger parseDigitsRecursive(char[] str, int from, int to, Map<Integer, BigInteger> powersOfTen, int recursionThreshold) {
         assert str != null : "str==null";
