@@ -157,6 +157,7 @@ public class JavaDoubleParser {
     private static final JavaDoubleBitsFromCharArray CHAR_ARRAY_PARSER = new JavaDoubleBitsFromCharArray();
 
     private static final JavaDoubleBitsFromCharSequence CHAR_SEQUENCE_PARSER = new JavaDoubleBitsFromCharSequence();
+    private static final JavaDoubleBitsFromString STRING_PARSER = new JavaDoubleBitsFromString();
 
     /**
      * Don't let anyone instantiate this class.
@@ -191,6 +192,35 @@ public class JavaDoubleParser {
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_SEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
+        return Double.longBitsToDouble(bitPattern);
+    }
+
+    /**
+     * Convenience method for calling {@link #parseDouble(String, int, int)}.
+     *
+     * @param str the string to be parsed
+     * @return the parsed value
+     * @throws NullPointerException  if the string is null
+     * @throws NumberFormatException if the string can not be parsed successfully
+     */
+    public static double parseDouble(String str) throws NumberFormatException {
+        return parseDouble(str, 0, str.length());
+    }
+
+    /**
+     * Parses a {@code FloatingPointLiteral} from a {@link String} and converts it
+     * into a {@code double} value.
+     *
+     * @param str    the string to be parsed
+     * @param offset the start offset of the {@code FloatingPointLiteral} in {@code str}
+     * @param length the length of {@code FloatingPointLiteral} in {@code str}
+     * @return the parsed value
+     * @throws NullPointerException     if the string is null
+     * @throws IllegalArgumentException if offset or length are illegal
+     * @throws NumberFormatException    if the string can not be parsed successfully
+     */
+    public static double parseDouble(String str, int offset, int length) throws NumberFormatException {
+        long bitPattern = STRING_PARSER.parseFloatingPointLiteral(str, offset, length);
         return Double.longBitsToDouble(bitPattern);
     }
 

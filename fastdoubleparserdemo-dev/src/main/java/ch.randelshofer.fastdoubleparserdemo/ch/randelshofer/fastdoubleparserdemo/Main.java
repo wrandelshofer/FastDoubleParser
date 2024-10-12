@@ -146,22 +146,26 @@ public class Main {
                 new BenchmarkFunction("java.math.BigDecimal", "java.math.BigDecimal", () -> sumJavaLangBigDecimal(lines)),
                 new BenchmarkFunction("java.text.NumberFormat", "java.text.NumberFormat", () -> sumJavaTextNumberFormat(lines, locale)),
 
-                new BenchmarkFunction("JavaDoubleParser String", "java.lang.Double", () -> sumFastDoubleFromCharSequence(lines)),
+                new BenchmarkFunction("JavaDoubleParser CharSequence", "java.lang.Double", () -> sumFastDoubleFromCharSequence(lines)),
+                new BenchmarkFunction("JavaDoubleParser String", "java.lang.Double", () -> sumFastDoubleFromString(lines)),
                 new BenchmarkFunction("JavaDoubleParser char[]", "java.lang.Double", () -> sumFastDoubleParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaDoubleParser byte[]", "java.lang.Double", () -> sumFastDoubleParserFromByteArray(byteArrayLines)),
 
-                new BenchmarkFunction("JsonDoubleParser String", "java.lang.Double", () -> sumJsonDoubleFromCharSequence(lines)),
+                new BenchmarkFunction("JsonDoubleParser String", "java.lang.Double", () -> sumJsonDoubleFromString(lines)),
+                new BenchmarkFunction("JsonDoubleParser CharSequence", "java.lang.Double", () -> sumJsonDoubleFromCharSequence(lines)),
                 new BenchmarkFunction("JsonDoubleParser char[]", "java.lang.Double", () -> sumJsonDoubleParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JsonDoubleParser byte[]", "java.lang.Double", () -> sumJsonDoubleParserFromByteArray(byteArrayLines)),
 
-                new BenchmarkFunction("JavaFloatParser  String", "java.lang.Float", () -> sumFastFloatFromCharSequence(lines)),
+                new BenchmarkFunction("JavaFloatParser  CharSequence", "java.lang.Float", () -> sumFastFloatFromCharSequence(lines)),
+                new BenchmarkFunction("JavaFloatParser  String", "java.lang.Float", () -> sumFastFloatFromString(lines)),
                 new BenchmarkFunction("JavaFloatParser  char[]", "java.lang.Float", () -> sumFastFloatParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaFloatParser  byte[]", "java.lang.Float", () -> sumFastFloatParserFromByteArray(byteArrayLines)),
 
-                new BenchmarkFunction("JavaBigDecimalParser String", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharSequence(lines)),
+                new BenchmarkFunction("JavaBigDecimalParser CharSequence", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharSequence(lines)),
                 new BenchmarkFunction("JavaBigDecimalParser char[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines)),
-                new BenchmarkFunction("LenientDoubleParser String", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines))
+                new BenchmarkFunction("LenientDoubleParser CharSequence", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines)),
+                new BenchmarkFunction("LenientDoubleParser String", "java.text.NumberFormat", () -> sumLenientDoubleFromString(lines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -185,13 +189,6 @@ public class Main {
         List<String> lines = Files.lines(path).collect(Collectors.toList());
         System.out.printf("Read %d lines\n", lines.size());
         Map<String, BenchmarkFunction> validated = validate(lines);
-        System.out.println("sleeping...");
-        try {
-            Thread.sleep(5_000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("...sleeping done");
         process(lines, validated);
     }
 
@@ -224,7 +221,7 @@ public class Main {
         if (printConfidence) {
             double confidenceWidth = Stats.confidence(1 - confidenceLevel, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
 
-            System.out.printf("%-27s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f  %4.2f speedup\n",
+            System.out.printf("%-33s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f  %4.2f speedup\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -235,7 +232,7 @@ public class Main {
                     speedup
             );
         } else {
-            System.out.printf("%-27s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f  %7.2f speedup\n",
+            System.out.printf("%-33s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f  %7.2f speedup\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -259,13 +256,13 @@ public class Main {
     }
 
     private void printStatsHeaderMarkdown() {
-        System.out.println("|Method                     | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |");
-        System.out.println("|---------------------------|------:|-----:|------:|--------:|--------:|--------|");
+        System.out.println("|Method                           | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |");
+        System.out.println("|---------------------------------|------:|-----:|------:|--------:|--------:|--------|");
     }
 
     private void printStatsMarkdown(List<String> lines, double volumeMB, String name, VarianceStatistics stats, Map<String, BenchmarkFunction> functions, Map<String, VarianceStatistics> results) {
         double speedup = computeSpeedup(name, stats, functions, results);
-        System.out.printf("|%-27s|%7.2f|%4.1f %%|%7.2f|%9.2f|%9.2f|%-8s|\n",
+        System.out.printf("|%-33s|%7.2f|%4.1f %%|%7.2f|%9.2f|%9.2f|%-8s|\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
                 stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -406,6 +403,15 @@ public class Main {
     private double sumFastDoubleFromCharSequence(List<String> s) {
         double answer = 0;
         for (String st : s) {
+            double x = JavaDoubleParser.parseDouble((CharSequence) st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumFastDoubleFromString(List<String> s) {
+        double answer = 0;
+        for (String st : s) {
             double x = JavaDoubleParser.parseDouble(st);
             answer += x;
         }
@@ -432,6 +438,15 @@ public class Main {
     }
 
     private float sumFastFloatFromCharSequence(List<String> s) {
+        float answer = 0;
+        for (String st : s) {
+            float x = JavaFloatParser.parseFloat((CharSequence) st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private float sumFastFloatFromString(List<String> s) {
         float answer = 0;
         for (String st : s) {
             float x = JavaFloatParser.parseFloat(st);
@@ -462,6 +477,16 @@ public class Main {
         double answer = 0;
         LenientDoubleParser p = new LenientDoubleParser(new DecimalFormat().getDecimalFormatSymbols());
         for (String st : s) {
+            double x = p.parseDouble((CharSequence) st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumLenientDoubleFromString(List<String> s) {
+        double answer = 0;
+        LenientDoubleParser p = new LenientDoubleParser(new DecimalFormat().getDecimalFormatSymbols());
+        for (String st : s) {
             double x = p.parseDouble(st);
             answer += x;
         }
@@ -478,6 +503,15 @@ public class Main {
     }
 
     private double sumJsonDoubleFromCharSequence(List<String> s) {
+        double answer = 0;
+        for (String st : s) {
+            double x = JsonDoubleParser.parseDouble((CharSequence) st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumJsonDoubleFromString(List<String> s) {
         double answer = 0;
         for (String st : s) {
             double x = JsonDoubleParser.parseDouble(st);

@@ -18,11 +18,13 @@ import java.text.DecimalFormatSymbols;
 public class LenientDoubleParser {
 
     private final NumberFormatSymbols symbols;
-    private final LenientDoubleBitsFromCharSequence p;
+    private final LenientDoubleBitsFromCharSequence pCharSequence;
+    private final LenientDoubleBitsFromString pString;
 
     public LenientDoubleParser(NumberFormatSymbols symbols) {
         this.symbols = symbols;
-        this.p = new LenientDoubleBitsFromCharSequence(symbols);
+        this.pCharSequence = new LenientDoubleBitsFromCharSequence(symbols);
+        this.pString = new LenientDoubleBitsFromString(symbols);
     }
 
     public LenientDoubleParser(DecimalFormatSymbols symbols) {
@@ -33,11 +35,19 @@ public class LenientDoubleParser {
         this(NumberFormatSymbols.fromDefault());
     }
 
+    public double parseDouble(String str) {
+        return Double.longBitsToDouble(pString.parseFloatingPointLiteral((String) str, 0, str.length()));
+    }
+
+    public double parseDouble(String str, int offset, int length) {
+        return Double.longBitsToDouble(pString.parseFloatingPointLiteral((String) str, offset, length));
+    }
+
     public double parseDouble(CharSequence str) {
-        return Double.longBitsToDouble(p.parseFloatingPointLiteral((String) str, 0, str.length()));
+        return Double.longBitsToDouble(pCharSequence.parseFloatingPointLiteral((String) str, 0, str.length()));
     }
 
     public double parseDouble(CharSequence str, int offset, int length) {
-        return Double.longBitsToDouble(p.parseFloatingPointLiteral((String) str, offset, length));
+        return Double.longBitsToDouble(pCharSequence.parseFloatingPointLiteral((String) str, offset, length));
     }
 }
