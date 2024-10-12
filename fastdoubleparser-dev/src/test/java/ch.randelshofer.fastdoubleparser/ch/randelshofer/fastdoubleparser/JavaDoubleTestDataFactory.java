@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractJavaDoubleParserTest.java
+ * @(#)JavaDoubleTestDataFactory.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -9,10 +9,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValueParserTest {
-    protected final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalClingerInputClasses;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalLimits;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleHexadecimalClingerInputClasses;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleHexadecimalLimits;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForSignificandDigitsInputClasses;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataWithVeryLongInputStrings;
 
-    protected List<NumberTestData> createTestDataForNaN() {
+public abstract class JavaDoubleTestDataFactory {
+
+
+    public static List<NumberTestData> createTestDataForNaN() {
         return Arrays.asList(
                 new NumberTestData("NaN", Double.NaN),
                 new NumberTestData("+NaN", Double.NaN),
@@ -26,7 +33,7 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    protected List<NumberTestData> createTestDataForInfinity() {
+    public static List<NumberTestData> createTestDataForInfinity() {
         return Arrays.asList(
                 new NumberTestData("Infinity", Double.POSITIVE_INFINITY),
                 new NumberTestData("+Infinity", Double.POSITIVE_INFINITY),
@@ -44,7 +51,7 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
     /**
      * ALl these strings must throw a {@link java.lang.NumberFormatException}.
      */
-    protected List<NumberTestData> createDataForBadStrings() {
+    public static List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
                 new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("+"),
@@ -74,7 +81,33 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    protected List<NumberTestData> createDataForLegalDecStrings() {
+    public static List<NumberTestData> createDataForLegalDecStringsWithFloatTypeSuffix() {
+        return Arrays.asList(
+                new NumberTestData("FloatTypeSuffix", "1d", 1),
+                new NumberTestData("FloatTypeSuffix", "1.2d", 1.2),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3d", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3d", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3d", 1.2e-3),
+
+                new NumberTestData("FloatTypeSuffix", "1D", 1),
+                new NumberTestData("FloatTypeSuffix", "1.2D", 1.2),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3D", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3D", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3D", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1f", 1),
+                new NumberTestData("FloatTypeSuffix", "1.2f", 1.2),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3f", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3f", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3f", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1F", 1),
+                new NumberTestData("FloatTypeSuffix", "1.2F", 1.2),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3F", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2E-3F", 1.2e-3),
+                new NumberTestData("FloatTypeSuffix", "1.2e-3F", 1.2e-3)
+        );
+    }
+
+    public static List<NumberTestData> createDataForLegalDecStrings() {
         return Arrays.asList(
                 new NumberTestData("0", 0),
                 new NumberTestData("00", 0),
@@ -100,27 +133,6 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
                 new NumberTestData("1.2E-3", 1.2e-3),
                 new NumberTestData("1.2e-3", 1.2e-3),
 
-                new NumberTestData("FloatTypeSuffix", "1d", 1),
-                new NumberTestData("FloatTypeSuffix", "1.2d", 1.2),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3d", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3d", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3d", 1.2e-3),
-
-                new NumberTestData("FloatTypeSuffix", "1D", 1),
-                new NumberTestData("FloatTypeSuffix", "1.2D", 1.2),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3D", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3D", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3D", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1f", 1),
-                new NumberTestData("FloatTypeSuffix", "1.2f", 1.2),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3f", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3f", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3f", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1F", 1),
-                new NumberTestData("FloatTypeSuffix", "1.2F", 1.2),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3F", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2E-3F", 1.2e-3),
-                new NumberTestData("FloatTypeSuffix", "1.2e-3F", 1.2e-3),
 
                 new NumberTestData("1", 1),
                 new NumberTestData("1.2", 1.2),
@@ -142,7 +154,7 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    protected List<NumberTestData> createDataForLegalHexStrings() {
+    public static List<NumberTestData> createDataForLegalHexStrings() {
         return Arrays.asList(
                 new NumberTestData("0xap2", 0xap2),
 
@@ -169,7 +181,7 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    protected List<NumberTestData> createDataForIllegalHexStrings() {
+    public static List<NumberTestData> createDataForIllegalHexStrings() {
         return Arrays.asList(
                 new NumberTestData("0xäp2"),
                 new NumberTestData("0x/äp2"),
@@ -179,7 +191,46 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    protected List<NumberTestData> createFloatTestDataForInputClassesInMethodParseFloatValue() {
+    public static List<NumberTestData> createFloatTestDataForInputClassesInMethodParseFloatValueWithFloatTypeSuffix() {
+        return Arrays.asList(
+                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'd': 1.2e3d", "1.2e3d", 0, 6, 0, 6, 1.2e3),
+                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'd' + whitespace: 1.2e3d ", "1.2e3d ", 0, 7, 0, 7, 1.2e3),
+                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'D': 1.2D", "1.2D", 0, 4, 0, 4, 1.2),
+                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'f': 1f", "1f", 0, 2, 0, 2, 1d),
+                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'F': -1.2e-3F", "-1.2e-3F", 0, 8, 0, 8, -1.2e-3),
+                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'd': 0x1.2p3d", "0x1.2p3d", 0, 8, 0, 8, 0x1.2p3d),
+                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'd' + whitespace: 0x1.2p3d ", "0x1.2p3d ", 0, 9, 0, 9, 0x1.2p3d),
+                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'D': 0x1.2p3D", "0x1.2p3D", 0, 8, 0, 8, 0x1.2p3d),
+                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'f': 0x1.2p3f", "0x1.2p3f", 0, 8, 0, 8, 0x1.2p3d),
+                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'F': 0x1.2p3F", "0x1.2p3F", 0, 8, 0, 8, 0x1.2p3d)
+        );
+    }
+
+    public static List<NumberTestData> createFloatTestDataForInputClassesInMethodParseFloatValueHex() {
+        return Arrays.asList(
+                new NumberTestData("parseHexFloatLiteral(): With decimal point", "0x3.", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): No digits with decimal point", "0x.", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): Without decimal point", "0X3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 7 digits after decimal point", "0x3.1234567", 0, 11, 0, 11, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 8 digits after decimal point", "0X3.12345678", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 9 digits after decimal point", "0x3.123456789", 0, 13, 0, 13, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): 1 digit + 7 chars after decimal point", "0X3.1abcdefg", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'p' at end", "0X3p", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'P' at end", "0x3P", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'p' + whitespace at end", "0X3p   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'P' + whitespace  at end", "0x3P   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'p+' at end", "0X3p+", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'P-' at end", "0x3P-", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 'p+9' at end", "0X3p+9", 0, 6, 0, 6, 0X3p+9),
+                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits", "0x12345678901234567890p0", 0, 24, 0, 24, 0x12345678901234567890p0),
+                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits + non-ascii char", "0x12345678901234567890￡p0", 0, 25, 0, 25, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits with decimal point", "0x1234567890.1234567890P0", 0, 25, 0, 25, 0x1234567890.1234567890P0),
+                new NumberTestData("parseHexFloatLiteral(): With illegal FloatTypeSuffix 'z': 0x1.2p3z", "0x1.2p3z", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
+
+        );
+    }
+
+    public static List<NumberTestData> createFloatTestDataForInputClassesInMethodParseFloatValue() {
         return Arrays.asList(
                 new NumberTestData("parseFloatValue(): charOffset too small", "3.14", -1, 4, -1, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("parseFloatValue(): charOffset too big", "3.14", 8, 4, 8, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
@@ -221,47 +272,24 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
                 new NumberTestData("parseDecFloatLiteral(): With 20 significand digits + non-ascii char", "12345678901234567890￡", 0, 21, 0, 21, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseDecFloatLiteral(): With 20 significand digits with decimal point", "1234567890.1234567890", 0, 21, 0, 21, 1234567890.1234567890),
                 new NumberTestData("parseDecFloatLiteral(): With illegal FloatTypeSuffix 'z': 1.2e3z", "1.2e3z", 0, 6, 0, 6, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'd': 1.2e3d", "1.2e3d", 0, 6, 0, 6, 1.2e3),
-                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'd' + whitespace: 1.2e3d ", "1.2e3d ", 0, 7, 0, 7, 1.2e3),
-                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'D': 1.2D", "1.2D", 0, 4, 0, 4, 1.2),
-                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'f': 1f", "1f", 0, 2, 0, 2, 1d),
-                new NumberTestData("parseDecFloatLiteral(): With FloatTypeSuffix 'F': -1.2e-3F", "-1.2e-3F", 0, 8, 0, 8, -1.2e-3),
-                new NumberTestData("parseDecFloatLiteral(): No digits+whitespace+'z'", ". z", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
+                new NumberTestData("parseDecFloatLiteral(): No digits+whitespace+'z'", ". z", 0, 2, 0, 2, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)
 
-                new NumberTestData("parseHexFloatLiteral(): With decimal point", "0x3.", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): No digits with decimal point", "0x.", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): Without decimal point", "0X3", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): 7 digits after decimal point", "0x3.1234567", 0, 11, 0, 11, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): 8 digits after decimal point", "0X3.12345678", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): 9 digits after decimal point", "0x3.123456789", 0, 13, 0, 13, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): 1 digit + 7 chars after decimal point", "0X3.1abcdefg", 0, 12, 0, 12, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 'p' at end", "0X3p", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 'P' at end", "0x3P", 0, 4, 0, 4, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 'p' + whitespace at end", "0X3p   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 'P' + whitespace  at end", "0x3P   ", 0, 7, 0, 7, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 'p+' at end", "0X3p+", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 'P-' at end", "0x3P-", 0, 5, 0, 5, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 'p+9' at end", "0X3p+9", 0, 6, 0, 6, 0X3p+9),
-                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits", "0x12345678901234567890p0", 0, 24, 0, 24, 0x12345678901234567890p0),
-                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits + non-ascii char", "0x12345678901234567890￡p0", 0, 25, 0, 25, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With 20 significand digits with decimal point", "0x1234567890.1234567890P0", 0, 25, 0, 25, 0x1234567890.1234567890P0),
-                new NumberTestData("parseHexFloatLiteral(): With illegal FloatTypeSuffix 'z': 0x1.2p3z", "0x1.2p3z", 0, 8, 0, 8, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
-                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'd': 0x1.2p3d", "0x1.2p3d", 0, 8, 0, 8, 0x1.2p3d),
-                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'd' + whitespace: 0x1.2p3d ", "0x1.2p3d ", 0, 9, 0, 9, 0x1.2p3d),
-                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'D': 0x1.2p3D", "0x1.2p3D", 0, 8, 0, 8, 0x1.2p3d),
-                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'f': 0x1.2p3f", "0x1.2p3f", 0, 8, 0, 8, 0x1.2p3d),
-                new NumberTestData("parseHexFloatLiteral(): With FloatTypeSuffix 'F': 0x1.2p3F", "0x1.2p3F", 0, 8, 0, 8, 0x1.2p3d)
         );
     }
 
-    protected List<NumberTestData> createDataForLegalCroppedStrings() {
+    public static List<NumberTestData> createDataForLegalCroppedStrings() {
         return Arrays.asList(
-                new NumberTestData("x1y", 1d, 1, 1),
+                new NumberTestData("x1y", 1d, 1, 1)
+        );
+    }
+
+    public static List<NumberTestData> createDataForLegalCroppedStringsHex() {
+        return Arrays.asList(
                 new NumberTestData("xx-0x1p2yyy", -0x1p2d, 2, 6)
         );
     }
 
-    List<NumberTestData> createRegularDoubleTestData() {
+    public static List<NumberTestData> createRegularDoubleTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());
@@ -269,21 +297,24 @@ public abstract class AbstractJavaDoubleParserTest extends AbstractFloatValuePar
         list.addAll(createDataForDoubleHexadecimalLimits());
         list.addAll(createDataForBadStrings());
         list.addAll(createDataForLegalDecStrings());
+        list.addAll(createDataForLegalDecStringsWithFloatTypeSuffix());
         list.addAll(createDataForLegalHexStrings());
         list.addAll(createDataForIllegalHexStrings());
         list.addAll(createDataForDoubleDecimalClingerInputClasses());
         list.addAll(createDataForDoubleHexadecimalClingerInputClasses());
         list.addAll(createDataForLegalCroppedStrings());
+        list.addAll(createDataForLegalCroppedStringsHex());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
+        list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValueHex());
+        list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValueWithFloatTypeSuffix());
         list.addAll(createDataForSignificandDigitsInputClasses());
         return list;
     }
 
-    Stream<NumberTestData> createLongRunningDoubleTestData() {
+    public static Stream<NumberTestData> createLongRunningDoubleTestData() {
         Stream<NumberTestData> s = Stream.empty();
-        if (longRunningTests) {
-            s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
-        }
+
+        s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
         return s;
     }
 }

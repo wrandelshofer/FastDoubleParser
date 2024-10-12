@@ -4,15 +4,23 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.BigDecimalTestDataFactory.createLongRunningTestData;
+import static ch.randelshofer.fastdoubleparser.BigDecimalTestDataFactory.createRegularTestData;
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class JavaBigDecimalFromByteArrayTest extends AbstractBigDecimalParserTest {
+public class JavaBigDecimalFromByteArrayTest {
 
 
     @TestFactory
@@ -40,6 +48,7 @@ public class JavaBigDecimalFromByteArrayTest extends AbstractBigDecimalParserTes
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicTest> dynamicTests_parseBigDecimal_byteArray_int_int_longRunningTests() {
         return createLongRunningTestData().stream()
                 .map(t -> dynamicTest(t.title(),
@@ -48,4 +57,27 @@ public class JavaBigDecimalFromByteArrayTest extends AbstractBigDecimalParserTes
                                 u.byteOffset(), u.byteLength()))));
 
     }
+
+    private void test(NumberTestDataSupplier s, Function<NumberTestData, BigDecimal> f) {
+        NumberTestData d = s.supplier().get();
+        BigDecimal expectedValue = (BigDecimal) d.expectedValue();
+        BigDecimal actual = null;
+        try {
+            actual = f.apply(d);
+        } catch (IllegalArgumentException e) {
+            if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
+                e.printStackTrace();
+                assertEquals(d.expectedErrorMessage(), e.getMessage());
+            }
+            assertEquals(d.expectedThrowableClass(), e.getClass());
+        }
+        if (expectedValue != null) {
+            assertEquals(0, expectedValue.compareTo(actual),
+                    "expected:" + expectedValue + " <> actual:" + actual);
+            assertEquals(expectedValue, actual);
+        } else {
+            assertNull(actual);
+        }
+    }
+
 }

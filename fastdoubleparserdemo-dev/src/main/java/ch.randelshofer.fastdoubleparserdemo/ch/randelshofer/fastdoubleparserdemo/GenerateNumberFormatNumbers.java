@@ -1,0 +1,60 @@
+/*
+ * @(#)GenerateNumberFormatNumbers.java
+ * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
+ */
+package ch.randelshofer.fastdoubleparserdemo;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.NumberFormat;
+import java.util.Locale;
+import java.util.random.RandomGenerator;
+
+/**
+ * Generate random numbers in a gamma corrected random number distribution function.
+ */
+public class GenerateNumberFormatNumbers {
+    private double gammaCorrection(double value, double invGamma) {
+        return Math.pow(value, invGamma);
+    }
+
+    public void generate(Path path, NumberFormat f, double range, int size, double gamma) throws IOException {
+        RandomGenerator rng = RandomGenerator.getDefault();
+        double invGamma = 1 / gamma;
+        try (var w = Files.newBufferedWriter(path)) {
+            rng.doubles(size)
+                    .map(v -> gammaCorrection(v, invGamma))
+                    .map(v -> v * range)
+                    .map(v -> (Double.doubleToRawLongBits(v) & 1) == 1 ? -v : v)
+                    .forEach(v -> {
+                                try {
+                                    w.write(f.format(v));
+                                    w.newLine();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                    );
+            /*
+            w.write(f.format(Double.NaN));
+            w.newLine();
+            w.write(f.format(Double.POSITIVE_INFINITY));
+            w.newLine();
+            w.write(f.format(Double.NEGATIVE_INFINITY));
+            w.newLine();
+             */
+        }
+    }
+
+    public static void main(String... args) throws IOException {
+        Locale locale = Locale.of("de", "CH");
+        NumberFormat f = NumberFormat.getNumberInstance(locale);
+        double range = 1e9;
+        int size = 100_000;
+        double gamma = 0.2;
+        Path path = Paths.get("fastdoubleparserdemo/data/formatted_" + locale.toLanguageTag() + ".txt").toAbsolutePath();
+        new GenerateNumberFormatNumbers().generate(path, f, range, size, gamma);
+    }
+}

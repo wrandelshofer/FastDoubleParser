@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractBigIntegerParserTest.java
+ * @(#)BigIntegerTestDataFactory.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -18,8 +18,13 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class AbstractBigIntegerParserTest {
-    private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
+/**
+ * Factory for String data and their expected {@link BigInteger} value.
+ */
+public abstract class BigIntegerTestDataFactory {
+    private BigIntegerTestDataFactory() {
+
+    }
 
     public static BigInteger createBigIntegerMaxValue() {
         byte[] bytes = new byte[Integer.MAX_VALUE / 8 + 1];
@@ -44,7 +49,7 @@ public abstract class AbstractBigIntegerParserTest {
         }
     }
 
-    protected void test(NumberTestDataSupplier s, Function<NumberTestData, BigInteger> f) {
+    public static void test(NumberTestDataSupplier s, Function<NumberTestData, BigInteger> f) {
         NumberTestData d = s.supplier().get();
         BigInteger expectedValue = (BigInteger) d.expectedValue();
         BigInteger actual = null;
@@ -68,7 +73,7 @@ public abstract class AbstractBigIntegerParserTest {
         }
     }
 
-    protected List<NumberTestDataSupplier> createDataForLegalRadixStrings() {
+    public static List<NumberTestDataSupplier> createDataForLegalRadixStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("1, radix 2", () -> new NumberTestData("1, radix 2", "1", 2, new BigInteger("1", 2))),
                 new NumberTestDataSupplier("2, radix 3", () -> new NumberTestData("2, radix 3", "2", 3, new BigInteger("2", 3))),
@@ -108,7 +113,7 @@ public abstract class AbstractBigIntegerParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForIllegalRadixStrings() {
+    public static List<NumberTestDataSupplier> createDataForIllegalRadixStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("1, radix 1", () -> new NumberTestData("1, radix 1", "1", 1, "*", NumberFormatException.class)),
                 new NumberTestDataSupplier("2, radix 2", () -> new NumberTestData("2, radix 2", "2", 2, "*", NumberFormatException.class)),
@@ -158,7 +163,7 @@ public abstract class AbstractBigIntegerParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForLegalHexStrings() {
+    public static List<NumberTestDataSupplier> createDataForLegalHexStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("0", () -> new NumberTestData("0", 16, BigInteger.ZERO)),
                 new NumberTestDataSupplier("1", () -> new NumberTestData("1", 16, BigInteger.ONE)),
@@ -189,7 +194,7 @@ public abstract class AbstractBigIntegerParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForIllegalStrings() {
+    public static List<NumberTestDataSupplier> createDataForIllegalStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("AAAA", () -> new NumberTestData("AAAA", "AAAA", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
                 new NumberTestDataSupplier("A**1500", () -> new NumberTestData("A**1500", new VirtualCharSequence('A', 1500), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
@@ -198,7 +203,7 @@ public abstract class AbstractBigIntegerParserTest {
     }
 
 
-    protected List<NumberTestDataSupplier> createDataForLegalDecStrings() {
+    public static List<NumberTestDataSupplier> createDataForLegalDecStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("0", () -> new NumberTestData("0", BigInteger.ZERO)),
                 new NumberTestDataSupplier("1", () -> new NumberTestData("1", BigInteger.ONE)),
@@ -233,7 +238,7 @@ public abstract class AbstractBigIntegerParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForVeryLongDecStrings() {
+    public static List<NumberTestDataSupplier> createDataForVeryLongDecStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("'0' ** 1292782622", () -> new NumberTestData(new VirtualCharSequence('0', 1_292_782_621 + 1), BigInteger.ZERO)),
                 new NumberTestDataSupplier("'9' ** 1292782622", () -> new NumberTestData(new VirtualCharSequence('9', 1_292_782_621 + 1), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class)),
@@ -247,13 +252,13 @@ public abstract class AbstractBigIntegerParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForVeryLongHexStrings() {
+    public static List<NumberTestDataSupplier> createDataForVeryLongHexStrings() {
         return Arrays.asList(
         );
     }
 
 
-    List<NumberTestDataSupplier> createTestData() {
+    public static List<NumberTestDataSupplier> createTestData() {
         List<NumberTestDataSupplier> list = new ArrayList<>();
         list.addAll(createDataForIllegalStrings());
         list.addAll(createDataForLegalDecStrings());
@@ -263,12 +268,10 @@ public abstract class AbstractBigIntegerParserTest {
         return list;
     }
 
-    List<NumberTestDataSupplier> createLongRunningTestData() {
+    public static List<NumberTestDataSupplier> createLongRunningTestData() {
         List<NumberTestDataSupplier> list = new ArrayList<>();
-        if (longRunningTests) {
             list.addAll(createDataForVeryLongDecStrings());
             list.addAll(createDataForVeryLongHexStrings());
-        }
         return list;
     }
 

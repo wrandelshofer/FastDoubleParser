@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractJavaFloatParserTest.java
+ * @(#)JavaFloatTestDataFactory.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -9,10 +9,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class AbstractJavaFloatParserTest extends AbstractFloatValueParserTest {
-    protected final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForFloatDecimalClingerInputClasses;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForFloatDecimalLimits;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForFloatHexadecimalClingerInputClasses;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForFloatHexadecimalLimits;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForSignificandDigitsInputClasses;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataWithVeryLongInputStrings;
 
-    protected List<NumberTestData> createTestDataForNaN() {
+public abstract class JavaFloatTestDataFactory {
+
+
+    public static List<NumberTestData> createTestDataForNaN() {
         return Arrays.asList(
                 new NumberTestData("NaN", Double.NaN),
                 new NumberTestData("+NaN", Double.NaN),
@@ -26,7 +33,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         );
     }
 
-    protected List<NumberTestData> createTestDataForInfinity() {
+    public static List<NumberTestData> createTestDataForInfinity() {
         return Arrays.asList(
                 new NumberTestData("Infinity", Double.POSITIVE_INFINITY),
                 new NumberTestData("+Infinity", Double.POSITIVE_INFINITY),
@@ -44,7 +51,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
     /**
      * ALl these strings must throw a {@link NumberFormatException}.
      */
-    protected List<NumberTestData> createDataForBadStrings() {
+    public static List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
                 new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("+"),
@@ -74,7 +81,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         );
     }
 
-    protected List<NumberTestData> createDataForLegalDecStrings() {
+    public static List<NumberTestData> createDataForLegalDecStrings() {
         return Arrays.asList(
                 new NumberTestData("0", 0f),
                 new NumberTestData("00", 0f),
@@ -142,7 +149,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         );
     }
 
-    protected List<NumberTestData> createDataForLegalHexStrings() {
+    public static List<NumberTestData> createDataForLegalHexStrings() {
         return Arrays.asList(
                 new NumberTestData("0xap2", 0xap2f),
 
@@ -168,7 +175,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         );
     }
 
-    protected List<NumberTestData> createDataForIllegalHexStrings() {
+    public static List<NumberTestData> createDataForIllegalHexStrings() {
         return Arrays.asList(
                 new NumberTestData("0xäp2"),
                 new NumberTestData("0x/äp2"),
@@ -178,7 +185,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         );
     }
 
-    protected List<NumberTestData> createFloatTestDataForInputClassesInMethodParseFloatValue() {
+    public static List<NumberTestData> createFloatTestDataForInputClassesInMethodParseFloatValue() {
         return Arrays.asList(
                 new NumberTestData("parseFloatValue(): charOffset too small", "3.14", -1, 4, -1, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("parseFloatValue(): charOffset too big", "3.14", 8, 4, 8, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
@@ -253,7 +260,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         );
     }
 
-    protected List<NumberTestData> createDataForLegalCroppedStrings() {
+    public static List<NumberTestData> createDataForLegalCroppedStrings() {
         return Arrays.asList(
                 new NumberTestData("x1y", 1d, 1, 1),
                 new NumberTestData("xx-0x1p2yyy", -0x1p2f, 2, 6)
@@ -261,7 +268,7 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
     }
 
 
-    List<NumberTestData> createRegularFloatTestData() {
+    public static List<NumberTestData> createRegularFloatTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createTestDataForInfinity());
         list.addAll(createTestDataForNaN());
@@ -279,11 +286,10 @@ public abstract class AbstractJavaFloatParserTest extends AbstractFloatValuePars
         return list;
     }
 
-    Stream<NumberTestData> createLongRunningFloatTestData() {
+    public static Stream<NumberTestData> createLongRunningFloatTestData() {
         Stream<NumberTestData> s = Stream.empty();
-        if (longRunningTests) {
-            s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
-        }
+
+        s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
         return s;
     }
 

@@ -9,8 +9,8 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
-    @Override
+public class EarlyAccessEightDigitsVectorTest {
+
     void testDec(String s, int offset, int expected) {
         char[] chars = s.toCharArray();
 
@@ -57,7 +57,7 @@ public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
         assertEquals(expected, actual);
     }
 
-    @Override
+
     void testHex(String s, int offset, long expected) {
         char[] chars = s.toCharArray();
         long actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(chars, offset);
@@ -86,7 +86,7 @@ public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
         testHex(s.getBytes(StandardCharsets.UTF_8), offset, expected);
     }
 
-    @Override
+
     void testHex(byte[] b, int offset, long expected) {
         long actual = FastDoubleVector.tryToParseEightHexDigitsUtf8(b, offset);
         if (expected < 0) {
@@ -96,7 +96,7 @@ public class EarlyAccessEightDigitsVectorTest extends AbstractEightDigitsTest {
         }
     }
 
-    @Override
+
     void testHex(char[] b, int offset, long expected) {
         long actual = FastDoubleVector.tryToParseEightHexDigitsUtf16(b, offset);
         if (expected < 0) {

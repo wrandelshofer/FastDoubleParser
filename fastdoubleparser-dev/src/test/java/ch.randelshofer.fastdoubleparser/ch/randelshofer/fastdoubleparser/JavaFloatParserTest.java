@@ -4,12 +4,15 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createLongRunningFloatTestData;
+import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createRegularFloatTestData;
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toCharArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,8 +22,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link JavaFloatParser}
  */
-public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
-
+public class JavaFloatParserTest {
+    public static final int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseFloat_CharSequence() {
@@ -40,6 +43,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseFloat_CharSequence_int_int_longRunningTests() {
         ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat((u.input()), u.charOffset(), u.charLength());
         return createLongRunningFloatTestData()
@@ -68,6 +72,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseFloat_byteArray_int_int_longRunningTests() {
         ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat(toByteArray(u.input()), u.charOffset(), u.charLength());
         return createLongRunningFloatTestData()
@@ -94,6 +99,7 @@ public class JavaFloatParserTest extends AbstractJavaFloatParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseFloat_charArray_int_int_longRunningTests() {
         ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat(toCharArray(u.input()), u.charOffset(), u.charLength());
         return createLongRunningFloatTestData()

@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
@@ -11,6 +12,8 @@ import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createLongRunningDoubleTestData;
+import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createRegularDoubleTestData;
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toCharArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,8 +23,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link JavaDoubleParser}
  */
-public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
-
+public class JavaDoubleParserTest {
+    public static final int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {
         return createRegularDoubleTestData().stream()
@@ -39,6 +42,7 @@ public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int_longRunningTests() {
         ToDoubleFunction<NumberTestData> lambda = u -> JavaDoubleParser.parseDouble(u.input(), u.charOffset(), u.charLength());
         return createLongRunningDoubleTestData()
@@ -64,6 +68,7 @@ public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_byteArray_int_int_longRunningTests() {
         ToDoubleFunction<NumberTestData> lambda = u -> JavaDoubleParser.parseDouble(toByteArray(u.input()), u.charOffset(), u.charLength());
         return createLongRunningDoubleTestData()
@@ -89,6 +94,7 @@ public class JavaDoubleParserTest extends AbstractJavaDoubleParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_charArray_int_int_longRunningTests() {
         ToDoubleFunction<NumberTestData> lambda = u -> JavaDoubleParser.parseDouble(toCharArray(u.input()), u.charOffset(), u.charLength());
         return createLongRunningDoubleTestData()

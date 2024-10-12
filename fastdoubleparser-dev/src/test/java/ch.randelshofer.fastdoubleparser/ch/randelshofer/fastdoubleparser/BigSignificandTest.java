@@ -10,6 +10,9 @@ import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Unit tests for {@link BigSignificand}.
+ */
 public class BigSignificandTest {
     @Test
     public void shouldAddValuesThatExceedIntValueRange() {

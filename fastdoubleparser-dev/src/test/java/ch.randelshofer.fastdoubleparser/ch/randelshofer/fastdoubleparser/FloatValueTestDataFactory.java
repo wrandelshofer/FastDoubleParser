@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractFloatValueParserTest.java
+ * @(#)FloatValueTestDataFactory.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -7,10 +7,9 @@ package ch.randelshofer.fastdoubleparser;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractFloatValueParserTest {
-    protected boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
+public abstract class FloatValueTestDataFactory {
 
-    protected List<NumberTestData> createDataForDoubleDecimalLimits() {
+    public static List<NumberTestData> createDataForDoubleDecimalLimits() {
         return Arrays.asList(
                 new NumberTestData("Double Dec Limit a", Double.toString(Double.MIN_VALUE), Double.MIN_VALUE),
                 new NumberTestData("Double Dec Limit b", Double.toString(Double.MAX_VALUE), Double.MAX_VALUE),
@@ -19,7 +18,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForFloatDecimalLimits() {
+    public static List<NumberTestData> createDataForFloatDecimalLimits() {
         return Arrays.asList(
                 new NumberTestData("Float Dec Limit a", Float.toString(Float.MIN_VALUE), Float.MIN_VALUE),
                 new NumberTestData("Float Dec Limit b", Float.toString(Float.MAX_VALUE), Float.MAX_VALUE),
@@ -28,7 +27,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForDoubleHexadecimalLimits() {
+    public static List<NumberTestData> createDataForDoubleHexadecimalLimits() {
         return Arrays.asList(
                 new NumberTestData("Double Hex Limit a", Double.toHexString(Double.MIN_VALUE), Double.MIN_VALUE),
                 new NumberTestData("Double Hex Limit b", Double.toHexString(Double.MAX_VALUE), Double.MAX_VALUE),
@@ -37,7 +36,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForFloatHexadecimalLimits() {
+    public static List<NumberTestData> createDataForFloatHexadecimalLimits() {
         return Arrays.asList(
                 new NumberTestData("Float Hex Limit", Float.toHexString(Float.MIN_VALUE), Float.MIN_VALUE),
                 new NumberTestData("Float Hex Limit", Float.toHexString(Float.MAX_VALUE), Float.MAX_VALUE),
@@ -46,7 +45,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForDoubleDecimalClingerInputClasses() {
+    public static List<NumberTestData> createDataForDoubleDecimalClingerInputClasses() {
         return Arrays.asList(
                 new NumberTestData("Dec Double: Inside Clinger fast path \"1000000000000000000e-325\")", "1000000000000000000e-325", 1000000000000000000e-325d),
                 new NumberTestData("Dec Double: Inside Clinger fast path (max_clinger_significand, max_clinger_exponent)", "9007199254740991e22", 9007199254740991e22d),
@@ -65,7 +64,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForFloatDecimalClingerInputClasses() {
+    public static List<NumberTestData> createDataForFloatDecimalClingerInputClasses() {
         return Arrays.asList(
                 new NumberTestData("Dec Float: Inside Clinger fast path \"1000000000000000000e-45f\")", "1000000000000000000e-45f", 1000000000000000000e-45f),
                 new NumberTestData("Dec Float: Inside Clinger fast path (max_clinger_significand, max_clinger_exponent)", "274877906943e22", 274877906943e22f),
@@ -82,7 +81,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForDoubleHexadecimalClingerInputClasses() {
+    public static List<NumberTestData> createDataForDoubleHexadecimalClingerInputClasses() {
         return Arrays.asList(
                 new NumberTestData("Hex Double: Inside Clinger fast path (max_clinger_significand)", "0x1fffffffffffffp74", 0x1fffffffffffffp74),
                 new NumberTestData("Hex Double: Inside Clinger fast path (max_clinger_significand), negative", "-0x1fffffffffffffp74", -0x1fffffffffffffp74),
@@ -93,7 +92,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForFloatHexadecimalClingerInputClasses() {
+    public static List<NumberTestData> createDataForFloatHexadecimalClingerInputClasses() {
         return Arrays.asList(
                 new NumberTestData("Hex Float: Inside Clinger fast path (max_clinger_significand)", "0x3FFFFFFFFFp74", 0x3FFFFFFFFFp74f),
                 new NumberTestData("Hex Float: Inside Clinger fast path (max_clinger_significand), negative", "-0x3FFFFFFFFFp74", -0x3FFFFFFFFFp74f),
@@ -104,7 +103,7 @@ public abstract class AbstractFloatValueParserTest {
         );
     }
 
-    protected List<NumberTestData> createDataForSignificandDigitsInputClasses() {
+    public static List<NumberTestData> createDataForSignificandDigitsInputClasses() {
         return Arrays.asList(
                 // In the worst case, we must consider up to 768 digits in the significand
                 new NumberTestData("Round Down due to value in 768-th digit",
@@ -117,7 +116,7 @@ public abstract class AbstractFloatValueParserTest {
     }
 
 
-    protected List<NumberTestData> createDataWithVeryLongInputStrings() {
+    public static List<NumberTestData> createDataWithVeryLongInputStrings() {
         return Arrays.asList(
                 new NumberTestData("too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 4), 0, Integer.MAX_VALUE - 3, 0, Integer.MAX_VALUE - 3, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("significand with maximal number of zero digits in integer part", new VirtualCharSequence('0', Integer.MAX_VALUE - 4), 0d),

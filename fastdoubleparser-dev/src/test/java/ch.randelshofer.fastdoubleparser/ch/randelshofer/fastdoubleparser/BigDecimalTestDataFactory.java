@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractBigDecimalParserTest.java
+ * @(#)BigDecimalTestDataFactory.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -9,19 +9,20 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 
 import static ch.randelshofer.fastdoubleparser.AbstractBigDecimalParser.RECURSION_THRESHOLD;
 import static ch.randelshofer.fastdoubleparser.Strings.repeat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
-public abstract class AbstractBigDecimalParserTest {
-    private final boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
+/**
+ * Factory for String data and their expected {@link BigDecimal} value.
+ */
+public class BigDecimalTestDataFactory {
+    private BigDecimalTestDataFactory() {
+
+    }
 
 
-    protected List<NumberTestDataSupplier> createDataForIllegalStrings() {
+    public static List<NumberTestDataSupplier> createDataForIllegalStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("NaN"),
                 new NumberTestDataSupplier("+NaN"),
@@ -102,7 +103,7 @@ public abstract class AbstractBigDecimalParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForLegalDecStrings() {
+    public static List<NumberTestDataSupplier> createDataForLegalDecStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("0", () -> new NumberTestData("0", new BigDecimal("0"))),
                 new NumberTestDataSupplier("00", () -> new NumberTestData("00", new BigDecimal("0"))),
@@ -147,20 +148,20 @@ public abstract class AbstractBigDecimalParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForLegalCroppedStrings() {
+    public static List<NumberTestDataSupplier> createDataForLegalCroppedStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("x1y", () -> new NumberTestData("x1y", BigDecimal.ONE, 1, 1)),
                 new NumberTestDataSupplier("xx+123e-456yyy", () -> new NumberTestData("xx+123e-456yyy", new BigDecimal("+123e-456"), 2, 9))
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForIllegalCroppedStrings() {
+    public static List<NumberTestDataSupplier> createDataForIllegalCroppedStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("xx-0x1p2yyy", () -> new NumberTestData("xx-0x1p2yyy", null, 2, 6, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class))
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataForBigDecimalLimits() {
+    public static List<NumberTestDataSupplier> createDataForBigDecimalLimits() {
         return Arrays.asList(
                 new NumberTestDataSupplier("BigDecimal Min Scale", () -> new NumberTestData("BigDecimal Min Scale",
                         BIG_DECIMAL_MIN_SCALE.toString(), BIG_DECIMAL_MIN_SCALE)),
@@ -178,7 +179,7 @@ public abstract class AbstractBigDecimalParserTest {
      *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalString(CharSequence, int, int)}</li>
      * </ul>
      */
-    protected List<NumberTestDataSupplier> createTestDataForInputClassesInMethodParseBigDecimalString() {
+    public static List<NumberTestDataSupplier> createTestDataForInputClassesInMethodParseBigDecimalString() {
         return Arrays.asList(
                 new NumberTestDataSupplier("many digits threshold", () -> new NumberTestData("many digits threshold", repeat(" ", 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
                 new NumberTestDataSupplier("not many digits threshold", () -> new NumberTestData("not many digits threshold", repeat(" ", 31), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
@@ -240,7 +241,7 @@ public abstract class AbstractBigDecimalParserTest {
      *     <li>{@link JavaBigDecimalFromCharSequence#parseBigDecimalStringWithManyDigits(CharSequence, int, int)}</li>
      * </ul>
      */
-    protected List<NumberTestDataSupplier> createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits() {
+    public static List<NumberTestDataSupplier> createTestDataForInputClassesInMethodParseBigDecimalStringWithManyDigits() {
         return Arrays.asList(
                 new NumberTestDataSupplier("illegal only negative sign", () -> new NumberTestData("-" + repeat('\000', 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
                 new NumberTestDataSupplier("illegal only positive sign", () -> new NumberTestData("+" + repeat('\000', 32), AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class)),
@@ -269,7 +270,7 @@ public abstract class AbstractBigDecimalParserTest {
      *     <li>{@link JavaBigDecimalFromCharSequence#valueOfBigDecimalString(CharSequence, int, int, int, int, boolean, int)}</li>
      * </ul>
      */
-    protected List<NumberTestDataSupplier> createTestDataForInputClassesInMethodValueOfBigDecimalString() {
+    public static List<NumberTestDataSupplier> createTestDataForInputClassesInMethodValueOfBigDecimalString() {
         return Arrays.asList(
                 new NumberTestDataSupplier("significand with " + (RECURSION_THRESHOLD) + " integer digits (below recursion threshold)", () -> new NumberTestData("significand with " + (RECURSION_THRESHOLD) + " integer digits (below recursion threshold)", new VirtualCharSequence('7', RECURSION_THRESHOLD), BigDecimal::new)),
                 new NumberTestDataSupplier("significand with " + (RECURSION_THRESHOLD + 1) + " integer digits (above recursion threshold)", () -> new NumberTestData("significand with " + (RECURSION_THRESHOLD + 1) + " integer digits (above recursion threshold)", new VirtualCharSequence('7', RECURSION_THRESHOLD + 1), BigDecimal::new)),
@@ -279,7 +280,7 @@ public abstract class AbstractBigDecimalParserTest {
         );
     }
 
-    protected List<NumberTestDataSupplier> createDataWithVeryLongInputStrings() {
+    public static List<NumberTestDataSupplier> createDataWithVeryLongInputStrings() {
         return Arrays.asList(
                 new NumberTestDataSupplier("significand too many input characters", () -> new NumberTestData("significand too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 3), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class)),
                 new NumberTestDataSupplier("significand too many non-zero digits", () -> new NumberTestData("significand too many non-zero digits", new VirtualCharSequence('1', 1_292_782_621 + 1), AbstractNumberParser.VALUE_EXCEEDS_LIMITS, NumberFormatException.class)),
@@ -296,7 +297,7 @@ public abstract class AbstractBigDecimalParserTest {
     private final static BigDecimal BIG_DECIMAL_MIN_SCALE = new BigDecimal(BigInteger.ONE, Integer.MIN_VALUE + 1);
     private final static BigDecimal BIG_DECIMAL_MAX_SCALE = new BigDecimal(BigInteger.ONE, Integer.MAX_VALUE);
 
-    List<NumberTestDataSupplier> createRegularTestData() {
+    public static List<NumberTestDataSupplier> createRegularTestData() {
         List<NumberTestDataSupplier> list = new ArrayList<>();
         list.addAll(createDataForBigDecimalLimits());
         list.addAll(createDataForIllegalStrings());
@@ -309,34 +310,11 @@ public abstract class AbstractBigDecimalParserTest {
         return list;
     }
 
-    List<NumberTestDataSupplier> createLongRunningTestData() {
+    public static List<NumberTestDataSupplier> createLongRunningTestData() {
         List<NumberTestDataSupplier> list = new ArrayList<>();
-        if (longRunningTests) {
-            list.addAll(createDataWithVeryLongInputStrings());
-        }
+        list.addAll(createDataWithVeryLongInputStrings());
         return list;
     }
 
 
-    protected void test(NumberTestDataSupplier s, Function<NumberTestData, BigDecimal> f) {
-        NumberTestData d = s.supplier().get();
-        BigDecimal expectedValue = (BigDecimal) d.expectedValue();
-        BigDecimal actual = null;
-        try {
-            actual = f.apply(d);
-        } catch (IllegalArgumentException e) {
-            if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
-                e.printStackTrace();
-                assertEquals(d.expectedErrorMessage(), e.getMessage());
-            }
-            assertEquals(d.expectedThrowableClass(), e.getClass());
-        }
-        if (expectedValue != null) {
-            assertEquals(0, expectedValue.compareTo(actual),
-                    "expected:" + expectedValue + " <> actual:" + actual);
-            assertEquals(expectedValue, actual);
-        } else {
-            assertNull(actual);
-        }
-    }
 }

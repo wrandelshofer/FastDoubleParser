@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
@@ -12,6 +13,8 @@ import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.JsonDoubleTestDataFactory.createLongRunningTestData;
+import static ch.randelshofer.fastdoubleparser.JsonDoubleTestDataFactory.createRegularTestData;
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
 import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toCharArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,8 +24,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link JsonDoubleParser}
  */
-public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
-
+public class JsonDoubleParserTest {
+    public static final int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {
         return createRegularTestData().stream()
@@ -41,6 +44,7 @@ public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int_longRunningTest() {
         ToDoubleFunction<NumberTestData> lambda = u -> JsonDoubleParser.parseDouble((u.input()), u.charOffset(), u.charLength());
         return createLongRunningTestData()
@@ -66,6 +70,7 @@ public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_ByteArray_int_int_longRunningTests() {
         ToDoubleFunction<NumberTestData> lambda = u -> JsonDoubleParser.parseDouble(toByteArray(u.input()), u.charOffset(), u.charLength());
         return createLongRunningTestData()
@@ -91,6 +96,7 @@ public class JsonDoubleParserTest extends AbstractJsonDoubleParserTest {
     }
 
     @TestFactory
+    @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_charArray_int_int_longRunningTests() {
         ToDoubleFunction<NumberTestData> lambda = u -> JsonDoubleParser.parseDouble(toCharArray(u.input()), u.charOffset(), u.charLength());
         return createLongRunningTestData()

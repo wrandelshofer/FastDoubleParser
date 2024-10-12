@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractJsonDoubleParserTest.java
+ * @(#)JsonDoubleTestDataFactory.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -9,10 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValueParserTest {
-    public final static int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalClingerInputClasses;
+import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalLimits;
 
-    protected List<NumberTestData> createDataForBadStrings() {
+public abstract class JsonDoubleTestDataFactory {
+
+    public static List<NumberTestData> createDataForBadStrings() {
         return Arrays.asList(
                 new NumberTestData("empty", "", AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("00"),
@@ -81,7 +83,7 @@ public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    protected List<NumberTestData> createDataForLegalDecStrings() {
+    public static List<NumberTestData> createDataForLegalDecStrings() {
         return Arrays.asList(
                 new NumberTestData("0", 0),
                 new NumberTestData("1", 1),
@@ -112,13 +114,13 @@ public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValuePar
     }
 
 
-    List<NumberTestData> createDataForLegalCroppedStrings() {
+    public static List<NumberTestData> createDataForLegalCroppedStrings() {
         return Arrays.asList(
                 new NumberTestData("x1y", 1d, 1, 1)
         );
     }
 
-    protected List<NumberTestData> createFloatTestDataForInputClassesInMethodParseNumber() {
+    public static List<NumberTestData> createFloatTestDataForInputClassesInMethodParseNumber() {
         return Arrays.asList(
                 new NumberTestData("parseNumber(): charOffset too small", "3.14", -1, 4, -1, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("parseNumber(): charOffset too big", "3.14", 8, 4, 8, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
@@ -166,7 +168,7 @@ public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValuePar
         );
     }
 
-    List<NumberTestData> createRegularTestData() {
+    public static List<NumberTestData> createRegularTestData() {
         List<NumberTestData> list = new ArrayList<>();
         list.addAll(createDataForDoubleDecimalLimits());
         list.addAll(createDataForBadStrings());
@@ -177,17 +179,15 @@ public abstract class AbstractJsonDoubleParserTest extends AbstractFloatValuePar
         return list;
     }
 
-    protected List<NumberTestData> createDataWithVeryLongInputStrings() {
+    public static List<NumberTestData> createDataWithVeryLongInputStrings() {
         return Arrays.asList(
                 new NumberTestData("too many input characters", new VirtualCharSequence('1', Integer.MAX_VALUE - 4), 0, Integer.MAX_VALUE - 3, 0, Integer.MAX_VALUE - 3, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class)
         );
     }
 
-    Stream<NumberTestData> createLongRunningTestData() {
+    public static Stream<NumberTestData> createLongRunningTestData() {
         Stream<NumberTestData> s = Stream.empty();
-        if (longRunningTests) {
-            s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
-        }
+        s = Stream.concat(s, createDataWithVeryLongInputStrings().stream());
         return s;
     }
 

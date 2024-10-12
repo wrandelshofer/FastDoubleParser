@@ -8,6 +8,7 @@ import ch.randelshofer.fastdoubleparser.JavaBigDecimalParser;
 import ch.randelshofer.fastdoubleparser.JavaDoubleParser;
 import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import ch.randelshofer.fastdoubleparser.JsonDoubleParser;
+import ch.randelshofer.fastdoubleparser.LenientDoubleParser;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,10 +16,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -93,7 +98,7 @@ public class Main {
     private String filename = null;
     private boolean markdown = false;
     private boolean sleep = false;
-
+    private Locale locale = Locale.ENGLISH;
     private boolean printConfidence = false;
 
     public static void main(String... args) throws Exception {
@@ -111,6 +116,9 @@ public class Main {
             case "--print-confidence":
                 benchmark.printConfidence = true;
                 break;
+                case "--locale":
+                    benchmark.locale = Locale.forLanguageTag(args[++i]);
+                    break;
             default:
                 benchmark.filename = args[i];
                 break;
@@ -136,6 +144,7 @@ public class Main {
                 new BenchmarkFunction("java.lang.Double", "java.lang.Double", () -> sumJavaLangDouble(lines)),
                 new BenchmarkFunction("java.lang.Float", "java.lang.Float", () -> sumJavaLangFloat(lines)),
                 new BenchmarkFunction("java.math.BigDecimal", "java.math.BigDecimal", () -> sumJavaLangBigDecimal(lines)),
+                new BenchmarkFunction("java.text.NumberFormat", "java.text.NumberFormat", () -> sumJavaTextNumberFormat(lines, locale)),
 
                 new BenchmarkFunction("JavaDoubleParser String", "java.lang.Double", () -> sumFastDoubleFromCharSequence(lines)),
                 new BenchmarkFunction("JavaDoubleParser char[]", "java.lang.Double", () -> sumFastDoubleParserFromCharArray(charArrayLines)),
@@ -151,7 +160,8 @@ public class Main {
 
                 new BenchmarkFunction("JavaBigDecimalParser String", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharSequence(lines)),
                 new BenchmarkFunction("JavaBigDecimalParser char[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharArray(charArrayLines)),
-                new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines))
+                new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines)),
+                new BenchmarkFunction("LenientDoubleParser String", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -175,6 +185,13 @@ public class Main {
         List<String> lines = Files.lines(path).collect(Collectors.toList());
         System.out.printf("Read %d lines\n", lines.size());
         Map<String, BenchmarkFunction> validated = validate(lines);
+        System.out.println("sleeping...");
+        try {
+            Thread.sleep(5_000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("...sleeping done");
         process(lines, validated);
     }
 
@@ -346,6 +363,19 @@ public class Main {
         return answer;
     }
 
+    private double sumJavaTextNumberFormat(List<String> s, Locale locale) {
+        double answer = 0;
+        NumberFormat fmt = NumberFormat.getNumberInstance(locale);
+        ParsePosition pos = new ParsePosition(0);
+        for (String st : s) {
+            pos.setIndex(0);
+            double x = fmt.parse(st, pos).doubleValue();
+            answer += x;
+        }
+        return answer;
+    }
+
+
     private int sumFastBigDecimalFromCharSequence(List<String> s) {
         int answer = 0;
         for (String st : s) {
@@ -428,6 +458,16 @@ public class Main {
         return answer;
     }
 
+    private double sumLenientDoubleFromCharSequence(List<String> s) {
+        double answer = 0;
+        var p = new LenientDoubleParser(new DecimalFormat().getDecimalFormatSymbols());
+        for (String st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
+
     private float sumJavaLangFloat(List<String> s) {
         float answer = 0;
         for (String st : s) {
@@ -468,25 +508,7 @@ public class Main {
     private Map<String, BenchmarkFunction> validate(List<String> lines) {
         Map<String, BenchmarkFunction> map = createBenchmarkFunctions(lines);
 
-        Number expectedDoubleValue;
-        Number expectedFloatValue;
-        Number expectedBigDecimalValue;
-        try {
-            expectedDoubleValue = sumJavaLangDouble(lines);
-        } catch (NumberFormatException e) {
-            expectedDoubleValue = 0;
-        }
-        try {
-            expectedFloatValue = sumJavaLangFloat(lines);
-        } catch (NumberFormatException e) {
-            expectedFloatValue = 0;
-        }
-        try {
-            expectedBigDecimalValue = sumJavaLangBigDecimal(lines);
-        } catch (NumberFormatException e) {
-            expectedBigDecimalValue = 0;
-        }
-
+        Map<String, Number> results = new LinkedHashMap<>();
 
         for (Iterator<Map.Entry<String, BenchmarkFunction>> iterator = map.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, BenchmarkFunction> entry = iterator.next();
@@ -494,26 +516,25 @@ public class Main {
             try {
                 BenchmarkFunction function = entry.getValue();
                 Number actual = function.supplier.get();
-                if (actual instanceof Double) {
-                    if (!expectedDoubleValue.equals(actual)) {
-                        throw new NumberFormatException("expectedSum=" + expectedDoubleValue + " actualSum=" + actual);
-
-                    }
-                } else if (actual instanceof Float) {
-                    if (!expectedFloatValue.equals(actual)) {
-                        throw new NumberFormatException("expectedSum=" + expectedFloatValue + " actualSum=" + actual);
-
-                    }
-                } else if (actual instanceof Integer) {
-                    if (!expectedBigDecimalValue.equals(actual)) {
-                        throw new NumberFormatException("expectedSum=" + expectedBigDecimalValue + " actualSum=" + actual);
-                    }
-                }
+                results.put(function.title, actual);
             } catch (NumberFormatException e) {
                 System.err.println(name + " has encountered an error: " + e);
                 iterator.remove();
             }
         }
+
+        // Check results
+        for (Iterator<Map.Entry<String, BenchmarkFunction>> iterator = map.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<String, BenchmarkFunction> entry = iterator.next();
+            var function = entry.getValue();
+            Number expected = results.get(function.reference);
+            Number actual = results.get(function.title);
+            if (!Objects.equals(expected, actual)) {
+                System.err.println(function.title + " has computed the wrong sum: expectedSum=" + expected + " actualSum=" + actual);
+                iterator.remove();
+            }
+        }
+
         return map;
     }
 
