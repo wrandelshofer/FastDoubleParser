@@ -147,25 +147,22 @@ public class Main {
                 new BenchmarkFunction("java.text.NumberFormat", "java.text.NumberFormat", () -> sumJavaTextNumberFormat(lines, locale)),
 
                 new BenchmarkFunction("JavaDoubleParser CharSequence", "java.lang.Double", () -> sumFastDoubleFromCharSequence(lines)),
-                new BenchmarkFunction("JavaDoubleParser String", "java.lang.Double", () -> sumFastDoubleFromString(lines)),
                 new BenchmarkFunction("JavaDoubleParser char[]", "java.lang.Double", () -> sumFastDoubleParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaDoubleParser byte[]", "java.lang.Double", () -> sumFastDoubleParserFromByteArray(byteArrayLines)),
 
-                new BenchmarkFunction("JsonDoubleParser String", "java.lang.Double", () -> sumJsonDoubleFromString(lines)),
                 new BenchmarkFunction("JsonDoubleParser CharSequence", "java.lang.Double", () -> sumJsonDoubleFromCharSequence(lines)),
                 new BenchmarkFunction("JsonDoubleParser char[]", "java.lang.Double", () -> sumJsonDoubleParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JsonDoubleParser byte[]", "java.lang.Double", () -> sumJsonDoubleParserFromByteArray(byteArrayLines)),
 
                 new BenchmarkFunction("JavaFloatParser  CharSequence", "java.lang.Float", () -> sumFastFloatFromCharSequence(lines)),
-                new BenchmarkFunction("JavaFloatParser  String", "java.lang.Float", () -> sumFastFloatFromString(lines)),
                 new BenchmarkFunction("JavaFloatParser  char[]", "java.lang.Float", () -> sumFastFloatParserFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaFloatParser  byte[]", "java.lang.Float", () -> sumFastFloatParserFromByteArray(byteArrayLines)),
 
                 new BenchmarkFunction("JavaBigDecimalParser CharSequence", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharSequence(lines)),
                 new BenchmarkFunction("JavaBigDecimalParser char[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines)),
-                new BenchmarkFunction("LenientDoubleParser CharSequence", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines)),
-                new BenchmarkFunction("LenientDoubleParser String", "java.text.NumberFormat", () -> sumLenientDoubleFromString(lines))
+
+                new BenchmarkFunction("LenientDoubleParser CharSequence", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -403,21 +400,11 @@ public class Main {
     private double sumFastDoubleFromCharSequence(List<String> s) {
         double answer = 0;
         for (String st : s) {
-            double x = JavaDoubleParser.parseDouble((CharSequence) st);
-            answer += x;
-        }
-        return answer;
-    }
-
-    private double sumFastDoubleFromString(List<String> s) {
-        double answer = 0;
-        for (String st : s) {
             double x = JavaDoubleParser.parseDouble(st);
             answer += x;
         }
         return answer;
     }
-
 
     private double sumFastDoubleParserFromByteArray(List<byte[]> s) {
         double answer = 0;
@@ -440,20 +427,12 @@ public class Main {
     private float sumFastFloatFromCharSequence(List<String> s) {
         float answer = 0;
         for (String st : s) {
-            float x = JavaFloatParser.parseFloat((CharSequence) st);
-            answer += x;
-        }
-        return answer;
-    }
-
-    private float sumFastFloatFromString(List<String> s) {
-        float answer = 0;
-        for (String st : s) {
             float x = JavaFloatParser.parseFloat(st);
             answer += x;
         }
         return answer;
     }
+
 
     private float sumFastFloatParserFromByteArray(List<byte[]> s) {
         float answer = 0;
@@ -483,15 +462,6 @@ public class Main {
         return answer;
     }
 
-    private double sumLenientDoubleFromString(List<String> s) {
-        double answer = 0;
-        LenientDoubleParser p = new LenientDoubleParser(new DecimalFormat().getDecimalFormatSymbols());
-        for (String st : s) {
-            double x = p.parseDouble(st);
-            answer += x;
-        }
-        return answer;
-    }
 
     private float sumJavaLangFloat(List<String> s) {
         float answer = 0;
@@ -503,15 +473,6 @@ public class Main {
     }
 
     private double sumJsonDoubleFromCharSequence(List<String> s) {
-        double answer = 0;
-        for (String st : s) {
-            double x = JsonDoubleParser.parseDouble((CharSequence) st);
-            answer += x;
-        }
-        return answer;
-    }
-
-    private double sumJsonDoubleFromString(List<String> s) {
         double answer = 0;
         for (String st : s) {
             double x = JsonDoubleParser.parseDouble(st);

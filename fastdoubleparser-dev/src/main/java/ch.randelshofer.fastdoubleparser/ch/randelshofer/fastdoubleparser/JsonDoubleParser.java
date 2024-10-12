@@ -46,7 +46,7 @@ public class JsonDoubleParser {
     private static final JsonDoubleBitsFromCharArray CHAR_ARRAY_PARSER = new JsonDoubleBitsFromCharArray();
 
     private static final JsonDoubleBitsFromCharSequence CHAR_SEQUENCE_PARSER = new JsonDoubleBitsFromCharSequence();
-    private static final JsonDoubleBitsFromString STRING_PARSER = new JsonDoubleBitsFromString();
+
 
     /**
      * Don't let anyone instantiate this class.
@@ -84,35 +84,6 @@ public class JsonDoubleParser {
         return Double.longBitsToDouble(bitPattern);
     }
 
-
-    /**
-     * Convenience method for calling {@link #parseDouble(String, int, int)}.
-     *
-     * @param str the string to be parsed
-     * @return the parsed value
-     * @throws NullPointerException  if the string is null
-     * @throws NumberFormatException if the string can not be parsed successfully
-     */
-    public static double parseDouble(String str) throws NumberFormatException {
-        return parseDouble(str, 0, str.length());
-    }
-
-    /**
-     * Parses a {@code FloatingPointLiteral} from a {@link String} and converts it
-     * into a {@code double} value.
-     *
-     * @param str    the string to be parsed
-     * @param offset the start offset of the {@code FloatingPointLiteral} in {@code str}
-     * @param length the length of {@code FloatingPointLiteral} in {@code str}
-     * @return the parsed value
-     * @throws NullPointerException     if the string is null
-     * @throws IllegalArgumentException if offset or length are illegal
-     * @throws NumberFormatException    if the string can not be parsed successfully
-     */
-    public static double parseDouble(String str, int offset, int length) throws NumberFormatException {
-        long bitPattern = STRING_PARSER.parseNumber(str, offset, length);
-        return Double.longBitsToDouble(bitPattern);
-    }
 
     /**
      * Convenience method for calling {@link #parseDouble(byte[], int, int)}.
