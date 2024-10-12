@@ -53,30 +53,64 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
      */
     abstract long negativeInfinity();
 
+    private boolean isDecimalSeparator(char ch) {
+        return decimalSeparator.contains(ch);
+    }
+
+    private boolean isGroupingSeparator(char ch) {
+        return groupingSeparator.contains(ch);
+    }
+
+    private boolean isExponentSeparator(char ch) {
+        return exponentSeparatorChar.contains(ch);
+    }
+
     /**
-     * Parses a {@code DecimalFloatingPointLiteral} production with optional
-     * trailing white space until the end of the text.
-     * Given that we have already consumed the optional leading zero of
-     * the {@code DecSignificand}.
+     * Parses a {@code FloatingPointLiteral} production with optional leading and trailing
+     * white space.
      * <blockquote>
      * <dl>
-     * <dt><i>DecimalFloatingPointLiteralWithWhiteSpace:</i></dt>
-     * <dd><i>DecimalFloatingPointLiteral [WhiteSpace] EOT</i></dd>
+     * <dt><i>FloatingPointLiteralWithWhiteSpace:</i></dt>
+     * <dd><i>[WhiteSpace] FloatingPointLiteral [WhiteSpace]</i></dd>
      * </dl>
      * </blockquote>
      * See {@link JavaDoubleParser} for the grammar of
-     * {@code DecimalFloatingPointLiteral} and {@code DecSignificand}.
+     * {@code FloatingPointLiteral}.
      *
-     * @param str            a string
-     * @param index          the current index
-     * @param startIndex     start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
-     * @param endIndex       end index (exclusive)
-     * @param isNegative     true if the float value is negative
-     * @param hasLeadingZero true if we have consumed the optional leading zero
+     * @param str    a string containing a {@code FloatingPointLiteralWithWhiteSpace}
+     * @param offset start offset of {@code FloatingPointLiteralWithWhiteSpace} in {@code str}
+     * @param length length of {@code FloatingPointLiteralWithWhiteSpace} in {@code str}
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    private long parseDecFloatLiteral(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
+    public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
+        final int endIndex = checkBounds(str.length(), offset, length);
+        if (offset == endIndex) {
+            throw new NumberFormatException(SYNTAX_ERROR);
+        }
+        int index = offset;
+        char ch = str.charAt(index);
+
+        // Parse optional sign
+        // -------------------
+        final boolean isNegative = ch == '-';
+        if (isNegative || ch == '+') {
+            ch = charAt(str, ++index, endIndex);
+            if (ch == 0) {
+                throw new NumberFormatException(SYNTAX_ERROR);
+            }
+        }
+
+        // Parse NaN or Infinity (this occurs rarely)
+        // ---------------------
+        if (nanOrInfinityChar.contains(ch)) {
+            return parseNaNOrInfinity(str, index, endIndex, isNegative);
+        }
+
+        // Parse optional leading zero
+        // ---------------------------
+        final boolean hasLeadingZero = ch == '0';
+
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -85,7 +119,7 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
         final int significandStartIndex = index;
         int virtualIndexOfPoint = -1;
         boolean illegal = false;
-        char ch = 0;
+
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
             int digit = (char) (ch - zeroChar);
@@ -171,71 +205,8 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
             isSignificandTruncated = false;
             exponentOfTruncatedSignificand = 0;
         }
-        return valueOfFloatLiteral(str, startIndex, endIndex, isNegative, significand, exponent, isSignificandTruncated,
+        return valueOfFloatLiteral(str, offset, endIndex, isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-    }
-
-    private boolean isDecimalSeparator(char ch) {
-        return decimalSeparator.contains(ch);
-    }
-
-    private boolean isGroupingSeparator(char ch) {
-        return groupingSeparator.contains(ch);
-    }
-
-    private boolean isExponentSeparator(char ch) {
-        return exponentSeparatorChar.contains(ch);
-    }
-
-    /**
-     * Parses a {@code FloatingPointLiteral} production with optional leading and trailing
-     * white space.
-     * <blockquote>
-     * <dl>
-     * <dt><i>FloatingPointLiteralWithWhiteSpace:</i></dt>
-     * <dd><i>[WhiteSpace] FloatingPointLiteral [WhiteSpace]</i></dd>
-     * </dl>
-     * </blockquote>
-     * See {@link JavaDoubleParser} for the grammar of
-     * {@code FloatingPointLiteral}.
-     *
-     * @param str    a string containing a {@code FloatingPointLiteralWithWhiteSpace}
-     * @param offset start offset of {@code FloatingPointLiteralWithWhiteSpace} in {@code str}
-     * @param length length of {@code FloatingPointLiteralWithWhiteSpace} in {@code str}
-     * @return the bit pattern of the parsed value, if the input is legal;
-     * otherwise, {@code -1L}.
-     */
-    public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
-        final int endIndex = checkBounds(str.length(), offset, length);
-        if (offset == endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
-        }
-        int index = offset;
-        char ch = str.charAt(index);
-
-        // Parse optional sign
-        // -------------------
-        final boolean isNegative = ch == '-';
-        if (isNegative || ch == '+') {
-            ch = charAt(str, ++index, endIndex);
-            if (ch == 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
-            }
-        }
-
-        // Parse NaN or Infinity (this occurs rarely)
-        // ---------------------
-        if (nanOrInfinityChar.contains(ch)) {
-            return parseNaNOrInfinity(str, index, endIndex, isNegative);
-        }
-
-        // Parse optional leading zero
-        // ---------------------------
-        final boolean hasLeadingZero = ch == '0';
-
-        // Parse the rest
-        // --------------
-        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
     }
 
     private boolean isMinusSign(char c) {
@@ -310,26 +281,4 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
             boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
 
-    /**
-     * Computes a float value from the given components of a hexadecimal float
-     * literal.
-     *
-     * @param str                            the string that contains the float literal (and maybe more)
-     * @param startIndex                     the start index (inclusive) of the float literal
-     *                                       inside the string
-     * @param endIndex                       the end index (exclusive) of the float literal inside
-     *                                       the string
-     * @param isNegative                     whether the float value is negative
-     * @param significand                    the significand of the float value (can be truncated)
-     * @param exponent                       the exponent of the float value
-     * @param isSignificandTruncated         whether the significand is truncated
-     * @param exponentOfTruncatedSignificand the exponent value of the truncated
-     *                                       significand
-     * @return the bit pattern of the parsed value, if the input is legal;
-     * otherwise, {@code -1L}.
-     */
-    abstract long valueOfHexLiteral(
-            CharSequence str, int startIndex, int endIndex,
-            boolean isNegative, long significand, int exponent,
-            boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
 }

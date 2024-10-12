@@ -6,8 +6,6 @@ package ch.randelshofer.fastdoubleparser;
 
 /**
  * Parses a {@code double} from a {@link CharSequence}.
- * <p>
- * FIXME should be from CharSequence instead of from CharSequence
  */
 final class LenientDoubleBitsFromCharSequence extends AbstractLenientFloatingPointBitsFromCharSequence {
     /**
@@ -37,18 +35,6 @@ final class LenientDoubleBitsFromCharSequence extends AbstractLenientFloatingPoi
                              long significand, int exponent, boolean isSignificandTruncated,
                              int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
-                exponentOfTruncatedSignificand);
-        return Double.doubleToRawLongBits(Double.isNaN(d)
-                ? Double.parseDouble(filterInputString(str, startIndex, endIndex).toString())
-                : d);
-    }
-
-
-    @Override
-    long valueOfHexLiteral(
-            CharSequence str, int startIndex, int endIndex, boolean isNegative, long significand, int exponent,
-            boolean isSignificandTruncated, int exponentOfTruncatedSignificand) {
-        double d = FastDoubleMath.tryHexFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
         return Double.doubleToRawLongBits(Double.isNaN(d)
                 ? Double.parseDouble(filterInputString(str, startIndex, endIndex).toString())

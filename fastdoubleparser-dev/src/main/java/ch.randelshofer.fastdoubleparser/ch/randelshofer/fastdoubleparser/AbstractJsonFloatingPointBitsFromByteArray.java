@@ -59,6 +59,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
         long significand = 0;// significand is treated as an unsigned long
         final int significandStartIndex = index;
         int virtualIndexOfPoint = -1;
+        int swarLimit = Math.min(endIndex - 4, 1 << 30);
         boolean illegal = false;
         for (; index < endIndex; index++) {
             ch = str[index];
@@ -69,16 +70,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
             } else if (ch == '.') {
                 illegal |= virtualIndexOfPoint >= 0;
                 virtualIndexOfPoint = index;
-                /*
-                for (; index < endIndex - 8; index += 8) {
-                    int digits = tryToParseEightDigits(str, index + 1);
-                    if (digits < 0) {
-                        break;
-                    }
-                    // This might overflow, we deal with it later.
-                    significand = 100_000_000L * significand + digits;
-                }*/
-                for (; index < endIndex - 4; index += 4) {
+                for (; index < swarLimit; index += 4) {
                     int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
                         break;
