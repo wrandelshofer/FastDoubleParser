@@ -142,15 +142,22 @@ public abstract class JavaDoubleTestDataFactory {
                 new NumberTestData("-1.2e+3", -1.2e3),
                 new NumberTestData("-1.2E-3", -1.2e-3),
                 new NumberTestData("+1.2E+3", 1.2e3),
+                new NumberTestData("1234567890", 1234567890d),
+                new NumberTestData("000000000", 0d),
+                new NumberTestData("0000.0000", 0d)
+        );
+    }
+
+    public static List<NumberTestData> createDataForLegalDecStringsWithWhitespace() {
+        return Arrays.asList(
+                new NumberTestData("parseFloatValue(): Significand with leading whitespace", "   3", 0, 4, 0, 4, 3d),
+                new NumberTestData("parseFloatValue(): Significand with trailing whitespace", "3   ", 0, 4, 0, 4, 3d),
                 new NumberTestData(" 1.2e3", 1.2e3),
                 new NumberTestData("1.2e3 ", 1.2e3),
                 new NumberTestData("  1.2e3", 1.2e3),
                 new NumberTestData("  -1.2e3", -1.2e3),
                 new NumberTestData("1.2e3  ", 1.2e3),
-                new NumberTestData("   1.2e3   ", 1.2e3),
-                new NumberTestData("1234567890", 1234567890d),
-                new NumberTestData("000000000", 0d),
-                new NumberTestData("0000.0000", 0d)
+                new NumberTestData("   1.2e3   ", 1.2e3)
         );
     }
 
@@ -236,8 +243,6 @@ public abstract class JavaDoubleTestDataFactory {
                 new NumberTestData("parseFloatValue(): charOffset too big", "3.14", 8, 4, 8, 4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("parseFloatValue(): charLength too small", "3.14", 0, -4, 0, -4, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
                 new NumberTestData("parseFloatValue(): charLength too big", "3.14", 0, 8, 0, 8, AbstractNumberParser.ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH, IllegalArgumentException.class),
-                new NumberTestData("parseFloatValue(): Significand with leading whitespace", "   3", 0, 4, 0, 4, 3d),
-                new NumberTestData("parseFloatValue(): Significand with trailing whitespace", "3   ", 0, 4, 0, 4, 3d),
                 new NumberTestData("parseFloatValue(): Empty String", "", 0, 0, 0, 0, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseFloatValue(): Blank String", "   ", 0, 3, 0, 3, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
                 new NumberTestData("parseFloatValue(): Very long non-blank String", new VirtualCharSequence('a', 66), 0, 66, 0, 66, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class),
@@ -297,6 +302,7 @@ public abstract class JavaDoubleTestDataFactory {
         list.addAll(createDataForDoubleHexadecimalLimits());
         list.addAll(createDataForBadStrings());
         list.addAll(createDataForLegalDecStrings());
+        list.addAll(createDataForLegalDecStringsWithWhitespace());
         list.addAll(createDataForLegalDecStringsWithFloatTypeSuffix());
         list.addAll(createDataForLegalHexStrings());
         list.addAll(createDataForIllegalHexStrings());

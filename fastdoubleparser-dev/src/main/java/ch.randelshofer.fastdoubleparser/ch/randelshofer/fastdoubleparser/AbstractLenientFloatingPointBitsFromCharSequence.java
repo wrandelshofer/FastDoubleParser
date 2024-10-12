@@ -11,10 +11,6 @@ import java.util.Set;
  * Lenient floating point parser.
  */
 abstract class AbstractLenientFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
-    /* This value is used for undefined character symbols. This value must be outside Character.MIN_VALUE, Character.MAX_VALUE */
-    private final static int UNDEFINED_CHAR = Integer.MIN_VALUE;
-    /* This value is used for EOF symbols. This value must be outside Character.MIN_VALUE, Character.MAX_VALUE */
-    private final static char EOF_CHAR = 0;
     private final char zeroChar;
     private final CharSet minusSignChar;
     private final CharSet plusSignChar;
@@ -56,28 +52,6 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
      * {@code long}
      */
     abstract long negativeInfinity();
-
-    /**
-     * Skips to first digit.
-     *
-     * @param str      a string
-     * @param index    start index (inclusive) of the optional white space
-     * @param endIndex end index (exclusive) of the optional white space
-     * @return index after the optional white space
-     */
-    private int skipToFirstDigit(CharSequence str, int index, int endIndex) {
-        while (index < endIndex && ((char) (str.charAt(index) - zeroChar)) > 9) {
-            index++;
-        }
-        return index;
-    }
-
-    private static int skipWhitespace(CharSequence str, int index, int endIndex) {
-        while (index < endIndex && str.charAt(index) <= ' ') {
-            index++;
-        }
-        return index;
-    }
 
     /**
      * Parses a {@code DecimalFloatingPointLiteral} production with optional
@@ -165,9 +139,8 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
             exponent += expNumber;
         }
 
-        // Skip trailing whitespace and check if FloatingPointLiteral is complete
+        // Check if FloatingPointLiteral is complete
         // ------------------------
-        index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex
                 || !hasLeadingZero && digitCount == 0) {
             throw new NumberFormatException(SYNTAX_ERROR);
@@ -234,13 +207,10 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
      */
     public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
         final int endIndex = checkBounds(str.length(), offset, length);
-
-        // Skip leading whitespace
-        // -------------------
-        int index = skipWhitespace(str, offset, endIndex);
-        if (index == endIndex) {
+        if (offset == endIndex) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
+        int index = offset;
         char ch = str.charAt(index);
 
         // Parse optional sign
@@ -298,13 +268,13 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
     private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
         int nanMatch = nanTrie.matchBranchless(str, index, endIndex);
         if (nanMatch > 0) {
-            if (skipWhitespace(str, index + nanMatch, endIndex) == endIndex) {
+            if (index + nanMatch == endIndex) {
                 return nan();
             }
         }
         int infinityMatch = infinityTrie.matchBranchless(str, index, endIndex);
         if (infinityMatch > 0) {
-            if (skipWhitespace(str, index + infinityMatch, endIndex) == endIndex) {
+            if (index + infinityMatch == endIndex) {
                 return isNegative ? negativeInfinity() : positiveInfinity();
             }
         }
