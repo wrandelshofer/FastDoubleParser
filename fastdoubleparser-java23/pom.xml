@@ -8,11 +8,11 @@
         <artifactId>fastdoubleparser-parentproject</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>fastdoubleparser-java22</artifactId>
+    <artifactId>fastdoubleparser-java23</artifactId>
     <packaging>jar</packaging>
-    <name>fastdoubleparser-java22</name>
+    <name>fastdoubleparser-java23</name>
     <properties>
-        <javaVersion>22</javaVersion>
+        <javaVersion>23</javaVersion>
         <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
@@ -54,7 +54,6 @@
                                     </includes>
                                     <excludes>
                                         <exclude>**/Decimal.java</exclude>
-                                        <exclude>**/FastDoubleSwar.java</exclude>
                                         <exclude>**/FastDoubleVector.java</exclude>
                                         <exclude>**/module-info.java</exclude>
                                     </excludes>

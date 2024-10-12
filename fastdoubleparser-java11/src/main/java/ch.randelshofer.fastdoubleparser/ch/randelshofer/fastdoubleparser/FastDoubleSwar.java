@@ -509,8 +509,9 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             byte ch = str[from];
-            success &= isDigit(ch);
-            result = 10 * (result) + ch - '0';
+            int digit = (char) (ch - '0');
+            success &= digit < 10;
+            result = 10 * (result) + digit;
         }
         return success ? result : -1;
     }
@@ -520,8 +521,9 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             char ch = str[from];
-            success &= isDigit(ch);
-            result = 10 * (result) + ch - '0';
+            int digit = (char) (ch - '0');
+            success &= digit < 10;
+            result = 10 * (result) + digit;
         }
         return success ? result : -1;
     }
@@ -531,8 +533,9 @@ class FastDoubleSwar {
         boolean success = true;
         for (; from < to; from++) {
             char ch = str.charAt(from);
-            success &= isDigit(ch);
-            result = 10 * (result) + ch - '0';
+            int digit = (char) (ch - '0');
+            success &= digit < 10;
+            result = 10 * (result) + digit;
         }
         return success ? result : -1;
     }
