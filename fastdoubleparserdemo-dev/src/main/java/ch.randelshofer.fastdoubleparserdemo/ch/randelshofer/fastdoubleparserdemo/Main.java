@@ -460,7 +460,7 @@ public class Main {
 
     private double sumLenientDoubleFromCharSequence(List<String> s) {
         double answer = 0;
-        var p = new LenientDoubleParser(new DecimalFormat().getDecimalFormatSymbols());
+        LenientDoubleParser p = new LenientDoubleParser(new DecimalFormat().getDecimalFormatSymbols());
         for (String st : s) {
             double x = p.parseDouble(st);
             answer += x;
@@ -526,7 +526,7 @@ public class Main {
         // Check results
         for (Iterator<Map.Entry<String, BenchmarkFunction>> iterator = map.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<String, BenchmarkFunction> entry = iterator.next();
-            var function = entry.getValue();
+            BenchmarkFunction function = entry.getValue();
             Number expected = results.get(function.reference);
             Number actual = results.get(function.title);
             if (!Objects.equals(expected, actual)) {

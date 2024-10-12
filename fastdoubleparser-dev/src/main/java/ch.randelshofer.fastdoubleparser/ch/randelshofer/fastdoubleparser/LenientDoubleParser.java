@@ -18,11 +18,11 @@ import java.text.DecimalFormatSymbols;
 public class LenientDoubleParser {
 
     private final NumberFormatSymbols symbols;
-    private final LenientDoubleBitsFromString p;
+    private final LenientDoubleBitsFromCharSequence p;
 
     public LenientDoubleParser(NumberFormatSymbols symbols) {
         this.symbols = symbols;
-        this.p = new LenientDoubleBitsFromString(symbols);
+        this.p = new LenientDoubleBitsFromCharSequence(symbols);
     }
 
     public LenientDoubleParser(DecimalFormatSymbols symbols) {

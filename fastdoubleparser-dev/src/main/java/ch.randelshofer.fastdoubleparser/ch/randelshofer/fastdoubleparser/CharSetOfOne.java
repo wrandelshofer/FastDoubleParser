@@ -11,7 +11,7 @@ public class CharSetOfOne implements CharSet {
 
     public CharSetOfOne(Set<?> set) {
         char c = 0;
-        for (var s : set) {
+        for (Object s : set) {
             c = s.toString().charAt(0);
         }
         this.ch = c;

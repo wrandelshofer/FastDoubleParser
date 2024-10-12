@@ -1,5 +1,5 @@
 /*
- * @(#)StringTrie.java
+ * @(#)CharTrie.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -9,10 +9,10 @@ import java.util.Set;
 /**
  * A trie for testing if a String is contained in a set of Strings.
  */
-class StringTrie {
+class CharTrie {
     private TrieNode root = new TrieNode();
 
-    public StringTrie(Set<String> set) {
+    public CharTrie(Set<String> set) {
         for (String str : set) {
             if (!str.isEmpty()) {
                 add(str);
@@ -35,8 +35,8 @@ class StringTrie {
      * @param str a string
      * @return the length of the longest matching string, or 0 if no string matches
      */
-    public int matchBranchless(String str) {
-        return matchBranchless(str, 0, str.length() - 1);
+    public int matchBranchless(CharSequence str) {
+        return matchBranchless(str, 0, str.length());
     }
 
     /**
@@ -46,12 +46,12 @@ class StringTrie {
      * @param str a string
      * @return the length of the longest matching string, or 0 if no string matches
      */
-    public int matchBranchless(String str, int startIndex, int endIndex) {
+    public int matchBranchless(CharSequence str, int startIndex, int endIndex) {
         TrieNode node = root;
         int longestMatch = startIndex;
-        for (int i = startIndex; i <= endIndex; i++) {
+        for (int i = startIndex; i < endIndex; i++) {
             node = node.get(str.charAt(i));
-            longestMatch = node.isEnd() ? longestMatch : i;
+            longestMatch = node.isEnd() ? i + 1 : longestMatch;
         }
         return longestMatch - startIndex;
     }

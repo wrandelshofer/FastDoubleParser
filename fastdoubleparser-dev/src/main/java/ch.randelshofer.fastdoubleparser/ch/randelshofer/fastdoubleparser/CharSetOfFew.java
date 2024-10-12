@@ -15,7 +15,7 @@ class CharSetOfFew implements CharSet {
     public CharSetOfFew(Set<Character> set) {
         this.chars = new char[set.size()];
         int i = 0;
-        for (var ch : set) {
+        for (Character ch : set) {
             chars[i++] = ch;
         }
     }

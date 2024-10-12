@@ -7,20 +7,23 @@ package ch.randelshofer.fastdoubleparser;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public interface CharSet {
+interface CharSet {
     boolean contains(char ch);
 
     public static CharSet copyOf(Set<Character> set) {
-        return switch (set.size()) {
-            case 0 -> new CharSetOfNone();
-            case 1 -> new CharSetOfOne(set);
-            default -> new CharSetOfFew(set);
-        };
+        switch (set.size()) {
+            case 0:
+                return new CharSetOfNone();
+            case 1:
+                return new CharSetOfOne(set);
+            default:
+                return new CharSetOfFew(set);
+        }
     }
 
     public static CharSet copyOfFirstChar(Set<String> strSet) {
-        var set = new LinkedHashSet<Character>();
-        for (var str : strSet) {
+        LinkedHashSet<Character> set = new LinkedHashSet<Character>();
+        for (String str : strSet) {
             set.add(str.charAt(0));
         }
         return copyOf(set);

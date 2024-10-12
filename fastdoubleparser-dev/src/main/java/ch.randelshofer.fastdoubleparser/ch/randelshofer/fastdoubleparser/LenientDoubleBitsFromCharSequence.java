@@ -5,15 +5,15 @@
 package ch.randelshofer.fastdoubleparser;
 
 /**
- * Parses a {@code double} from a {@link String}.
+ * Parses a {@code double} from a {@link CharSequence}.
  * <p>
- * FIXME should be from CharSequence instead of from String
+ * FIXME should be from CharSequence instead of from CharSequence
  */
-final class LenientDoubleBitsFromString extends AbstractLenientFloatingPointBitsFromString {
+final class LenientDoubleBitsFromCharSequence extends AbstractLenientFloatingPointBitsFromCharSequence {
     /**
      * Creates a new instance.
      */
-    public LenientDoubleBitsFromString(NumberFormatSymbols symbols) {
+    public LenientDoubleBitsFromCharSequence(NumberFormatSymbols symbols) {
         super(symbols);
     }
 
@@ -33,7 +33,7 @@ final class LenientDoubleBitsFromString extends AbstractLenientFloatingPointBits
     }
 
     @Override
-    long valueOfFloatLiteral(String str, int startIndex, int endIndex, boolean isNegative,
+    long valueOfFloatLiteral(CharSequence str, int startIndex, int endIndex, boolean isNegative,
                              long significand, int exponent, boolean isSignificandTruncated,
                              int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
@@ -46,7 +46,7 @@ final class LenientDoubleBitsFromString extends AbstractLenientFloatingPointBits
 
     @Override
     long valueOfHexLiteral(
-            String str, int startIndex, int endIndex, boolean isNegative, long significand, int exponent,
+            CharSequence str, int startIndex, int endIndex, boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryHexFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);

@@ -4,13 +4,14 @@
  */
 package ch.randelshofer.fastdoubleparserdemo;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.random.RandomGenerator;
+import java.util.Random;
 
 /**
  * Generate random numbers in a gamma corrected random number distribution function.
@@ -21,9 +22,9 @@ public class GenerateNumberFormatNumbers {
     }
 
     public void generate(Path path, NumberFormat f, double range, int size, double gamma) throws IOException {
-        RandomGenerator rng = RandomGenerator.getDefault();
+        Random rng = new Random();
         double invGamma = 1 / gamma;
-        try (var w = Files.newBufferedWriter(path)) {
+        try (BufferedWriter w = Files.newBufferedWriter(path)) {
             rng.doubles(size)
                     .map(v -> gammaCorrection(v, invGamma))
                     .map(v -> v * range)
@@ -37,14 +38,7 @@ public class GenerateNumberFormatNumbers {
                                 }
                             }
                     );
-            /*
-            w.write(f.format(Double.NaN));
-            w.newLine();
-            w.write(f.format(Double.POSITIVE_INFINITY));
-            w.newLine();
-            w.write(f.format(Double.NEGATIVE_INFINITY));
-            w.newLine();
-             */
+
         }
     }
 

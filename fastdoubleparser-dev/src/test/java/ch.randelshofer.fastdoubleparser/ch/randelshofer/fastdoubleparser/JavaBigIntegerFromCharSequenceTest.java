@@ -85,9 +85,9 @@ public class JavaBigIntegerFromCharSequenceTest {
         try {
             actual = f.apply(d);
         } catch (NumberFormatException e) {
-            if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
-                e.printStackTrace();
-                // assertEquals(d.expectedErrorMessage(), e.getMessage());
+            if (d.expectedErrorMessage() != null && !Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
+                //e.printStackTrace();
+                assertEquals(d.expectedErrorMessage(), e.getMessage());
             }
             assertEquals(d.expectedThrowableClass(), e.getClass());
         }
