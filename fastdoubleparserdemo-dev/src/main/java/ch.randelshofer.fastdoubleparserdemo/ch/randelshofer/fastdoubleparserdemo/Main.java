@@ -108,21 +108,21 @@ public class Main {
         Main benchmark = new Main();
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
-            case "--markdown":
-                benchmark.markdown = true;
-                break;
-            case "--sleep":
-                benchmark.sleep = true;
-                break;
-            case "--print-confidence":
-                benchmark.printConfidence = true;
-                break;
+                case "--markdown":
+                    benchmark.markdown = true;
+                    break;
+                case "--sleep":
+                    benchmark.sleep = true;
+                    break;
+                case "--print-confidence":
+                    benchmark.printConfidence = true;
+                    break;
                 case "--locale":
                     benchmark.locale = Locale.forLanguageTag(args[++i]);
                     break;
-            default:
-                benchmark.filename = args[i];
-                break;
+                default:
+                    benchmark.filename = args[i];
+                    break;
             }
         }
 
@@ -163,8 +163,8 @@ public class Main {
                 new BenchmarkFunction("JavaBigDecimalParser char[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines)),
 
-                new BenchmarkFunction("ConfigurableDoubleParser CharSequence", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines)),
-                new BenchmarkFunction("ConfigurableDoubleParser char[]", "java.text.NumberFormat", () -> sumLenientDoubleFromCharArray(charArrayLines))
+                new BenchmarkFunction("ConfigurableDoubleParser CharSequence", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharSequence(lines)),
+                new BenchmarkFunction("ConfigurableDoubleParser char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArray(charArrayLines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -225,7 +225,7 @@ public class Main {
         if (printConfidence) {
             double confidenceWidth = Stats.confidence(1 - confidenceLevel, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
 
-            System.out.printf("%-33s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f  %4.2f %s %s\n",
+            System.out.printf("%-40s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f  %4.2f %s %s\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -238,7 +238,7 @@ public class Main {
                     baselines.get(reference)
             );
         } else {
-            System.out.printf("%-33s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f  %7.2f %s %s\n",
+            System.out.printf("%-40s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f  %7.2f %s %s\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -264,8 +264,8 @@ public class Main {
     }
 
     private void printStatsHeaderMarkdown() {
-        System.out.println("|Method                           | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |");
-        System.out.println("|---------------------------------|------:|-----:|------:|--------:|--------:|--------|");
+        System.out.println("|Method                                  | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |");
+        System.out.println("|----------------------------------------|------:|-----:|------:|--------:|--------:|--------|");
     }
 
     private void printStatsMarkdown(List<String> lines, double volumeMB, String name, VarianceStatistics stats, Map<String, BenchmarkFunction> functions, Map<String, VarianceStatistics> results, Map<String, Character> baselines) {
@@ -273,7 +273,7 @@ public class Main {
         String reference = functions.get(name).reference;
         boolean isBaseline = reference.equals(name);
         String speedupOrBaseline = isBaseline ? "=" : "*";
-        System.out.printf("|%-33s|%7.2f|%4.1f %%|%7.2f|%9.2f|%7.2f%s%s|%-8s|\n",
+        System.out.printf("|%-40s|%7.2f|%4.1f %%|%7.2f|%9.2f|%7.2f%s%s|%-8s|\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
                 stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -474,7 +474,7 @@ public class Main {
         return answer;
     }
 
-    private double sumLenientDoubleFromCharSequence(List<String> s) {
+    private double sumConfigurableDoubleFromCharSequence(List<String> s) {
         double answer = 0;
         ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
                 NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
@@ -485,7 +485,7 @@ public class Main {
         return answer;
     }
 
-    private double sumLenientDoubleFromCharArray(List<char[]> s) {
+    private double sumConfigurableDoubleFromCharArray(List<char[]> s) {
         double answer = 0;
         ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
                 NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
