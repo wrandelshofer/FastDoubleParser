@@ -16,13 +16,26 @@ import java.text.DecimalFormatSymbols;
  * </blockquote>
  */
 public class LenientDoubleParser {
-
     private final NumberFormatSymbols symbols;
-    private final LenientDoubleBitsFromCharSequence pCharSequence;
+    private LenientDoubleBitsFromCharSequence charSequenceParser;
+    private LenientDoubleBitsFromCharArray charArrayParser;
 
     public LenientDoubleParser(NumberFormatSymbols symbols) {
         this.symbols = symbols;
-        this.pCharSequence = new LenientDoubleBitsFromCharSequence(symbols);
+    }
+
+    private LenientDoubleBitsFromCharArray getCharArrayParser() {
+        if (charArrayParser == null) {
+            this.charArrayParser = new LenientDoubleBitsFromCharArray(symbols);
+        }
+        return charArrayParser;
+    }
+
+    private LenientDoubleBitsFromCharSequence getCharSequenceParser() {
+        if (charSequenceParser == null) {
+            this.charSequenceParser = new LenientDoubleBitsFromCharSequence(symbols);
+        }
+        return charSequenceParser;
     }
 
     public LenientDoubleParser(DecimalFormatSymbols symbols) {
@@ -34,10 +47,18 @@ public class LenientDoubleParser {
     }
 
     public double parseDouble(CharSequence str) {
-        return Double.longBitsToDouble(pCharSequence.parseFloatingPointLiteral((String) str, 0, str.length()));
+        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str, 0, str.length()));
     }
 
     public double parseDouble(CharSequence str, int offset, int length) {
-        return Double.longBitsToDouble(pCharSequence.parseFloatingPointLiteral((String) str, offset, length));
+        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str, offset, length));
+    }
+
+    public double parseDouble(char[] str) {
+        return Double.longBitsToDouble(getCharArrayParser().parseFloatingPointLiteral(str, 0, str.length));
+    }
+
+    public double parseDouble(char[] str, int offset, int length) {
+        return Double.longBitsToDouble(getCharArrayParser().parseFloatingPointLiteral(str, offset, length));
     }
 }

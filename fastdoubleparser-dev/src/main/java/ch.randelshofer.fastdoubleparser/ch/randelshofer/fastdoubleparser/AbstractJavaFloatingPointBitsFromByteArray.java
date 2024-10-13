@@ -72,19 +72,20 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         //       arbitrary integer multiplication.
         long significand = 0;// significand is treated as an unsigned long
         final int significandStartIndex = index;
-        int virtualIndexOfPoint = -1;
+        int integerDigitCount = -1;
         boolean illegal = false;
         byte ch = 0;
+        int swarLimit = Math.min(endIndex - 4, 1 << 30);
         for (; index < endIndex; index++) {
             ch = str[index];
-            char digit = (char) (ch - '0');
+            int digit = (char) (ch - '0');
             if (digit < 10) {
                 // This might overflow, we deal with it later.
                 significand = 10 * significand + digit;
             } else if (ch == '.') {
-                illegal |= virtualIndexOfPoint >= 0;
-                virtualIndexOfPoint = index;
-                for (; index < endIndex - 4; index += 4) {
+                illegal |= integerDigitCount >= 0;
+                integerDigitCount = index - significandStartIndex;
+                for (; index < swarLimit; index += 4) {
                     int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
                         break;
@@ -99,13 +100,13 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         final int digitCount;
         final int significandEndIndex = index;
         int exponent;
-        if (virtualIndexOfPoint < 0) {
+        if (integerDigitCount < 0) {
             digitCount = index - significandStartIndex;
-            virtualIndexOfPoint = index;
+            integerDigitCount = digitCount;
             exponent = 0;
         } else {
             digitCount = index - significandStartIndex - 1;
-            exponent = virtualIndexOfPoint - index + 1;
+            exponent = integerDigitCount - digitCount;
         }
 
         // Parse exponent number
@@ -151,24 +152,24 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // Re-parse significand in case of a potential overflow
         // -----------------------------------------------
         final boolean isSignificandTruncated;
-        int skipCountInTruncatedDigits = 0;//counts +1 if we skipped over the decimal point
         int exponentOfTruncatedSignificand;
         if (digitCount > 19) {
+            int truncatedDigitCount = 0;
             significand = 0;
             for (index = significandStartIndex; index < significandEndIndex; index++) {
                 ch = str[index];
-                if (ch == '.') {
-                    skipCountInTruncatedDigits++;
-                } else {
+                int digit = (char) (ch - '0');
+                if (digit < 10) {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = 10 * (significand) + ch - '0';
+                        significand = 10 * significand + digit;
+                        truncatedDigitCount++;
                     } else {
                         break;
                     }
                 }
             }
             isSignificandTruncated = (index < significandEndIndex);
-            exponentOfTruncatedSignificand = virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber;
+            exponentOfTruncatedSignificand = integerDigitCount - truncatedDigitCount + expNumber;
         } else {
             isSignificandTruncated = false;
             exponentOfTruncatedSignificand = 0;

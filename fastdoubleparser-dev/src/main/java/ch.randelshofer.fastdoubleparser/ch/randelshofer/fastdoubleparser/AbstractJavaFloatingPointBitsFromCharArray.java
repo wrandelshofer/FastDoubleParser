@@ -75,7 +75,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         //       arbitrary integer multiplication.
         long significand = 0;// significand is treated as an unsigned long
         final int significandStartIndex = index;
-        int virtualIndexOfPoint = -1;
+        int integerDigitCount = -1;
         boolean illegal = false;
         char ch = 0;
         int swarLimit = Math.min(endIndex - 4, 1 << 30);
@@ -84,10 +84,10 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             int digit = (char) (ch - '0');
             if (digit < 10) {
                 // This might overflow, we deal with it later.
-                significand = 10 * (significand) + digit;
+                significand = 10 * significand + digit;
             } else if (ch == '.') {
-                illegal |= virtualIndexOfPoint >= 0;
-                virtualIndexOfPoint = index;
+                illegal |= integerDigitCount >= 0;
+                integerDigitCount = index - significandStartIndex;
                 for (; index < swarLimit; index += 4) {
                     int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
@@ -103,13 +103,13 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         final int digitCount;
         final int significandEndIndex = index;
         int exponent;
-        if (virtualIndexOfPoint < 0) {
-            digitCount = significandEndIndex - significandStartIndex;
-            virtualIndexOfPoint = significandEndIndex;
+        if (integerDigitCount < 0) {
+            digitCount = index - significandStartIndex;
+            integerDigitCount = digitCount;
             exponent = 0;
         } else {
-            digitCount = significandEndIndex - significandStartIndex - 1;
-            exponent = virtualIndexOfPoint - significandEndIndex + 1;
+            digitCount = index - significandStartIndex - 1;
+            exponent = integerDigitCount - digitCount;
         }
 
         // Parse exponent number
@@ -126,7 +126,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             do {
                 // Guard against overflow
                 if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * (expNumber) + digit;
+                    expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
                 digit = (char) (ch - '0');
@@ -155,24 +155,24 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         // Re-parse significand in case of a potential overflow
         // -----------------------------------------------
         final boolean isSignificandTruncated;
-        int skipCountInTruncatedDigits = 0;//counts +1 if we skipped over the decimal point
         int exponentOfTruncatedSignificand;
         if (digitCount > 19) {
+            int truncatedDigitCount = 0;
             significand = 0;
             for (index = significandStartIndex; index < significandEndIndex; index++) {
                 ch = str[index];
-                if (ch == '.') {
-                    skipCountInTruncatedDigits++;
-                } else {
+                int digit = (char) (ch - '0');
+                if (digit < 10) {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
-                        significand = 10 * significand + ch - '0';
+                        significand = 10 * significand + digit;
+                        truncatedDigitCount++;
                     } else {
                         break;
                     }
                 }
             }
             isSignificandTruncated = (index < significandEndIndex);
-            exponentOfTruncatedSignificand = virtualIndexOfPoint - index + skipCountInTruncatedDigits + expNumber;
+            exponentOfTruncatedSignificand = integerDigitCount - truncatedDigitCount + expNumber;
         } else {
             isSignificandTruncated = false;
             exponentOfTruncatedSignificand = 0;

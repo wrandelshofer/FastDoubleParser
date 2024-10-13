@@ -144,7 +144,8 @@ public abstract class JavaDoubleTestDataFactory {
                 new NumberTestData("+1.2E+3", 1.2e3),
                 new NumberTestData("1234567890", 1234567890d),
                 new NumberTestData("000000000", 0d),
-                new NumberTestData("0000.0000", 0d)
+                new NumberTestData("0000.0000", 0d),
+                new NumberTestData("-30000000000000000000000000", -3e25)
         );
     }
 

@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Locale;
 import java.util.Random;
 
@@ -42,13 +43,17 @@ public class GenerateNumberFormatNumbers {
         }
     }
 
-    public static void main(String... args) throws IOException {
-        Locale locale = Locale.of("de", "CH");
+    public static void main(String... args) throws IOException, ParseException {
+        Locale locale = new Locale("ar");
         NumberFormat f = NumberFormat.getNumberInstance(locale);
         double range = 1e9;
         int size = 100_000;
         double gamma = 0.2;
-        Path path = Paths.get("fastdoubleparserdemo/data/formatted_" + locale.toLanguageTag() + ".txt").toAbsolutePath();
+        Path path = Paths.get("fastdoubleparserdemo/data/formatted_"
+                + locale.getLanguage()
+                + (locale.getCountry() == null ? "" : "-" + locale.getCountry())
+                + ".txt").toAbsolutePath();
         new GenerateNumberFormatNumbers().generate(path, f, range, size, gamma);
     }
+
 }

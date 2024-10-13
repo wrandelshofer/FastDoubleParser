@@ -28,6 +28,7 @@ import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createF
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createLongRunningDoubleTestData;
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createTestDataForInfinity;
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createTestDataForNaN;
+import static ch.randelshofer.fastdoubleparser.LenientDoubleParserTestDataFactory.createLocalizedTestData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -77,26 +78,32 @@ public class LenientDoubleParserTest {
     }
 
     @TestFactory
-    public Stream<DynamicNode> dynamicTests_parseDouble_Localized() {
-        String languageTag = "de-CH";
-        Locale locale = Locale.forLanguageTag(languageTag);
-        DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) NumberFormat.getNumberInstance(locale)).getDecimalFormatSymbols();
-        return createLocalizedTestData(locale).stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charOffset() == 0)
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> new LenientDoubleParser(decimalFormatSymbols).parseDouble(u.input()))));
-    }
+    public List<DynamicNode> dynamicTests_parseDouble_Localized() {
+        List<DynamicNode> list = new ArrayList<>();
+        for (Locale locale : new Locale[]{new Locale("de,CH"), new Locale("fr", "FR"), new Locale("ar")}) {
 
-    public static List<NumberTestData> createLocalizedTestData(Locale locale) {
-        String languageTag = locale.toLanguageTag();
-        NumberFormat f = NumberFormat.getNumberInstance(locale);
-        List<NumberTestData> list = new ArrayList<>();
-        for (double v : new double[]{1_000_000.05, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NaN}) {
-            list.add(new NumberTestData(languageTag + " " + f.format(v), f.format(v), v));
+            DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) NumberFormat.getNumberInstance(locale)).getDecimalFormatSymbols();
+            List<NumberTestData> dataList = new ArrayList<>();
+            dataList.addAll(createLocalizedTestData(locale));
+            dataList.addAll(createLocalizedTestData(locale, createFloatTestDataForInputClassesInMethodParseFloatValue()));
+            dataList.addAll(createLocalizedTestData(locale, createDataForSignificandDigitsInputClasses()));
+            dataList.stream()
+                    .filter(t -> t.charLength() == t.input().length()
+                            && t.charOffset() == 0)
+                    .map(t -> dynamicTest(t.title(),
+                            () -> performTest(t, decimalFormatSymbols)))
+                    .forEach(list::add);
         }
+
         return list;
     }
+
+
+    public void performTest(NumberTestData u, DecimalFormatSymbols decimalFormatSymbols) {
+        test(u, d -> new LenientDoubleParser(decimalFormatSymbols).parseDouble(d.input()));
+        test(u, d -> new LenientDoubleParser(decimalFormatSymbols).parseDouble(d.input().toString().toCharArray()));
+    }
+
 
     private void test(NumberTestData d, ToDoubleFunction<NumberTestData> f) {
         if (d.input() instanceof String) {

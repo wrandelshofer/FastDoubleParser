@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractLenientFloatingPointBitsFromCharSequence.java
+ * @(#)AbstractLenientFloatingPointBitsFromCharArray.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Lenient floating point parser.
  */
-abstract class AbstractLenientFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
+abstract class AbstractLenientFloatingPointBitsFromCharArray extends AbstractFloatValueParser {
     private final char zeroChar;
     private final CharSet minusSignChar;
     private final CharSet plusSignChar;
@@ -22,7 +22,7 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
     private final CharSet exponentSeparatorChar;
     private final CharTrie exponentSeparatorTrie;
 
-    public AbstractLenientFloatingPointBitsFromCharSequence(NumberFormatSymbols symbols) {
+    public AbstractLenientFloatingPointBitsFromCharArray(NumberFormatSymbols symbols) {
         this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator());
         this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator());
         this.zeroChar = symbols.zeroDigit();
@@ -83,8 +83,8 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
-        final int endIndex = checkBounds(str.length(), offset, length);
+    public final long parseFloatingPointLiteral(char[] str, int offset, int length) {
+        final int endIndex = checkBounds(str.length, offset, length);
 
         // Skip leading whitespace
         // -------------------
@@ -92,7 +92,7 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
         if (index == endIndex) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
-        char ch = str.charAt(index);
+        char ch = str[index];
 
         // Parse optional sign
         // -------------------
@@ -125,7 +125,7 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
         boolean illegal = false;
 
         for (; index < endIndex; index++) {
-            ch = str.charAt(index);
+            ch = str[index];
             int digit = (char) (ch - zeroChar);
             if (digit < 10) {
                 // This might overflow, we deal with it later.
@@ -192,7 +192,7 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
             int truncatedDigitCount = 0;
             significand = 0;
             for (index = significandStartIndex; index < significandEndIndex; index++) {
-                ch = str.charAt(index);
+                ch = str[index];
                 int digit = (char) (ch - zeroChar);
                 if (digit < 10) {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
@@ -222,10 +222,10 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
     }
 
 
-    protected CharSequence filterInputString(CharSequence str, int startIndex, int endIndex) {
+    protected CharSequence filterInputString(char[] str, int startIndex, int endIndex) {
         StringBuilder b = new StringBuilder(endIndex - startIndex);
         for (int i = startIndex; i < endIndex; i++) {
-            char ch = str.charAt(i);
+            char ch = str[i];
             int digit = (char) (ch - zeroChar);
             if (digit < 10) {
                 b.append((char) (digit + '0'));
@@ -248,13 +248,14 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
      * @param endIndex end index (exclusive) of the optional white space
      * @return index after the optional format character
      */
-    private static int skipFormatCharacters(CharSequence str, int index, int endIndex) {
-        while (index < endIndex && Character.getType(str.charAt(index)) == Character.FORMAT) {
+    private static int skipFormatCharacters(char[] str, int index, int endIndex) {
+        while (index < endIndex && Character.getType(str[index]) == Character.FORMAT) {
             index++;
         }
         return index;
     }
-    private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
+
+    private long parseNaNOrInfinity(char[] str, int index, int endIndex, boolean isNegative) {
         int nanMatch = nanTrie.match(str, index, endIndex);
         if (nanMatch > 0) {
             if (index + nanMatch == endIndex) {
@@ -295,7 +296,7 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
      * otherwise, {@code -1L}.
      */
     abstract long valueOfFloatLiteral(
-            CharSequence str, int startIndex, int endIndex,
+            char[] str, int startIndex, int endIndex,
             boolean isNegative, long significand, int exponent,
             boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
 

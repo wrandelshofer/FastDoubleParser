@@ -9,12 +9,10 @@ import java.util.Set;
 public class CharSetOfOne implements CharSet {
     private final char ch;
 
-    public CharSetOfOne(Set<?> set) {
-        char c = 0;
-        for (Object s : set) {
-            c = s.toString().charAt(0);
-        }
-        this.ch = c;
+    public CharSetOfOne(Set<Character> set) {
+        if (set.size() != 1) throw new IllegalArgumentException("set size must be 1, size=" + set.size());
+        this.ch = set.iterator().next();
+
     }
 
     public boolean contains(char ch) {
