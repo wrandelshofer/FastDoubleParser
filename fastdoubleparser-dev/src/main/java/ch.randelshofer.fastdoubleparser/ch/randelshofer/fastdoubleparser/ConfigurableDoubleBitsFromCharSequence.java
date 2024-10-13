@@ -1,17 +1,17 @@
 /*
- * @(#)LenientDoubleBitsFromCharArray.java
+ * @(#)ConfigurableDoubleBitsFromCharSequence.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 
 /**
- * Parses a {@code double} from a {@link char[]}.
+ * Parses a {@code double} from a {@link CharSequence} with configurable {@link NumberFormatSymbols}.
  */
-final class LenientDoubleBitsFromCharArray extends AbstractLenientFloatingPointBitsFromCharArray {
+final class ConfigurableDoubleBitsFromCharSequence extends AbstractConfigurableFloatingPointBitsFromCharSequence {
     /**
      * Creates a new instance.
      */
-    public LenientDoubleBitsFromCharArray(NumberFormatSymbols symbols) {
+    public ConfigurableDoubleBitsFromCharSequence(NumberFormatSymbols symbols) {
         super(symbols);
     }
 
@@ -31,7 +31,7 @@ final class LenientDoubleBitsFromCharArray extends AbstractLenientFloatingPointB
     }
 
     @Override
-    long valueOfFloatLiteral(char[] str, int startIndex, int endIndex, boolean isNegative,
+    long valueOfFloatLiteral(CharSequence str, int startIndex, int endIndex, boolean isNegative,
                              long significand, int exponent, boolean isSignificandTruncated,
                              int exponentOfTruncatedSignificand) {
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,

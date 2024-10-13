@@ -56,6 +56,7 @@
                     <exclude>**/FastDoubleSwar.java</exclude>
                     <exclude>**/FastDoubleVector.java</exclude>
                     <exclude>**/FastIntegerMath.java</exclude>
+                    <exclude>**/NumberFormatSymbols.java</exclude>
                     <exclude>**/module-info.java</exclude>
                   </excludes>
                 </resource>

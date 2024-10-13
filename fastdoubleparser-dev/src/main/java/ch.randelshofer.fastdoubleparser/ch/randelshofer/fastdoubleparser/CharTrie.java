@@ -6,7 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.util.Set;
 
-public interface CharTrie {
+interface CharTrie {
     /**
      * Searches for the longest matching string in the trie
      * that matches the provided string.
@@ -35,6 +35,8 @@ public interface CharTrie {
      * that matches the provided string.
      *
      * @param str a string
+     * @param startIndex start index (inclusive)
+     * @param endIndex end index (exclusive)
      * @return the length of the longest matching string, or 0 if no string matches
      */
     int match(CharSequence str, int startIndex, int endIndex);
@@ -44,6 +46,8 @@ public interface CharTrie {
      * that matches the provided string.
      *
      * @param str a string
+     * @param startIndex start index (inclusive)
+     * @param endIndex end index (exclusive)
      * @return the length of the longest matching string, or 0 if no string matches
      */
     int match(char[] str, int startIndex, int endIndex);

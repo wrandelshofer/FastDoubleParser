@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-public class CharTrieOfNone implements CharTrie {
+class CharTrieOfNone implements CharTrie {
     @Override
     public int match(CharSequence str) {
         return 0;

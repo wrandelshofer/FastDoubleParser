@@ -1,5 +1,5 @@
 /*
- * @(#)AbstractLenientFloatingPointBitsFromCharSequence.java
+ * @(#)AbstractConfigurableFloatingPointBitsFromCharSequence.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -8,9 +8,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Lenient floating point parser.
+ * Formattable floating point parser.
  */
-abstract class AbstractLenientFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
+abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
     private final char zeroChar;
     private final CharSet minusSignChar;
     private final CharSet plusSignChar;
@@ -22,7 +22,7 @@ abstract class AbstractLenientFloatingPointBitsFromCharSequence extends Abstract
     private final CharSet exponentSeparatorChar;
     private final CharTrie exponentSeparatorTrie;
 
-    public AbstractLenientFloatingPointBitsFromCharSequence(NumberFormatSymbols symbols) {
+    public AbstractConfigurableFloatingPointBitsFromCharSequence(NumberFormatSymbols symbols) {
         this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator());
         this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator());
         this.zeroChar = symbols.zeroDigit();

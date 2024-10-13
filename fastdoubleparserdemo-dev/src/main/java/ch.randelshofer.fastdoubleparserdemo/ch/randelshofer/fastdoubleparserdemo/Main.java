@@ -4,11 +4,11 @@
  */
 package ch.randelshofer.fastdoubleparserdemo;
 
+import ch.randelshofer.fastdoubleparser.ConfigurableDoubleParser;
 import ch.randelshofer.fastdoubleparser.JavaBigDecimalParser;
 import ch.randelshofer.fastdoubleparser.JavaDoubleParser;
 import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import ch.randelshofer.fastdoubleparser.JsonDoubleParser;
-import ch.randelshofer.fastdoubleparser.LenientDoubleParser;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -163,8 +163,8 @@ public class Main {
                 new BenchmarkFunction("JavaBigDecimalParser char[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromCharArray(charArrayLines)),
                 new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines)),
 
-                new BenchmarkFunction("LenientDoubleParser CharSequence", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines)),
-                new BenchmarkFunction("LenientDoubleParser char[]", "java.text.NumberFormat", () -> sumLenientDoubleFromCharArray(charArrayLines))
+                new BenchmarkFunction("ConfigurableDoubleParser CharSequence", "java.text.NumberFormat", () -> sumLenientDoubleFromCharSequence(lines)),
+                new BenchmarkFunction("ConfigurableDoubleParser char[]", "java.text.NumberFormat", () -> sumLenientDoubleFromCharArray(charArrayLines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -476,7 +476,7 @@ public class Main {
 
     private double sumLenientDoubleFromCharSequence(List<String> s) {
         double answer = 0;
-        LenientDoubleParser p = new LenientDoubleParser(((DecimalFormat)
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
                 NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
         for (String st : s) {
             double x = p.parseDouble((CharSequence) st);
@@ -487,7 +487,7 @@ public class Main {
 
     private double sumLenientDoubleFromCharArray(List<char[]> s) {
         double answer = 0;
-        LenientDoubleParser p = new LenientDoubleParser(((DecimalFormat)
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
                 NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
         for (char[] st : s) {
             double x = p.parseDouble(st);

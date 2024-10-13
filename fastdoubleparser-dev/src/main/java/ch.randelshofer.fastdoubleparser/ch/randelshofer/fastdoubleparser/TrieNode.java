@@ -6,7 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.util.Arrays;
 
-public class TrieNode {
+class TrieNode {
     private char[] chars = new char[0];
     private TrieNode[] children = new TrieNode[0];
     private boolean isEnd;

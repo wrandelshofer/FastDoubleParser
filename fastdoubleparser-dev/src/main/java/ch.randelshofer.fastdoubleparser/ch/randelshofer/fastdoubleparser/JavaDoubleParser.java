@@ -10,11 +10,11 @@ package ch.randelshofer.fastdoubleparser;
  * <p>
  * <b>Syntax</b>
  * <p>
- * Leading and trailing whitespace characters in {@code str} are ignored.
+ * Leading and trailing whitespace characters in the string are ignored.
  * Whitespace is removed as if by the {@link java.lang.String#trim()} method;
  * that is, characters in the range [U+0000,U+0020].
  * <p>
- * The rest of {@code str} should constitute a Java {@code FloatingPointLiteral}
+ * The rest of string should constitute a Java {@code FloatingPointLiteral}
  * as described by the lexical syntax rules shown below:
  * <blockquote>
  * <dl>
@@ -23,7 +23,6 @@ package ch.randelshofer.fastdoubleparser;
  * <dd><i>[Sign]</i> {@code Infinity}</dd>
  * <dd><i>[Sign] DecimalFloatingPointLiteral</i></dd>
  * <dd><i>[Sign] HexFloatingPointLiteral</i></dd>
- * <dd><i>SignedInteger</i></dd>
  * </dl>
  *
  * <dl>
@@ -74,24 +73,19 @@ package ch.randelshofer.fastdoubleparser;
  *
  * <dl>
  * <dt><i>DecExponent:</i>
- * <dd><i>ExponentIndicator SignedInteger</i>
+ * <dd><i>ExponentIndicator [Sign] Digits</i>
  * </dl>
  *
  * <dl>
  * <dt><i>ExponentIndicator:</i>
- * <dd><i>e</i>
- * <dd><i>E</i>
- * </dl>
- *
- * <dl>
- * <dt><i>SignedInteger:</i>
- * <dd><i>[Sign] Digits</i>
+ * <dd>{@code e}
+ * <dd>{@code E}
  * </dl>
  *
  * <dl>
  * <dt><i>Sign:</i>
- * <dd><i>+</i>
- * <dd><i>-</i>
+ * <dd>{@code +}+
+ * <dd>{@code -}
  * </dl>
  *
  * <dl>

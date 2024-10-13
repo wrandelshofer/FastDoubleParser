@@ -1,5 +1,5 @@
 /*
- * @(#)new LenientDoubleParser()Test.java
+ * @(#)ConfigurableDoubleParserTest.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
@@ -34,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
- * Tests class {@link new LenientDoubleParser()}
+ * Tests class {@link new ConfigurableDoubleParser()}
  */
-public class LenientDoubleParserTest {
+public class ConfigurableDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {
@@ -44,20 +44,20 @@ public class LenientDoubleParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> new LenientDoubleParser().parseDouble(u.input()))));
+                        () -> test(t, u -> new ConfigurableDoubleParser().parseDouble(u.input()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int() {
         return createRegularDoubleTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> new LenientDoubleParser().parseDouble(u.input(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> new ConfigurableDoubleParser().parseDouble(u.input(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
     @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int_longRunningTests() {
-        ToDoubleFunction<NumberTestData> lambda = u -> new LenientDoubleParser().parseDouble(u.input(), u.charOffset(), u.charLength());
+        ToDoubleFunction<NumberTestData> lambda = u -> new ConfigurableDoubleParser().parseDouble(u.input(), u.charOffset(), u.charLength());
         return createLongRunningDoubleTestData()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, lambda)));
@@ -100,8 +100,8 @@ public class LenientDoubleParserTest {
 
 
     public void performTest(NumberTestData u, DecimalFormatSymbols decimalFormatSymbols) {
-        test(u, d -> new LenientDoubleParser(decimalFormatSymbols).parseDouble(d.input()));
-        test(u, d -> new LenientDoubleParser(decimalFormatSymbols).parseDouble(d.input().toString().toCharArray()));
+        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols).parseDouble(d.input()));
+        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols).parseDouble(d.input().toString().toCharArray()));
     }
 
 

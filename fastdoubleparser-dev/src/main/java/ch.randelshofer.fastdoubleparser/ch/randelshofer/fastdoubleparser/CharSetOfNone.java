@@ -1,14 +1,12 @@
 /*
- * @(#)CharSetOfOne.java
+ * @(#)CharSetOfNone.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 
-import java.util.Set;
+class CharSetOfNone implements CharSet {
 
-public class CharSetOfNone implements CharSet {
-
-    public CharSetOfNone() {
+    CharSetOfNone() {
     }
 
     public boolean contains(char ch) {

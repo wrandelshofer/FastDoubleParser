@@ -15,7 +15,7 @@ can upload to the nexus repository manager.
 
 ```shell
 cp ../fastdoubleparser/target/*.jar .
-cp ../fastdoubleparser-java21/target/*javadoc.jar fastdoubleparser-1.0.1-javadoc.jar
+cp ../fastdoubleparser-java23/target/*javadoc.jar fastdoubleparser-1.0.1-javadoc.jar
 rm -rf META-INF
 mkdir META-INF 
 cp ../LICENSE META-INF

@@ -25,8 +25,8 @@ import java.math.BigInteger;
  *
  * <dl>
  * <dt><i>Sign:</i>
- * <dd><i>+</i>
- * <dd><i>-</i>
+ * <dd>{@code +}
+ * <dd>{@code -}
  * </dl>
  *
  * <dl>

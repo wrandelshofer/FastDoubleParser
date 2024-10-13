@@ -1,12 +1,12 @@
 /*
- * @(#)CharTrieOfNone.java
+ * @(#)CharTrieOfOne.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
 
 import java.util.Set;
 
-public class CharTrieOfOne implements CharTrie {
+class CharTrieOfOne implements CharTrie {
     private final char[] chars;
 
     public CharTrieOfOne(Set<String> set) {
