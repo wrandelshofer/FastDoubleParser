@@ -333,7 +333,7 @@ public class Main {
             printStatsHeaderMarkdown();
         }
         Map<String, Character> baselines = new LinkedHashMap<>();
-        for (var entry : functions.entrySet()) {
+        for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
             if (entry.getValue().reference.equals(entry.getKey())) {
                 baselines.put(entry.getKey(), (char) ('a' + baselines.size()));
             }

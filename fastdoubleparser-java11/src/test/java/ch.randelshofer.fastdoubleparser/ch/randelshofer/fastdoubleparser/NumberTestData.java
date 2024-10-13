@@ -102,6 +102,12 @@ public final class NumberTestData {
                 10, expectedValue, null,
                 null, locale);
     }
+
+    public NumberTestData(Locale locale, String title, CharSequence input, Number expectedValue) {
+        this(title, input, 0, input.length(), 0, input.length(),
+                10, expectedValue, null,
+                null, locale);
+    }
     public NumberTestData(String title, CharSequence input, Number expectedValue) {
         this(title,
                 input, 0, input.length(), 0, input.length(),
