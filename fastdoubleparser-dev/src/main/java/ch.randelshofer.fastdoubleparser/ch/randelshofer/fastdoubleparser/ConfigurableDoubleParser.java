@@ -166,8 +166,8 @@ public class ConfigurableDoubleParser {
      * Parses a double value from a substring of the specified char sequence.
      *
      * @param str    a char sequence
-     * @param offset the start offset
-     * @param length the length
+     * @param offset the start offset of the substring
+     * @param length the length of the substring
      * @throws NumberFormatException if the provided char sequence could not be parsed
      */
     public double parseDouble(CharSequence str, int offset, int length) {
@@ -189,8 +189,8 @@ public class ConfigurableDoubleParser {
      * Parses a double value from a substring of the specified char array.
      *
      * @param str    a char array
-     * @param offset the start offset
-     * @param length the length
+     * @param offset the start offset of the substring
+     * @param length the length of the substring
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(char[] str, int offset, int length) {
