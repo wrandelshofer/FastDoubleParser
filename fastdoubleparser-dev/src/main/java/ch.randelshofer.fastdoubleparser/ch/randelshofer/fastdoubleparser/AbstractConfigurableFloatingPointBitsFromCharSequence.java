@@ -96,8 +96,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
 
         // Parse optional sign
         // -------------------
-        final boolean isNegative = ch == '-';
-        if (isNegative || ch == '+') {
+        final boolean isNegative = isMinusSign(ch);
+        if (isNegative || isPlusSign(ch)) {
             ch = charAt(str, ++index, endIndex);
             if (ch == 0) {
                 throw new NumberFormatException(SYNTAX_ERROR);

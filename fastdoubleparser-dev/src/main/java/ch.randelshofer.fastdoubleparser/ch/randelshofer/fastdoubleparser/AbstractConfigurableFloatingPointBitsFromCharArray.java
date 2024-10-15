@@ -96,8 +96,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
 
         // Parse optional sign
         // -------------------
-        final boolean isNegative = ch == '-';
-        if (isNegative || ch == '+') {
+        final boolean isNegative = isMinusSign(ch);
+        if (isNegative || isPlusSign(ch)) {
             ch = charAt(str, ++index, endIndex);
             if (ch == 0) {
                 throw new NumberFormatException(SYNTAX_ERROR);
@@ -112,7 +112,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
 
         // Parse optional leading zero
         // ---------------------------
-        final boolean hasLeadingZero = ch == '0';
+        final boolean hasLeadingZero = ch == zeroChar;
 
         // Parse significand
         // -----------------

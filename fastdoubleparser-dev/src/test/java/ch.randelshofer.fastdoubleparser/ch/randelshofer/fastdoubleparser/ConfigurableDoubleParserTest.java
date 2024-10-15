@@ -18,6 +18,8 @@ import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createLocalizedTestData;
+import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createNumberFormatSymbolsTestData;
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalClingerInputClasses;
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalLimits;
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForSignificandDigitsInputClasses;
@@ -28,7 +30,6 @@ import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createF
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createLongRunningDoubleTestData;
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createTestDataForInfinity;
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createTestDataForNaN;
-import static ch.randelshofer.fastdoubleparser.LenientDoubleParserTestDataFactory.createLocalizedTestData;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -91,7 +92,7 @@ public class ConfigurableDoubleParserTest {
                     .filter(t -> t.charLength() == t.input().length()
                             && t.charOffset() == 0)
                     .map(t -> dynamicTest(t.title(),
-                            () -> performTest(t, decimalFormatSymbols)))
+                            () -> performTestDecimalFormatSymbols(t, decimalFormatSymbols)))
                     .forEach(list::add);
         }
 
@@ -99,9 +100,31 @@ public class ConfigurableDoubleParserTest {
     }
 
 
-    public void performTest(NumberTestData u, DecimalFormatSymbols decimalFormatSymbols) {
+    public void performTestDecimalFormatSymbols(NumberTestData u, DecimalFormatSymbols decimalFormatSymbols) {
         test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols).parseDouble(d.input()));
         test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols).parseDouble(d.input().toString().toCharArray()));
+    }
+
+    @TestFactory
+    public List<DynamicNode> dynamicTests_parseDouble_NumberFormatSymbols() {
+        List<DynamicNode> list = new ArrayList<>();
+        List<NumberTestData> dataList = new ArrayList<>();
+        dataList.addAll(createNumberFormatSymbolsTestData());
+            dataList.stream()
+                    .filter(t -> t.charLength() == t.input().length()
+                            && t.charOffset() == 0)
+                    .map(t -> dynamicTest(t.title(),
+                            () -> performTestNumberFormatSymbols(t)))
+                    .forEach(list::add);
+
+
+        return list;
+    }
+
+
+    public void performTestNumberFormatSymbols(NumberTestData u) {
+        test(u, d -> new ConfigurableDoubleParser(u.symbols()).parseDouble(d.input()));
+        test(u, d -> new ConfigurableDoubleParser(u.symbols()).parseDouble(d.input().toString().toCharArray()));
     }
 
 

@@ -22,8 +22,8 @@ class CharSetOfFew implements CharSet {
 
     public boolean contains(char ch) {
         boolean found = false;
-        for (int i = 0; i < chars.length; i++) {
-            found |= chars[i] == ch;
+        for (char aChar : chars) {
+            found |= aChar == ch;
         }
         return found;
     }
