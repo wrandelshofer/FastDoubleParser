@@ -46,6 +46,7 @@ public class GenerateNumberFormatNumbers {
     public static void main(String... args) throws IOException, ParseException {
         Locale locale = new Locale("et,EE");
         NumberFormat f = NumberFormat.getNumberInstance(locale);
+
         double range = 1e9;
         int size = 100_000;
         double gamma = 0.2;

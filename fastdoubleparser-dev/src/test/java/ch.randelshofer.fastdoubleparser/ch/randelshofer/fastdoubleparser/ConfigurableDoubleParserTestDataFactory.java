@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -35,8 +36,13 @@ public class ConfigurableDoubleParserTestDataFactory {
 
     public static List<NumberTestData> createNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
+        list.addAll(createArabianNumberFormatSymbolsTestData());
+        list.addAll(createEstonianNumberFormatSymbolsTestData());
+        return list;
+    }
 
-        //--
+    public static List<NumberTestData> createEstonianNumberFormatSymbolsTestData() {
+        List<NumberTestData> list = new ArrayList<>();
         Locale estonianLocale = new Locale("et", "EE");
         var dfs = DecimalFormatSymbols.getInstance(
                 estonianLocale
@@ -58,7 +64,20 @@ public class ConfigurableDoubleParserTestDataFactory {
                 new NumberTestData("Estonian locale with full-width plus", dfs.getLocale(), symbols, "\uff0b13,35", 13.35),
                 new NumberTestData("Estonian locale with ordinary plus", dfs.getLocale(), symbols, "+13,35", 13.35)
         ));
-        //--
+        return list;
+    }
+
+    public static List<NumberTestData> createArabianNumberFormatSymbolsTestData() {
+        List<NumberTestData> list = new ArrayList<>();
+        Locale arabianLocale = new Locale("ar");
+        var dfs = DecimalFormatSymbols.getInstance(
+                arabianLocale
+        );
+        var symbols = NumberFormatSymbols.fromDecimalFormatSymbols(dfs);
+        DecimalFormat fmt = new DecimalFormat("#00.0####E0", dfs);
+        for (var n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
+            list.add(new NumberTestData(fmt.format(n), arabianLocale, symbols, fmt.format(n), n));
+        }
 
         return list;
     }

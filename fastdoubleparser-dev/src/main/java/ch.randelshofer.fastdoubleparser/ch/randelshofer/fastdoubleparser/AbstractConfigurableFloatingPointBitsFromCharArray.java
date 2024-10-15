@@ -156,6 +156,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         int count = exponentSeparatorTrie.match(str, index, endIndex);
         if (count > 0) {
             index += count;
+            index = skipFormatCharacters(str, index, endIndex);
             ch = charAt(str, index, endIndex);
             boolean isExponentNegative = isMinusSign(ch);
             if (isExponentNegative || isPlusSign(ch)) {
