@@ -33,6 +33,7 @@ public record NumberTestData(String title,
                 expectedThrowableClass,
                 locale, symbols, false);
     }
+
     public NumberTestData(CharSequence input, Number expectedValue) {
         this(input.toString(), input, 0, input.length(), 0, input.length(),
                 10, expectedValue, null,

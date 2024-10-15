@@ -164,7 +164,9 @@ public class Main {
                 new BenchmarkFunction("JavaBigDecimalParser byte[]", "java.math.BigDecimal", () -> sumFastBigDecimalFromByteArray(byteArrayLines)),
 
                 new BenchmarkFunction("ConfigurableDoubleParser CharSequence", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharSequence(lines)),
-                new BenchmarkFunction("ConfigurableDoubleParser char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArray(charArrayLines))
+                new BenchmarkFunction("ConfigurableDoubleParser char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArray(charArrayLines)),
+                new BenchmarkFunction("ConfigurableDoubleParserCI CharSequence", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharSequenceCI(lines)),
+                new BenchmarkFunction("ConfigurableDoubleParserCI char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArrayCI(charArrayLines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -489,6 +491,28 @@ public class Main {
         double answer = 0;
         ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
                 NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
+        for (char[] st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumConfigurableDoubleFromCharSequenceCI(List<String> s) {
+        double answer = 0;
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
+                NumberFormat.getInstance(locale)).getDecimalFormatSymbols(), true);
+        for (String st : s) {
+            double x = p.parseDouble((CharSequence) st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumConfigurableDoubleFromCharArrayCI(List<char[]> s) {
+        double answer = 0;
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
+                NumberFormat.getInstance(locale)).getDecimalFormatSymbols(), true);
         for (char[] st : s) {
             double x = p.parseDouble(st);
             answer += x;

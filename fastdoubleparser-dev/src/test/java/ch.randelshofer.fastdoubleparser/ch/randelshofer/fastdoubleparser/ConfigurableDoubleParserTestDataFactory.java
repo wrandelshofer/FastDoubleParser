@@ -45,11 +45,11 @@ public class ConfigurableDoubleParserTestDataFactory {
     public static List<NumberTestData> createEstonianNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
         Locale estonianLocale = new Locale("et", "EE");
-        var dfs = DecimalFormatSymbols.getInstance(
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(
                 estonianLocale
         );
         assertEquals(dfs.getMinusSign(), '\u2212', "Expected estonian minus sign U+2212");
-        var symbols = new NumberFormatSymbols(
+        NumberFormatSymbols symbols = new NumberFormatSymbols(
                 Set.of(dfs.getDecimalSeparator()),
                 Set.of(dfs.getGroupingSeparator()),
                 Set.of(dfs.getExponentSeparator()),
@@ -77,11 +77,11 @@ public class ConfigurableDoubleParserTestDataFactory {
     public static List<NumberTestData> createIgnoreCaseNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
         Locale englishLocale = Locale.ENGLISH;
-        var dfs = DecimalFormatSymbols.getInstance(englishLocale);
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(englishLocale);
         dfs.setInfinity("Infinity");
         dfs.setExponentSeparator("Exp");
         dfs.setNaN("NaN");
-        var symbols = new NumberFormatSymbols(
+        NumberFormatSymbols symbols = new NumberFormatSymbols(
                 Set.of(dfs.getDecimalSeparator()),
                 Set.of(dfs.getGroupingSeparator()),
                 Set.of(dfs.getExponentSeparator()),
@@ -92,7 +92,7 @@ public class ConfigurableDoubleParserTestDataFactory {
                 dfs.getZeroDigit()
         );
         DecimalFormat fmt = new DecimalFormat("#00.0####E0", dfs);
-        for (var n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
+        for (double n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
             list.add(new NumberTestData("ignoreCase: " + fmt.format(n), englishLocale, symbols, true, fmt.format(n), n));
             list.add(new NumberTestData("ignoreCase: lower-case " + fmt.format(n).toLowerCase(englishLocale), englishLocale, symbols, true, fmt.format(n).toLowerCase(englishLocale), n));
             list.add(new NumberTestData("ignoreCase: upper-case " + fmt.format(n).toUpperCase(englishLocale), englishLocale, symbols, true, fmt.format(n).toUpperCase(englishLocale), n));
@@ -104,12 +104,12 @@ public class ConfigurableDoubleParserTestDataFactory {
     public static List<NumberTestData> createArabianNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
         Locale arabianLocale = new Locale("ar");
-        var dfs = DecimalFormatSymbols.getInstance(
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(
                 arabianLocale
         );
-        var symbols = NumberFormatSymbols.fromDecimalFormatSymbols(dfs);
+        NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(dfs);
         DecimalFormat fmt = new DecimalFormat("#00.0####E0", dfs);
-        for (var n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
+        for (double n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
             list.add(new NumberTestData(fmt.format(n), arabianLocale, symbols, fmt.format(n), n));
         }
 

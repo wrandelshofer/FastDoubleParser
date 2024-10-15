@@ -10,7 +10,7 @@ import java.util.Set;
 interface CharSet {
     boolean contains(char ch);
 
-    public static CharSet copyOf(Set<Character> set, boolean ignoreCase) {
+    static CharSet copyOf(Set<Character> set, boolean ignoreCase) {
         set = applyIgnoreCase(set, ignoreCase);
         switch (set.size()) {
             case 0:
@@ -22,10 +22,10 @@ interface CharSet {
         }
     }
 
-    private static Set<Character> applyIgnoreCase(Set<Character> set, boolean ignoreCase) {
+    static Set<Character> applyIgnoreCase(Set<Character> set, boolean ignoreCase) {
         if (ignoreCase) {
-            var convertedSet = new LinkedHashSet<Character>();
-            for (var ch : set) {
+            LinkedHashSet<Character> convertedSet = new LinkedHashSet<Character>();
+            for (Character ch : set) {
                 convertedSet.add(ch);
                 char lc = Character.toLowerCase(ch);
                 char uc = Character.toUpperCase(ch);
@@ -39,7 +39,7 @@ interface CharSet {
         return set;
     }
 
-    public static CharSet copyOfFirstChar(Set<String> strSet, boolean ignoreCase) {
+    static CharSet copyOfFirstChar(Set<String> strSet, boolean ignoreCase) {
         LinkedHashSet<Character> set = new LinkedHashSet<Character>();
         for (String str : strSet) {
             set.add(str.charAt(0));
