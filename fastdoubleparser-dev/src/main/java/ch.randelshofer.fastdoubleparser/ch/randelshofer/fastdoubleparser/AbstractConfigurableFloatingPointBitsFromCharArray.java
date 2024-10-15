@@ -19,7 +19,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
     private final CharSet nanOrInfinityChar;
     private final CharTrie nanTrie;
     private final CharTrie infinityTrie;
-    private final CharSet exponentSeparatorChar;
     private final CharTrie exponentSeparatorTrie;
 
     public AbstractConfigurableFloatingPointBitsFromCharArray(NumberFormatSymbols symbols, boolean ignoreCase) {
@@ -27,7 +26,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator(), ignoreCase);
         this.zeroChar = symbols.zeroDigit();
         this.minusSignChar = CharSet.copyOf(symbols.minusSign(), ignoreCase);
-        this.exponentSeparatorChar = CharSet.copyOfFirstChar(symbols.exponentSeparator(), ignoreCase);
         this.exponentSeparatorTrie = CharTrie.of(symbols.exponentSeparator(), ignoreCase);
         this.plusSignChar = CharSet.copyOf(symbols.plusSign(), ignoreCase);
         this.nanTrie = CharTrie.of(symbols.nan(), ignoreCase);
@@ -59,10 +57,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
 
     private boolean isGroupingSeparator(char ch) {
         return groupingSeparator.contains(ch);
-    }
-
-    private boolean isExponentSeparator(char ch) {
-        return exponentSeparatorChar.contains(ch);
     }
 
     /**
