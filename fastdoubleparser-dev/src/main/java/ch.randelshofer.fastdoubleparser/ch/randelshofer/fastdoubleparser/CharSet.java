@@ -39,11 +39,4 @@ interface CharSet {
         return set;
     }
 
-    static CharSet copyOfFirstChar(Set<String> strSet, boolean ignoreCase) {
-        LinkedHashSet<Character> set = new LinkedHashSet<Character>();
-        for (String str : strSet) {
-            set.add(str.charAt(0));
-        }
-        return copyOf(set, ignoreCase);
-    }
 }
