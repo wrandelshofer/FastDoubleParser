@@ -36,6 +36,7 @@ public class ConfigurableDoubleParserTestDataFactory {
 
     public static List<NumberTestData> createNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
+        list.addAll(createIgnoreCaseNumberFormatSymbolsTestData());
         list.addAll(createArabianNumberFormatSymbolsTestData());
         list.addAll(createEstonianNumberFormatSymbolsTestData());
         return list;
@@ -59,11 +60,44 @@ public class ConfigurableDoubleParserTestDataFactory {
                 dfs.getZeroDigit()
         );
         list.addAll(List.of(
-                new NumberTestData("Estonian locale with Estonian minus", dfs.getLocale(), symbols, dfs.getMinusSign() + "13,35", -13.35),
+                new NumberTestData("Estonian locale with Estonian minus", dfs.getLocale(), symbols, "\u221213,35", -13.35),
                 new NumberTestData("Estonian locale with ordinary minus", dfs.getLocale(), symbols, "-13,35", -13.35),
                 new NumberTestData("Estonian locale with full-width plus", dfs.getLocale(), symbols, "\uff0b13,35", 13.35),
-                new NumberTestData("Estonian locale with ordinary plus", dfs.getLocale(), symbols, "+13,35", 13.35)
+                new NumberTestData("Estonian locale with ordinary plus", dfs.getLocale(), symbols, "+13,35", 13.35),
+                new NumberTestData("Estonian locale with Estonian minus exponent", dfs.getLocale(), symbols, "13,35×10^\u22124", 13.35e-4),
+                new NumberTestData("Estonian locale with ordinary minus exponent", dfs.getLocale(), symbols, "13,35×10^-4", 13.35e-4),
+                new NumberTestData("Estonian locale with full-width plus exponent", dfs.getLocale(), symbols, "13,35×10^\uff0b4", 13.35e4),
+                new NumberTestData("Estonian locale with ordinary plus exponent", dfs.getLocale(), symbols, "13,35×10^+4", 13.35e4),
+                new NumberTestData("Estonian locale, Outside Clinger fast path, mantissa overflows in semi-fast path, 7.2057594037927933e+16",
+                        dfs.getLocale(), symbols, "7,2057594037927933×10^16", 7.2057594037927933e+16d)
         ));
+        return list;
+    }
+
+    public static List<NumberTestData> createIgnoreCaseNumberFormatSymbolsTestData() {
+        List<NumberTestData> list = new ArrayList<>();
+        Locale englishLocale = Locale.ENGLISH;
+        var dfs = DecimalFormatSymbols.getInstance(englishLocale);
+        dfs.setInfinity("Infinity");
+        dfs.setExponentSeparator("Exp");
+        dfs.setNaN("NaN");
+        var symbols = new NumberFormatSymbols(
+                Set.of(dfs.getDecimalSeparator()),
+                Set.of(dfs.getGroupingSeparator()),
+                Set.of(dfs.getExponentSeparator()),
+                Set.of(dfs.getMinusSign()),
+                Set.of('+'),
+                Set.of(dfs.getInfinity()),
+                Set.of(dfs.getNaN()),
+                dfs.getZeroDigit()
+        );
+        DecimalFormat fmt = new DecimalFormat("#00.0####E0", dfs);
+        for (var n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
+            list.add(new NumberTestData("ignoreCase: " + fmt.format(n), englishLocale, symbols, true, fmt.format(n), n));
+            list.add(new NumberTestData("ignoreCase: lower-case " + fmt.format(n).toLowerCase(englishLocale), englishLocale, symbols, true, fmt.format(n).toLowerCase(englishLocale), n));
+            list.add(new NumberTestData("ignoreCase: upper-case " + fmt.format(n).toUpperCase(englishLocale), englishLocale, symbols, true, fmt.format(n).toUpperCase(englishLocale), n));
+        }
+
         return list;
     }
 

@@ -109,44 +109,75 @@ public class ConfigurableDoubleParser {
     private final NumberFormatSymbols symbols;
     private ConfigurableDoubleBitsFromCharSequence charSequenceParser;
     private ConfigurableDoubleBitsFromCharArray charArrayParser;
+    private final boolean ignoreCase;
 
     /**
      * Creates a new instance with the specified number format symbols.
+     * <p>
+     * The parser does not ignore case.
      *
      * @param symbols the number format symbols
      */
     public ConfigurableDoubleParser(NumberFormatSymbols symbols) {
-        this.symbols = symbols;
+        this(symbols, false);
     }
 
     /**
      * Creates a new instance with number format symbols derived
      * from the specified symbols by calling
      * {@link NumberFormatSymbols#fromDecimalFormatSymbols(DecimalFormatSymbols)}.
+     * <p>
+     * The parser does not ignore case.
      *
      * @param symbols the decimal format symbols
      */
     public ConfigurableDoubleParser(DecimalFormatSymbols symbols) {
-        this(NumberFormatSymbols.fromDecimalFormatSymbols(symbols));
+        this(symbols, false);
     }
 
     /**
-     * Creates a new instance with {@link NumberFormatSymbols#fromDefault()}.
+     * Creates a new instance with the specified number format symbols and case sensitivity.
+     *
+     * @param symbols    the number format symbols
+     * @param ignoreCase whether case should be ignored by the parser
+     */
+    public ConfigurableDoubleParser(NumberFormatSymbols symbols, boolean ignoreCase) {
+        this.symbols = symbols;
+        this.ignoreCase = ignoreCase;
+    }
+
+    /**
+     * Creates a new instance with decimal format symbols and case sensitivity.
+     * <p>
+     * The number format symbols are derived
+     * from the specified decimal format symbols by calling
+     * {@link NumberFormatSymbols#fromDecimalFormatSymbols(DecimalFormatSymbols)}.
+     *
+     * @param symbols    the decimal format symbols
+     * @param ignoreCase whether case should be ignored by the parser
+     */
+    public ConfigurableDoubleParser(DecimalFormatSymbols symbols, boolean ignoreCase) {
+        this(NumberFormatSymbols.fromDecimalFormatSymbols(symbols), ignoreCase);
+    }
+
+    /**
+     * Creates a new instance with {@link NumberFormatSymbols#fromDefault()}
+     * which does not ignore case.
      */
     public ConfigurableDoubleParser() {
-        this(NumberFormatSymbols.fromDefault());
+        this(NumberFormatSymbols.fromDefault(), false);
     }
 
     private ConfigurableDoubleBitsFromCharArray getCharArrayParser() {
         if (charArrayParser == null) {
-            this.charArrayParser = new ConfigurableDoubleBitsFromCharArray(symbols);
+            this.charArrayParser = new ConfigurableDoubleBitsFromCharArray(symbols, ignoreCase);
         }
         return charArrayParser;
     }
 
     private ConfigurableDoubleBitsFromCharSequence getCharSequenceParser() {
         if (charSequenceParser == null) {
-            this.charSequenceParser = new ConfigurableDoubleBitsFromCharSequence(symbols);
+            this.charSequenceParser = new ConfigurableDoubleBitsFromCharSequence(symbols, ignoreCase);
         }
         return charSequenceParser;
     }

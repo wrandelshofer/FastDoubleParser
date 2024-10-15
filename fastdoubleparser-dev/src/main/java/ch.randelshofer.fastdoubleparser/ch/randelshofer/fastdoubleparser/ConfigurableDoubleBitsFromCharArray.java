@@ -11,8 +11,8 @@ final class ConfigurableDoubleBitsFromCharArray extends AbstractConfigurableFloa
     /**
      * Creates a new instance.
      */
-    public ConfigurableDoubleBitsFromCharArray(NumberFormatSymbols symbols) {
-        super(symbols);
+    public ConfigurableDoubleBitsFromCharArray(NumberFormatSymbols symbols, boolean ignoreCase) {
+        super(symbols, ignoreCase);
     }
 
     @Override

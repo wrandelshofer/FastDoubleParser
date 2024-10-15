@@ -11,8 +11,8 @@ final class ConfigurableDoubleBitsFromCharSequence extends AbstractConfigurableF
     /**
      * Creates a new instance.
      */
-    public ConfigurableDoubleBitsFromCharSequence(NumberFormatSymbols symbols) {
-        super(symbols);
+    public ConfigurableDoubleBitsFromCharSequence(NumberFormatSymbols symbols, boolean ignoreCase) {
+        super(symbols, ignoreCase);
     }
 
     @Override

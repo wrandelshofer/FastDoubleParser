@@ -22,16 +22,16 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
     private final CharSet exponentSeparatorChar;
     private final CharTrie exponentSeparatorTrie;
 
-    public AbstractConfigurableFloatingPointBitsFromCharSequence(NumberFormatSymbols symbols) {
-        this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator());
-        this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator());
+    public AbstractConfigurableFloatingPointBitsFromCharSequence(NumberFormatSymbols symbols, boolean ignoreCase) {
+        this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator(), ignoreCase);
+        this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator(), ignoreCase);
         this.zeroChar = symbols.zeroDigit();
-        this.minusSignChar = CharSet.copyOf(symbols.minusSign());
-        this.exponentSeparatorChar = CharSet.copyOfFirstChar(symbols.exponentSeparator());
-        this.exponentSeparatorTrie = CharTrie.of(symbols.exponentSeparator());
-        this.plusSignChar = CharSet.copyOf(symbols.plusSign());
-        this.nanTrie = CharTrie.of(symbols.nan());
-        this.infinityTrie = CharTrie.of(symbols.infinity());
+        this.minusSignChar = CharSet.copyOf(symbols.minusSign(), ignoreCase);
+        this.exponentSeparatorChar = CharSet.copyOfFirstChar(symbols.exponentSeparator(), ignoreCase);
+        this.exponentSeparatorTrie = CharTrie.of(symbols.exponentSeparator(), ignoreCase);
+        this.plusSignChar = CharSet.copyOf(symbols.plusSign(), ignoreCase);
+        this.nanTrie = CharTrie.of(symbols.nan(), ignoreCase);
+        this.infinityTrie = CharTrie.of(symbols.infinity(), ignoreCase);
         Set<Character> nanOrInfinitySet = new LinkedHashSet<>();
         for (String s : symbols.nan()) {
             nanOrInfinitySet.add(s.charAt(0));
@@ -39,7 +39,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         for (String s : symbols.infinity()) {
             nanOrInfinitySet.add(s.charAt(0));
         }
-        nanOrInfinityChar = CharSet.copyOf(nanOrInfinitySet);
+        nanOrInfinityChar = CharSet.copyOf(nanOrInfinitySet, ignoreCase);
     }
 
     /**
@@ -224,21 +224,63 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
 
 
     protected CharSequence filterInputString(CharSequence str, int startIndex, int endIndex) {
-        StringBuilder b = new StringBuilder(endIndex - startIndex);
-        for (int i = startIndex; i < endIndex; i++) {
-            char ch = str.charAt(i);
+        StringBuilder buf = new StringBuilder(endIndex - startIndex);
+
+        // Filter leading format characters
+        // -------------------
+        int index = skipFormatCharacters(str, startIndex, endIndex);
+        char ch = str.charAt(index);
+
+        // Filter optional sign
+        // -------------------
+        final boolean isNegative = isMinusSign(ch);
+        if (isNegative) buf.append('-');
+        if (isNegative || isPlusSign(ch)) {
+            ++index;
+        }
+
+        // We do not need to parse NaN or Infinity, this case has already been processed
+
+        // Parse significand
+        for (; index < endIndex; index++) {
+            ch = str.charAt(index);
             int digit = (char) (ch - zeroChar);
             if (digit < 10) {
-                b.append((char) (digit + '0'));
-            } else if (isMinusSign(ch)) {
-                b.append('-');
+                buf.append((char) (digit + '0'));
             } else if (isDecimalSeparator(ch)) {
-                b.append('.');
-            } else if (isExponentSeparator(ch)) {
-                b.append('e');
+                buf.append('.');
+            } else if (!isGroupingSeparator(ch)) {
+                break;
             }
+
         }
-        return b;
+
+        // Parse exponent number
+        // ---------------------
+        int count = exponentSeparatorTrie.match(str, index, endIndex);
+        if (count > 0) {
+            buf.append('e');
+            index += count;
+            index = skipFormatCharacters(str, index, endIndex);
+            ch = charAt(str, index, endIndex);
+            boolean isExponentNegative = isMinusSign(ch);
+            if (isExponentNegative) {
+                buf.append('-');
+            }
+            if (isExponentNegative || isPlusSign(ch)) {
+                ++index;
+            }
+            ch = str.charAt(index);
+            int digit = (char) (ch - zeroChar);
+            do {
+                buf.append((char) (digit + '0'));
+                ch = charAt(str, ++index, endIndex);
+                digit = (char) (ch - zeroChar);
+            } while (digit < 10);
+        }
+
+
+        return buf;
     }
 
     /**
@@ -255,6 +297,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         }
         return index;
     }
+
     private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
         int nanMatch = nanTrie.match(str, index, endIndex);
         if (nanMatch > 0) {

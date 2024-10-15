@@ -52,14 +52,14 @@ interface CharTrie {
      */
     int match(char[] str, int startIndex, int endIndex);
 
-    public static CharTrie of(Set<String> set) {
+    public static CharTrie of(Set<String> set, boolean ignoreCase) {
         switch (set.size()) {
             case 0:
                 return new CharTrieOfNone();
             case 1:
-                return new CharTrieOfOne(set);
+                return ignoreCase ? new CharTrieOfOneIgnoreCase(set) : new CharTrieOfOne(set);
             default:
-                return new CharTrieOfMany(set);
+                return ignoreCase ? new CharTrieOfManyIgnoreCase(set) : new CharTrieOfMany(set);
         }
     }
 }
