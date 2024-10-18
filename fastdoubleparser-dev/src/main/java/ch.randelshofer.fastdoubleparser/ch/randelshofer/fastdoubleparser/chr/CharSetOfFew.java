@@ -2,12 +2,12 @@
  * @(#)CharSetOfFew.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.fastdoubleparser;
+package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Set;
 
 /**
- * A set for {@code char} with linear search.
+ * A set of {@code char} with linear search.
  */
 class CharSetOfFew implements CharSet {
     private final char[] chars;
@@ -20,7 +20,7 @@ class CharSetOfFew implements CharSet {
         }
     }
 
-    public boolean contains(char ch) {
+    public boolean containsKey(char ch) {
         boolean found = false;
         for (char aChar : chars) {
             found |= aChar == ch;

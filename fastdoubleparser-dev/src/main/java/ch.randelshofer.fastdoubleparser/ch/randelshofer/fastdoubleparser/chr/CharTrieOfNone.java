@@ -2,7 +2,7 @@
  * @(#)CharTrieOfNone.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.fastdoubleparser;
+package ch.randelshofer.fastdoubleparser.chr;
 
 class CharTrieOfNone implements CharTrie {
     @Override

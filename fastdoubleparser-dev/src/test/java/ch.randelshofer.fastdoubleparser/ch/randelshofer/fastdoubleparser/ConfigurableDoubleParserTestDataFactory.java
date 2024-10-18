@@ -36,6 +36,7 @@ public class ConfigurableDoubleParserTestDataFactory {
 
     public static List<NumberTestData> createNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
+        list.addAll(createChineseNumberFormatSymbolsTestData());
         list.addAll(createIgnoreCaseNumberFormatSymbolsTestData());
         list.addAll(createArabianNumberFormatSymbolsTestData());
         list.addAll(createEstonianNumberFormatSymbolsTestData());
@@ -50,14 +51,14 @@ public class ConfigurableDoubleParserTestDataFactory {
         );
         assertEquals(dfs.getMinusSign(), '\u2212', "Expected estonian minus sign U+2212");
         NumberFormatSymbols symbols = new NumberFormatSymbols(
-                Set.of(dfs.getDecimalSeparator()),
-                Set.of(dfs.getGroupingSeparator()),
+                "" + dfs.getDecimalSeparator(),
+                "" + dfs.getGroupingSeparator(),
                 Set.of(dfs.getExponentSeparator()),
-                Set.of(dfs.getMinusSign(), '-'), // adding estonian minus sign and normal one
-                Set.of('\uff0b', '+'), // adding full-width plus sign and normal one
+                "" + dfs.getMinusSign() + '-', // adding estonian minus sign and normal one
+                "" + '\uff0b' + '+', // adding full-width plus sign and normal one
                 Set.of(dfs.getInfinity()),
                 Set.of(dfs.getNaN()),
-                dfs.getZeroDigit()
+                "" + dfs.getZeroDigit()
         );
         list.addAll(List.of(
                 new NumberTestData("Estonian locale with Estonian minus", dfs.getLocale(), symbols, "\u221213,35", -13.35),
@@ -74,6 +75,28 @@ public class ConfigurableDoubleParserTestDataFactory {
         return list;
     }
 
+    public static List<NumberTestData> createChineseNumberFormatSymbolsTestData() {
+        List<NumberTestData> list = new ArrayList<>();
+        Locale estonianLocale = new Locale("zh", "CN");
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(
+                estonianLocale
+        );
+        NumberFormatSymbols symbols = new NumberFormatSymbols(
+                "" + dfs.getDecimalSeparator(),
+                "" + dfs.getGroupingSeparator(),
+                Set.of(dfs.getExponentSeparator()),
+                "" + dfs.getMinusSign(),
+                "+",
+                Set.of(dfs.getInfinity()),
+                Set.of(dfs.getNaN()),
+                "〇一二三四五六七八九"
+        );
+        list.addAll(List.of(
+                new NumberTestData("Chinese locale", dfs.getLocale(), symbols, "一,二三四,五六七.〇八九", 1234567.089)
+        ));
+        return list;
+    }
+
     public static List<NumberTestData> createIgnoreCaseNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
         Locale englishLocale = Locale.ENGLISH;
@@ -82,14 +105,14 @@ public class ConfigurableDoubleParserTestDataFactory {
         dfs.setExponentSeparator("Exp");
         dfs.setNaN("NaN");
         NumberFormatSymbols symbols = new NumberFormatSymbols(
-                Set.of(dfs.getDecimalSeparator()),
-                Set.of(dfs.getGroupingSeparator()),
+                "" + dfs.getDecimalSeparator(),
+                "" + dfs.getGroupingSeparator(),
                 Set.of(dfs.getExponentSeparator()),
-                Set.of(dfs.getMinusSign()),
-                Set.of('+'),
+                "" + dfs.getMinusSign(),
+                "+",
                 Set.of(dfs.getInfinity()),
                 Set.of(dfs.getNaN()),
-                dfs.getZeroDigit()
+                "" + dfs.getZeroDigit()
         );
         DecimalFormat fmt = new DecimalFormat("#00.0####E0", dfs);
         for (double n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {

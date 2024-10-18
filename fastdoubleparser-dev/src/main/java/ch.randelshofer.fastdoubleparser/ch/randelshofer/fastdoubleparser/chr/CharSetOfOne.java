@@ -2,7 +2,7 @@
  * @(#)CharSetOfOne.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.fastdoubleparser;
+package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Set;
 
@@ -15,7 +15,7 @@ class CharSetOfOne implements CharSet {
 
     }
 
-    public boolean contains(char ch) {
+    public boolean containsKey(char ch) {
         return this.ch == ch;
     }
 }

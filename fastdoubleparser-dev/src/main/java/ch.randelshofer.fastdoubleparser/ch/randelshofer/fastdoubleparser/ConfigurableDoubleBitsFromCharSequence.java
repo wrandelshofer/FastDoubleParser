@@ -31,13 +31,15 @@ final class ConfigurableDoubleBitsFromCharSequence extends AbstractConfigurableF
     }
 
     @Override
-    long valueOfFloatLiteral(CharSequence str, int startIndex, int endIndex, boolean isNegative,
+    long valueOfFloatLiteral(CharSequence str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative,
                              long significand, int exponent, boolean isSignificandTruncated,
-                             int exponentOfTruncatedSignificand) {
-        double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isNegative, significand, exponent, isSignificandTruncated,
+                             int exponentOfTruncatedSignificand, int exponentValue) {
+        double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isSignificandNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
-        return Double.doubleToRawLongBits(Double.isNaN(d)
-                ? Double.parseDouble(filterInputString(str, startIndex, endIndex).toString())
-                : d);
+        return Double.doubleToRawLongBits(Double.isNaN(d) ?
+                // Double.parseDouble(filterInputString(str, startIndex, endIndex).toString())
+                slowPathToDouble(str, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue) :
+                d);
     }
+
 }

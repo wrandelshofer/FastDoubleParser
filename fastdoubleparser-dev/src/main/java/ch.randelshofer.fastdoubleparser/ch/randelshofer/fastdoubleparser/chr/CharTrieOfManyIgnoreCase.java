@@ -1,8 +1,8 @@
 /*
- * @(#)CharTrieOfMany.java
+ * @(#)CharTrieOfManyIgnoreCase.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.fastdoubleparser;
+package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Set;
 
@@ -28,7 +28,9 @@ class CharTrieOfManyIgnoreCase implements CharTrie {
         node.setEnd();
     }
 
-    private char convert(char c) {
+    private static char convert(char c) {
+        // We have to convert to upper case and then to lower case
+        // because of sophisticated writing systems, like Georgian script.
         return Character.toLowerCase(Character.toUpperCase(c));
     }
 

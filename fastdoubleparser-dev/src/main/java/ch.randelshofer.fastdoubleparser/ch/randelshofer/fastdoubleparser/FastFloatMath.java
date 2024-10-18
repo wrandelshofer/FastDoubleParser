@@ -60,7 +60,7 @@ class FastFloatMath {
                     && exponentOfTruncatedSignificand <= FLOAT_MAX_EXPONENT_POWER_OF_TEN) {
                 float withoutRounding = tryDecToFloatWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
                 float roundedUp = tryDecToFloatWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
-                if (!Float.isNaN(withoutRounding) && roundedUp == withoutRounding) {
+                if (roundedUp == withoutRounding) {//Note: A NaN value is always != NaN
                     return withoutRounding;
                 }
             }

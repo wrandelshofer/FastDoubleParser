@@ -4,6 +4,10 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import ch.randelshofer.fastdoubleparser.chr.CharDigitSet;
+import ch.randelshofer.fastdoubleparser.chr.CharSet;
+import ch.randelshofer.fastdoubleparser.chr.CharTrie;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -11,7 +15,7 @@ import java.util.Set;
  * Formattable floating point parser.
  */
 abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends AbstractFloatValueParser {
-    private final char zeroChar;
+    private final CharDigitSet digitSet;
     private final CharSet minusSignChar;
     private final CharSet plusSignChar;
     private final CharSet decimalSeparator;
@@ -24,7 +28,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
     public AbstractConfigurableFloatingPointBitsFromCharSequence(NumberFormatSymbols symbols, boolean ignoreCase) {
         this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator(), ignoreCase);
         this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator(), ignoreCase);
-        this.zeroChar = symbols.zeroDigit();
+        this.digitSet = CharDigitSet.copyOf(symbols.digits());
         this.minusSignChar = CharSet.copyOf(symbols.minusSign(), ignoreCase);
         this.exponentSeparatorTrie = CharTrie.of(symbols.exponentSeparator(), ignoreCase);
         this.plusSignChar = CharSet.copyOf(symbols.plusSign(), ignoreCase);
@@ -52,11 +56,11 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
     abstract long negativeInfinity();
 
     private boolean isDecimalSeparator(char ch) {
-        return decimalSeparator.contains(ch);
+        return decimalSeparator.containsKey(ch);
     }
 
     private boolean isGroupingSeparator(char ch) {
-        return groupingSeparator.contains(ch);
+        return groupingSeparator.containsKey(ch);
     }
 
 
@@ -81,7 +85,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
     public final long parseFloatingPointLiteral(CharSequence str, int offset, int length) {
         final int endIndex = checkBounds(str.length(), offset, length);
 
-        // Skip leading whitespace
+        // Skip leading format characters
         // -------------------
         int index = skipFormatCharacters(str, offset, endIndex);
         if (index == endIndex) {
@@ -101,13 +105,10 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
 
         // Parse NaN or Infinity (this occurs rarely)
         // ---------------------
-        if (nanOrInfinityChar.contains(ch)) {
+        if (nanOrInfinityChar.containsKey(ch)) {
             return parseNaNOrInfinity(str, index, endIndex, isNegative);
         }
 
-        // Parse optional leading zero
-        // ---------------------------
-        final boolean hasLeadingZero = ch == '0';
 
         // Parse significand
         // -----------------
@@ -115,18 +116,20 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         //       arbitrary integer multiplication.
         long significand = 0;// significand is treated as an unsigned long
         final int significandStartIndex = index;
+        int decimalSeparatorIndex = -1;
         int integerDigitCount = -1;
         int groupingCount = 0;
         boolean illegal = false;
 
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
-            int digit = (char) (ch - zeroChar);
+            int digit = digitSet.toDigit(ch);
             if (digit < 10) {
                 // This might overflow, we deal with it later.
                 significand = 10 * significand + digit;
             } else if (isDecimalSeparator(ch)) {
                 illegal |= integerDigitCount >= 0;
+                decimalSeparatorIndex = index;
                 integerDigitCount = index - significandStartIndex - groupingCount;
             } else if (isGroupingSeparator(ch)) {
                 groupingCount++;
@@ -139,6 +142,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         int exponent;
         if (integerDigitCount < 0) {
             integerDigitCount = digitCount = significandEndIndex - significandStartIndex - groupingCount;
+            decimalSeparatorIndex = significandEndIndex;
             exponent = 0;
         } else {
             digitCount = significandEndIndex - significandStartIndex - 1 - groupingCount;
@@ -157,7 +161,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
             if (isExponentNegative || isPlusSign(ch)) {
                 ch = charAt(str, ++index, endIndex);
             }
-            int digit = (char) (ch - zeroChar);
+            int digit = digitSet.toDigit(ch);
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
@@ -165,7 +169,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
                     expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
-                digit = (char) (ch - zeroChar);
+                digit = digitSet.toDigit(ch);
             } while (digit < 10);
             if (isExponentNegative) {
                 expNumber = -expNumber;
@@ -176,7 +180,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         // Check if FloatingPointLiteral is complete
         // ------------------------
         if (illegal || index < endIndex
-                || !hasLeadingZero && digitCount == 0) {
+                || digitCount == 0) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
 
@@ -189,7 +193,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
             significand = 0;
             for (index = significandStartIndex; index < significandEndIndex; index++) {
                 ch = str.charAt(index);
-                int digit = (char) (ch - zeroChar);
+                int digit = digitSet.toDigit(ch);
                 if (digit < 10) {
                     if (Long.compareUnsigned(significand, AbstractFloatValueParser.MINIMAL_NINETEEN_DIGIT_INTEGER) < 0) {
                         significand = 10 * significand + digit;
@@ -205,16 +209,18 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
             isSignificandTruncated = false;
             exponentOfTruncatedSignificand = 0;
         }
-        return valueOfFloatLiteral(str, offset, endIndex, isNegative, significand, exponent, isSignificandTruncated,
-                exponentOfTruncatedSignificand);
+        return valueOfFloatLiteral(str, significandStartIndex, decimalSeparatorIndex,
+                decimalSeparatorIndex + 1, significandEndIndex,
+                isNegative, significand, exponent, isSignificandTruncated,
+                exponentOfTruncatedSignificand, expNumber);
     }
 
     private boolean isMinusSign(char c) {
-        return minusSignChar.contains(c);
+        return minusSignChar.containsKey(c);
     }
 
     private boolean isPlusSign(char c) {
-        return plusSignChar.contains(c);
+        return plusSignChar.containsKey(c);
     }
 
 
@@ -239,7 +245,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         // Parse significand
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
-            int digit = (char) (ch - zeroChar);
+            int digit = digitSet.toDigit(ch);
             if (digit < 10) {
                 buf.append((char) (digit + '0'));
             } else if (isDecimalSeparator(ch)) {
@@ -266,11 +272,11 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
                 ++index;
             }
             ch = str.charAt(index);
-            int digit = (char) (ch - zeroChar);
+            int digit = digitSet.toDigit(ch);
             do {
                 buf.append((char) (digit + '0'));
                 ch = charAt(str, ++index, endIndex);
-                digit = (char) (ch - zeroChar);
+                digit = digitSet.toDigit(ch);
             } while (digit < 10);
         }
 
@@ -320,22 +326,31 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
      * literal.
      *
      * @param str                            the string that contains the float literal (and maybe more)
-     * @param startIndex                     the start index (inclusive) of the float literal
+     * @param integerStartIndex              the start index (inclusive) of the integer part of the significand
      *                                       inside the string
-     * @param endIndex                       the end index (exclusive) of the float literal inside
+     * @param integerEndIndex                the end index (exclusive) of the integer part of the significand
      *                                       the string
-     * @param isNegative                     whether the float value is negative
+     * @param fractionStartIndex             the start index (inclusive) of the fraction part of the significand
+     *                                       inside the string
+     * @param fractionEndIndex               the end index (exclusive) of the fraction part of the significand
+     *                                       the string
+     * @param isSignificandNegative          whether the significand value is negative
      * @param significand                    the significand of the float value (can be truncated)
-     * @param exponent                       the exponent of the float value
+     * @param exponent                       the exponent of the float value considering the significand
      * @param isSignificandTruncated         whether the significand is truncated
      * @param exponentOfTruncatedSignificand the exponent value of the truncated
      *                                       significand
+     * @param exponentValue the exponent value without considering the significand
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    abstract long valueOfFloatLiteral(
-            CharSequence str, int startIndex, int endIndex,
-            boolean isNegative, long significand, int exponent,
-            boolean isSignificandTruncated, int exponentOfTruncatedSignificand);
+    abstract long valueOfFloatLiteral(CharSequence str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative,
+                                      long significand, int exponent, boolean isSignificandTruncated,
+                                      int exponentOfTruncatedSignificand, int exponentValue);
+
+    protected double slowPathToDouble(CharSequence str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, int exponentValue) {
+        return SlowDoubleConversionPath.toDouble(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue);
+    }
+
 
 }

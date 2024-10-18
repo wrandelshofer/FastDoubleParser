@@ -81,7 +81,7 @@ import java.text.DecimalFormatSymbols;
  *
  * <dl>
  * <dt><i>Digit:</i>
- * <dd><i>(one of digits 0 through 9 starting with {@link NumberFormatSymbols#zeroDigit()})</i>
+ * <dd><i>(one of digits 0 through 9 starting with {@link NumberFormatSymbols#digits()})</i>
  * </dl>
  *
  * <dl>

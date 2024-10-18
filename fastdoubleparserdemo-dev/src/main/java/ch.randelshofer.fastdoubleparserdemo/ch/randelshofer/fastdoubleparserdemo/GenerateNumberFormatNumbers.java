@@ -22,7 +22,7 @@ public class GenerateNumberFormatNumbers {
         return Math.pow(value, invGamma);
     }
 
-    public void generate(Path path, NumberFormat f, double range, int size, double gamma) throws IOException {
+    public void generate(Path path, NumberFormat f, double range, int size, double gamma, String digits) throws IOException {
         Random rng = new Random();
         double invGamma = 1 / gamma;
         try (BufferedWriter w = Files.newBufferedWriter(path)) {
@@ -32,7 +32,7 @@ public class GenerateNumberFormatNumbers {
                     .map(v -> (Double.doubleToRawLongBits(v) & 1) == 1 ? -v : v)
                     .forEach(v -> {
                                 try {
-                                    w.write(f.format(v));
+                                    w.write(replaceDigits(f.format(v), digits));
                                     w.newLine();
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
@@ -43,10 +43,23 @@ public class GenerateNumberFormatNumbers {
         }
     }
 
-    public static void main(String... args) throws IOException, ParseException {
-        Locale locale = new Locale("et,EE");
-        NumberFormat f = NumberFormat.getNumberInstance(locale);
+    private String replaceDigits(String str, String digits) {
+        if (digits == null) return str;
+        StringBuilder buf = new StringBuilder(str);
+        for (int i = 0; i < buf.length(); i++) {
+            char ch = buf.charAt(i);
+            int digit = (char) (ch - '0');
+            if (digit < 10) {
+                buf.setCharAt(i, digits.charAt(digit));
+            }
+        }
+        return buf.toString();
+    }
 
+    public static void main(String... args) throws IOException, ParseException {
+        Locale locale = Locale.forLanguageTag("zh-Hans-CN-u-nu-hanidec");
+        NumberFormat f = NumberFormat.getNumberInstance(locale);
+        String digits = "〇一二三四五六七八九";
         double range = 1e9;
         int size = 100_000;
         double gamma = 0.2;
@@ -54,7 +67,7 @@ public class GenerateNumberFormatNumbers {
                 + locale.getLanguage()
                 + (locale.getCountry() == null ? "" : "-" + locale.getCountry())
                 + ".txt").toAbsolutePath();
-        new GenerateNumberFormatNumbers().generate(path, f, range, size, gamma);
+        new GenerateNumberFormatNumbers().generate(path, f, range, size, gamma, digits);
     }
 
 }

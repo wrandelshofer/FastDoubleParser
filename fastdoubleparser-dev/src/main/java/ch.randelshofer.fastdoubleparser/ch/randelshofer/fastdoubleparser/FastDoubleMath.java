@@ -34,6 +34,7 @@ class FastDoubleMath {
      * The number of bits in the significand, including the implicit bit.
      */
     public static final int DOUBLE_SIGNIFICAND_WIDTH = 53;
+    public static final int MAX_REQUIRED_DIGITS = 768;
     /**
      * Smallest power of 10 value of the exponent.
      * <p>
@@ -782,7 +783,7 @@ class FastDoubleMath {
                     && exponentOfTruncatedSignificand <= DOUBLE_MAX_EXPONENT_POWER_OF_TEN) {
                 double withoutRounding = tryDecToDoubleWithFastAlgorithm(isNegative, significand, exponentOfTruncatedSignificand);
                 double roundedUp = tryDecToDoubleWithFastAlgorithm(isNegative, significand + 1, exponentOfTruncatedSignificand);
-                if (!Double.isNaN(withoutRounding) && roundedUp == withoutRounding) {
+                if (roundedUp == withoutRounding) {//Note: a NaN value is always != another NaN value
                     return withoutRounding;
                 }
             }

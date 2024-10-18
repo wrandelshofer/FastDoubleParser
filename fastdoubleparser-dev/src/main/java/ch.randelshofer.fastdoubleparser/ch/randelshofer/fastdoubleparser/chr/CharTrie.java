@@ -2,11 +2,11 @@
  * @(#)CharTrie.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.fastdoubleparser;
+package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Set;
 
-interface CharTrie {
+public interface CharTrie {
     /**
      * Searches for the longest matching string in the trie
      * that matches the provided string.

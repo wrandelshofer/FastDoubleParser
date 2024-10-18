@@ -9,6 +9,8 @@ import ch.randelshofer.fastdoubleparser.JavaBigDecimalParser;
 import ch.randelshofer.fastdoubleparser.JavaDoubleParser;
 import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import ch.randelshofer.fastdoubleparser.JsonDoubleParser;
+import ch.randelshofer.fastdoubleparser.NumberFormatSymbols;
+import com.ibm.icu.text.DecimalFormatSymbols;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,6 +21,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,6 +33,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 
 /**
  * This benchmark for {@link ch.randelshofer.fastdoubleparser.JavaDoubleParser} aims to provide results that
@@ -100,6 +104,7 @@ public class Main {
     private boolean markdown = false;
     private boolean sleep = false;
     private Locale locale = Locale.ENGLISH;
+    private String digits = null;
     private boolean printConfidence = false;
 
     public static void main(String... args) throws Exception {
@@ -119,6 +124,9 @@ public class Main {
                     break;
                 case "--locale":
                     benchmark.locale = Locale.forLanguageTag(args[++i]);
+                    break;
+                case "--digits":
+                    benchmark.digits = args[++i];
                     break;
                 default:
                     benchmark.filename = args[i];
@@ -145,7 +153,8 @@ public class Main {
                 new BenchmarkFunction("java.lang.Double", "java.lang.Double", () -> sumJavaLangDouble(lines)),
                 new BenchmarkFunction("java.lang.Float", "java.lang.Float", () -> sumJavaLangFloat(lines)),
                 new BenchmarkFunction("java.math.BigDecimal", "java.math.BigDecimal", () -> sumJavaLangBigDecimal(lines)),
-                new BenchmarkFunction("java.text.NumberFormat", "java.text.NumberFormat", () -> sumJavaTextNumberFormat(lines, locale)),
+                new BenchmarkFunction("java.text.NumberFormat", "java.text.NumberFormat", () -> sumJavaTextNumberFormat(lines)),
+                new BenchmarkFunction("com.ibm.icu.text.NumberFormat", "com.ibm.icu.text.NumberFormat", () -> sumIcuNumberFormat(lines)),
 
                 new BenchmarkFunction("JavaDoubleParser CharSequence", "java.lang.Double", () -> sumFastDoubleFromCharSequence(lines)),
                 new BenchmarkFunction("JavaDoubleParser char[]", "java.lang.Double", () -> sumFastDoubleParserFromCharArray(charArrayLines)),
@@ -381,14 +390,39 @@ public class Main {
         return answer;
     }
 
-    private double sumJavaTextNumberFormat(List<String> s, Locale locale) {
+    private double sumJavaTextNumberFormat(List<String> s) {
         double answer = 0;
         NumberFormat fmt = NumberFormat.getNumberInstance(locale);
         ParsePosition pos = new ParsePosition(0);
         for (String st : s) {
             pos.setIndex(0);
-            double x = fmt.parse(st, pos).doubleValue();
-            answer += x;
+            Number x = fmt.parse(st, pos);
+            if (x == null) throw new NumberFormatException("can not parse " + st);
+            answer += x.doubleValue();
+        }
+        return answer;
+    }
+
+    private double sumIcuNumberFormat(List<String> s) {
+        double answer = 0;
+        com.ibm.icu.text.DecimalFormat fmt = (com.ibm.icu.text.DecimalFormat) com.ibm.icu.text.NumberFormat.getNumberInstance(locale);
+
+        if (digits != null) {
+            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+            List<String> list = new ArrayList<>();
+            for (char ch : digits.toCharArray()) {
+                list.add("" + ch);
+            }
+            symbols.setDigitStrings(list.toArray(new String[0]));
+            fmt.setDecimalFormatSymbols(symbols);
+        }
+
+        ParsePosition pos = new ParsePosition(0);
+        for (String st : s) {
+            pos.setIndex(0);
+            Number x = fmt.parse(st, pos);
+            if (x == null) throw new NumberFormatException("can not parse " + st);
+            answer += x.doubleValue();
         }
         return answer;
     }
@@ -478,8 +512,8 @@ public class Main {
 
     private double sumConfigurableDoubleFromCharSequence(List<String> s) {
         double answer = 0;
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
-                NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
         for (String st : s) {
             double x = p.parseDouble((CharSequence) st);
             answer += x;
@@ -487,10 +521,32 @@ public class Main {
         return answer;
     }
 
+    private NumberFormatSymbols getNumberFormatSymbols() {
+        NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(((DecimalFormat) NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
+        if (digits != null) {
+            symbols = new NumberFormatSymbols(
+                    symbols.decimalSeparator(),
+                    symbols.groupingSeparator(),
+                    symbols.exponentSeparator(),
+                    symbols.minusSign(),
+                    symbols.plusSign(),
+                    symbols.infinity(),
+                    symbols.nan(),
+                    toList(digits));
+        }
+        return symbols;
+    }
+
+    private List<Character> toList(String digits) {
+        ArrayList<Character> list = new ArrayList<>(10);
+        for (char ch : digits.toCharArray()) list.add(ch);
+        return list;
+    }
+
     private double sumConfigurableDoubleFromCharArray(List<char[]> s) {
         double answer = 0;
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
-                NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
         for (char[] st : s) {
             double x = p.parseDouble(st);
             answer += x;
@@ -500,8 +556,8 @@ public class Main {
 
     private double sumConfigurableDoubleFromCharSequenceCI(List<String> s) {
         double answer = 0;
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
-                NumberFormat.getInstance(locale)).getDecimalFormatSymbols(), true);
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
         for (String st : s) {
             double x = p.parseDouble((CharSequence) st);
             answer += x;
@@ -511,8 +567,8 @@ public class Main {
 
     private double sumConfigurableDoubleFromCharArrayCI(List<char[]> s) {
         double answer = 0;
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(((DecimalFormat)
-                NumberFormat.getInstance(locale)).getDecimalFormatSymbols(), true);
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
         for (char[] st : s) {
             double x = p.parseDouble(st);
             answer += x;
@@ -582,7 +638,7 @@ public class Main {
             BenchmarkFunction function = entry.getValue();
             Number expected = results.get(function.reference);
             Number actual = results.get(function.title);
-            if (!Objects.equals(expected, actual)) {
+            if (expected != null && !Objects.equals(expected, actual)) {
                 System.err.println(function.title + " has computed the wrong sum: expectedSum=" + expected + " actualSum=" + actual);
                 iterator.remove();
             }
