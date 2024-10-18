@@ -34,13 +34,15 @@ class SlowDoubleConversionPath {
             }
         }
         // skip leading zeroes in fraction part
+        int skippedFractionDigits = 0;
         if (integerStartIndex == integerEndIndex) {
-            for (; fractionStartIndex < fractionEndIndex; fractionEndIndex++) {
+            for (; fractionStartIndex < fractionEndIndex; fractionStartIndex++) {
                 char ch = str.charAt(fractionStartIndex);
                 int digit = digitSet.toDigit(ch);
                 if (digit > 0 && digit < 10) {
                     break;
                 }
+                skippedFractionDigits++;
             }
         }
 
@@ -98,7 +100,7 @@ class SlowDoubleConversionPath {
         mul = powersOfTen[numFractionDigits % 8];
         if (mul != 0) b.fma(mul, acc);
 
-        int exponent = (int) (exponentValue + skippedIntegerDigits - numFractionDigits);
+        int exponent = (int) (exponentValue + skippedIntegerDigits - numFractionDigits - skippedFractionDigits);
 
         BigInteger bigInteger = b.toBigInteger();
 
@@ -124,13 +126,15 @@ class SlowDoubleConversionPath {
             }
         }
         // skip leading zeroes in fraction part
+        int skippedFractionDigits = 0;
         if (integerStartIndex == integerEndIndex) {
-            for (; fractionStartIndex < fractionEndIndex; fractionEndIndex++) {
+            for (; fractionStartIndex < fractionEndIndex; fractionStartIndex++) {
                 char ch = str[fractionStartIndex];
                 int digit = digitSet.toDigit(ch);
                 if (digit > 0 && digit < 10) {
                     break;
                 }
+                skippedFractionDigits++;
             }
         }
 
@@ -188,7 +192,7 @@ class SlowDoubleConversionPath {
         mul = powersOfTen[numFractionDigits % 8];
         if (mul != 0) b.fma(mul, acc);
 
-        int exponent = (int) (exponentValue + skippedIntegerDigits - numFractionDigits);
+        int exponent = (int) (exponentValue + skippedIntegerDigits - numFractionDigits - skippedFractionDigits);
 
         BigInteger bigInteger = b.toBigInteger();
 

@@ -210,7 +210,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         return valueOfFloatLiteral(str, significandStartIndex, decimalSeparatorIndex,
                 decimalSeparatorIndex + 1, significandEndIndex,
                 isNegative, significand, exponent, isSignificandTruncated,
-                exponentOfTruncatedSignificand, expNumber);
+                exponentOfTruncatedSignificand, expNumber, offset, endIndex);
     }
 
     private boolean isMinusSign(char c) {
@@ -338,13 +338,15 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
      * @param isSignificandTruncated         whether the significand is truncated
      * @param exponentOfTruncatedSignificand the exponent value of the truncated
      *                                       significand
-     * @param exponentValue the exponent of the float value without considering the significand
+     * @param exponentValue                  the exponent of the float value without considering the significand
+     * @param startIndex
+     * @param endIndex
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
     abstract long valueOfFloatLiteral(char[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative,
                                       long significand, int exponent, boolean isSignificandTruncated,
-                                      int exponentOfTruncatedSignificand, int exponentValue);
+                                      int exponentOfTruncatedSignificand, int exponentValue, int startIndex, int endIndex);
 
     protected double slowPathToDouble(char[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, int exponentValue) {
         return SlowDoubleConversionPath.toDouble(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue);

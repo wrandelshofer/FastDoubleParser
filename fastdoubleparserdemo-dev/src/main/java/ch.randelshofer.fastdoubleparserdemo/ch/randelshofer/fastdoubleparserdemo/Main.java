@@ -174,8 +174,10 @@ public class Main {
 
                 new BenchmarkFunction("ConfigurableDoubleParser CharSequence", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharSequence(lines)),
                 new BenchmarkFunction("ConfigurableDoubleParser char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArray(charArrayLines)),
+                new BenchmarkFunction("ConfigurableDoubleParser byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArray(byteArrayLines)),
                 new BenchmarkFunction("ConfigurableDoubleParserCI CharSequence", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharSequenceCI(lines)),
-                new BenchmarkFunction("ConfigurableDoubleParserCI char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArrayCI(charArrayLines))
+                new BenchmarkFunction("ConfigurableDoubleParserCI char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArrayCI(charArrayLines)),
+                new BenchmarkFunction("ConfigurableDoubleParserCI byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArrayCI(byteArrayLines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -543,10 +545,43 @@ public class Main {
         return list;
     }
 
+    private double sumConfigurableDoubleFromByteArray(List<byte[]> s) {
+        double answer = 0;
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
+        for (byte[] st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumConfigurableDoubleFromByteArrayCI(List<byte[]> s) {
+        double answer = 0;
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
+        for (byte[] st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
+
     private double sumConfigurableDoubleFromCharArray(List<char[]> s) {
         double answer = 0;
         NumberFormatSymbols symbols = getNumberFormatSymbols();
         ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
+        for (char[] st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumConfigurableDoubleFromCharArrayCI(List<char[]> s) {
+        double answer = 0;
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
         for (char[] st : s) {
             double x = p.parseDouble(st);
             answer += x;
@@ -565,16 +600,6 @@ public class Main {
         return answer;
     }
 
-    private double sumConfigurableDoubleFromCharArrayCI(List<char[]> s) {
-        double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
-        for (char[] st : s) {
-            double x = p.parseDouble(st);
-            answer += x;
-        }
-        return answer;
-    }
 
 
     private float sumJavaLangFloat(List<String> s) {

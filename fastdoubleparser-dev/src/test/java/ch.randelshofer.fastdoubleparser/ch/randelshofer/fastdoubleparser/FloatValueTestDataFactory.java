@@ -55,7 +55,8 @@ public abstract class FloatValueTestDataFactory {
                 new NumberTestData("Dec Double: Outside Clinger fast path (min_clinger_significand + 1, min_clinger_exponent - 1)", "1e-23", 1e-23d),
                 new NumberTestData("Dec Double: Outside Clinger fast path, bail-out in semi-fast path, 1e23", "1e23", 1e23d),
                 new NumberTestData("Dec Double: Outside Clinger fast path, mantissa overflows in semi-fast path, 7.2057594037927933e+16", "7.2057594037927933e+16", 7.2057594037927933e+16d),
-                new NumberTestData("Dec Double: Outside Clinger fast path, bail-out in semi-fast path, 7.3177701707893310e+15", "7.3177701707893310e+15", 7.3177701707893310e+15d)
+                new NumberTestData("Dec Double: Outside Clinger fast path, bail-out in semi-fast path, 7.3177701707893310e+15", "7.3177701707893310e+15", 7.3177701707893310e+15d),
+                new NumberTestData("Dec Double: Slow path with leading zero digits, 0.0032714205467505586", "0.0032714205467505586", 0.0032714205467505586)
 
                 //   new NumberTestData("-2.97851206854973E-75", -2.97851206854973E-75),
                 //   new NumberTestData("3.0286208942000664E-69", 3.0286208942000664E-69),

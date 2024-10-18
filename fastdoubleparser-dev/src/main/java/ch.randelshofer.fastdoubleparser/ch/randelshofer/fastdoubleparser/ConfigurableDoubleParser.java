@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormatSymbols;
 
 /**
@@ -226,5 +227,30 @@ public class ConfigurableDoubleParser {
      */
     public double parseDouble(char[] str, int offset, int length) {
         return Double.longBitsToDouble(getCharArrayParser().parseFloatingPointLiteral(str, offset, length));
+    }
+
+    /**
+     * Parses a double value from the specified byte array.
+     *
+     * @param str a byte array
+     * @return a double value
+     * @throws NumberFormatException if the provided char array could not be parsed
+     */
+    public double parseDouble(byte[] str) {
+        String str1 = new String(str, StandardCharsets.UTF_8);
+        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str1, 0, str1.length()));
+    }
+
+    /**
+     * Parses a double value from a substring of the specified byte array.
+     *
+     * @param str    a byte array
+     * @param offset the start offset of the substring
+     * @param length the length of the substring
+     * @throws NumberFormatException if the provided char array could not be parsed
+     */
+    public double parseDouble(byte[] str, int offset, int length) {
+        String str1 = new String(str, offset, length, StandardCharsets.UTF_8);
+        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str1, 0, str1.length()));
     }
 }
