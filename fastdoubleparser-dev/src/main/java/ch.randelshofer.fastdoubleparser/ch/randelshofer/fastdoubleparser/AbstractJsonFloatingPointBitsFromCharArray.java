@@ -155,11 +155,6 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
                 exponentOfTruncatedSignificand);
     }
 
-
-    private int tryToParseEightDigits(char[] str, int offset) {
-        return FastDoubleSwar.tryToParseEightDigits(str, offset);
-    }
-
     /**
      * Computes a float value from the given components of a decimal float
      * literal.
