@@ -28,5 +28,5 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots --errors package
       - name: Performance Test canada.txt
-        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main fastdoubleparserdemo/data/canada.txt
+        run: java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p ~/.m2/repository/com/ibm/icu/icu4j/75.1/icu4j-75.1.jar:fastdoubleparserdemo/target:fastdoubleparser/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main fastdoubleparserdemo/data/canada.txt
 ...
