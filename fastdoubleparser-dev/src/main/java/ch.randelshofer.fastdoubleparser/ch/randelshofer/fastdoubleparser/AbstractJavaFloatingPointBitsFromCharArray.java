@@ -149,7 +149,9 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex
                 || !hasLeadingZero && digitCount == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            // Parse NaN or Infinity (this occurs rarely)
+            // ---------------------
+            return parseNaNOrInfinity(str, index, endIndex, isNegative);
         }
 
         // Re-parse significand in case of a potential overflow
@@ -218,12 +220,6 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             if (ch == 0) {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
-        }
-
-        // Parse NaN or Infinity
-        // ---------------------
-        if (ch >= 'I') {
-            return parseNaNOrInfinity(str, index, endIndex, isNegative);
         }
 
         // Parse optional leading zero
@@ -379,6 +375,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
     }
 
     private long parseNaNOrInfinity(char[] str, int index, int endIndex, boolean isNegative) {
+        if (index < endIndex) {
         if (str[index] == 'N') {
             if (index + 2 < endIndex
                     // && str[index] == 'N'
@@ -406,6 +403,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
                     return isNegative ? negativeInfinity() : positiveInfinity();
                 }
             }
+        }
         }
         throw new NumberFormatException(SYNTAX_ERROR);
     }

@@ -103,12 +103,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
             }
         }
 
-        // Parse NaN or Infinity (this occurs rarely)
-        // ---------------------
-        if (nanOrInfinityChar.containsKey(ch)) {
-            return parseNaNOrInfinity(str, index, endIndex, isNegative);
-        }
-
 
         // Parse significand
         // -----------------
@@ -177,11 +171,11 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
             exponent += expNumber;
         }
 
-        // Check if FloatingPointLiteral is complete
-        // ------------------------
+        // Parse NaN or Infinity (this occurs rarely)
+        // ---------------------
         if (illegal || index < endIndex
                 || digitCount == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return parseNaNOrInfinity(str, index, endIndex, isNegative);
         }
 
         // Re-parse significand in case of a potential overflow

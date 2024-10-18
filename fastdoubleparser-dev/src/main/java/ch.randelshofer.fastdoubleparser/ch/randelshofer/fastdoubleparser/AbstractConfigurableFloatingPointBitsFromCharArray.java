@@ -102,12 +102,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
             }
         }
 
-        // Parse NaN or Infinity (this occurs rarely)
-        // ---------------------
-        if (nanOrInfinityChar.containsKey(ch)) {
-            return parseNaNOrInfinity(str, index, endIndex, isNegative);
-        }
-
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -175,11 +169,11 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
             exponent += expNumber;
         }
 
-        // Check if FloatingPointLiteral is complete
-        // ------------------------
+        // Parse NaN or Infinity (this occurs rarely)
+        // ---------------------
         if (illegal || index < endIndex
                 || digitCount == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return parseNaNOrInfinity(str, index, endIndex, isNegative);
         }
 
         // Re-parse significand in case of a potential overflow
