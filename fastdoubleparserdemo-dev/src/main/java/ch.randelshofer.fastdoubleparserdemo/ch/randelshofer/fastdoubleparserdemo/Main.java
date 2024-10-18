@@ -144,7 +144,7 @@ public class Main {
     }
 
     private Map<String, BenchmarkFunction> createBenchmarkFunctions(List<String> lines) {
-        List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.ISO_8859_1)).collect(Collectors.toList());
+        List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.UTF_8)).collect(Collectors.toList());
         List<char[]> charArrayLines = lines.stream().map(String::toCharArray).collect(Collectors.toList());
 
 
