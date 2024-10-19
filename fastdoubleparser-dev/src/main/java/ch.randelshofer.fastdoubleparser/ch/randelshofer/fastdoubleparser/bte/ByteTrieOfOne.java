@@ -15,10 +15,6 @@ class ByteTrieOfOne implements ByteTrie {
         chars = set.iterator().next().getBytes(StandardCharsets.UTF_8);
     }
 
-    public ByteTrieOfOne(byte[] chars) {
-        this.chars = chars;
-    }
-
 
     @Override
     public int match(byte[] str) {
@@ -27,6 +23,10 @@ class ByteTrieOfOne implements ByteTrie {
 
     @Override
     public int match(byte[] str, int startIndex, int endIndex) {
+        /*
+        int mismatch = Arrays.mismatch(chars, 0, chars.length, str, startIndex,startIndex+ Math.min(endIndex - startIndex, chars.length));
+        return mismatch<0?chars.length:0;
+        */
         int i = 0;
         int limit = Math.min(endIndex - startIndex, chars.length);
         while (i < limit && str[i + startIndex] == chars[i]) {

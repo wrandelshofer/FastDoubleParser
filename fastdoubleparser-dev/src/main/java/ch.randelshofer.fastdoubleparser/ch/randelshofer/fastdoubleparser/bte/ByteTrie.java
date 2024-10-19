@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser.bte;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -39,8 +40,8 @@ public interface ByteTrie {
             case 0:
                 return new ByteTrieOfNone();
             case 1:
+                String str = set.iterator().next();
                 if (ignoreCase) {
-                    String str = set.iterator().next();
                     switch (str.length()) {
                         case 0:
                             return new ByteTrieOfNone();
@@ -48,10 +49,19 @@ public interface ByteTrie {
                             LinkedHashSet<String> newSet = new LinkedHashSet<>();
                             newSet.add(str.toLowerCase());
                             newSet.add(str.toUpperCase());
-                            return newSet.size() == 1 ? new ByteTrieOfOne(newSet) : new ByteTrieOfFew(newSet);
+                            if (newSet.size() == 1) {
+                                if (newSet.iterator().next().getBytes(StandardCharsets.UTF_8).length == 1) {
+                                    return new ByteTrieOfOneSingleByte(newSet);
+                                }
+                                return new ByteTrieOfOne(newSet);
+                            }
+                            return new ByteTrieOfFew(newSet);
                         default:
                             return new ByteTrieOfOneIgnoreCase(set);
                     }
+                }
+                if (set.iterator().next().getBytes(StandardCharsets.UTF_8).length == 1) {
+                    return new ByteTrieOfOneSingleByte(set);
                 }
                 return new ByteTrieOfOne(set);
             default:

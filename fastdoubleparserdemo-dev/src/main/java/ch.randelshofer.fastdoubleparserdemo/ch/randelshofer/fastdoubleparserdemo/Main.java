@@ -229,12 +229,20 @@ public class Main {
     }
 
     private VarianceStatistics measure(Supplier<? extends Number> func, int numberOfTrials,
-                                       double confidenceLevel, double confidenceIntervalWidth, int minTrials) {
+                                       double confidenceLevel, double confidenceIntervalWidth, int minTrials, String name) {
         long t1;
         double confidenceWidth;
         long t2;
         double elapsed;
         VarianceStatistics stats = new VarianceStatistics();
+
+        // sleep to cooldown the processor
+        try {
+            System.out.println(name);
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            // ignore
+        }
 
         // measure
         int trials = 0;
@@ -308,6 +316,7 @@ public class Main {
         String reference = functions.get(name).reference;
         boolean isBaseline = reference.equals(name);
         String speedupOrBaseline = isBaseline ? "=" : "*";
+        Character first = baselines.isEmpty() ? null : baselines.values().iterator().next();
         System.out.printf("|%-40s|%7.2f|%4.1f %%|%7.2f|%9.2f|%7.2f%s%s|%-8s|\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
@@ -316,7 +325,7 @@ public class Main {
                 stats.getAverage() / lines.size(),
                 speedup,
                 speedupOrBaseline,
-                baselines.getOrDefault(reference, baselines.values().iterator().next()),
+                baselines.getOrDefault(reference, first),
                 System.getProperty("java.version")
         );
     }
@@ -333,7 +342,7 @@ public class Main {
         for (Map.Entry<String, BenchmarkFunction> entry : entries) {
             System.out.print(".");
             System.out.flush();
-            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS);
+            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS, entry.getKey());
             warmupResults.put(entry.getKey(), warmup);
         }
         System.out.println();
@@ -352,7 +361,7 @@ public class Main {
             System.out.print(".");
             System.out.flush();
 
-            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1);
+            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1, entry.getKey());
             results.put(entry.getKey(), stats);
         }
         System.out.println();

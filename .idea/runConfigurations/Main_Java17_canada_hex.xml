@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main-Java17 canada_hex" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="17" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="fastdoubleparserdemo-dev" />
     <option name="PROGRAM_PARAMETERS" value="--markdown data/canada_hex.txt" />
