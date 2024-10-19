@@ -10,6 +10,7 @@ import java.util.Set;
 public interface CharSet {
     boolean containsKey(char ch);
 
+
     static CharSet copyOf(Set<Character> set, boolean ignoreCase) {
         set = applyIgnoreCase(set, ignoreCase);
         switch (set.size()) {

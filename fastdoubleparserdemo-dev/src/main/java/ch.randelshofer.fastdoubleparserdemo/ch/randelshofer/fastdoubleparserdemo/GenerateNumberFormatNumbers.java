@@ -57,15 +57,15 @@ public class GenerateNumberFormatNumbers {
     }
 
     public static void main(String... args) throws IOException, ParseException {
-        Locale locale = Locale.forLanguageTag("zh-Hans-CN-u-nu-hanidec");
+        Locale locale = Locale.forLanguageTag("zh-CN");
         NumberFormat f = NumberFormat.getNumberInstance(locale);
-        String digits = "〇一二三四五六七八九";
+        String digits = null;//"〇一二三四五六七八九";
         double range = 1e9;
-        int size = 100_000;
+        int size = 50_000;
         double gamma = 0.2;
         Path path = Paths.get("fastdoubleparserdemo/data/formatted_"
                 + locale.getLanguage()
-                + (locale.getCountry() == null ? "" : "-" + locale.getCountry())
+                + (locale.getCountry() == null || locale.getCountry().isEmpty() ? "" : "-" + locale.getCountry())
                 + ".txt").toAbsolutePath();
         new GenerateNumberFormatNumbers().generate(path, f, range, size, gamma, digits);
     }

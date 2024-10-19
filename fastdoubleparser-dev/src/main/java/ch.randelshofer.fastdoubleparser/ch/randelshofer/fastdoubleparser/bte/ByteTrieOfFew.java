@@ -1,5 +1,5 @@
 /*
- * @(#)ByteTrieOfMany.java
+ * @(#)ByteTrieOfFew.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser.bte;
@@ -10,10 +10,10 @@ import java.util.Set;
 /**
  * A trie for testing if a String is contained in a set of Strings.
  */
-class ByteTrieOfMany implements ByteTrie {
+class ByteTrieOfFew implements ByteTrie {
     private ByteTrieNode root = new ByteTrieNode();
 
-    public ByteTrieOfMany(Set<String> set) {
+    public ByteTrieOfFew(Set<String> set) {
         for (String str : set) {
             if (!str.isEmpty()) {
                 add(str);

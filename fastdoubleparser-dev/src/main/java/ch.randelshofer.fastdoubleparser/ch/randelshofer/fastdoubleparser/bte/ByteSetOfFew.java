@@ -4,6 +4,8 @@
  */
 package ch.randelshofer.fastdoubleparser.bte;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -13,13 +15,14 @@ class ByteSetOfFew implements ByteSet {
     private final byte[] bytes;
 
     public ByteSetOfFew(Set<Character> set) {
-        this.bytes = new byte[set.size()];
+        byte[] tmp = new byte[set.size() * 4];
         int i = 0;
         for (char ch : set) {
-            if (ch > 127)
-                throw new IllegalArgumentException("can not map to a single byte. ch=" + ch + "' 0x" + Integer.toHexString(ch));
-            this.bytes[i++] = (byte) ch;
+            for (byte b : new String(new char[]{ch}).getBytes(StandardCharsets.UTF_8)) {
+                tmp[i++] = b;
+            }
         }
+        this.bytes = Arrays.copyOf(tmp, i);
     }
 
     public boolean containsKey(byte ch) {

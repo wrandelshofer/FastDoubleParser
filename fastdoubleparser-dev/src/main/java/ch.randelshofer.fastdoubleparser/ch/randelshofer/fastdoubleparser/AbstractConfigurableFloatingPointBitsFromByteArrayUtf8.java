@@ -7,13 +7,10 @@ package ch.randelshofer.fastdoubleparser;
 import ch.randelshofer.fastdoubleparser.bte.ByteDigitSet;
 import ch.randelshofer.fastdoubleparser.bte.ByteTrie;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
- * Formattable floating point parser.
+ * Configurable floating point parser for input data given in UTF-8.
  */
-abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends AbstractFloatValueParser {
+abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends AbstractFloatValueParser {
     private final ByteDigitSet digitSet;
     private final ByteTrie minusSignChar;
     private final ByteTrie plusSignChar;
@@ -23,22 +20,15 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
     private final ByteTrie infinityTrie;
     private final ByteTrie exponentSeparatorTrie;
 
-    public AbstractConfigurableFloatingPointBitsFromByteArray(NumberFormatSymbols symbols, boolean ignoreCase) {
-        this.decimalSeparator = ByteTrie.copyOfChars(symbols.decimalSeparator(), ignoreCase);
-        this.groupingSeparator = ByteTrie.copyOfChars(symbols.groupingSeparator(), ignoreCase);
+    public AbstractConfigurableFloatingPointBitsFromByteArrayUtf8(NumberFormatSymbols symbols) {
+        this.decimalSeparator = ByteTrie.copyOfChars(symbols.decimalSeparator(), false);
+        this.groupingSeparator = ByteTrie.copyOfChars(symbols.groupingSeparator(), false);
         this.digitSet = ByteDigitSet.copyOf(symbols.digits());
-        this.minusSignChar = ByteTrie.copyOfChars(symbols.minusSign(), ignoreCase);
-        this.exponentSeparatorTrie = ByteTrie.copyOf(symbols.exponentSeparator(), ignoreCase);
-        this.plusSignChar = ByteTrie.copyOfChars(symbols.plusSign(), ignoreCase);
-        this.nanTrie = ByteTrie.copyOf(symbols.nan(), ignoreCase);
-        this.infinityTrie = ByteTrie.copyOf(symbols.infinity(), ignoreCase);
-        Set<Character> nanOrInfinitySet = new LinkedHashSet<>();
-        for (String s : symbols.nan()) {
-            nanOrInfinitySet.add(s.charAt(0));
-        }
-        for (String s : symbols.infinity()) {
-            nanOrInfinitySet.add(s.charAt(0));
-        }
+        this.minusSignChar = ByteTrie.copyOfChars(symbols.minusSign(), false);
+        this.exponentSeparatorTrie = ByteTrie.copyOf(symbols.exponentSeparator(), false);
+        this.plusSignChar = ByteTrie.copyOfChars(symbols.plusSign(), false);
+        this.nanTrie = ByteTrie.copyOf(symbols.nan(), false);
+        this.infinityTrie = ByteTrie.copyOf(symbols.infinity(), false);
     }
 
     /**
@@ -79,16 +69,20 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
         if (index == endIndex) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
-        byte ch;
+        byte ch = str[index];
 
         // Parse optional sign
         // -------------------
-        int matchCount = minusSignChar.match(str, index, endIndex);
-        final boolean isNegative = matchCount > 0;
+        int matchCount = 0;
+        final boolean isNegative = (matchCount = minusSignChar.match(str, index, endIndex)) > 0;
         if (isNegative) {
             index += matchCount;
         } else {
             index += plusSignChar.match(str, index, endIndex);
+        }
+        ch = charAt(str, index, endIndex);
+        if (ch == 0) {
+            throw new NumberFormatException(SYNTAX_ERROR);
         }
 
         // Parse significand
@@ -140,14 +134,14 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
         if (count > 0) {
             index += count;
             index = skipFormatCharacters(str, index, endIndex);
-            matchCount = minusSignChar.match(str, index, endIndex);
-            boolean isExponentNegative = matchCount > 0;
+            ch = charAt(str, index, endIndex);
+            boolean isExponentNegative = (matchCount = minusSignChar.match(str, index, endIndex)) > 0;
             if (isExponentNegative) {
                 index += matchCount;
             } else {
                 index += plusSignChar.match(str, index, endIndex);
             }
-            ch = str[index];
+            ch = charAt(str, index, endIndex);
             int digit = digitSet.toDigit(ch);
             illegal |= digit >= 10;
             do {
@@ -218,8 +212,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
 
         // Filter optional sign
         // -------------------
-        int matchCount = minusSignChar.match(str, index, endIndex);
-        final boolean isNegative = matchCount > 0;
+        int matchCount;
+        final boolean isNegative = (matchCount = minusSignChar.match(str, index, endIndex)) > 0;
         if (isNegative) {
             buf.append('-');
             index += matchCount;
@@ -230,17 +224,16 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
         // We do not need to parse NaN or Infinity, this case has already been processed
 
         // Parse significand
-        int numMatchedChars;
         for (; index < endIndex; index++) {
             ch = str[index];
             int digit = digitSet.toDigit(ch);
             if (digit < 10) {
                 buf.append((char) (digit + '0'));
-            } else if ((numMatchedChars = decimalSeparator.match(str, index, endIndex)) > 0) {
+            } else if ((matchCount = decimalSeparator.match(str, index, endIndex)) > 0) {
+                index += matchCount - 1;
                 buf.append('.');
-                index += numMatchedChars - 1;
-            } else if ((numMatchedChars = groupingSeparator.match(str, index, endIndex)) > 0) {
-                index += numMatchedChars - 1;
+            } else if ((matchCount = groupingSeparator.match(str, index, endIndex)) > 0) {
+                index += matchCount - 1;
             } else {
                 break;
             }
@@ -254,8 +247,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
             buf.append('e');
             index += count;
             index = skipFormatCharacters(str, index, endIndex);
-            matchCount = minusSignChar.match(str, index, endIndex);
-            boolean isExponentNegative = matchCount > 0;
+            ch = charAt(str, index, endIndex);
+            boolean isExponentNegative = ((matchCount = minusSignChar.match(str, index, endIndex)) > 0);
             if (isExponentNegative) {
                 buf.append('-');
                 index += matchCount;
@@ -284,7 +277,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
      * @return index after the optional format character
      */
     private static int skipFormatCharacters(byte[] str, int index, int endIndex) {
-        while (index < endIndex && Character.getType((char) str[index]) == Character.FORMAT) {
+        while (index < endIndex && Character.getType(str[index]) == Character.FORMAT) {
             index++;
         }
         return index;
@@ -340,7 +333,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArray extends Abstra
     abstract long valueOfFloatLiteral(byte[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative,
                                       long significand, int exponent, boolean isSignificandTruncated,
                                       int exponentOfTruncatedSignificand, int exponentValue, int startIndex, int endIndex);
-
 
     protected double slowPathToDouble(byte[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, int exponentValue) {
         return SlowDoubleConversionPath.toDouble(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue);

@@ -7,11 +7,11 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Parses a {@code double} from a {@code char[]} with configurable {@link NumberFormatSymbols}.
  */
-final class ConfigurableDoubleBitsFromByteArray extends AbstractConfigurableFloatingPointBitsFromByteArray {
+final class ConfigurableDoubleBitsFromByteArrayAscii extends AbstractConfigurableFloatingPointBitsFromByteArrayAscii {
     /**
      * Creates a new instance.
      */
-    public ConfigurableDoubleBitsFromByteArray(NumberFormatSymbols symbols, boolean ignoreCase) {
+    public ConfigurableDoubleBitsFromByteArrayAscii(NumberFormatSymbols symbols, boolean ignoreCase) {
         super(symbols, ignoreCase);
     }
 
@@ -29,7 +29,6 @@ final class ConfigurableDoubleBitsFromByteArray extends AbstractConfigurableFloa
     long positiveInfinity() {
         return Double.doubleToRawLongBits(Double.POSITIVE_INFINITY);
     }
-
     @Override
     long valueOfFloatLiteral(byte[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative,
                              long significand, int exponent, boolean isSignificandTruncated,
@@ -37,8 +36,8 @@ final class ConfigurableDoubleBitsFromByteArray extends AbstractConfigurableFloa
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isSignificandNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
         return Double.doubleToRawLongBits(Double.isNaN(d) ?
-                Double.parseDouble(filterInputString(str, startIndex, endIndex).toString()) :
-                //slowPathToDouble(str, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue) :
+                // Double.parseDouble(filterInputString(str, startIndex, endIndex).toString()):
+                slowPathToDouble(str, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue) :
                 d);
     }
 }

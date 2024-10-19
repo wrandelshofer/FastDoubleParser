@@ -113,6 +113,11 @@ class SlowDoubleConversionPath {
         return isSignificandNegative ? -v : v;
     }
 
+    static double toDouble(byte[] str, ByteDigitSet digitSet, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, long exponentValue) {
+        double v = toBigDecimal(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, FastDoubleMath.MAX_REQUIRED_DIGITS, exponentValue).doubleValue();
+        return isSignificandNegative ? -v : v;
+    }
+
     static BigDecimal toBigDecimal(char[] str, CharDigitSet digitSet, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, int maxRequiredDigits, long exponentValue) {
 
         // skip leading zeroes in integer part
@@ -199,13 +204,6 @@ class SlowDoubleConversionPath {
 
         return new BigDecimal(bigInteger, -exponent);
     }
-
-
-    public static double toDouble(byte[] str, ByteDigitSet digitSet, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, int exponentValue) {
-        double v = toBigDecimal(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, FastDoubleMath.MAX_REQUIRED_DIGITS, exponentValue).doubleValue();
-        return isSignificandNegative ? -v : v;
-    }
-
     static BigDecimal toBigDecimal(byte[] str, ByteDigitSet digitSet, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, int maxRequiredDigits, long exponentValue) {
 
         // skip leading zeroes in integer part
@@ -292,5 +290,6 @@ class SlowDoubleConversionPath {
 
         return new BigDecimal(bigInteger, -exponent);
     }
+
 
 }

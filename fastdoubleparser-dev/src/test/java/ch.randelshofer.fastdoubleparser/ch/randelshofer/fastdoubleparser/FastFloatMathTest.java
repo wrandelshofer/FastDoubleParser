@@ -24,7 +24,7 @@ public class FastFloatMathTest {
         for (int e = 0; e < Integer.MAX_VALUE; e++) {
             try {
                 testTryDecFloatToFloat(false, e + 16777215L, 0, Float.NaN);
-                System.out.println("e:" + (e + 16777215L));
+                //System.out.println("e:" + (e + 16777215L));
                 return;
             } catch (AssertionError ex) {
             }

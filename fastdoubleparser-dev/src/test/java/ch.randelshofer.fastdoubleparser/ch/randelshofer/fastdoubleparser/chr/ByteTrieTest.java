@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ByteTrieTest {
     @Test
     public void shouldAddAndRetrieve() {
-        CharTrieOfMany trie = new CharTrieOfMany(new HashSet<>(Arrays.asList("e", "E", "Exp")));
+        CharTrieOfFew trie = new CharTrieOfFew(new HashSet<>(Arrays.asList("e", "E", "Exp")));
         assertEquals(0, trie.match("a"));
         assertEquals(1, trie.match("e"));
         assertEquals(1, trie.match("E"));

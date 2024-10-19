@@ -52,6 +52,7 @@ public interface CharTrie {
      */
     int match(char[] str, int startIndex, int endIndex);
 
+
     public static CharTrie of(Set<String> set, boolean ignoreCase) {
         switch (set.size()) {
             case 0:
@@ -59,7 +60,7 @@ public interface CharTrie {
             case 1:
                 return ignoreCase ? new CharTrieOfOneIgnoreCase(set) : new CharTrieOfOne(set);
             default:
-                return ignoreCase ? new CharTrieOfManyIgnoreCase(set) : new CharTrieOfMany(set);
+                return ignoreCase ? new CharTrieOfFewIgnoreCase(set) : new CharTrieOfFew(set);
         }
     }
 }

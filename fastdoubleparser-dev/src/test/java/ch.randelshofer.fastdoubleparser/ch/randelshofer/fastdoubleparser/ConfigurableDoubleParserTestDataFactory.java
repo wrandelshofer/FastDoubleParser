@@ -121,6 +121,10 @@ public class ConfigurableDoubleParserTestDataFactory {
             list.add(new NumberTestData("ignoreCase: lower-case " + fmt.format(n).toLowerCase(englishLocale), englishLocale, symbols, true, fmt.format(n).toLowerCase(englishLocale), n));
             list.add(new NumberTestData("ignoreCase: upper-case " + fmt.format(n).toUpperCase(englishLocale), englishLocale, symbols, true, fmt.format(n).toUpperCase(englishLocale), n));
         }
+        list.add(new NumberTestData("ignoreCase: " + dfs.getNaN().toLowerCase(), englishLocale, symbols, true, dfs.getNaN().toLowerCase(), Double.NaN));
+        list.add(new NumberTestData("ignoreCase: " + dfs.getNaN().toUpperCase(), englishLocale, symbols, true, dfs.getNaN().toUpperCase(), Double.NaN));
+        list.add(new NumberTestData("ignoreCase: 12" + dfs.getExponentSeparator().toLowerCase() + "5", englishLocale, symbols, true, "12" + dfs.getExponentSeparator().toLowerCase() + "5", 12e5));
+        list.add(new NumberTestData("ignoreCase: 12" + dfs.getExponentSeparator().toUpperCase() + "5", englishLocale, symbols, true, "12" + dfs.getExponentSeparator().toUpperCase() + "5", 12e5));
 
         return list;
     }
@@ -143,6 +147,10 @@ public class ConfigurableDoubleParserTestDataFactory {
                 "" + dfs.getZeroDigit()
         );
         list.add(new NumberTestData("ignoreCase: 12’961’872.332", swissLocale, symbols, true, "12’961’872.332", 12961872.332));
+        list.add(new NumberTestData("ignoreCase: " + dfs.getNaN().toLowerCase(), swissLocale, symbols, true, dfs.getNaN().toLowerCase(), Double.NaN));
+        list.add(new NumberTestData("ignoreCase: " + dfs.getNaN().toUpperCase(), swissLocale, symbols, true, dfs.getNaN().toUpperCase(), Double.NaN));
+        list.add(new NumberTestData("ignoreCase: 12" + dfs.getExponentSeparator().toLowerCase() + "5", swissLocale, symbols, true, "12" + dfs.getExponentSeparator().toLowerCase() + "5", 12e5));
+        list.add(new NumberTestData("ignoreCase: 12" + dfs.getExponentSeparator().toUpperCase() + "5", swissLocale, symbols, true, "12" + dfs.getExponentSeparator().toUpperCase() + "5", 12e5));
         return list;
     }
 

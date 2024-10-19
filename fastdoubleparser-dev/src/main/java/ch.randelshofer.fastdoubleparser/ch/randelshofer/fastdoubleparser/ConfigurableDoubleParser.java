@@ -4,8 +4,8 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
 
 /**
  * Parses a floating point value with configurable {@link NumberFormatSymbols}.
@@ -111,8 +111,11 @@ public class ConfigurableDoubleParser {
     private ConfigurableDoubleBitsFromCharSequence charSequenceParser;
     private ConfigurableDoubleBitsFromCharArray charArrayParser;
     private final boolean ignoreCase;
-    private boolean canParseByteArray = true;
-    private ConfigurableDoubleBitsFromByteArray byteArrayParser;
+    private final boolean isAllSingleCharSymbolsAscii;
+    private final boolean isDigitsAscii;
+    private final boolean isAscii;
+    private ConfigurableDoubleBitsFromByteArrayAscii byteArrayAsciiParser;
+    private ConfigurableDoubleBitsFromByteArrayUtf8 byteArrayUtf8Parser;
 
     /**
      * Creates a new instance with the specified number format symbols.
@@ -147,9 +150,69 @@ public class ConfigurableDoubleParser {
     public ConfigurableDoubleParser(NumberFormatSymbols symbols, boolean ignoreCase) {
         this.symbols = symbols;
         this.ignoreCase = ignoreCase;
-        this.canParseByteArray = !ignoreCase;
+        this.isAllSingleCharSymbolsAscii = isMostlyAscii(symbols);
+        this.isDigitsAscii = isDigitsTokensAscii(symbols);
+        this.isAscii = isAscii(symbols);
     }
 
+    /**
+     * Returns true if all symbols are ASCII code points in the range U+0000 to U+007f.
+     */
+    private boolean isAscii(NumberFormatSymbols symbols) {
+        return isAsciiCharCollection(symbols.decimalSeparator())
+                && isAsciiCharCollection(symbols.groupingSeparator())
+                && isAsciiStringCollection(symbols.exponentSeparator())
+                && isAsciiCharCollection(symbols.minusSign())
+                && isAsciiCharCollection(symbols.plusSign())
+                && isAsciiStringCollection(symbols.infinity())
+                && isAsciiStringCollection(symbols.nan())
+                && isAsciiCharCollection(symbols.digits())
+                ;
+    }
+
+    /**
+     * Returns true if all single character symbols are ASCII code points in the range U+0000 to U+007f.
+     */
+    private boolean isMostlyAscii(NumberFormatSymbols symbols) {
+        return isAsciiCharCollection(symbols.decimalSeparator())
+                && isAsciiCharCollection(symbols.groupingSeparator())
+                //        && isAsciiStringCollection(symbols.exponentSeparator())
+                && isAsciiCharCollection(symbols.minusSign())
+                && isAsciiCharCollection(symbols.plusSign())
+                //      && isAsciiStringCollection(symbols.infinity())
+                //        && isAsciiStringCollection(symbols.nan())
+                && isAsciiCharCollection(symbols.digits())
+                ;
+    }
+
+    private boolean isDigitsTokensAscii(NumberFormatSymbols symbols) {
+        return //isAsciiCharCollection(symbols.decimalSeparator())
+                //  && isAsciiCharCollection(symbols.groupingSeparator())
+                //        && isAsciiStringCollection(symbols.exponentSeparator())
+                //  && isAsciiCharCollection(symbols.minusSign())
+                // && isAsciiCharCollection(symbols.plusSign())
+                //      && isAsciiStringCollection(symbols.infinity())
+                //        && isAsciiStringCollection(symbols.nan())
+                isAsciiCharCollection(symbols.digits())
+                ;
+    }
+
+    private boolean isAsciiStringCollection(Collection<String> collection) {
+        for (String str : collection) {
+            for (int i = 0; i < str.length(); i++) {
+                char ch = str.charAt(i);
+                if (ch > 0x7f) return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isAsciiCharCollection(Collection<Character> collection) {
+        for (char ch : collection) {
+            if (ch > 0x7f) return false;
+        }
+        return true;
+    }
     /**
      * Creates a new instance with decimal format symbols and case sensitivity.
      * <p>
@@ -180,18 +243,20 @@ public class ConfigurableDoubleParser {
         return charArrayParser;
     }
 
-    private ConfigurableDoubleBitsFromByteArray getByteArrayParser() {
-        if (byteArrayParser == null) {
-            if (canParseByteArray) {
-                try {
-                    this.byteArrayParser = new ConfigurableDoubleBitsFromByteArray(symbols, ignoreCase);
-                } catch (IllegalArgumentException e) {
-                    // e.printStackTrace();
-                    canParseByteArray = false;
-                }
-            }
+    private ConfigurableDoubleBitsFromByteArrayAscii getByteArrayAsciiParser() {
+        if (byteArrayAsciiParser == null) {
+            this.byteArrayAsciiParser = new ConfigurableDoubleBitsFromByteArrayAscii(symbols, ignoreCase);
+
         }
-        return byteArrayParser;
+        return byteArrayAsciiParser;
+    }
+
+    private ConfigurableDoubleBitsFromByteArrayUtf8 getByteArrayUtf8Parser() {
+        if (byteArrayUtf8Parser == null) {
+            this.byteArrayUtf8Parser = new ConfigurableDoubleBitsFromByteArrayUtf8(symbols);
+
+        }
+        return byteArrayUtf8Parser;
     }
 
     private ConfigurableDoubleBitsFromCharSequence getCharSequenceParser() {
@@ -255,12 +320,7 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(byte[] str) {
-        ConfigurableDoubleBitsFromByteArray byteArrayParser1 = getByteArrayParser();
-        if (byteArrayParser1 != null) {
-            return Double.longBitsToDouble(byteArrayParser1.parseFloatingPointLiteral(str, 0, str.length));
-        }
-        String str1 = new String(str, StandardCharsets.UTF_8);
-        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str1, 0, str1.length()));
+        return parseDouble(str, 0, str.length);
     }
 
     /**
@@ -272,11 +332,17 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(byte[] str, int offset, int length) {
-        ConfigurableDoubleBitsFromByteArray byteArrayParser1 = getByteArrayParser();
-        if (byteArrayParser1 != null) {
-            return Double.longBitsToDouble(byteArrayParser1.parseFloatingPointLiteral(str, offset, length));
+        if (isAscii || !ignoreCase && isAllSingleCharSymbolsAscii) {
+            return Double.longBitsToDouble(getByteArrayAsciiParser().parseFloatingPointLiteral(str, offset, length));
+        } else if (!ignoreCase && isDigitsAscii) {
+            return Double.longBitsToDouble(getByteArrayUtf8Parser().parseFloatingPointLiteral(str, offset, length));
+        } else {
+            /*
+            String string = new String(str, offset, length, StandardCharsets.UTF_8);
+            return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(string,0,string.length()));
+            */
+            Utf8Decoder.Result result = Utf8Decoder.decode(str, offset, length);
+            return Double.longBitsToDouble(getCharArrayParser().parseFloatingPointLiteral(result.chars(), 0, result.length()));
         }
-        String str1 = new String(str, offset, length, StandardCharsets.UTF_8);
-        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str1, 0, str1.length()));
     }
 }

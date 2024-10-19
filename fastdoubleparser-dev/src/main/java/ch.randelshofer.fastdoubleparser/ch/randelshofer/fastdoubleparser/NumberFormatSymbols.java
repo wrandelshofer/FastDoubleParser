@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.SequencedSet;
 import java.util.Set;
 
 /**
@@ -81,7 +80,7 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
     }
 
     private static Set<Character> toSet(String chars) {
-        SequencedSet<Character> set = new LinkedHashSet<>(chars.length() * 2);
+        Set<Character> set = new LinkedHashSet<>(chars.length() * 2);
         for (char ch : chars.toCharArray()) {
             set.add(ch);
         }
@@ -126,6 +125,7 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
                 Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
         );
     }
+
 
     @Override
     public String toString() {

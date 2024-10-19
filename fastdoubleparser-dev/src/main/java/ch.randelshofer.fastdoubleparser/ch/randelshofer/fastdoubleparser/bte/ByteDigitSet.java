@@ -27,8 +27,5 @@ public interface ByteDigitSet {
         return consecutive ?
                 new ConsecutiveByteDigitSet(digits.get(0)) :
                 new ByteToIntMap(digits);
-        //new HashMapByteDigitSet(digits);
-        //new SwarByteDigitSet(digits);
-        //new LookupCharDigitSet(digits);
     }
 }

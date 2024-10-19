@@ -26,11 +26,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -106,6 +108,9 @@ public class Main {
     private boolean sleep = false;
     private Locale locale = Locale.ENGLISH;
     private String digits = null;
+    private String groupingSeparators = null;
+    private String infinity = null;
+    private String nan = null;
     private boolean printConfidence = false;
 
     public static void main(String... args) throws Exception {
@@ -129,7 +134,19 @@ public class Main {
                 case "--digits":
                     benchmark.digits = args[++i];
                     break;
+                case "--infinity":
+                    benchmark.infinity = args[++i];
+                    break;
+                case "--grouping-separators":
+                    benchmark.groupingSeparators = args[++i];
+                    break;
+                case "--nan":
+                    benchmark.nan = args[++i];
+                    break;
                 default:
+                    if (args[i].startsWith("-")) {
+                        throw new IllegalArgumentException("this option is not supported: " + args[i]);
+                    }
                     benchmark.filename = args[i];
                     break;
             }
@@ -269,7 +286,7 @@ public class Main {
         double speedup;
         String reference = functions.get(name).reference;
         if (!reference.equals(name)) {
-            VarianceStatistics referenceStats = results.get(reference);
+            VarianceStatistics referenceStats = results.getOrDefault(reference, results.values().iterator().next());
             speedup = referenceStats == null ? 1 : referenceStats.getAverage() / stats.getAverage();
         } else {
             speedup = 1;
@@ -295,7 +312,7 @@ public class Main {
                 stats.getAverage() / lines.size(),
                 speedup,
                 speedupOrBaseline,
-                baselines.get(reference),
+                baselines.getOrDefault(reference, baselines.values().iterator().next()),
                 System.getProperty("java.version")
         );
     }
@@ -423,6 +440,18 @@ public class Main {
             fmt.setDecimalFormatSymbols(symbols);
         }
 
+        if (infinity != null) {
+            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+            symbols.setInfinity(infinity);
+            fmt.setDecimalFormatSymbols(symbols);
+        }
+
+        if (nan != null) {
+            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+            symbols.setNaN(nan);
+            fmt.setDecimalFormatSymbols(symbols);
+        }
+
         ParsePosition pos = new ParsePosition(0);
         for (String st : s) {
             pos.setIndex(0);
@@ -529,18 +558,22 @@ public class Main {
 
     private NumberFormatSymbols getNumberFormatSymbols() {
         NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(((DecimalFormat) NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
-        if (digits != null) {
-            symbols = new NumberFormatSymbols(
-                    symbols.decimalSeparator(),
-                    symbols.groupingSeparator(),
-                    symbols.exponentSeparator(),
-                    symbols.minusSign(),
-                    symbols.plusSign(),
-                    symbols.infinity(),
-                    symbols.nan(),
-                    toList(digits));
-        }
+        symbols = new NumberFormatSymbols(
+                symbols.decimalSeparator(),
+                groupingSeparators != null ? toSetOfCharacters(groupingSeparators) : symbols.groupingSeparator(),
+                symbols.exponentSeparator(),
+                symbols.minusSign(),
+                symbols.plusSign(),
+                infinity != null ? Collections.singleton(infinity) : symbols.infinity(),
+                nan != null ? Collections.singleton(nan) : symbols.nan(),
+                digits != null ? toList(digits) : symbols.digits());
         return symbols;
+    }
+
+    private Set<Character> toSetOfCharacters(String groupingSeparators) {
+        LinkedHashSet<Character> set = new LinkedHashSet<Character>();
+        for (char ch : groupingSeparators.toCharArray()) set.add(ch);
+        return set;
     }
 
     private List<Character> toList(String digits) {
@@ -567,7 +600,7 @@ public class Main {
         for (byte[] st : s) {
             try {
                 double x = p.parseDouble(st);
-            answer += x;
+                answer += x;
             } catch (NumberFormatException e) {
                 System.err.println("ERROR PARSING " + new String(st, StandardCharsets.UTF_8));
                 e.printStackTrace();

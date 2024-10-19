@@ -24,4 +24,5 @@ class CharTrieOfNone implements CharTrie {
     public int match(char[] str, int startIndex, int endIndex) {
         return 0;
     }
+
 }

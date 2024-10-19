@@ -8,11 +8,8 @@ import ch.randelshofer.fastdoubleparser.chr.CharDigitSet;
 import ch.randelshofer.fastdoubleparser.chr.CharSet;
 import ch.randelshofer.fastdoubleparser.chr.CharTrie;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
- * Formattable floating point parser.
+ * Configurable floating point parser.
  */
 abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends AbstractFloatValueParser {
     private final CharDigitSet digitSet;
@@ -33,13 +30,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         this.plusSignChar = CharSet.copyOf(symbols.plusSign(), ignoreCase);
         this.nanTrie = CharTrie.of(symbols.nan(), ignoreCase);
         this.infinityTrie = CharTrie.of(symbols.infinity(), ignoreCase);
-        Set<Character> nanOrInfinitySet = new LinkedHashSet<>();
-        for (String s : symbols.nan()) {
-            nanOrInfinitySet.add(s.charAt(0));
-        }
-        for (String s : symbols.infinity()) {
-            nanOrInfinitySet.add(s.charAt(0));
-        }
     }
 
     /**

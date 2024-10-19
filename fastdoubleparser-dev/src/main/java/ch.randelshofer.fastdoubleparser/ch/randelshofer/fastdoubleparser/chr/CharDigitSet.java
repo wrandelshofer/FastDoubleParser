@@ -16,6 +16,7 @@ public interface CharDigitSet {
      */
     int toDigit(char ch);
 
+
     @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
     static CharDigitSet copyOf(List<Character> digits) {
         boolean consecutive = true;
@@ -27,8 +28,5 @@ public interface CharDigitSet {
         return consecutive ?
                 new ConsecutiveCharDigitSet(digits.get(0)) :
                 new CharToIntMap(digits);
-        //new HashMapCharDigitSet(digits);
-        //new SwarCharDigitSet(digits);
-        //new LookupCharDigitSet(digits);
     }
 }

@@ -21,7 +21,6 @@ public interface ByteSet {
                 return set.size() < 5 ? new ByteSetOfFew(set) : new ByteToIntMap(set);
         }
     }
-
     static Set<Character> applyIgnoreCase(Set<Character> set, boolean ignoreCase) {
         if (ignoreCase) {
             LinkedHashSet<Character> convertedSet = new LinkedHashSet<Character>();
@@ -45,5 +44,6 @@ public interface ByteSet {
         }
         return set;
     }
+
 
 }

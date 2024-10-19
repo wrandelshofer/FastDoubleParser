@@ -1,5 +1,5 @@
 /*
- * @(#)CharTrieOfManyIgnoreCase.java
+ * @(#)CharTrieOfFewIgnoreCase.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser.chr;
@@ -9,10 +9,10 @@ import java.util.Set;
 /**
  * A trie for testing if a String is contained in a set of Strings.
  */
-class CharTrieOfManyIgnoreCase implements CharTrie {
+class CharTrieOfFewIgnoreCase implements CharTrie {
     private CharTrieNode root = new CharTrieNode();
 
-    public CharTrieOfManyIgnoreCase(Set<String> set) {
+    public CharTrieOfFewIgnoreCase(Set<String> set) {
         for (String str : set) {
             if (!str.isEmpty()) {
                 add(str);
@@ -55,4 +55,5 @@ class CharTrieOfManyIgnoreCase implements CharTrie {
         }
         return longestMatch - startIndex;
     }
+
 }

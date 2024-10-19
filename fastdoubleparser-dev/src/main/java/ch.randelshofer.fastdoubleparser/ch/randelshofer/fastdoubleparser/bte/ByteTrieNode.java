@@ -6,6 +6,9 @@ package ch.randelshofer.fastdoubleparser.bte;
 
 import java.util.Arrays;
 
+/**
+ * Represents a node in a {@link ch.randelshofer.fastdoubleparser.bte.ByteTrieOfFew}
+ */
 class ByteTrieNode {
     private byte[] chars = new byte[0];
     private ByteTrieNode[] children = new ByteTrieNode[0];
