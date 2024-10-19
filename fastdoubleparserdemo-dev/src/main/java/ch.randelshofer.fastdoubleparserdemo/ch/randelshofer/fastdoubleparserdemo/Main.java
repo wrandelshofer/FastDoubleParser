@@ -323,7 +323,7 @@ public class Main {
                 100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
         // Put entries in results, so that we have them in the original sequence
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
-        for (var key : functions.keySet()) {
+        for (String key : functions.keySet()) {
             results.put(key, null);
         }
         Collections.shuffle(entries);// randomize to prevent bias caused by JIT
