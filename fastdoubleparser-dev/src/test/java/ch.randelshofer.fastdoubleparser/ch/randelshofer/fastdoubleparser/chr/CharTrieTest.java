@@ -1,5 +1,5 @@
 /*
- * @(#)ByteTrieTest.java
+ * @(#)CharTrieTest.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser.chr;
@@ -11,7 +11,7 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ByteTrieTest {
+public class CharTrieTest {
     @Test
     public void shouldAddAndRetrieve() {
         CharTrieOfFew trie = new CharTrieOfFew(new HashSet<>(Arrays.asList("e", "E", "Exp")));

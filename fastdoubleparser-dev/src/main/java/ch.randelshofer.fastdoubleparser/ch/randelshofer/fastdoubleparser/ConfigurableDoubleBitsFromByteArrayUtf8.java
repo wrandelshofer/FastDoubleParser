@@ -11,8 +11,8 @@ final class ConfigurableDoubleBitsFromByteArrayUtf8 extends AbstractConfigurable
     /**
      * Creates a new instance.
      */
-    public ConfigurableDoubleBitsFromByteArrayUtf8(NumberFormatSymbols symbols) {
-        super(symbols);
+    public ConfigurableDoubleBitsFromByteArrayUtf8(NumberFormatSymbols symbols, boolean ignoreCase) {
+        super(symbols, ignoreCase);
     }
 
     @Override

@@ -133,16 +133,13 @@ public class ConfigurableDoubleParserTestDataFactory {
         List<NumberTestData> list = new ArrayList<>();
         Locale swissLocale = new Locale("de", "CH");
         DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(swissLocale);
-        dfs.setInfinity("Infinity");
-        dfs.setExponentSeparator("Exp");
-        dfs.setNaN("NaN");
         NumberFormatSymbols symbols = new NumberFormatSymbols(
                 "" + dfs.getDecimalSeparator(),
-                "" + dfs.getGroupingSeparator(),
-                Set.of(dfs.getExponentSeparator()),
+                "" + dfs.getGroupingSeparator() + "'",
+                Set.of(dfs.getExponentSeparator(), "Exp"),
                 "" + dfs.getMinusSign(),
                 "+",
-                Set.of(dfs.getInfinity()),
+                Set.of(dfs.getInfinity(), "Inf", "Infinity"),
                 Set.of(dfs.getNaN()),
                 "" + dfs.getZeroDigit()
         );

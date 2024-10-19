@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
@@ -57,15 +59,24 @@ public class GenerateNumberFormatNumbers {
     }
 
     public static void main(String... args) throws IOException, ParseException {
-        Locale locale = Locale.forLanguageTag("zh-CN");
-        NumberFormat f = NumberFormat.getNumberInstance(locale);
-        String digits = null;//"〇一二三四五六七八九";
+        Locale locale = Locale.forLanguageTag("en-GB");
+        DecimalFormat f = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+        f.applyPattern("####,##0.0######E0##");
+        f.setGroupingUsed(true);
+        String digits = null;
+        DecimalFormatSymbols symbols = f.getDecimalFormatSymbols();
+/*
+        symbols.setExponentSeparator("*10^");
+        f.setDecimalFormatSymbols(symbols);
+        String digits = "〇一二三四五六七八九";
+*/
+
         double range = 1e9;
         int size = 50_000;
         double gamma = 0.2;
         Path path = Paths.get("fastdoubleparserdemo/data/formatted_"
                 + locale.getLanguage()
-                + (locale.getCountry() == null || locale.getCountry().isEmpty() ? "" : "-" + locale.getCountry())
+                + (locale.getCountry() == null || locale.getCountry().isEmpty() ? "" : "-" + locale.getCountry() + "_scientific")
                 + ".txt").toAbsolutePath();
         new GenerateNumberFormatNumbers().generate(path, f, range, size, gamma, digits);
     }

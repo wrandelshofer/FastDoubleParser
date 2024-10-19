@@ -34,7 +34,7 @@ public interface ByteTrie {
      */
     int match(byte[] str, int startIndex, int endIndex);
 
-    public static ByteTrie copyOf(Set<String> set, boolean ignoreCase) {
+    static ByteTrie copyOf(Set<String> set, boolean ignoreCase) {
         switch (set.size()) {
             case 0:
                 return new ByteTrieOfNone();
@@ -50,19 +50,47 @@ public interface ByteTrie {
                             newSet.add(str.toUpperCase());
                             return newSet.size() == 1 ? new ByteTrieOfOne(newSet) : new ByteTrieOfFew(newSet);
                         default:
-                            return new ByteTrieOfFewIgnoreCase(set);
+                            return new ByteTrieOfOneIgnoreCase(set);
                     }
                 }
                 return new ByteTrieOfOne(set);
             default:
-                return ignoreCase ? new ByteTrieOfFewIgnoreCase(set) : new ByteTrieOfFew(set);
+                if (ignoreCase) {
+                    if (isAscii(set)) {
+                        return new ByteTrieOfFewIgnoreCaseAscii(set);
+                    }
+                    return new ByteTrieOfFewIgnoreCaseUtf8(set);
+                }
+                return new ByteTrieOfFew(set);
         }
     }
 
-    public static ByteTrie copyOfChars(Set<Character> set, boolean ignoreCase) {
+    static boolean isAscii(Set<String> set) {
+        for (String str : set) {
+            for (int i = 0, n = str.length(); i < n; i++) {
+                if (str.charAt(i) > 127) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    static ByteTrie copyOfChars(Set<Character> set, boolean ignoreCase) {
         Set<String> strSet = new HashSet<>(set.size() * 2);
+        if (ignoreCase) {
+            for (char ch : set) {
+                String string = new String(new char[]{ch});
+                strSet.add(string.toLowerCase());
+                strSet.add(string.toUpperCase());
+
+            }
+            return copyOf(strSet, false);
+        }
+
         for (char ch : set) {
             strSet.add(new String(new char[]{ch}));
+
         }
         return copyOf(strSet, ignoreCase);
     }

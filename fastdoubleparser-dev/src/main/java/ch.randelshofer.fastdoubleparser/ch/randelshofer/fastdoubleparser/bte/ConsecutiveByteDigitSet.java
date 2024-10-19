@@ -8,8 +8,9 @@ public class ConsecutiveByteDigitSet implements ByteDigitSet {
     private final byte zeroDigit;
 
     public ConsecutiveByteDigitSet(char zeroDigit) {
-        if (zeroDigit > 127)
+        if (zeroDigit > 127) {
             throw new IllegalArgumentException("can not map to a single byte. zeroDigit=" + zeroDigit + "' 0x" + Integer.toHexString(zeroDigit));
+        }
         this.zeroDigit = (byte) zeroDigit;
     }
 

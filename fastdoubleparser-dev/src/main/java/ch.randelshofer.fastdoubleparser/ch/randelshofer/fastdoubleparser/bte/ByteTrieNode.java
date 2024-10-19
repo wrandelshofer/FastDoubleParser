@@ -14,7 +14,6 @@ class ByteTrieNode {
     private ByteTrieNode[] children = new ByteTrieNode[0];
     private boolean isEnd;
 
-    public final static ByteTrieNode SENTINEL = new ByteTrieNode();
 
     public ByteTrieNode() {
     }
@@ -39,6 +38,29 @@ class ByteTrieNode {
     }
 
     /**
+     * Insert a character into this node if it does not already exist.
+     * Forces the node 'forceNode' to be inserted.
+     *
+     * @param ch         the character
+     * @param forcedNode the forced node
+     * @return the forced node
+     */
+    public ByteTrieNode insert(byte ch, ByteTrieNode forcedNode) {
+        int index = indexOf(ch);
+        if (index < 0) {
+            index = chars.length;
+            chars = Arrays.copyOf(chars, chars.length + 1);
+            children = Arrays.copyOf(children, children.length + 1);
+            chars[index] = ch;
+            children[index] = forcedNode;
+        }
+        if (children[index] != forcedNode) {
+            throw new AssertionError("trie is corrupt");
+        }
+        return children[index];
+    }
+
+    /**
      * Gets the child not for the given character, if it exists.
      *
      * @param ch the character
@@ -46,7 +68,7 @@ class ByteTrieNode {
      */
     public ByteTrieNode get(byte ch) {
         int index = indexOf(ch);
-        return index < 0 ? SENTINEL : children[index];
+        return index < 0 ? null : children[index];
     }
 
     /**

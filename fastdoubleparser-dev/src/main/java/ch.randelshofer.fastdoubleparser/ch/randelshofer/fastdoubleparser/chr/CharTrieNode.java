@@ -11,7 +11,7 @@ class CharTrieNode {
     private CharTrieNode[] children = new CharTrieNode[0];
     private boolean isEnd;
 
-    public final static CharTrieNode SENTINEL = new CharTrieNode();
+
 
     public CharTrieNode() {
     }
@@ -43,7 +43,7 @@ class CharTrieNode {
      */
     public CharTrieNode get(char ch) {
         int index = indexOf(ch);
-        return index < 0 ? SENTINEL : children[index];
+        return index < 0 ? null : children[index];
     }
 
     /**

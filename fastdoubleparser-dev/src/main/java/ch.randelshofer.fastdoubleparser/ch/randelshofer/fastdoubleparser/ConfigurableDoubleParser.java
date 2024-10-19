@@ -253,7 +253,7 @@ public class ConfigurableDoubleParser {
 
     private ConfigurableDoubleBitsFromByteArrayUtf8 getByteArrayUtf8Parser() {
         if (byteArrayUtf8Parser == null) {
-            this.byteArrayUtf8Parser = new ConfigurableDoubleBitsFromByteArrayUtf8(symbols);
+            this.byteArrayUtf8Parser = new ConfigurableDoubleBitsFromByteArrayUtf8(symbols, ignoreCase);
 
         }
         return byteArrayUtf8Parser;
@@ -334,7 +334,7 @@ public class ConfigurableDoubleParser {
     public double parseDouble(byte[] str, int offset, int length) {
         if (isAscii || !ignoreCase && isAllSingleCharSymbolsAscii) {
             return Double.longBitsToDouble(getByteArrayAsciiParser().parseFloatingPointLiteral(str, offset, length));
-        } else if (!ignoreCase && isDigitsAscii) {
+        } else if (isDigitsAscii) {
             return Double.longBitsToDouble(getByteArrayUtf8Parser().parseFloatingPointLiteral(str, offset, length));
         } else {
             /*

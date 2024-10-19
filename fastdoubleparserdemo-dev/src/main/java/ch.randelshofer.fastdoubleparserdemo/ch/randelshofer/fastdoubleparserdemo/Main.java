@@ -109,6 +109,7 @@ public class Main {
     private Locale locale = Locale.ENGLISH;
     private String digits = null;
     private String groupingSeparators = null;
+    private String exponentSeparator = null;
     private String infinity = null;
     private String nan = null;
     private boolean printConfidence = false;
@@ -139,6 +140,9 @@ public class Main {
                     break;
                 case "--grouping-separators":
                     benchmark.groupingSeparators = args[++i];
+                    break;
+                case "--exponent-separator":
+                    benchmark.exponentSeparator = args[++i];
                     break;
                 case "--nan":
                     benchmark.nan = args[++i];
@@ -561,7 +565,7 @@ public class Main {
         symbols = new NumberFormatSymbols(
                 symbols.decimalSeparator(),
                 groupingSeparators != null ? toSetOfCharacters(groupingSeparators) : symbols.groupingSeparator(),
-                symbols.exponentSeparator(),
+                exponentSeparator != null ? Collections.singleton(exponentSeparator) : symbols.exponentSeparator(),
                 symbols.minusSign(),
                 symbols.plusSign(),
                 infinity != null ? Collections.singleton(infinity) : symbols.infinity(),

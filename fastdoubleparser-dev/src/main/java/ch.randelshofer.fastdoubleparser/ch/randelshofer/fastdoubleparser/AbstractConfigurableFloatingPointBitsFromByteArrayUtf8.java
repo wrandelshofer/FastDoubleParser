@@ -20,15 +20,15 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
     private final ByteTrie infinityTrie;
     private final ByteTrie exponentSeparatorTrie;
 
-    public AbstractConfigurableFloatingPointBitsFromByteArrayUtf8(NumberFormatSymbols symbols) {
-        this.decimalSeparator = ByteTrie.copyOfChars(symbols.decimalSeparator(), false);
-        this.groupingSeparator = ByteTrie.copyOfChars(symbols.groupingSeparator(), false);
+    public AbstractConfigurableFloatingPointBitsFromByteArrayUtf8(NumberFormatSymbols symbols, boolean ignoreCase) {
+        this.decimalSeparator = ByteTrie.copyOfChars(symbols.decimalSeparator(), ignoreCase);
+        this.groupingSeparator = ByteTrie.copyOfChars(symbols.groupingSeparator(), ignoreCase);
         this.digitSet = ByteDigitSet.copyOf(symbols.digits());
-        this.minusSignChar = ByteTrie.copyOfChars(symbols.minusSign(), false);
-        this.exponentSeparatorTrie = ByteTrie.copyOf(symbols.exponentSeparator(), false);
-        this.plusSignChar = ByteTrie.copyOfChars(symbols.plusSign(), false);
-        this.nanTrie = ByteTrie.copyOf(symbols.nan(), false);
-        this.infinityTrie = ByteTrie.copyOf(symbols.infinity(), false);
+        this.minusSignChar = ByteTrie.copyOfChars(symbols.minusSign(), ignoreCase);
+        this.exponentSeparatorTrie = ByteTrie.copyOf(symbols.exponentSeparator(), ignoreCase);
+        this.plusSignChar = ByteTrie.copyOfChars(symbols.plusSign(), ignoreCase);
+        this.nanTrie = ByteTrie.copyOf(symbols.nan(), ignoreCase);
+        this.infinityTrie = ByteTrie.copyOf(symbols.infinity(), ignoreCase);
     }
 
     /**

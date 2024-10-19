@@ -37,6 +37,7 @@ class ByteTrieOfFew implements ByteTrie {
         int longestMatch = startIndex;
         for (int i = startIndex; i < endIndex; i++) {
             node = node.get(str[i]);
+            if (node == null) break;
             longestMatch = node.isEnd() ? i + 1 : longestMatch;
         }
         return longestMatch - startIndex;
