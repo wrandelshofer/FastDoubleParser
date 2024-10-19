@@ -2,23 +2,23 @@
  * @(#)ByteSet.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.fastdoubleparser.chr;
+package ch.randelshofer.fastdoubleparser.bte;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public interface CharSet {
-    boolean containsKey(char ch);
+public interface ByteSet {
+    boolean containsKey(byte ch);
 
-    static CharSet copyOf(Set<Character> set, boolean ignoreCase) {
+    static ByteSet copyOf(Set<Character> set, boolean ignoreCase) {
         set = applyIgnoreCase(set, ignoreCase);
         switch (set.size()) {
             case 0:
-                return new CharSetOfNone();
+                return new ByteSetOfNone();
             case 1:
-                return new CharSetOfOne(set);
+                return new ByteSetOfOne(set);
             default:
-                return set.size() < 5 ? new CharSetOfFew(set) : new CharToIntMap(set);
+                return set.size() < 5 ? new ByteSetOfFew(set) : new ByteToIntMap(set);
         }
     }
 

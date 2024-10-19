@@ -20,7 +20,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
     private final CharSet plusSignChar;
     private final CharSet decimalSeparator;
     private final CharSet groupingSeparator;
-    private final CharSet nanOrInfinityChar;
     private final CharTrie nanTrie;
     private final CharTrie infinityTrie;
     private final CharTrie exponentSeparatorTrie;
@@ -41,7 +40,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         for (String s : symbols.infinity()) {
             nanOrInfinitySet.add(s.charAt(0));
         }
-        nanOrInfinityChar = CharSet.copyOf(nanOrInfinitySet, ignoreCase);
     }
 
     /**

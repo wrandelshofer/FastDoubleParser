@@ -1,19 +1,19 @@
 /*
- * @(#)TrieNode.java
+ * @(#)ByteTrieNode.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
-package ch.randelshofer.fastdoubleparser.chr;
+package ch.randelshofer.fastdoubleparser.bte;
 
 import java.util.Arrays;
 
-class TrieNode {
-    private char[] chars = new char[0];
-    private TrieNode[] children = new TrieNode[0];
+class ByteTrieNode {
+    private byte[] chars = new byte[0];
+    private ByteTrieNode[] children = new ByteTrieNode[0];
     private boolean isEnd;
 
-    public final static TrieNode SENTINEL = new TrieNode();
+    public final static ByteTrieNode SENTINEL = new ByteTrieNode();
 
-    public TrieNode() {
+    public ByteTrieNode() {
     }
 
     /**
@@ -23,14 +23,14 @@ class TrieNode {
      * @param ch the character
      * @return the child node corresponding to the char
      */
-    public TrieNode insert(char ch) {
+    public ByteTrieNode insert(byte ch) {
         int index = indexOf(ch);
         if (index < 0) {
             index = chars.length;
             chars = Arrays.copyOf(chars, chars.length + 1);
             children = Arrays.copyOf(children, children.length + 1);
             chars[index] = ch;
-            children[index] = new TrieNode();
+            children[index] = new ByteTrieNode();
         }
         return children[index];
     }
@@ -41,7 +41,7 @@ class TrieNode {
      * @param ch the character
      * @return the child node corresponding to the char, or the sentinel node
      */
-    public TrieNode get(char ch) {
+    public ByteTrieNode get(byte ch) {
         int index = indexOf(ch);
         return index < 0 ? SENTINEL : children[index];
     }
@@ -52,7 +52,7 @@ class TrieNode {
      * @param ch the character
      * @return the index or -1
      */
-    private int indexOf(char ch) {
+    private int indexOf(byte ch) {
         // intentionally 'branchless' loop
         int index = -1;
         for (int i = 0; i < chars.length; i++) {

@@ -111,6 +111,8 @@ public class ConfigurableDoubleParser {
     private ConfigurableDoubleBitsFromCharSequence charSequenceParser;
     private ConfigurableDoubleBitsFromCharArray charArrayParser;
     private final boolean ignoreCase;
+    private boolean canParseByteArray = true;
+    private ConfigurableDoubleBitsFromByteArray byteArrayParser;
 
     /**
      * Creates a new instance with the specified number format symbols.
@@ -145,6 +147,7 @@ public class ConfigurableDoubleParser {
     public ConfigurableDoubleParser(NumberFormatSymbols symbols, boolean ignoreCase) {
         this.symbols = symbols;
         this.ignoreCase = ignoreCase;
+        this.canParseByteArray = !ignoreCase;
     }
 
     /**
@@ -172,8 +175,23 @@ public class ConfigurableDoubleParser {
     private ConfigurableDoubleBitsFromCharArray getCharArrayParser() {
         if (charArrayParser == null) {
             this.charArrayParser = new ConfigurableDoubleBitsFromCharArray(symbols, ignoreCase);
+
         }
         return charArrayParser;
+    }
+
+    private ConfigurableDoubleBitsFromByteArray getByteArrayParser() {
+        if (byteArrayParser == null) {
+            if (canParseByteArray) {
+                try {
+                    this.byteArrayParser = new ConfigurableDoubleBitsFromByteArray(symbols, ignoreCase);
+                } catch (IllegalArgumentException e) {
+                    // e.printStackTrace();
+                    canParseByteArray = false;
+                }
+            }
+        }
+        return byteArrayParser;
     }
 
     private ConfigurableDoubleBitsFromCharSequence getCharSequenceParser() {
@@ -237,6 +255,10 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(byte[] str) {
+        ConfigurableDoubleBitsFromByteArray byteArrayParser1 = getByteArrayParser();
+        if (byteArrayParser1 != null) {
+            return Double.longBitsToDouble(byteArrayParser1.parseFloatingPointLiteral(str, 0, str.length));
+        }
         String str1 = new String(str, StandardCharsets.UTF_8);
         return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str1, 0, str1.length()));
     }
@@ -250,6 +272,10 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(byte[] str, int offset, int length) {
+        ConfigurableDoubleBitsFromByteArray byteArrayParser1 = getByteArrayParser();
+        if (byteArrayParser1 != null) {
+            return Double.longBitsToDouble(byteArrayParser1.parseFloatingPointLiteral(str, offset, length));
+        }
         String str1 = new String(str, offset, length, StandardCharsets.UTF_8);
         return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str1, 0, str1.length()));
     }

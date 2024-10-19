@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -103,6 +104,7 @@ public class ConfigurableDoubleParserTest {
     public void performTestDecimalFormatSymbols(NumberTestData u, DecimalFormatSymbols decimalFormatSymbols) {
         test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input()));
         test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input().toString().toCharArray()));
+        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input().toString().getBytes(StandardCharsets.UTF_8)));
     }
 
     @TestFactory
@@ -125,6 +127,7 @@ public class ConfigurableDoubleParserTest {
     public void performTestNumberFormatSymbols(NumberTestData u) {
         test(u, d -> new ConfigurableDoubleParser(u.symbols(), u.ignoreCase()).parseDouble(d.input()));
         test(u, d -> new ConfigurableDoubleParser(u.symbols(), u.ignoreCase()).parseDouble(d.input().toString().toCharArray()));
+        test(u, d -> new ConfigurableDoubleParser(u.symbols(), u.ignoreCase()).parseDouble(d.input().toString().getBytes(StandardCharsets.UTF_8)));
     }
 
 

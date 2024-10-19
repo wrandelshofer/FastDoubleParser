@@ -36,8 +36,9 @@ public class ConfigurableDoubleParserTestDataFactory {
 
     public static List<NumberTestData> createNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
+        list.addAll(createSwissIgnoreCaseNumberFormatSymbolsTestData());
         list.addAll(createChineseNumberFormatSymbolsTestData());
-        list.addAll(createIgnoreCaseNumberFormatSymbolsTestData());
+        list.addAll(createEnglishIgnoreCaseNumberFormatSymbolsTestData());
         list.addAll(createArabianNumberFormatSymbolsTestData());
         list.addAll(createEstonianNumberFormatSymbolsTestData());
         return list;
@@ -97,7 +98,7 @@ public class ConfigurableDoubleParserTestDataFactory {
         return list;
     }
 
-    public static List<NumberTestData> createIgnoreCaseNumberFormatSymbolsTestData() {
+    public static List<NumberTestData> createEnglishIgnoreCaseNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
         Locale englishLocale = Locale.ENGLISH;
         DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(englishLocale);
@@ -121,6 +122,27 @@ public class ConfigurableDoubleParserTestDataFactory {
             list.add(new NumberTestData("ignoreCase: upper-case " + fmt.format(n).toUpperCase(englishLocale), englishLocale, symbols, true, fmt.format(n).toUpperCase(englishLocale), n));
         }
 
+        return list;
+    }
+
+    public static List<NumberTestData> createSwissIgnoreCaseNumberFormatSymbolsTestData() {
+        List<NumberTestData> list = new ArrayList<>();
+        Locale swissLocale = new Locale("de", "CH");
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(swissLocale);
+        dfs.setInfinity("Infinity");
+        dfs.setExponentSeparator("Exp");
+        dfs.setNaN("NaN");
+        NumberFormatSymbols symbols = new NumberFormatSymbols(
+                "" + dfs.getDecimalSeparator(),
+                "" + dfs.getGroupingSeparator(),
+                Set.of(dfs.getExponentSeparator()),
+                "" + dfs.getMinusSign(),
+                "+",
+                Set.of(dfs.getInfinity()),
+                Set.of(dfs.getNaN()),
+                "" + dfs.getZeroDigit()
+        );
+        list.add(new NumberTestData("ignoreCase: 12’961’872.332", swissLocale, symbols, true, "12’961’872.332", 12961872.332));
         return list;
     }
 

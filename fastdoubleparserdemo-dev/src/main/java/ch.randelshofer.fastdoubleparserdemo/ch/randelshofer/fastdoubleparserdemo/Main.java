@@ -565,8 +565,14 @@ public class Main {
         NumberFormatSymbols symbols = getNumberFormatSymbols();
         ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
         for (byte[] st : s) {
-            double x = p.parseDouble(st);
+            try {
+                double x = p.parseDouble(st);
             answer += x;
+            } catch (NumberFormatException e) {
+                System.err.println("ERROR PARSING " + new String(st, StandardCharsets.UTF_8));
+                e.printStackTrace();
+                System.exit(10);
+            }
         }
         return answer;
     }

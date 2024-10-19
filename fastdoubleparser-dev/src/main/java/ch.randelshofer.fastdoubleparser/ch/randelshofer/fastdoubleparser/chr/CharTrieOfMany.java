@@ -10,7 +10,7 @@ import java.util.Set;
  * A trie for testing if a String is contained in a set of Strings.
  */
 class CharTrieOfMany implements CharTrie {
-    private TrieNode root = new TrieNode();
+    private CharTrieNode root = new CharTrieNode();
 
     public CharTrieOfMany(Set<String> set) {
         for (String str : set) {
@@ -21,7 +21,7 @@ class CharTrieOfMany implements CharTrie {
     }
 
     private void add(String str) {
-        TrieNode node = root;
+        CharTrieNode node = root;
         for (int i = 0; i < str.length(); i++) {
             node = node.insert(str.charAt(i));
         }
@@ -31,7 +31,7 @@ class CharTrieOfMany implements CharTrie {
 
     @Override
     public int match(CharSequence str, int startIndex, int endIndex) {
-        TrieNode node = root;
+        CharTrieNode node = root;
         int longestMatch = startIndex;
         for (int i = startIndex; i < endIndex; i++) {
             node = node.get(str.charAt(i));
@@ -42,7 +42,7 @@ class CharTrieOfMany implements CharTrie {
 
     @Override
     public int match(char[] str, int startIndex, int endIndex) {
-        TrieNode node = root;
+        CharTrieNode node = root;
         int longestMatch = startIndex;
         for (int i = startIndex; i < endIndex; i++) {
             node = node.get(str[i]);
