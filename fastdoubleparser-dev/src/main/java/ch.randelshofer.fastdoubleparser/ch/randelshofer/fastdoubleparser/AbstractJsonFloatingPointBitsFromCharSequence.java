@@ -60,6 +60,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         final int significandStartIndex = index;
         int integerDigitCount = -1;
         boolean illegal = false;
+        //int swarLimit = Math.min(endIndex - 4, 1 << 30);
         for (; index < endIndex; index++) {
             ch = str.charAt(index);
             int digit = (char) (ch - '0');
@@ -69,7 +70,8 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
             } else if (ch == '.') {
                 illegal |= integerDigitCount >= 0;
                 integerDigitCount = index - significandStartIndex;
-                for (; index < endIndex - 4; index += 4) {
+                /*
+                for (; index < swarLimit; index += 4) {
                     int digits = FastDoubleSwar.tryToParseFourDigits(str, index + 1);
                     if (digits < 0) {
                         break;
@@ -77,6 +79,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
                     // This might overflow, we deal with it later.
                     significand = 10_000L * significand + digits;
                 }
+                 */
             } else {
                 break;
             }
