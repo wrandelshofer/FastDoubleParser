@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -306,13 +307,13 @@ public class Main {
         System.out.printf("Warming Up: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
         Map<String, VarianceStatistics> warmupResults = new LinkedHashMap<>();
-        for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
-            //System.out.println("  " + entry.getKey() + " ...");
+        List<Map.Entry<String, BenchmarkFunction>> entries = new ArrayList<>(functions.entrySet());
+        Collections.shuffle(entries);// randomize to prevent bias in multiple runs
+        for (Map.Entry<String, BenchmarkFunction> entry : entries) {
             System.out.print(".");
             System.out.flush();
             VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS);
             warmupResults.put(entry.getKey(), warmup);
-            //System.out.println("  " + entry.getKey() + " " + warmup);
         }
         System.out.println();
 
@@ -320,15 +321,18 @@ public class Main {
 
         System.out.printf("Measuring: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
                 100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
+        // Put entries in results, so that we have them in the original sequence
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
-        for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
-            //System.out.println("  " + entry.getKey() + " ...");
+        for (var key : functions.keySet()) {
+            results.put(key, null);
+        }
+        Collections.shuffle(entries);// randomize to prevent bias caused by JIT
+        for (Map.Entry<String, BenchmarkFunction> entry : entries) {
             System.out.print(".");
             System.out.flush();
 
             VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1);
             results.put(entry.getKey(), stats);
-            //System.out.println("  " + entry.getKey() + " " + stats);
         }
         System.out.println();
 
