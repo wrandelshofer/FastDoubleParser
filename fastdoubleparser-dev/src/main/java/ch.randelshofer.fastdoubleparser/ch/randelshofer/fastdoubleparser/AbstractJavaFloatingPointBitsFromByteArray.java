@@ -56,16 +56,15 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
      * See {@link JavaDoubleParser} for the grammar of
      * {@code DecimalFloatingPointLiteral} and {@code DecSignificand}.
      *
-     * @param str            a string
-     * @param index          start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
-     * @param endIndex       end index (exclusive)
-     * @param isNegative     true if the float value is negative
-     * @param hasLeadingZero true if we have consumed the optional leading zero
+     * @param str        a string
+     * @param index      start index inclusive of the {@code DecimalFloatingPointLiteralWithWhiteSpace}
+     * @param endIndex   end index (exclusive)
+     * @param isNegative true if the float value is negative
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
 
-    private long parseDecFloatLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative, boolean hasLeadingZero) {
+    private long parseDecFloatLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -108,6 +107,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             digitCount = index - significandStartIndex - 1;
             exponent = integerDigitCount - digitCount;
         }
+        illegal |= digitCount == 0 && significandEndIndex > significandStartIndex;
 
         // Parse exponent number
         // ---------------------
@@ -134,6 +134,13 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             exponent += expNumber;
         }
 
+
+        // Parse NaN or Infinity (this occurs rarely)
+        // ---------------------
+        if (!illegal && digitCount == 0) {
+            return parseNaNOrInfinity(str, index, endIndex, isNegative);
+        }
+
         // Skip optional FloatTypeSuffix
         // long-circuit-or is faster than short-circuit-or
         // ------------------------
@@ -144,11 +151,8 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // Skip trailing whitespace and check if FloatingPointLiteral is complete
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
-        if (illegal || index < endIndex
-                || !hasLeadingZero && digitCount == 0) {
-            // Parse NaN or Infinity (this occurs rarely)
-            // ---------------------
-            return parseNaNOrInfinity(str, index, endIndex, isNegative);
+        if (illegal || index < endIndex) {
+            throw new NumberFormatException(SYNTAX_ERROR);
         }
 
         // Re-parse significand in case of a potential overflow
@@ -228,9 +232,10 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             if ((ch | 0x20) == 'x') {// equals ignore case
                 return parseHexFloatingPointLiteral(str, index + 1, offset, endIndex, isNegative);
             }
+            index--;//push the leading zero back
         }
 
-        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative, hasLeadingZero);
+        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative);
     }
 
     /**

@@ -28,8 +28,8 @@ import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createD
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createDataForLegalDecStrings;
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createFloatTestDataForInputClassesInMethodParseFloatValue;
 import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createLongRunningDoubleTestData;
-import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createTestDataForInfinity;
-import static ch.randelshofer.fastdoubleparser.JavaDoubleTestDataFactory.createTestDataForNaN;
+import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createTestDataForInfinity;
+import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createTestDataForNaN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;

@@ -15,38 +15,13 @@ import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createD
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleHexadecimalLimits;
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForSignificandDigitsInputClasses;
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataWithVeryLongInputStrings;
+import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createTestDataForInfinity;
+import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createTestDataForNaN;
 
 public abstract class JavaDoubleTestDataFactory {
 
 
-    public static List<NumberTestData> createTestDataForNaN() {
-        return Arrays.asList(
-                new NumberTestData("NaN", Double.NaN),
-                new NumberTestData("+NaN", Double.NaN),
-                new NumberTestData("-NaN", Double.NaN),
-                new NumberTestData("NaNf"),
-                new NumberTestData("+NaNd"),
-                new NumberTestData("-NaNF"),
-                new NumberTestData("+-NaND"),
-                new NumberTestData("NaNInfinity"),
-                new NumberTestData("nan")
-        );
-    }
 
-    public static List<NumberTestData> createTestDataForInfinity() {
-        return Arrays.asList(
-                new NumberTestData("Infinity", Double.POSITIVE_INFINITY),
-                new NumberTestData("+Infinity", Double.POSITIVE_INFINITY),
-                new NumberTestData("-Infinity", Double.NEGATIVE_INFINITY),
-                new NumberTestData("Infinit"),
-                new NumberTestData("+Infinityf"),
-                new NumberTestData("-InfinityF"),
-                new NumberTestData("+Infinityd"),
-                new NumberTestData("+-InfinityD"),
-                new NumberTestData("+InfinityNaN"),
-                new NumberTestData("infinity")
-        );
-    }
 
     /**
      * ALl these strings must throw a {@link java.lang.NumberFormatException}.

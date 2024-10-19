@@ -140,6 +140,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
             digitCount = significandEndIndex - significandStartIndex - 1 - groupingCount;
             exponent = integerDigitCount - digitCount;
         }
+        illegal |= digitCount == 0 && significandEndIndex > significandStartIndex;
 
         // Parse exponent number
         // ---------------------
@@ -171,9 +172,14 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
 
         // Parse NaN or Infinity (this occurs rarely)
         // ---------------------
-        if (illegal || index < endIndex
-                || digitCount == 0) {
+        if (!illegal && digitCount == 0) {
             return parseNaNOrInfinity(str, index, endIndex, isNegative);
+        }
+
+        // Check if FloatingPointLiteral is complete
+        // ------------------------
+        if (illegal || index < endIndex) {
+            throw new NumberFormatException(SYNTAX_ERROR);
         }
 
         // Re-parse significand in case of a potential overflow
