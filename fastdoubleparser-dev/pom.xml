@@ -34,7 +34,7 @@
         <configuration>
           <compilerArgs>
             <arg>-Xlint:all</arg>
-            <arg>--enable-preview</arg>
+            <!--            <arg>&#45;&#45;enable-preview</arg>-->
           </compilerArgs>
         </configuration>
         </plugin>
@@ -42,7 +42,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <argLine>--enable-preview --add-modules jdk.incubator.vector -Xmx20g</argLine>
+            <!--            <argLine>&#45;&#45;enable-preview &#45;&#45;add-modules jdk.incubator.vector -Xmx20g</argLine>-->
+            <argLine>-Xmx20g</argLine>
             <parallel>classesAndMethods</parallel>
             <forkCount>4</forkCount>
           </configuration>
