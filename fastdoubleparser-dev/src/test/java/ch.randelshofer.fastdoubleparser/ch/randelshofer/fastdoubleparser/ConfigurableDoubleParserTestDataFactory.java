@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConfigurableDoubleParserTestDataFactory {
@@ -80,9 +81,9 @@ public class ConfigurableDoubleParserTestDataFactory {
 
     public static List<NumberTestData> createChineseNumberFormatSymbolsTestData() {
         List<NumberTestData> list = new ArrayList<>();
-        Locale estonianLocale = new Locale("zh", "CN");
+        Locale chineseLocale = new Locale("zh", "CN");
         DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(
-                estonianLocale
+                chineseLocale
         );
         NumberFormatSymbols symbols = new NumberFormatSymbols(
                 "" + dfs.getDecimalSeparator(),
@@ -95,8 +96,8 @@ public class ConfigurableDoubleParserTestDataFactory {
                 "〇一二三四五六七八九"
         );
         list.addAll(List.of(
-                new NumberTestData("Chinese locale", dfs.getLocale(), symbols, "一,二三四,五六七.〇八九", 1234567.089),
-                new NumberTestData("Chinese locale", dfs.getLocale(), symbols, "〇.五六四", 0.564)
+                new NumberTestData("Chinese locale 一,二三四,五六七.〇八九", dfs.getLocale(), symbols, "一,二三四,五六七.〇八九", 1234567.089),
+                new NumberTestData("Chinese locale 〇.五六四", dfs.getLocale(), symbols, "〇.五六四", 0.564)
         ));
         return list;
     }
@@ -151,6 +152,7 @@ public class ConfigurableDoubleParserTestDataFactory {
         list.add(new NumberTestData("ignoreCase: " + dfs.getNaN().toUpperCase(), swissLocale, symbols, true, dfs.getNaN().toUpperCase(), Double.NaN));
         list.add(new NumberTestData("ignoreCase: 12" + dfs.getExponentSeparator().toLowerCase() + "5", swissLocale, symbols, true, "12" + dfs.getExponentSeparator().toLowerCase() + "5", 12e5));
         list.add(new NumberTestData("ignoreCase: 12" + dfs.getExponentSeparator().toUpperCase() + "5", swissLocale, symbols, true, "12" + dfs.getExponentSeparator().toUpperCase() + "5", 12e5));
+        list.add(new NumberTestData("case-sensitive, invalid: 12.3458’67", "12.3458’67", 0, 9, 0, 9, 10, null, SYNTAX_ERROR, NumberFormatException.class, swissLocale, symbols));
         return list;
     }
 

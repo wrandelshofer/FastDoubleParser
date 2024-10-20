@@ -35,6 +35,20 @@ If you redistribute code, you must follow the terms of all involved licenses (MI
 The build scripts in this project do include the license files into the jar files.
 So that the released jar files automatically comply with the licenses, when you use them.
 
+## Dependency
+
+You can download released Jar files from [github](https://github.com/wrandelshofer/FastDoubleParser/releases),
+or from a public Maven using the following dependency descriptor:
+
+```xml
+
+<dependency>
+  <groupId>ch.randelshofer</groupId>
+  <artifactId>fastdoubleparser</artifactId>
+  <version>…version…</version>
+</dependency>
+```
+
 ## Usage
 
 ```java
@@ -49,6 +63,14 @@ import ch.randelshofer.fastdoubleparser.JavaFloatParser;
 import ch.randelshofer.fastdoubleparser.JavaBigDecimalParser;
 import ch.randelshofer.fastdoubleparser.JavaBigIntegerParser;
 import ch.randelshofer.fastdoubleparser.JsonDoubleParser;
+import ch.randelshofer.fastdoubleparser.NumberFormatSymbols;
+import ch.randelshofer.fastdoubleparser.ConfigurableDoubleParser;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DecimalFormatSymbols;
+
+import java.util.Locale;
 
 class MyMain {
     public static void main(String... args) {
@@ -57,6 +79,10 @@ class MyMain {
         BigDecimal bd = JavaBigDecimalParser.parseBigDecimal("1.2345");
         BigInteger bi = JavaBigIntegerParser.parseBigInteger("12345");
         double jsonD = JsonDoubleParser.parseDouble("1.2345e85");
+
+        var symbols = NumberFormatSymbols.fromDecimalFormatSymbols(new DecimalFormatSymbols(Locale.GERMAN));
+        var confdParser = new ConfigurableDoubleParser(symbols);
+        double confD = confdParser.parseDouble("123.456,89");
     }
 }
 ```
@@ -151,29 +177,6 @@ VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
 | JavaBigDecimalParser char[] | 637.52 |  6.0 % |     36.59 |  27.33 |    3.44 | 24-beta |
 | JavaBigDecimalParser byte[] | 659.48 |  2.9 % |     37.85 |  26.42 |    3.56 | 24-beta |
 
-MacBook Pro (2023)<br>
-CPU: Apple M2 Max<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
-
-| Method                      |   MB/s | stdev | Mfloats/s |   ns/f | speedup | JDK     |
-|-----------------------------|-------:|------:|----------:|-------:|--------:|---------|
-| java.lang.Double            | 103.13 | 5.8 % |      5.92 | 168.97 |    1.00 | 24-beta |
-| java.lang.Float             | 121.32 | 2.4 % |      6.96 | 143.64 |    1.00 | 24-beta |
-| java.math.BigDecimal        | 189.35 | 2.9 % |     10.87 |  92.03 |    1.00 | 24-beta |
-| JavaDoubleParser String     | 616.08 | 7.2 % |     35.35 |  28.28 |    5.97 | 24-beta |
-| JavaDoubleParser char[]     | 779.92 | 4.9 % |     44.76 |  22.34 |    7.56 | 24-beta |
-| JavaDoubleParser byte[]     | 815.18 | 3.9 % |     46.78 |  21.38 |    7.90 | 24-beta |
-| JsonDoubleParser String     | 544.99 | 6.3 % |     31.28 |  31.97 |    5.28 | 24-beta |
-| JsonDoubleParser char[]     | 796.67 | 4.4 % |     45.72 |  21.87 |    7.72 | 24-beta |
-| JsonDoubleParser byte[]     | 804.16 | 2.8 % |     46.15 |  21.67 |    7.80 | 24-beta |
-| JavaFloatParser  String     | 633.53 | 3.6 % |     36.36 |  27.51 |    5.22 | 24-beta |
-| JavaFloatParser  char[]     | 827.80 | 3.7 % |     47.50 |  21.05 |    6.82 | 24-beta |
-| JavaFloatParser  byte[]     | 690.68 | 3.7 % |     39.64 |  25.23 |    5.69 | 24-beta |
-| JavaBigDecimalParser String | 634.82 | 6.8 % |     36.43 |  27.45 |    3.35 | 24-beta |
-| JavaBigDecimalParser char[] | 736.93 | 1.9 % |     42.29 |  23.65 |    3.89 | 24-beta |
-| JavaBigDecimalParser byte[] | 676.75 | 4.7 % |     38.84 |  25.75 |    3.57 | 24-beta |
 
 
 ### The data file `canada.txt`
@@ -205,29 +208,7 @@ VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
 | JavaBigDecimalParser char[] | 652.82 |  8.6 % |     37.52 |  26.66 |    2.02 | 24-beta |
 | JavaBigDecimalParser byte[] | 633.94 |  4.0 % |     36.43 |  27.45 |    1.96 | 24-beta |
 
-MacBook Pro (2023)<br>
-CPU: Apple M2 Max<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
 
-| Method                      |   MB/s | stdev | Mfloats/s |   ns/f | speedup | JDK     |
-|-----------------------------|-------:|------:|----------:|-------:|--------:|---------|
-| java.lang.Double            | 100.17 | 4.5 % |      5.76 | 173.72 |    1.00 | 24-beta |
-| java.lang.Float             | 119.69 | 5.8 % |      6.88 | 145.39 |    1.00 | 24-beta |
-| java.math.BigDecimal        | 383.19 | 3.6 % |     22.02 |  45.41 |    1.00 | 24-beta |
-| JavaDoubleParser String     | 518.31 | 1.3 % |     29.79 |  33.57 |    5.17 | 24-beta |
-| JavaDoubleParser char[]     | 699.50 | 3.8 % |     40.20 |  24.88 |    6.98 | 24-beta |
-| JavaDoubleParser byte[]     | 739.89 | 2.7 % |     42.52 |  23.52 |    7.39 | 24-beta |
-| JsonDoubleParser String     | 488.27 | 3.4 % |     28.06 |  35.64 |    4.87 | 24-beta |
-| JsonDoubleParser char[]     | 601.89 | 3.1 % |     34.59 |  28.91 |    6.01 | 24-beta |
-| JsonDoubleParser byte[]     | 680.65 | 2.8 % |     39.11 |  25.57 |    6.79 | 24-beta |
-| JavaFloatParser  String     | 490.24 | 2.7 % |     28.17 |  35.50 |    4.10 | 24-beta |
-| JavaFloatParser  char[]     | 681.75 | 2.1 % |     39.18 |  25.52 |    5.70 | 24-beta |
-| JavaFloatParser  byte[]     | 697.36 | 2.4 % |     40.07 |  24.95 |    5.83 | 24-beta |
-| JavaBigDecimalParser String | 475.46 | 1.7 % |     27.32 |  36.60 |    1.24 | 24-beta |
-| JavaBigDecimalParser char[] | 794.76 | 2.7 % |     45.67 |  21.90 |    2.07 | 24-beta |
-| JavaBigDecimalParser byte[] | 747.19 | 4.8 % |     42.94 |  23.29 |    1.95 | 24-beta |
 
 
 ### The data file `mesh.txt`
@@ -258,29 +239,6 @@ VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
 | JavaBigDecimalParser char[] | 452.22 |  7.0 % |     61.60 | 16.23 |    1.84 | 24-beta |
 | JavaBigDecimalParser byte[] | 469.67 |  8.3 % |     63.98 | 15.63 |    1.91 | 24-beta |
 
-MacBook Pro (2023)<br>
-CPU: Apple M2 Max<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
-
-| Method                      |   MB/s | stdev | Mfloats/s |  ns/f | speedup | JDK     |
-|-----------------------------|-------:|------:|----------:|------:|--------:|---------|
-| java.lang.Double            | 235.18 | 6.5 % |     32.04 | 31.21 |    1.00 | 24-beta |
-| java.lang.Float             | 124.91 | 5.5 % |     17.02 | 58.77 |    1.00 | 24-beta |
-| java.math.BigDecimal        | 279.83 | 4.1 % |     38.12 | 26.23 |    1.00 | 24-beta |
-| JavaDoubleParser String     | 405.69 | 2.6 % |     55.27 | 18.09 |    1.73 | 24-beta |
-| JavaDoubleParser char[]     | 460.44 | 3.6 % |     62.73 | 15.94 |    1.96 | 24-beta |
-| JavaDoubleParser byte[]     | 482.24 | 3.5 % |     65.69 | 15.22 |    2.05 | 24-beta |
-| JsonDoubleParser String     | 422.72 | 3.6 % |     57.59 | 17.37 |    1.80 | 24-beta |
-| JsonDoubleParser char[]     | 454.11 | 3.0 % |     61.86 | 16.16 |    1.93 | 24-beta |
-| JsonDoubleParser byte[]     | 501.59 | 3.4 % |     68.33 | 14.63 |    2.13 | 24-beta |
-| JavaFloatParser  String     | 321.48 | 3.8 % |     43.79 | 22.83 |    2.57 | 24-beta |
-| JavaFloatParser  char[]     | 414.89 | 2.3 % |     56.52 | 17.69 |    3.32 | 24-beta |
-| JavaFloatParser  byte[]     | 456.44 | 3.4 % |     62.18 | 16.08 |    3.65 | 24-beta |
-| JavaBigDecimalParser String | 354.47 | 4.1 % |     48.29 | 20.71 |    1.27 | 24-beta |
-| JavaBigDecimalParser char[] | 414.05 | 7.7 % |     56.41 | 17.73 |    1.48 | 24-beta |
-| JavaBigDecimalParser byte[] | 536.53 | 7.4 % |     73.09 | 13.68 |    1.92 | 24-beta |
 
 
 ### The data file `canada_hex.txt`
@@ -305,22 +263,6 @@ VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
 | JavaFloatParser  char[] | 468.57 | 6.7 % |     25.69 |  38.92 |   11.24 | 24-beta |
 | JavaFloatParser  byte[] | 788.61 | 2.9 % |     43.24 |  23.13 |   18.91 | 24-beta |
 
-MacBook Pro (2023)<br>
-CPU: Apple M2 Max<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
-
-| Method                  |   MB/s | stdev | Mfloats/s |   ns/f | speedup | JDK     |
-|-------------------------|-------:|------:|----------:|-------:|--------:|---------|
-| java.lang.Double        |  41.95 | 1.4 % |      2.30 | 434.75 |    1.00 | 24-beta |
-| java.lang.Float         |  42.07 | 1.5 % |      2.31 | 433.52 |    1.00 | 24-beta |
-| JavaDoubleParser String | 430.37 | 2.1 % |     23.60 |  42.38 |   10.26 | 24-beta |
-| JavaDoubleParser char[] | 623.75 | 2.8 % |     34.20 |  29.24 |   14.87 | 24-beta |
-| JavaDoubleParser byte[] | 840.88 | 2.8 % |     46.11 |  21.69 |   20.04 | 24-beta |
-| JavaFloatParser  String | 404.41 | 2.0 % |     22.17 |  45.10 |    9.61 | 24-beta |
-| JavaFloatParser  char[] | 560.33 | 2.2 % |     30.72 |  32.55 |   13.32 | 24-beta |
-| JavaFloatParser  byte[] | 828.25 | 2.9 % |     45.41 |  22.02 |   19.69 | 24-beta |
 
 ### Comparison with C version
 

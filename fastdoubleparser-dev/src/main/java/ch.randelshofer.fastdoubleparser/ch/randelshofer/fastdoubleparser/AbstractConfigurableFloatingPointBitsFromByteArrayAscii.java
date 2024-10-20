@@ -84,8 +84,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         // -------------------
         final boolean isNegative = isMinusSign(ch);
         if (isNegative || isPlusSign(ch)) {
-            ch = charAt(str, ++index, endIndex);
-            if (ch == 0) {
+            ++index;
+            if (index == endIndex) {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
         }

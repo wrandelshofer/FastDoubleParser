@@ -46,20 +46,20 @@ public class ConfigurableDoubleParserTest {
                 .filter(t -> t.charLength() == t.input().length()
                         && t.charOffset() == 0)
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> new ConfigurableDoubleParser().parseDouble(u.input()))));
+                        () -> test(t, u -> new ConfigurableDoubleParser(u.symbols() == null ? NumberFormatSymbols.fromDefault() : u.symbols(), u.ignoreCase()).parseDouble(u.input()))));
     }
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int() {
         return createRegularDoubleTestData().stream()
                 .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> new ConfigurableDoubleParser().parseDouble(u.input(), u.charOffset(), u.charLength()))));
+                        () -> test(t, u -> new ConfigurableDoubleParser(u.symbols() == null ? NumberFormatSymbols.fromDefault() : u.symbols(), u.ignoreCase()).parseDouble(u.input(), u.charOffset(), u.charLength()))));
     }
 
     @TestFactory
     @Disabled("long running test")
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence_int_int_longRunningTests() {
-        ToDoubleFunction<NumberTestData> lambda = u -> new ConfigurableDoubleParser().parseDouble(u.input(), u.charOffset(), u.charLength());
+        ToDoubleFunction<NumberTestData> lambda = u -> new ConfigurableDoubleParser(u.symbols() == null ? NumberFormatSymbols.fromDefault() : u.symbols(), u.ignoreCase()).parseDouble(u.input(), u.charOffset(), u.charLength());
         return createLongRunningDoubleTestData()
                 .map(t -> dynamicTest(t.title(),
                         () -> test(t, lambda)));
@@ -76,6 +76,7 @@ public class ConfigurableDoubleParserTest {
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
         list.addAll(createDataForSignificandDigitsInputClasses());
+        list.addAll(createNumberFormatSymbolsTestData());
         return list;
     }
 

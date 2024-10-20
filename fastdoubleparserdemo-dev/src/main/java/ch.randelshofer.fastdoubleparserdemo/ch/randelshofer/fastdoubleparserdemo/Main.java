@@ -116,10 +116,6 @@ public class Main {
     private String infinity = null;
     private String nan = null;
     private boolean printConfidence = false;
-    /**
-     * Whether to shuffle the input data before each measurement.
-     */
-    private boolean shuffleData = false;
 
     private static double computeSpeedup(String name, VarianceStatistics stats, Map<String, BenchmarkFunction> functions, Map<String, VarianceStatistics> results) {
         double speedup;
@@ -264,8 +260,8 @@ public class Main {
     }
 
     private VarianceStatistics measure(Supplier<? extends Number> func, int numberOfTrials,
-                                       double confidenceLevel, double confidenceIntervalWidth, int minTrials, String name,
-                                       Runnable shuffleFunction) {
+                                       double confidenceLevel, double confidenceIntervalWidth, int minTrials, String name
+    ) {
         long t1;
         double confidenceWidth;
         long t2;
@@ -281,7 +277,6 @@ public class Main {
                 if (i % 10 == 0) {
                     System.out.print(".");
                 }
-                shuffleFunction.run();
                 t1 = System.nanoTime();
                 func.get();
                 t2 = System.nanoTime();
@@ -395,7 +390,7 @@ public class Main {
         for (Map.Entry<String, BenchmarkFunction> entry : entries) {
             System.out.print(".");
             System.out.flush();
-            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS, entry.getKey(), this::shuffleData);
+            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS, entry.getKey());
             results.put(entry.getKey(), warmup);
         }
         // Print results
@@ -412,7 +407,7 @@ public class Main {
             System.out.print(".");
             System.out.flush();
 
-            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1, entry.getKey(), this::shuffleData);
+            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1, entry.getKey());
             results.put(entry.getKey(), stats);
         }
         System.out.println();
@@ -423,18 +418,6 @@ public class Main {
 
     }
 
-    private void shuffleData() {
-        // If the lists are big enough, so that the data values don't fit into the cache,
-        // then shuffling the data prevents that the prefetching unit of the CPU can learn
-        // a memory access pattern.
-        // This is probably an unrealistic scenario. We expect that the parsers are being
-        // called with input data that is in the cache.
-        if (shuffleData) {
-            if (stringLines != null) Collections.shuffle(stringLines);
-            if (byteArrayLines != null) Collections.shuffle(byteArrayLines);
-            if (charArrayLines != null) Collections.shuffle(charArrayLines);
-        }
-    }
 
     private void sleep() {
         if (sleep) {

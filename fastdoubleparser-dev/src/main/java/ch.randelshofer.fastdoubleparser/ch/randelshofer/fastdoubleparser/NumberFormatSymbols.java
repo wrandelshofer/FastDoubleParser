@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -30,6 +31,143 @@ import java.util.Set;
 public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character> groupingSeparator,
                                   Set<String> exponentSeparator, Set<Character> minusSign, Set<Character> plusSign,
                                   Set<String> infinity, Set<String> nan, List<Character> digits) {
+
+    /**
+     * Creates a new instance with the specified decimal separator symbols.
+     *
+     * @param newValue the decimal separator symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withDecimalSeparator(Set<Character> newValue) {
+        return new NumberFormatSymbols(newValue,
+                groupingSeparator,
+                exponentSeparator,
+                minusSign,
+                plusSign,
+                infinity,
+                nan,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified grouping separator symbols.
+     *
+     * @param newValue the grouping separator symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withGroupingSeparator(Set<Character> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                newValue,
+                exponentSeparator,
+                minusSign,
+                plusSign,
+                infinity,
+                nan,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified exponent separator symbols.
+     *
+     * @param newValue the exponent separator symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withExponentSeparator(Set<String> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                newValue,
+                minusSign,
+                plusSign,
+                infinity,
+                nan,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified minus sign symbols.
+     *
+     * @param newValue the minus sign symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withMinusSign(Set<Character> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                exponentSeparator,
+                newValue,
+                plusSign,
+                infinity,
+                nan,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified plus sign symbols.
+     *
+     * @param newValue the plus sign symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withPlusSign(Set<Character> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                exponentSeparator,
+                minusSign,
+                newValue,
+                infinity,
+                nan,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified infinity symbols.
+     *
+     * @param newValue the infinity symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withInfinity(Set<String> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                exponentSeparator,
+                minusSign,
+                plusSign,
+                newValue,
+                nan,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified NaN symbols.
+     *
+     * @param newValue the NaN symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withNaN(Set<String> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                exponentSeparator,
+                minusSign,
+                plusSign,
+                infinity,
+                newValue,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified digits.
+     *
+     * @param newValue the digits
+     * @return a new instance
+     */
+    public NumberFormatSymbols withDigits(List<Character> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                exponentSeparator,
+                minusSign,
+                plusSign,
+                infinity,
+                nan,
+                newValue);
+    }
+
     /**
      * Canonical constructor.
      *
@@ -43,14 +181,15 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
      * @param digits            the first 10 characters in this string define the digit characters from 0 to 9
      */
     public NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character> groupingSeparator, Set<String> exponentSeparator, Set<Character> minusSign, Set<Character> plusSign, Set<String> infinity, Set<String> nan, List<Character> digits) {
-        if (digits.size() != 10) throw new IllegalArgumentException("digits list must have size 10");
-        this.decimalSeparator = decimalSeparator;
-        this.groupingSeparator = groupingSeparator;
-        this.exponentSeparator = exponentSeparator;
-        this.minusSign = minusSign;
-        this.plusSign = plusSign;
-        this.infinity = infinity;
-        this.nan = nan;
+        if (Objects.requireNonNull(digits, "digits").size() != 10)
+            throw new IllegalArgumentException("digits list must have size 10");
+        this.decimalSeparator = Objects.requireNonNull(decimalSeparator, "decimalSeparator");
+        this.groupingSeparator = Objects.requireNonNull(groupingSeparator, "groupingSeparator");
+        this.exponentSeparator = Objects.requireNonNull(exponentSeparator, "exponentSeparator");
+        this.minusSign = Objects.requireNonNull(minusSign, "minusSign");
+        this.plusSign = Objects.requireNonNull(plusSign, "plusSign");
+        this.infinity = Objects.requireNonNull(infinity, "infinity");
+        this.nan = Objects.requireNonNull(nan, "nan");
         this.digits = digits;
     }
 
@@ -107,7 +246,6 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
         return list;
     }
 
-
     /**
      * Creates a new instance from the provided {@link DecimalFormatSymbols}.
      *
@@ -115,6 +253,7 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
      * @return a new instance
      */
     public static NumberFormatSymbols fromDecimalFormatSymbols(DecimalFormatSymbols symbols) {
+        Objects.requireNonNull(symbols, "symbols");
         List<Character> digits = new ArrayList<>(10);
         char zeroDigit = symbols.getZeroDigit();
         for (int i = 0; i < 10; i++) {

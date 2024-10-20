@@ -85,8 +85,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         // -------------------
         final boolean isNegative = isMinusSign(ch);
         if (isNegative || isPlusSign(ch)) {
-            ch = charAt(str, ++index, endIndex);
-            if (ch == 0) {
+            ++index;
+            if (index == endIndex) {
                 throw new NumberFormatException(SYNTAX_ERROR);
             }
         }
@@ -114,6 +114,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
                 decimalSeparatorIndex = index;
                 integerDigitCount = index - significandStartIndex - groupingCount;
             } else if (isGroupingSeparator(ch)) {
+                illegal |= decimalSeparatorIndex != -1;
                 groupingCount++;
             } else {
                 break;

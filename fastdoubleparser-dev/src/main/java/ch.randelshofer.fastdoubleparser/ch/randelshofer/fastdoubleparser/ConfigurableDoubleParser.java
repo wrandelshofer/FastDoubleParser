@@ -6,6 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.text.DecimalFormatSymbols;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Parses a floating point value with configurable {@link NumberFormatSymbols}.
@@ -148,11 +149,29 @@ public class ConfigurableDoubleParser {
      * @param ignoreCase whether case should be ignored by the parser
      */
     public ConfigurableDoubleParser(NumberFormatSymbols symbols, boolean ignoreCase) {
+        Objects.requireNonNull(symbols, "symbols");
         this.symbols = symbols;
         this.ignoreCase = ignoreCase;
         this.isAllSingleCharSymbolsAscii = isMostlyAscii(symbols);
         this.isDigitsAscii = isDigitsTokensAscii(symbols);
         this.isAscii = isAscii(symbols);
+    }
+
+    /**
+     * Gets the number format symbols of this parser.
+     * @return the number format symbols
+     */
+    public NumberFormatSymbols getNumberFormatSymbols() {
+        return symbols;
+    }
+
+    /**
+     * Returns true of this parser ignores case.
+     *
+     * @return true if case is ignored
+     */
+    public boolean isIgnoreCase() {
+        return ignoreCase;
     }
 
     /**

@@ -80,8 +80,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
         } else {
             index += plusSignChar.match(str, index, endIndex);
         }
-        ch = charAt(str, index, endIndex);
-        if (ch == 0) {
+        if (index == endIndex) {
             throw new NumberFormatException(SYNTAX_ERROR);
         }
 
@@ -108,6 +107,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
                 integerDigitCount = index - significandStartIndex - groupingCount;
                 index += matchCount - 1;
             } else if ((matchCount = groupingSeparator.match(str, index, endIndex)) > 0) {
+                illegal |= decimalSeparatorIndex != -1;
                 groupingCount += matchCount;
                 index += matchCount - 1;
             } else {
