@@ -209,67 +209,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         return plusSignChar.containsKey(c);
     }
 
-
-    protected CharSequence filterInputString(byte[] str, int startIndex, int endIndex) {
-        StringBuilder buf = new StringBuilder(endIndex - startIndex);
-
-        // Filter leading format characters
-        // -------------------
-        int index = skipFormatCharacters(str, startIndex, endIndex);
-        byte ch = str[index];
-
-        // Filter optional sign
-        // -------------------
-        final boolean isNegative = isMinusSign(ch);
-        if (isNegative) buf.append('-');
-        if (isNegative || isPlusSign(ch)) {
-            ++index;
-        }
-
-        // We do not need to parse NaN or Infinity, this case has already been processed
-
-        // Parse significand
-        for (; index < endIndex; index++) {
-            ch = str[index];
-            int digit = digitSet.toDigit(ch);
-            if (digit < 10) {
-                buf.append((char) (digit + '0'));
-            } else if (isDecimalSeparator(ch)) {
-                buf.append('.');
-            } else if (!isGroupingSeparator(ch)) {
-                break;
-            }
-
-        }
-
-        // Parse exponent number
-        // ---------------------
-        int count = exponentSeparatorTrie.match(str, index, endIndex);
-        if (count > 0) {
-            buf.append('e');
-            index += count;
-            index = skipFormatCharacters(str, index, endIndex);
-            ch = charAt(str, index, endIndex);
-            boolean isExponentNegative = isMinusSign(ch);
-            if (isExponentNegative) {
-                buf.append('-');
-            }
-            if (isExponentNegative || isPlusSign(ch)) {
-                ++index;
-            }
-            ch = str[index];
-            int digit = digitSet.toDigit(ch);
-            do {
-                buf.append((char) (digit + '0'));
-                ch = charAt(str, ++index, endIndex);
-                digit = digitSet.toDigit(ch);
-            } while (digit < 10);
-        }
-
-
-        return buf;
-    }
-
     /**
      * Skips all format characters.
      *

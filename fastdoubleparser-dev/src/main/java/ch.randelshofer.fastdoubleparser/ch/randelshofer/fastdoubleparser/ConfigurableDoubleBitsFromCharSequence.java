@@ -37,7 +37,6 @@ final class ConfigurableDoubleBitsFromCharSequence extends AbstractConfigurableF
         double d = FastDoubleMath.tryDecFloatToDoubleTruncated(isSignificandNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand);
         return Double.doubleToRawLongBits(Double.isNaN(d) ?
-                //Double.parseDouble(filterInputString(str, startIndex, endIndex).toString()):
                 slowPathToDouble(str, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue) :
                 d);
     }
