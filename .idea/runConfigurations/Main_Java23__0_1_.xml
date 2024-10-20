@@ -1,9 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main-Java17 canada_hex" type="Application" factoryName="Application">
-    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+  <configuration default="false" name="Main-Java23 [0,1)" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="21" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
-    <module name="fastdoubleparserdemo-dev" />
-    <option name="PROGRAM_PARAMETERS" value="--markdown data/canada_hex.txt" />
+    <module name="fastdoubleparserdemo-java23" />
     <option name="VM_PARAMETERS" value="-XX:CompileCommand=inline,java/lang/String.charAt" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
     <extension name="coverage">

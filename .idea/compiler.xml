@@ -63,7 +63,7 @@
       <module name="FastDoubleParserDemo-Java8" options="-Xlint:all" />
       <module name="FastDoubleParserDemo-JavaEarlyAccess" options="-Xlint:all" />
       <module name="fastdoubleparser" options="" />
-      <module name="fastdoubleparser-dev" options="-Xlint:all" />
+      <module name="fastdoubleparser-dev" options="-Xlint:all --enable-preview" />
       <module name="fastdoubleparser-java11" options="" />
       <module name="fastdoubleparser-java17" options="" />
       <module name="fastdoubleparser-java19" options="" />
