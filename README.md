@@ -70,19 +70,43 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormatSymbols;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 class MyMain {
     public static void main(String... args) {
         double d = JavaDoubleParser.parseDouble("1.2345e135");
+        System.out.println("Java double value: " + d);
+
         float f = JavaFloatParser.parseFloat("1.2345f");
+        System.out.println("Java float value: " + f);
+
         BigDecimal bd = JavaBigDecimalParser.parseBigDecimal("1.2345");
+        System.out.println("Java big decimal value: " + bd);
+
         BigInteger bi = JavaBigIntegerParser.parseBigInteger("12345");
+        System.out.println("Java big integer value: " + bi);
+
         double jsonD = JsonDoubleParser.parseDouble("1.2345e85");
+        System.out.println("JSON double value: " + jsonD);
 
         var symbols = NumberFormatSymbols.fromDecimalFormatSymbols(new DecimalFormatSymbols(Locale.GERMAN));
-        var confdParser = new ConfigurableDoubleParser(symbols);
-        double confD = confdParser.parseDouble("123.456,89");
+        boolean ignoreCase = true;
+        var confdParser = new ConfigurableDoubleParser(symbols, ignoreCase);
+        double confD1 = confdParser.parseDouble("123.456,89e5");
+        double confD2 = confdParser.parseDouble("-0.15425,89E-5");
+        System.out.println("Double value in German Locale: " + confD1);
+        System.out.println("Another double value in German Locale: " + confD2);
+
+        symbols = NumberFormatSymbols.fromDecimalFormatSymbols(new DecimalFormatSymbols(Locale.forLanguageTag("zh-CN")));
+        symbols = symbols
+                .withDigits(List.of('〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'))
+                .withExponentSeparator((Set.of("*一〇^")));
+
+        confdParser = new ConfigurableDoubleParser(symbols, ignoreCase);
+        double confZh = confdParser.parseDouble("四一.五七五三七一六六二一四五九八*一〇^七");
+        System.out.println("Double value in Chinese Locale: " + confZh);
     }
 }
 ```
