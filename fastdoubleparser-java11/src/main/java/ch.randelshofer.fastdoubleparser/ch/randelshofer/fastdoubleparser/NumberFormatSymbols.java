@@ -9,8 +9,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -46,14 +44,14 @@ public final class NumberFormatSymbols {
                                Set<String> infinity, Set<String> nan, List<Character> digits) {
         if (Objects.requireNonNull(digits, "digits").size() != 10)
             throw new IllegalArgumentException("digits list must have size 10");
-        this.decimalSeparator = Objects.requireNonNull(decimalSeparator, "decimalSeparator");
-        this.groupingSeparator = Objects.requireNonNull(groupingSeparator, "groupingSeparator");
-        this.exponentSeparator = Objects.requireNonNull(exponentSeparator, "exponentSeparator");
-        this.minusSign = Objects.requireNonNull(minusSign, "minusSign");
-        this.plusSign = Objects.requireNonNull(plusSign, "plusSign");
-        this.infinity = Objects.requireNonNull(infinity, "infinity");
-        this.nan = Objects.requireNonNull(nan, "nan");
-        this.digits = digits;
+        this.decimalSeparator = Set.copyOf(Objects.requireNonNull(decimalSeparator, "decimalSeparator"));
+        this.groupingSeparator = Set.copyOf(Objects.requireNonNull(groupingSeparator, "groupingSeparator"));
+        this.exponentSeparator = Set.copyOf(Objects.requireNonNull(exponentSeparator, "exponentSeparator"));
+        this.minusSign = Set.copyOf(Objects.requireNonNull(minusSign, "minusSign"));
+        this.plusSign = Set.copyOf(Objects.requireNonNull(plusSign, "plusSign"));
+        this.infinity = Set.copyOf(Objects.requireNonNull(infinity, "infinity"));
+        this.nan = Set.copyOf(Objects.requireNonNull(nan, "nan"));
+        this.digits = List.copyOf(digits);
     }
 
     /**
@@ -93,12 +91,56 @@ public final class NumberFormatSymbols {
         return buf.toString();
     }
 
-    private static Set<Character> toSet(String chars) {
-        Set<Character> set = new LinkedHashSet<>(chars.length() * 2);
-        for (char ch : chars.toCharArray()) {
-            set.add(ch);
+    /**
+     * Creates a new instance from the provided {@link DecimalFormatSymbols}.
+     *
+     * @param symbols the decimal format symbols
+     * @return a new instance
+     */
+    public static NumberFormatSymbols fromDecimalFormatSymbols(DecimalFormatSymbols symbols) {
+        List<Character> digits = new ArrayList<>(10);
+        char zeroDigit = symbols.getZeroDigit();
+        for (int i = 0; i < 10; i++) {
+            digits.add((char) (zeroDigit + i));
         }
-        return set;
+        return new NumberFormatSymbols(
+                Set.of(symbols.getDecimalSeparator()),
+                Set.of(symbols.getGroupingSeparator()),
+                Set.of(symbols.getExponentSeparator()),
+                Set.of(symbols.getMinusSign()),
+                Set.of(),
+                Set.of(symbols.getInfinity()),
+                Set.of(symbols.getNaN()),
+                digits
+        );
+    }
+
+    /**
+     * Creates a new instance with the following default symbols.
+     * <dl>
+     *     <dt>decimalSeparator </dt><dd>{@code .}</dd>
+     *     <dt>groupingSeparator</dt><dd>none</dd>
+     *     <dt>exponentSeparator</dt><dd>{@code e}, {@code E}</dd>
+     *     <dt>minusSign        </dt><dd>{@code -}</dd>
+     *     <dt>plusSign         </dt><dd>{@code +}</dd>
+     *     <dt>infinity         </dt><dd>{@code Infinity}</dd>
+     *     <dt>nan              </dt><dd>{@code NaN}</dd>
+     *     <dt>digits           </dt><dd>{@code 0} ... {@code 9}</dd>
+     * </dl>
+     *
+     * @return a new instance
+     */
+    public static NumberFormatSymbols fromDefault() {
+        return new NumberFormatSymbols(
+                Set.of('.'),
+                Set.of(),
+                Set.of("e", "E"),
+                Set.of('-'),
+                Set.of('+'),
+                Set.of("Infinity"),
+                Set.of("NaN"),
+                Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+        );
     }
 
     private static List<Character> toList(String chars) {
@@ -109,76 +151,16 @@ public final class NumberFormatSymbols {
         return set;
     }
 
-    public static NumberFormatSymbols fromDecimalFormatSymbols(DecimalFormatSymbols symbols) {
-        List<Character> digits = new ArrayList<>(10);
-        char zeroDigit = symbols.getZeroDigit();
-        for (int i = 0; i < 10; i++) {
-            digits.add((char) (zeroDigit + i));
+    private static Set<Character> toSet(String chars) {
+        Set<Character> set = new LinkedHashSet<>(chars.length() * 2);
+        for (char ch : chars.toCharArray()) {
+            set.add(ch);
         }
-        return new NumberFormatSymbols(
-                Collections.singleton(symbols.getDecimalSeparator()),
-                Collections.singleton(symbols.getGroupingSeparator()),
-                Collections.singleton(symbols.getExponentSeparator()),
-                Collections.singleton(symbols.getMinusSign()),
-                Collections.emptySet(),
-                Collections.singleton(symbols.getInfinity()),
-                Collections.singleton(symbols.getNaN()),
-                digits
-        );
-    }
-
-    public static NumberFormatSymbols fromDefault() {
-        return new NumberFormatSymbols(
-                Collections.singleton('.'),
-                Collections.emptySet(),
-                new HashSet<>(Arrays.asList("e", "E")),
-                Collections.singleton('-'),
-                Collections.singleton('+'),
-                Collections.singleton("Infinity"),
-                Collections.singleton("NaN"),
-                Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
-        );
-    }
-
-    @Override
-    public String toString() {
-        return "NumberFormatSymbols[" +
-                "decimalSeparator=" + decimalSeparator + ", " +
-                "groupingSeparator=" + groupingSeparator + ", " +
-                "exponentSeparator=" + exponentSeparator + ", " +
-                "minusSign=" + minusSign + ", " +
-                "plusSign=" + plusSign + ", " +
-                "infinity=" + infinity + ", " +
-                "nan=" + nan + ", " +
-                "digits=" + digits + ']';
+        return set;
     }
 
     public Set<Character> decimalSeparator() {
         return decimalSeparator;
-    }
-
-    public Set<Character> groupingSeparator() {
-        return groupingSeparator;
-    }
-
-    public Set<String> exponentSeparator() {
-        return exponentSeparator;
-    }
-
-    public Set<Character> minusSign() {
-        return minusSign;
-    }
-
-    public Set<Character> plusSign() {
-        return plusSign;
-    }
-
-    public Set<String> infinity() {
-        return infinity;
-    }
-
-    public Set<String> nan() {
-        return nan;
     }
 
     public List<Character> digits() {
@@ -200,9 +182,46 @@ public final class NumberFormatSymbols {
                 Objects.equals(this.digits, that.digits);
     }
 
+    public Set<String> exponentSeparator() {
+        return exponentSeparator;
+    }
+
+    public Set<Character> groupingSeparator() {
+        return groupingSeparator;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(decimalSeparator, groupingSeparator, exponentSeparator, minusSign, plusSign, infinity, nan, digits);
+    }
+
+    public Set<String> infinity() {
+        return infinity;
+    }
+
+    public Set<Character> minusSign() {
+        return minusSign;
+    }
+
+    public Set<String> nan() {
+        return nan;
+    }
+
+    public Set<Character> plusSign() {
+        return plusSign;
+    }
+
+    @Override
+    public String toString() {
+        return "NumberFormatSymbols[" +
+                "decimalSeparator=" + decimalSeparator + ", " +
+                "groupingSeparator=" + groupingSeparator + ", " +
+                "exponentSeparator=" + exponentSeparator + ", " +
+                "minusSign=" + minusSign + ", " +
+                "plusSign=" + plusSign + ", " +
+                "infinity=" + infinity + ", " +
+                "nan=" + nan + ", " +
+                "digits=" + digits + ']';
     }
 
     /**
@@ -215,6 +234,40 @@ public final class NumberFormatSymbols {
         return new NumberFormatSymbols(newValue,
                 groupingSeparator,
                 exponentSeparator,
+                minusSign,
+                plusSign,
+                infinity,
+                nan,
+                digits);
+    }
+
+    /**
+     * Creates a new instance with the specified digits.
+     *
+     * @param newValue the digits
+     * @return a new instance
+     */
+    public NumberFormatSymbols withDigits(List<Character> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                exponentSeparator,
+                minusSign,
+                plusSign,
+                infinity,
+                nan,
+                newValue);
+    }
+
+    /**
+     * Creates a new instance with the specified exponent separator symbols.
+     *
+     * @param newValue the exponent separator symbols
+     * @return a new instance
+     */
+    public NumberFormatSymbols withExponentSeparator(Set<String> newValue) {
+        return new NumberFormatSymbols(decimalSeparator,
+                groupingSeparator,
+                newValue,
                 minusSign,
                 plusSign,
                 infinity,
@@ -240,18 +293,18 @@ public final class NumberFormatSymbols {
     }
 
     /**
-     * Creates a new instance with the specified exponent separator symbols.
+     * Creates a new instance with the specified infinity symbols.
      *
-     * @param newValue the exponent separator symbols
+     * @param newValue the infinity symbols
      * @return a new instance
      */
-    public NumberFormatSymbols withExponentSeparator(Set<String> newValue) {
+    public NumberFormatSymbols withInfinity(Set<String> newValue) {
         return new NumberFormatSymbols(decimalSeparator,
                 groupingSeparator,
-                newValue,
+                exponentSeparator,
                 minusSign,
                 plusSign,
-                infinity,
+                newValue,
                 nan,
                 digits);
     }
@@ -274,40 +327,6 @@ public final class NumberFormatSymbols {
     }
 
     /**
-     * Creates a new instance with the specified plus sign symbols.
-     *
-     * @param newValue the plus sign symbols
-     * @return a new instance
-     */
-    public NumberFormatSymbols withPlusSign(Set<Character> newValue) {
-        return new NumberFormatSymbols(decimalSeparator,
-                groupingSeparator,
-                exponentSeparator,
-                minusSign,
-                newValue,
-                infinity,
-                nan,
-                digits);
-    }
-
-    /**
-     * Creates a new instance with the specified infinity symbols.
-     *
-     * @param newValue the infinity symbols
-     * @return a new instance
-     */
-    public NumberFormatSymbols withInfinity(Set<String> newValue) {
-        return new NumberFormatSymbols(decimalSeparator,
-                groupingSeparator,
-                exponentSeparator,
-                minusSign,
-                plusSign,
-                newValue,
-                nan,
-                digits);
-    }
-
-    /**
      * Creates a new instance with the specified NaN symbols.
      *
      * @param newValue the NaN symbols
@@ -325,20 +344,20 @@ public final class NumberFormatSymbols {
     }
 
     /**
-     * Creates a new instance with the specified digits.
+     * Creates a new instance with the specified plus sign symbols.
      *
-     * @param newValue the digits
+     * @param newValue the plus sign symbols
      * @return a new instance
      */
-    public NumberFormatSymbols withDigits(List<Character> newValue) {
+    public NumberFormatSymbols withPlusSign(Set<Character> newValue) {
         return new NumberFormatSymbols(decimalSeparator,
                 groupingSeparator,
                 exponentSeparator,
                 minusSign,
-                plusSign,
+                newValue,
                 infinity,
                 nan,
-                newValue);
+                digits);
     }
 
 }
