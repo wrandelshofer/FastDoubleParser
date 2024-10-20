@@ -22,8 +22,8 @@ class ByteToIntMap implements ByteDigitSet, ByteSet {
     }
 
     @Override
-    public boolean containsKey(byte key) {
-        return getOrDefault(key, -1) >= 0;
+    public boolean containsKey(byte b) {
+        return getOrDefault(b, -1) >= 0;
     }
 
     @Override

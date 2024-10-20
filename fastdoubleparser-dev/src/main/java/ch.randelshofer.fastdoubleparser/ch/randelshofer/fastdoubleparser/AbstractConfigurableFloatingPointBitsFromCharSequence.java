@@ -26,10 +26,10 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
         this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator(), ignoreCase);
         this.digitSet = CharDigitSet.copyOf(symbols.digits());
         this.minusSignChar = CharSet.copyOf(symbols.minusSign(), ignoreCase);
-        this.exponentSeparatorTrie = CharTrie.of(symbols.exponentSeparator(), ignoreCase);
+        this.exponentSeparatorTrie = CharTrie.copyOf(symbols.exponentSeparator(), ignoreCase);
         this.plusSignChar = CharSet.copyOf(symbols.plusSign(), ignoreCase);
-        this.nanTrie = CharTrie.of(symbols.nan(), ignoreCase);
-        this.infinityTrie = CharTrie.of(symbols.infinity(), ignoreCase);
+        this.nanTrie = CharTrie.copyOf(symbols.nan(), ignoreCase);
+        this.infinityTrie = CharTrie.copyOf(symbols.infinity(), ignoreCase);
     }
 
     /**

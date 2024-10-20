@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Interface for a data retrieval tree (trie) of bytes.
+ */
 public interface ByteTrie {
 
 
@@ -16,7 +19,7 @@ public interface ByteTrie {
      * Searches for the longest matching string in the trie
      * that matches the provided string.
      *
-     * @param str a string
+     * @param str a string in the form of a byte array
      * @return the length of the longest matching string, or 0 if no string matches
      */
     default int match(byte[] str) {
@@ -35,6 +38,14 @@ public interface ByteTrie {
      */
     int match(byte[] str, int startIndex, int endIndex);
 
+    /**
+     * Creates a new {@link ByteTrie} from the provided set.
+     *
+     * @param set        a set of strings
+     * @param ignoreCase whether the {@link ByteTrie} shall ignore the
+     *                   case of the characters
+     * @return a new {@link ByteTrie} instance
+     */
     static ByteTrie copyOf(Set<String> set, boolean ignoreCase) {
         switch (set.size()) {
             case 0:
@@ -72,6 +83,14 @@ public interface ByteTrie {
         }
     }
 
+    /**
+     * Creates a new {@link ByteTrie} from the provided set.
+     *
+     * @param set a set of characters
+     * @param ignoreCase whether the {@link ByteTrie} shall ignore the
+     *                   case of the characters
+     * @return a new {@link ByteTrie} instance
+     */
     static ByteTrie copyOfChars(Set<Character> set, boolean ignoreCase) {
         Set<String> strSet = new HashSet<>(set.size() * 2);
         if (ignoreCase) {

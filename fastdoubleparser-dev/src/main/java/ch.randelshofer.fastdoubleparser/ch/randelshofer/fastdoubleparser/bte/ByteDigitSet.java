@@ -6,6 +6,9 @@ package ch.randelshofer.fastdoubleparser.bte;
 
 import java.util.List;
 
+/**
+ * Interface for sets of digit bytes.
+ */
 public interface ByteDigitSet {
     /**
      * Returns a value in the range 0 to 9 if the specified character is a digit.
@@ -16,6 +19,15 @@ public interface ByteDigitSet {
      */
     int toDigit(byte ch);
 
+    /**
+     * Creates a new {@link ByteDigitSet} instead from the
+     * specified list.
+     * <p>
+     * The list must contain characters for the digits 0 to 9.
+     *
+     * @param digits a list of digit characters
+     * @return a new {@link ByteDigitSet} instance
+     */
     @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
     static ByteDigitSet copyOf(List<Character> digits) {
         boolean consecutive = true;

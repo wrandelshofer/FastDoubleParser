@@ -7,9 +7,26 @@ package ch.randelshofer.fastdoubleparser.bte;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Interface for sets of bytes.
+ */
 public interface ByteSet {
-    boolean containsKey(byte ch);
+    /**
+     * Returns true if the set contains the specified byte.
+     *
+     * @param b a byte
+     * @return true if the byte is in the set
+     */
+    boolean containsKey(byte b);
 
+    /**
+     * Creates a new {@link ByteSet} from the provided set.
+     *
+     * @param set        a set of characters
+     * @param ignoreCase whether the {@link ByteSet} shall ignore the
+     *                   case of the characters
+     * @return a new {@link ByteSet} instance
+     */
     static ByteSet copyOf(Set<Character> set, boolean ignoreCase) {
         set = applyIgnoreCase(set, ignoreCase);
         switch (set.size()) {
@@ -21,6 +38,20 @@ public interface ByteSet {
                 return set.size() < 5 ? new ByteSetOfFew(set) : new ByteToIntMap(set);
         }
     }
+
+    /**
+     * Creates a copy of the provided set, or returns the same set.
+     * <p>
+     * If {@code ignoreCase} is set to true, the copy will contain
+     * an upper and lower case character for each character in the provided
+     * set.
+     *
+     * @param set a set of characters
+     * @param ignoreCase whether the copy of the set shall contain
+     *                   upper and lower case characters from the
+     *                   provided set
+     * @return a new set if {@code ignoreCase} is false, otherwise a copy of the set
+     */
     static Set<Character> applyIgnoreCase(Set<Character> set, boolean ignoreCase) {
         if (ignoreCase) {
             LinkedHashSet<Character> convertedSet = new LinkedHashSet<Character>();

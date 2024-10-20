@@ -18,7 +18,7 @@ class ByteSetOfOne implements ByteSet {
     }
 
     @Override
-    public boolean containsKey(byte ch) {
-        return this.ch == ch;
+    public boolean containsKey(byte b) {
+        return this.ch == b;
     }
 }

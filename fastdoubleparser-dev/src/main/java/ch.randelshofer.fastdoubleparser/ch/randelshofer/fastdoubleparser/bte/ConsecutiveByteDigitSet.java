@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser.bte;
 
-public class ConsecutiveByteDigitSet implements ByteDigitSet {
+class ConsecutiveByteDigitSet implements ByteDigitSet {
     private final byte zeroDigit;
 
     public ConsecutiveByteDigitSet(char zeroDigit) {

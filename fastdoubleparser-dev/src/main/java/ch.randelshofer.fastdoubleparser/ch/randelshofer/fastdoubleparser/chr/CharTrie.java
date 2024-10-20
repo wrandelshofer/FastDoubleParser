@@ -6,12 +6,15 @@ package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Set;
 
+/**
+ * Interface for a data retrieval tree (trie) of characters.
+ */
 public interface CharTrie {
     /**
      * Searches for the longest matching string in the trie
      * that matches the provided string.
      *
-     * @param str a string
+     * @param str a string in the form of a {@link CharSequence}
      * @return the length of the longest matching string, or 0 if no string matches
      */
     default int match(CharSequence str) {
@@ -22,7 +25,7 @@ public interface CharTrie {
      * Searches for the longest matching string in the trie
      * that matches the provided string.
      *
-     * @param str a string
+     * @param str a string in the form of a char array
      * @return the length of the longest matching string, or 0 if no string matches
      */
     default int match(char[] str) {
@@ -53,7 +56,15 @@ public interface CharTrie {
     int match(char[] str, int startIndex, int endIndex);
 
 
-    public static CharTrie of(Set<String> set, boolean ignoreCase) {
+    /**
+     * Creates a new {@link CharTrie} from the provided set.
+     *
+     * @param set        a set of strings
+     * @param ignoreCase whether the {@link CharTrie} shall ignore the
+     *                   case of the characters
+     * @return a new {@link CharTrie} instance
+     */
+    static CharTrie copyOf(Set<String> set, boolean ignoreCase) {
         switch (set.size()) {
             case 0:
                 return new CharTrieOfNone();

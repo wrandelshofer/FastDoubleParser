@@ -9,7 +9,7 @@ class ByteSetOfNone implements ByteSet {
     ByteSetOfNone() {
     }
 
-    public boolean containsKey(byte ch) {
+    public boolean containsKey(byte b) {
         return false;
     }
 }

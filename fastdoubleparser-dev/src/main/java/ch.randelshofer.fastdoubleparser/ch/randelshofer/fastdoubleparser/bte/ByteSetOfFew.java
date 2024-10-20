@@ -25,10 +25,10 @@ class ByteSetOfFew implements ByteSet {
         this.bytes = Arrays.copyOf(tmp, i);
     }
 
-    public boolean containsKey(byte ch) {
+    public boolean containsKey(byte b) {
         boolean found = false;
         for (byte aChar : bytes) {
-            found |= aChar == ch;
+            found |= aChar == b;
         }
         return found;
     }
