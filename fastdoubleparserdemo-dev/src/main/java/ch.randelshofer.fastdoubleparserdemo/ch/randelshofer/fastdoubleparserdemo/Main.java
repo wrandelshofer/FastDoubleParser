@@ -103,6 +103,9 @@ public class Main {
      * Must be large enough, so that Java hits the C2 compiler.
      */
     private static final int WARMUP_MIN_TRIALS = 256;
+    List<String> stringLines;
+    List<byte[]> byteArrayLines;
+    List<char[]> charArrayLines;
     private String filename = null;
     private boolean markdown = false;
     private boolean sleep = false;
@@ -113,6 +116,22 @@ public class Main {
     private String infinity = null;
     private String nan = null;
     private boolean printConfidence = false;
+    /**
+     * Whether to shuffle the input data before each measurement.
+     */
+    private boolean shuffleData = false;
+
+    private static double computeSpeedup(String name, VarianceStatistics stats, Map<String, BenchmarkFunction> functions, Map<String, VarianceStatistics> results) {
+        double speedup;
+        String reference = functions.get(name).reference;
+        if (!reference.equals(name)) {
+            VarianceStatistics referenceStats = results.getOrDefault(reference, results.values().iterator().next());
+            speedup = referenceStats == null ? 1 : referenceStats.getAverage() / stats.getAverage();
+        } else {
+            speedup = 1;
+        }
+        return speedup;
+    }
 
     public static void main(String... args) throws Exception {
         System.out.println(SystemInfo.getSystemSummary());
@@ -166,8 +185,9 @@ public class Main {
     }
 
     private Map<String, BenchmarkFunction> createBenchmarkFunctions(List<String> lines) {
-        List<byte[]> byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.UTF_8)).collect(Collectors.toList());
-        List<char[]> charArrayLines = lines.stream().map(String::toCharArray).collect(Collectors.toList());
+        stringLines = lines;
+        byteArrayLines = lines.stream().map(l -> l.getBytes(StandardCharsets.UTF_8)).collect(Collectors.toList());
+        charArrayLines = lines.stream().map(String::toCharArray).collect(Collectors.toList());
 
 
         Map<String, BenchmarkFunction> functions = new LinkedHashMap<>();
@@ -217,6 +237,20 @@ public class Main {
         process(lines, validated);
     }
 
+    private NumberFormatSymbols getNumberFormatSymbols() {
+        NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(((DecimalFormat) NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
+        symbols = new NumberFormatSymbols(
+                symbols.decimalSeparator(),
+                groupingSeparators != null ? toSetOfCharacters(groupingSeparators) : symbols.groupingSeparator(),
+                exponentSeparator != null ? Collections.singleton(exponentSeparator) : symbols.exponentSeparator(),
+                symbols.minusSign(),
+                symbols.plusSign(),
+                infinity != null ? Collections.singleton(infinity) : symbols.infinity(),
+                nan != null ? Collections.singleton(nan) : symbols.nan(),
+                digits != null ? toList(digits) : symbols.digits());
+        return symbols;
+    }
+
     public void loadFile(String filename) throws IOException {
         Path path = FileSystems.getDefault().getPath(filename).toAbsolutePath();
         System.out.printf("Parsing numbers in file %s\n", path);
@@ -229,25 +263,24 @@ public class Main {
     }
 
     private VarianceStatistics measure(Supplier<? extends Number> func, int numberOfTrials,
-                                       double confidenceLevel, double confidenceIntervalWidth, int minTrials, String name) {
+                                       double confidenceLevel, double confidenceIntervalWidth, int minTrials, String name,
+                                       Runnable shuffleFunction) {
         long t1;
         double confidenceWidth;
         long t2;
         double elapsed;
         VarianceStatistics stats = new VarianceStatistics();
 
-        // sleep to cooldown the processor
-        try {
-            System.out.println(name);
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            // ignore
-        }
+        System.out.printf("%-40s", name);
 
         // measure
         int trials = 0;
         do {
             for (int i = 0; i < numberOfTrials; i++) {
+                if (i % 10 == 0) {
+                    System.out.print(".");
+                }
+                shuffleFunction.run();
                 t1 = System.nanoTime();
                 func.get();
                 t2 = System.nanoTime();
@@ -257,7 +290,32 @@ public class Main {
             confidenceWidth = Stats.confidence(1 - confidenceLevel, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
             trials += numberOfTrials;
         } while (trials < minTrials || confidenceWidth > confidenceIntervalWidth);
+
+        System.out.println();
         return stats;
+    }
+
+    private void printResults(String title, List<String> lines, double volumeMB, Map<String, VarianceStatistics> results, double confidenceLevel, Map<String, BenchmarkFunction> functions) {
+        System.out.println();
+        System.out.println(title);
+        if (markdown) {
+            printStatsHeaderMarkdown();
+        }
+        Map<String, Character> baselines = new LinkedHashMap<>();
+        for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
+            if (entry.getValue().reference.equals(entry.getKey())) {
+                baselines.put(entry.getKey(), (char) ('a' + baselines.size()));
+            }
+        }
+        for (Map.Entry<String, VarianceStatistics> entry : results.entrySet()) {
+            String name = entry.getKey();
+            VarianceStatistics stats = entry.getValue();
+            if (markdown) {
+                printStatsMarkdown(lines, volumeMB, name, stats, functions, results, baselines);
+            } else {
+                printStatsAscii(lines, volumeMB, name, stats, confidenceLevel, functions, results, baselines);
+            }
+        }
     }
 
     private void printStatsAscii(List<String> lines, double volumeMB, String name, VarianceStatistics stats, double confidenceLevel, Map<String, BenchmarkFunction> functions, Map<String, VarianceStatistics> results, Map<String, Character> baselines) {
@@ -294,18 +352,6 @@ public class Main {
         }
     }
 
-    private static double computeSpeedup(String name, VarianceStatistics stats, Map<String, BenchmarkFunction> functions, Map<String, VarianceStatistics> results) {
-        double speedup;
-        String reference = functions.get(name).reference;
-        if (!reference.equals(name)) {
-            VarianceStatistics referenceStats = results.getOrDefault(reference, results.values().iterator().next());
-            speedup = referenceStats == null ? 1 : referenceStats.getAverage() / stats.getAverage();
-        } else {
-            speedup = 1;
-        }
-        return speedup;
-    }
-
     private void printStatsHeaderMarkdown() {
         System.out.println("|Method                                  | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |");
         System.out.println("|----------------------------------------|------:|-----:|------:|--------:|--------:|--------|");
@@ -332,67 +378,60 @@ public class Main {
 
     private void process(List<String> lines, Map<String, BenchmarkFunction> functions) {
         double volumeMB = lines.stream().mapToInt(String::length).sum() / (1024. * 1024.);
-
-        // Warm up
-        System.out.printf("Warming Up: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
-                100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
-        Map<String, VarianceStatistics> warmupResults = new LinkedHashMap<>();
         List<Map.Entry<String, BenchmarkFunction>> entries = new ArrayList<>(functions.entrySet());
-        Collections.shuffle(entries);// randomize to prevent bias in multiple runs
-        for (Map.Entry<String, BenchmarkFunction> entry : entries) {
-            System.out.print(".");
-            System.out.flush();
-            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS, entry.getKey());
-            warmupResults.put(entry.getKey(), warmup);
-        }
-        System.out.println();
-
-        sleep();
-
-        System.out.printf("Measuring: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
-                100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
         // Put entries in results, so that we have them in the original sequence
         Map<String, VarianceStatistics> results = new LinkedHashMap<>();
         for (String key : functions.keySet()) {
             results.put(key, null);
         }
-        Collections.shuffle(entries);// randomize to prevent bias caused by JIT
+
+        /*
+        // Warm up
+        System.out.printf("Warming Up: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+                100 * WARMUP_CONFIDENCE_LEVEL, 100 * WARMUP_CONFIDENCE_INTERVAL_WIDTH);
+
+        Collections.shuffle(entries);// randomize to prevent bias in multiple runs
+        for (Map.Entry<String, BenchmarkFunction> entry : entries) {
+            System.out.print(".");
+            System.out.flush();
+            VarianceStatistics warmup = measure(entry.getValue().supplier, WARMUP_NUMBER_OF_TRIALS, WARMUP_CONFIDENCE_LEVEL, WARMUP_CONFIDENCE_INTERVAL_WIDTH, WARMUP_MIN_TRIALS, entry.getKey(), this::shuffleData);
+            results.put(entry.getKey(), warmup);
+        }
+        // Print results
+        printResults("Warmup results:", lines, volumeMB, results, WARMUP_CONFIDENCE_LEVEL, functions);
+        System.out.println();
+        */
+
+        sleep();
+
+        System.out.printf("Measuring: Trying to reach a confidence level of %,.1f %% which only deviates by %,.0f %% from the average measured duration.\n",
+                100 * MEASUREMENT_CONFIDENCE_LEVEL, 100 * MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH);
+        Collections.shuffle(entries);// randomize to counteract bias caused by JIT
         for (Map.Entry<String, BenchmarkFunction> entry : entries) {
             System.out.print(".");
             System.out.flush();
 
-            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1, entry.getKey());
+            VarianceStatistics stats = measure(entry.getValue().supplier, MEASUREMENT_NUMBER_OF_TRIALS, MEASUREMENT_CONFIDENCE_LEVEL, MEASUREMENT_CONFIDENCE_INTERVAL_WIDTH, 1, entry.getKey(), this::shuffleData);
             results.put(entry.getKey(), stats);
         }
         System.out.println();
 
         // Print results
-        //printResults("Warmup results:", lines, volumeMB, warmupResults, WARMUP_CONFIDENCE_LEVEL, functions);
         printResults("Measurement results:", lines, volumeMB, results, MEASUREMENT_CONFIDENCE_LEVEL, functions);
         System.out.println();
 
     }
 
-    private void printResults(String title, List<String> lines, double volumeMB, Map<String, VarianceStatistics> results, double confidenceLevel, Map<String, BenchmarkFunction> functions) {
-        System.out.println();
-        System.out.println(title);
-        if (markdown) {
-            printStatsHeaderMarkdown();
-        }
-        Map<String, Character> baselines = new LinkedHashMap<>();
-        for (Map.Entry<String, BenchmarkFunction> entry : functions.entrySet()) {
-            if (entry.getValue().reference.equals(entry.getKey())) {
-                baselines.put(entry.getKey(), (char) ('a' + baselines.size()));
-            }
-        }
-        for (Map.Entry<String, VarianceStatistics> entry : results.entrySet()) {
-            String name = entry.getKey();
-            VarianceStatistics stats = entry.getValue();
-            if (markdown) {
-                printStatsMarkdown(lines, volumeMB, name, stats, functions, results, baselines);
-            } else {
-                printStatsAscii(lines, volumeMB, name, stats, confidenceLevel, functions, results, baselines);
-            }
+    private void shuffleData() {
+        // If the lists are big enough, so that the data values don't fit into the cache,
+        // then shuffling the data prevents that the prefetching unit of the CPU can learn
+        // a memory access pattern.
+        // This is probably an unrealistic scenario. We expect that the parsers are being
+        // called with input data that is in the cache.
+        if (shuffleData) {
+            if (stringLines != null) Collections.shuffle(stringLines);
+            if (byteArrayLines != null) Collections.shuffle(byteArrayLines);
+            if (charArrayLines != null) Collections.shuffle(charArrayLines);
         }
     }
 
@@ -408,79 +447,68 @@ public class Main {
         }
     }
 
-    private double sumJavaLangDouble(List<String> s) {
+    private double sumConfigurableDoubleFromByteArray(List<byte[]> s) {
         double answer = 0;
-        for (String st : s) {
-            double x = Double.parseDouble(st);
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
+        for (byte[] st : s) {
+            double x = p.parseDouble(st);
             answer += x;
         }
         return answer;
     }
 
-    private int sumJavaLangBigDecimal(List<String> s) {
-        int answer = 0;
-        for (String st : s) {
-            BigDecimal x = new BigDecimal(st);
-            answer += x.scale();
-        }
-        return answer;
-    }
-
-    private double sumJavaTextNumberFormat(List<String> s) {
+    private double sumConfigurableDoubleFromByteArrayCI(List<byte[]> s) {
         double answer = 0;
-        NumberFormat fmt = NumberFormat.getNumberInstance(locale);
-        ParsePosition pos = new ParsePosition(0);
-        for (String st : s) {
-            pos.setIndex(0);
-            Number x = fmt.parse(st, pos);
-            if (x == null) throw new NumberFormatException("can not parse " + st);
-            answer += x.doubleValue();
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
+        for (byte[] st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
         }
         return answer;
     }
 
-    private double sumIcuNumberFormat(List<String> s) {
+    private double sumConfigurableDoubleFromCharArray(List<char[]> s) {
         double answer = 0;
-        com.ibm.icu.text.DecimalFormat fmt = (com.ibm.icu.text.DecimalFormat) com.ibm.icu.text.NumberFormat.getNumberInstance(locale);
-
-        if (digits != null) {
-            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
-            List<String> list = new ArrayList<>();
-            for (char ch : digits.toCharArray()) {
-                list.add("" + ch);
-            }
-            symbols.setDigitStrings(list.toArray(new String[0]));
-            fmt.setDecimalFormatSymbols(symbols);
-        }
-
-        if (infinity != null) {
-            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
-            symbols.setInfinity(infinity);
-            fmt.setDecimalFormatSymbols(symbols);
-        }
-
-        if (nan != null) {
-            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
-            symbols.setNaN(nan);
-            fmt.setDecimalFormatSymbols(symbols);
-        }
-
-        ParsePosition pos = new ParsePosition(0);
-        for (String st : s) {
-            pos.setIndex(0);
-            Number x = fmt.parse(st, pos);
-            if (x == null) throw new NumberFormatException("can not parse " + st);
-            answer += x.doubleValue();
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
+        for (char[] st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
         }
         return answer;
     }
 
+    private double sumConfigurableDoubleFromCharArrayCI(List<char[]> s) {
+        double answer = 0;
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
+        for (char[] st : s) {
+            double x = p.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
 
-    private int sumFastBigDecimalFromCharSequence(List<String> s) {
-        int answer = 0;
+    private double sumConfigurableDoubleFromCharSequence(List<String> s) {
+        double answer = 0;
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
         for (String st : s) {
-            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
-            answer += x.scale();
+            double x = p.parseDouble((CharSequence) st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumConfigurableDoubleFromCharSequenceCI(List<String> s) {
+        double answer = 0;
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
+        for (String st : s) {
+            double x = p.parseDouble((CharSequence) st);
+            answer += x;
         }
         return answer;
     }
@@ -497,6 +525,15 @@ public class Main {
     private int sumFastBigDecimalFromCharArray(List<char[]> s) {
         int answer = 0;
         for (char[] st : s) {
+            BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
+            answer += x.scale();
+        }
+        return answer;
+    }
+
+    private int sumFastBigDecimalFromCharSequence(List<String> s) {
+        int answer = 0;
+        for (String st : s) {
             BigDecimal x = JavaBigDecimalParser.parseBigDecimal(st);
             answer += x.scale();
         }
@@ -539,7 +576,6 @@ public class Main {
         return answer;
     }
 
-
     private float sumFastFloatParserFromByteArray(List<byte[]> s) {
         float answer = 0;
         for (byte[] st : s) {
@@ -558,111 +594,78 @@ public class Main {
         return answer;
     }
 
-    private double sumConfigurableDoubleFromCharSequence(List<String> s) {
+    private double sumIcuNumberFormat(List<String> s) {
         double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
-        for (String st : s) {
-            double x = p.parseDouble((CharSequence) st);
-            answer += x;
-        }
-        return answer;
-    }
+        com.ibm.icu.text.DecimalFormat fmt = (com.ibm.icu.text.DecimalFormat) com.ibm.icu.text.NumberFormat.getNumberInstance(locale);
 
-    private NumberFormatSymbols getNumberFormatSymbols() {
-        NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(((DecimalFormat) NumberFormat.getInstance(locale)).getDecimalFormatSymbols());
-        symbols = new NumberFormatSymbols(
-                symbols.decimalSeparator(),
-                groupingSeparators != null ? toSetOfCharacters(groupingSeparators) : symbols.groupingSeparator(),
-                exponentSeparator != null ? Collections.singleton(exponentSeparator) : symbols.exponentSeparator(),
-                symbols.minusSign(),
-                symbols.plusSign(),
-                infinity != null ? Collections.singleton(infinity) : symbols.infinity(),
-                nan != null ? Collections.singleton(nan) : symbols.nan(),
-                digits != null ? toList(digits) : symbols.digits());
-        return symbols;
-    }
-
-    private Set<Character> toSetOfCharacters(String groupingSeparators) {
-        LinkedHashSet<Character> set = new LinkedHashSet<Character>();
-        for (char ch : groupingSeparators.toCharArray()) set.add(ch);
-        return set;
-    }
-
-    private List<Character> toList(String digits) {
-        ArrayList<Character> list = new ArrayList<>(10);
-        for (char ch : digits.toCharArray()) list.add(ch);
-        return list;
-    }
-
-    private double sumConfigurableDoubleFromByteArray(List<byte[]> s) {
-        double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
-        for (byte[] st : s) {
-            double x = p.parseDouble(st);
-            answer += x;
-        }
-        return answer;
-    }
-
-    private double sumConfigurableDoubleFromByteArrayCI(List<byte[]> s) {
-        double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
-        for (byte[] st : s) {
-            try {
-                double x = p.parseDouble(st);
-                answer += x;
-            } catch (NumberFormatException e) {
-                System.err.println("ERROR PARSING " + new String(st, StandardCharsets.UTF_8));
-                e.printStackTrace();
-                System.exit(10);
+        if (digits != null) {
+            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+            List<String> list = new ArrayList<>();
+            for (char ch : digits.toCharArray()) {
+                list.add("" + ch);
             }
+            symbols.setDigitStrings(list.toArray(new String[0]));
+            fmt.setDecimalFormatSymbols(symbols);
         }
-        return answer;
-    }
 
-    private double sumConfigurableDoubleFromCharArray(List<char[]> s) {
-        double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols);
-        for (char[] st : s) {
-            double x = p.parseDouble(st);
-            answer += x;
+        if (infinity != null) {
+            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+            symbols.setInfinity(infinity);
+            fmt.setDecimalFormatSymbols(symbols);
         }
-        return answer;
-    }
 
-    private double sumConfigurableDoubleFromCharArrayCI(List<char[]> s) {
-        double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
-        for (char[] st : s) {
-            double x = p.parseDouble(st);
-            answer += x;
+        if (nan != null) {
+            DecimalFormatSymbols symbols = fmt.getDecimalFormatSymbols();
+            symbols.setNaN(nan);
+            fmt.setDecimalFormatSymbols(symbols);
         }
-        return answer;
-    }
 
-    private double sumConfigurableDoubleFromCharSequenceCI(List<String> s) {
-        double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
+        ParsePosition pos = new ParsePosition(0);
         for (String st : s) {
-            double x = p.parseDouble((CharSequence) st);
-            answer += x;
+            pos.setIndex(0);
+            Number x = fmt.parse(st, pos);
+            if (x == null) throw new NumberFormatException("can not parse " + st);
+            answer += x.doubleValue();
         }
         return answer;
     }
 
+    private int sumJavaLangBigDecimal(List<String> s) {
+        int answer = 0;
+        for (String st : s) {
+            BigDecimal x = new BigDecimal(st);
+            answer += x.scale();
+        }
+        return answer;
+    }
 
+    private double sumJavaLangDouble(List<String> s) {
+        double answer = 0;
+        for (String st : s) {
+            double x = Double.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
 
     private float sumJavaLangFloat(List<String> s) {
         float answer = 0;
         for (String st : s) {
             float x = Float.parseFloat(st);
             answer += x;
+        }
+        return answer;
+    }
+
+    private double sumJavaTextNumberFormat(List<String> s) {
+        double answer = 0;
+        NumberFormat fmt = NumberFormat.getNumberInstance(locale);
+        ParsePosition pos = new ParsePosition(0);
+        for (String st : s) {
+            pos.setIndex(0);
+            Number x = fmt.parse(st, pos);
+            if (x == null) throw new NumberFormatException("can not parse " + st);
+            answer += x.doubleValue();
         }
         return answer;
     }
@@ -694,6 +697,17 @@ public class Main {
         return answer;
     }
 
+    private List<Character> toList(String digits) {
+        ArrayList<Character> list = new ArrayList<>(10);
+        for (char ch : digits.toCharArray()) list.add(ch);
+        return list;
+    }
+
+    private Set<Character> toSetOfCharacters(String groupingSeparators) {
+        LinkedHashSet<Character> set = new LinkedHashSet<Character>();
+        for (char ch : groupingSeparators.toCharArray()) set.add(ch);
+        return set;
+    }
 
     private Map<String, BenchmarkFunction> validate(List<String> lines) {
         Map<String, BenchmarkFunction> map = createBenchmarkFunctions(lines);
@@ -746,18 +760,6 @@ public class Main {
             this.supplier = supplier;
         }
 
-        public String title() {
-            return title;
-        }
-
-        public String reference() {
-            return reference;
-        }
-
-        public Supplier<? extends Number> supplier() {
-            return supplier;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if (obj == this) {
@@ -775,6 +777,18 @@ public class Main {
         @Override
         public int hashCode() {
             return Objects.hash(title, reference, supplier);
+        }
+
+        public String reference() {
+            return reference;
+        }
+
+        public Supplier<? extends Number> supplier() {
+            return supplier;
+        }
+
+        public String title() {
+            return title;
         }
 
         @Override

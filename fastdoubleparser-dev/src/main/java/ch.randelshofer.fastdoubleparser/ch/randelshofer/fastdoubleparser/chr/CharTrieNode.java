@@ -4,6 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser.chr;
 
+
 import java.util.Arrays;
 
 class CharTrieNode {
@@ -69,4 +70,26 @@ class CharTrieNode {
         return isEnd;
     }
 
+    /**
+     * Insert a character into this node if it does not already exist.
+     * Forces the node 'forceNode' to be inserted.
+     *
+     * @param ch         the character
+     * @param forcedNode the forced node
+     * @return the forced node
+     */
+    public CharTrieNode insert(char ch, CharTrieNode forcedNode) {
+        int index = indexOf(ch);
+        if (index < 0) {
+            index = chars.length;
+            chars = Arrays.copyOf(chars, chars.length + 1);
+            children = Arrays.copyOf(children, children.length + 1);
+            chars[index] = ch;
+            children[index] = forcedNode;
+        }
+        if (children[index] != forcedNode) {
+            throw new AssertionError("trie is corrupt");
+        }
+        return children[index];
+    }
 }

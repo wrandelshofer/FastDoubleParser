@@ -30,6 +30,18 @@ import java.util.Set;
 public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character> groupingSeparator,
                                   Set<String> exponentSeparator, Set<Character> minusSign, Set<Character> plusSign,
                                   Set<String> infinity, Set<String> nan, List<Character> digits) {
+    /**
+     * Canonical constructor.
+     *
+     * @param decimalSeparator  each character in this string defines a decimal separator
+     * @param groupingSeparator each character in this string defines a decimal separator
+     * @param exponentSeparator each string in this collection defines an exponent separator
+     * @param minusSign         each character in this string defines a minus sign
+     * @param plusSign          each character in this string defines a plus sign
+     * @param infinity          each string in this collection defines an infinity string
+     * @param nan               each string in this collection defines a NaN string
+     * @param digits            the first 10 characters in this string define the digit characters from 0 to 9
+     */
     public NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character> groupingSeparator, Set<String> exponentSeparator, Set<Character> minusSign, Set<Character> plusSign, Set<String> infinity, Set<String> nan, List<Character> digits) {
         if (digits.size() != 10) throw new IllegalArgumentException("digits list must have size 10");
         this.decimalSeparator = decimalSeparator;
@@ -95,6 +107,13 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
         return list;
     }
 
+
+    /**
+     * Creates a new instance from the provided {@link DecimalFormatSymbols}.
+     *
+     * @param symbols the decimal format symbols
+     * @return a new instance
+     */
     public static NumberFormatSymbols fromDecimalFormatSymbols(DecimalFormatSymbols symbols) {
         List<Character> digits = new ArrayList<>(10);
         char zeroDigit = symbols.getZeroDigit();
@@ -113,6 +132,21 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
         );
     }
 
+    /**
+     * Creates a new instance with default symbols.
+     * <dl>
+     *     <dt>decimalSeparator </dt><dd>{@code .}</dd>
+     *     <dt>groupingSeparator</dt><dd>none</dd>
+     *     <dt>exponentSeparator</dt><dd>{@code e}, {@code E}</dd>
+     *     <dt>minusSign        </dt><dd>{@code -}</dd>
+     *     <dt>plusSign         </dt><dd>{@code +}</dd>
+     *     <dt>infinity         </dt><dd>{@code Infinity}</dd>
+     *     <dt>nan              </dt><dd>{@code NaN}</dd>
+     *     <dt>digits           </dt><dd>{@code 0} ... {@code 9}</dd>
+     * </dl>
+     *
+     * @return a new instance
+     */
     public static NumberFormatSymbols fromDefault() {
         return new NumberFormatSymbols(
                 Collections.singleton('.'),
@@ -125,19 +159,4 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
                 Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
         );
     }
-
-
-    @Override
-    public String toString() {
-        return "NumberFormatSymbols[" +
-                "decimalSeparator=" + decimalSeparator + ", " +
-                "groupingSeparator=" + groupingSeparator + ", " +
-                "exponentSeparator=" + exponentSeparator + ", " +
-                "minusSign=" + minusSign + ", " +
-                "plusSign=" + plusSign + ", " +
-                "infinity=" + infinity + ", " +
-                "nan=" + nan + ", " +
-                "digits=" + digits + ']';
-    }
-
 }

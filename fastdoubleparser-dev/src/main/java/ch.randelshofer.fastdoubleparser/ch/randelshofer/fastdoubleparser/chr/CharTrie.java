@@ -59,9 +59,9 @@ public interface CharTrie {
                 return new CharTrieOfNone();
             case 1:
                 if (set.iterator().next().length() == 1) {
-                    return ignoreCase ? new CharTrieOfOneIgnoreCase(set) : new CharTrieOfOneSingleChar(set);
+                    return ignoreCase ? new CharTrieOfFewIgnoreCase(set) : new CharTrieOfOneSingleChar(set);
                 }
-                return ignoreCase ? new CharTrieOfOneIgnoreCase(set) : new CharTrieOfOne(set);
+                return ignoreCase ? new CharTrieOfFewIgnoreCase(set) : new CharTrieOfOne(set);
             default:
                 return ignoreCase ? new CharTrieOfFewIgnoreCase(set) : new CharTrieOfFew(set);
         }

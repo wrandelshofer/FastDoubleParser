@@ -24,7 +24,7 @@ public class GenerateNumberFormatNumbers {
         return Math.pow(value, invGamma);
     }
 
-    public void generate(Path path, NumberFormat f, double range, int size, double gamma, String digits) throws IOException {
+    public void generate(Path path, NumberFormat f, DecimalFormat fsc, double range, int size, double gamma, String digits) throws IOException {
         Random rng = new Random();
         double invGamma = 1 / gamma;
         try (BufferedWriter w = Files.newBufferedWriter(path)) {
@@ -34,7 +34,7 @@ public class GenerateNumberFormatNumbers {
                     .map(v -> (Double.doubleToRawLongBits(v) & 1) == 1 ? -v : v)
                     .forEach(v -> {
                                 try {
-                                    w.write(replaceDigits(f.format(v), digits));
+                                    w.write(replaceDigits(gammaCorrection(rng.nextFloat(), invGamma) < 0.5 ? f.format(v) : fsc.format(v), digits));
                                     w.newLine();
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
@@ -59,26 +59,28 @@ public class GenerateNumberFormatNumbers {
     }
 
     public static void main(String... args) throws IOException, ParseException {
-        Locale locale = Locale.forLanguageTag("en-GB");
+        Locale locale = Locale.forLanguageTag("ka-GE");
         DecimalFormat f = (DecimalFormat) NumberFormat.getNumberInstance(locale);
-        f.applyPattern("####,##0.0######E0##");
-        f.setGroupingUsed(true);
+        DecimalFormat fsc = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+        fsc.applyPattern("####,##0.0######E0##");
         String digits = null;
         DecimalFormatSymbols symbols = f.getDecimalFormatSymbols();
-/*
+
+        /*
         symbols.setExponentSeparator("*10^");
         f.setDecimalFormatSymbols(symbols);
-        String digits = "〇一二三四五六七八九";
-*/
+        fsc.setDecimalFormatSymbols(symbols);
+        digits = "〇一二三四五六七八九";
+        */
 
         double range = 1e9;
         int size = 50_000;
         double gamma = 0.2;
         Path path = Paths.get("fastdoubleparserdemo/data/formatted_"
                 + locale.getLanguage()
-                + (locale.getCountry() == null || locale.getCountry().isEmpty() ? "" : "-" + locale.getCountry() + "_scientific")
+                + (locale.getCountry() == null || locale.getCountry().isEmpty() ? "" : "-" + locale.getCountry())
                 + ".txt").toAbsolutePath();
-        new GenerateNumberFormatNumbers().generate(path, f, range, size, gamma, digits);
+        new GenerateNumberFormatNumbers().generate(path, f, fsc, range, size, gamma, digits);
     }
 
 }

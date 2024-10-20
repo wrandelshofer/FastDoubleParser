@@ -8,6 +8,25 @@ import java.util.Set;
 
 /**
  * A trie for testing if a String is contained in a set of Strings.
+ * <p>
+ * This trie is a directed acyclic graph.
+ * <p>
+ * <pre>
+ *     Given: the strings: "NaN", "Inf"
+ *     The trie will have the following structure:
+ *
+ *     root ['N','n', 'I','i']
+ *            │   │    │   │
+ *            │   │    └─┬─┘
+ *            │   │      └─→ node ['N','n']
+ *            │   │                 │   │
+ *            │   │                 └─┬─┘
+ *            └─┬─┘                   └─→ node ['F','f']
+ *              └─→ node ['A','a']
+ *                         │   │
+ *                         └─┬─┘
+ *                           └─→ node ['N','N']
+ * </pre>
  */
 class CharTrieOfFewIgnoreCase implements CharTrie {
     private CharTrieNode root = new CharTrieNode();
@@ -21,25 +40,29 @@ class CharTrieOfFewIgnoreCase implements CharTrie {
     }
 
     private void add(String str) {
-        CharTrieNode node = root;
-        for (int i = 0; i < str.length(); i++) {
-            node = node.insert(convert(str.charAt(i)));
-        }
-        node.setEnd();
-    }
-
-    private static char convert(char c) {
         // We have to convert to upper case and then to lower case
         // because of sophisticated writing systems, like Georgian script.
-        return Character.toLowerCase(Character.toUpperCase(c));
+        CharTrieNode upperNode = root;
+        CharTrieNode lowerNode = root;
+        String upperStr = str.toUpperCase();
+        String lowerStr = upperStr.toLowerCase();
+        for (int i = 0; i < str.length(); i++) {
+            char upper = upperStr.charAt(i);
+            char lower = lowerStr.charAt(i);
+            upperNode = upperNode.insert(upper);
+            lowerNode = lowerNode.insert(lower, upperNode);
+
+        }
+        upperNode.setEnd();
     }
 
+
     @Override
-    public int match(CharSequence str, int startIndex, int endIndex) {
+    public int match(char[] str, int startIndex, int endIndex) {
         CharTrieNode node = root;
         int longestMatch = startIndex;
         for (int i = startIndex; i < endIndex; i++) {
-            node = node.get(convert(str.charAt(i)));
+            node = node.get(str[i]);
             if (node == null) break;
             longestMatch = node.isEnd() ? i + 1 : longestMatch;
         }
@@ -47,11 +70,11 @@ class CharTrieOfFewIgnoreCase implements CharTrie {
     }
 
     @Override
-    public int match(char[] str, int startIndex, int endIndex) {
+    public int match(CharSequence str, int startIndex, int endIndex) {
         CharTrieNode node = root;
         int longestMatch = startIndex;
         for (int i = startIndex; i < endIndex; i++) {
-            node = node.get(convert(str[i]));
+            node = node.get(str.charAt(i));
             if (node == null) break;
             longestMatch = node.isEnd() ? i + 1 : longestMatch;
         }

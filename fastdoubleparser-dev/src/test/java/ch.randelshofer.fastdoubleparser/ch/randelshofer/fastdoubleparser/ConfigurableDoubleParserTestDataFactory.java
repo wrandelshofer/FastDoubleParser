@@ -8,9 +8,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -54,11 +56,11 @@ public class ConfigurableDoubleParserTestDataFactory {
         NumberFormatSymbols symbols = new NumberFormatSymbols(
                 "" + dfs.getDecimalSeparator(),
                 "" + dfs.getGroupingSeparator(),
-                Set.of(dfs.getExponentSeparator()),
+                Collections.singleton(dfs.getExponentSeparator()),
                 "" + dfs.getMinusSign() + '-', // adding estonian minus sign and normal one
                 "" + '\uff0b' + '+', // adding full-width plus sign and normal one
-                Set.of(dfs.getInfinity()),
-                Set.of(dfs.getNaN()),
+                Collections.singleton(dfs.getInfinity()),
+                Collections.singleton(dfs.getNaN()),
                 "" + dfs.getZeroDigit()
         );
         list.addAll(List.of(
@@ -85,15 +87,16 @@ public class ConfigurableDoubleParserTestDataFactory {
         NumberFormatSymbols symbols = new NumberFormatSymbols(
                 "" + dfs.getDecimalSeparator(),
                 "" + dfs.getGroupingSeparator(),
-                Set.of(dfs.getExponentSeparator()),
+                Collections.singleton(dfs.getExponentSeparator()),
                 "" + dfs.getMinusSign(),
                 "+",
-                Set.of(dfs.getInfinity()),
-                Set.of(dfs.getNaN()),
+                Collections.singleton(dfs.getInfinity()),
+                Collections.singleton(dfs.getNaN()),
                 "〇一二三四五六七八九"
         );
         list.addAll(List.of(
-                new NumberTestData("Chinese locale", dfs.getLocale(), symbols, "一,二三四,五六七.〇八九", 1234567.089)
+                new NumberTestData("Chinese locale", dfs.getLocale(), symbols, "一,二三四,五六七.〇八九", 1234567.089),
+                new NumberTestData("Chinese locale", dfs.getLocale(), symbols, "〇.五六四", 0.564)
         ));
         return list;
     }
@@ -108,11 +111,11 @@ public class ConfigurableDoubleParserTestDataFactory {
         NumberFormatSymbols symbols = new NumberFormatSymbols(
                 "" + dfs.getDecimalSeparator(),
                 "" + dfs.getGroupingSeparator(),
-                Set.of(dfs.getExponentSeparator()),
+                Collections.singleton(dfs.getExponentSeparator()),
                 "" + dfs.getMinusSign(),
                 "+",
-                Set.of(dfs.getInfinity()),
-                Set.of(dfs.getNaN()),
+                Collections.singleton(dfs.getInfinity()),
+                Collections.singleton(dfs.getNaN()),
                 "" + dfs.getZeroDigit()
         );
         DecimalFormat fmt = new DecimalFormat("#00.0####E0", dfs);
@@ -136,11 +139,11 @@ public class ConfigurableDoubleParserTestDataFactory {
         NumberFormatSymbols symbols = new NumberFormatSymbols(
                 "" + dfs.getDecimalSeparator(),
                 "" + dfs.getGroupingSeparator() + "'",
-                Set.of(dfs.getExponentSeparator(), "Exp"),
+                new LinkedHashSet<>(Arrays.asList(dfs.getExponentSeparator(), "Exp")),
                 "" + dfs.getMinusSign(),
                 "+",
-                Set.of(dfs.getInfinity(), "Inf", "Infinity"),
-                Set.of(dfs.getNaN()),
+                new LinkedHashSet<>(Arrays.asList(dfs.getInfinity(), "Inf", "Infinity")),
+                Collections.singleton(dfs.getNaN()),
                 "" + dfs.getZeroDigit()
         );
         list.add(new NumberTestData("ignoreCase: 12’961’872.332", swissLocale, symbols, true, "12’961’872.332", 12961872.332));

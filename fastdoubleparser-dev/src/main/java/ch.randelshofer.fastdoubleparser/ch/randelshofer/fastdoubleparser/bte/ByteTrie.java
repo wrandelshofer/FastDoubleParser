@@ -57,7 +57,7 @@ public interface ByteTrie {
                             }
                             return new ByteTrieOfFew(newSet);
                         default:
-                            return new ByteTrieOfOneIgnoreCase(set);
+                            return new ByteTrieOfFewIgnoreCase(set);
                     }
                 }
                 if (set.iterator().next().getBytes(StandardCharsets.UTF_8).length == 1) {
@@ -66,24 +66,10 @@ public interface ByteTrie {
                 return new ByteTrieOfOne(set);
             default:
                 if (ignoreCase) {
-                    if (isAscii(set)) {
-                        return new ByteTrieOfFewIgnoreCaseAscii(set);
-                    }
-                    return new ByteTrieOfFewIgnoreCaseUtf8(set);
+                    return new ByteTrieOfFewIgnoreCase(set);
                 }
                 return new ByteTrieOfFew(set);
         }
-    }
-
-    static boolean isAscii(Set<String> set) {
-        for (String str : set) {
-            for (int i = 0, n = str.length(); i < n; i++) {
-                if (str.charAt(i) > 127) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     static ByteTrie copyOfChars(Set<Character> set, boolean ignoreCase) {
