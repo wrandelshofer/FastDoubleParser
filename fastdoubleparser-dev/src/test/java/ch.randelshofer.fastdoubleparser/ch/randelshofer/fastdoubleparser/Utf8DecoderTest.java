@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Utf8DecoderTest {
 
@@ -30,5 +31,29 @@ public class Utf8DecoderTest {
 
         assertEquals(expected.length, actual.length());
         assertArrayEquals(expected, Arrays.copyOf(actual.chars(), actual.length()));
+    }
+
+    @SuppressWarnings("UnnecessaryUnicodeEscape")
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "80",
+            "c0",
+            "c0 80",
+            "e0 80",
+            "e0 80 80",
+            "e0 80 e0",
+            "f0 80 80",
+            "f0 80 80 80",
+            "f0 80 80 80",
+            "f0 80 a0 a0",
+    })
+    public void shouldNotDecode(String str) {
+        String[] hexes = str.split(" ");
+        byte[] bytes = new byte[hexes.length];
+        for (int i = 0; i < hexes.length; i++) {
+            bytes[i] = (byte) Integer.parseInt(hexes[i], 16);
+
+        }
+        assertThrows(NumberFormatException.class, () -> Utf8Decoder.decode(bytes, 0, bytes.length));
     }
 }

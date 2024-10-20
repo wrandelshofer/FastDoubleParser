@@ -219,7 +219,8 @@ public class Main {
                 new BenchmarkFunction("ConfigurableDoubleParser byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArray(byteArrayLines)),
                 new BenchmarkFunction("ConfigurableDoubleParserCI CharSequence", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharSequenceCI(lines)),
                 new BenchmarkFunction("ConfigurableDoubleParserCI char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArrayCI(charArrayLines)),
-                new BenchmarkFunction("ConfigurableDoubleParserCI byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArrayCI(byteArrayLines))
+                new BenchmarkFunction("ConfigurableDoubleParserCI byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArrayCI(byteArrayLines)),
+                new BenchmarkFunction("ConfigurableDoubleParserCI String(byte[])", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArrayCIViaString(byteArrayLines))
 
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
@@ -271,7 +272,7 @@ public class Main {
         double elapsed;
         VarianceStatistics stats = new VarianceStatistics();
 
-        System.out.printf("%-40s", name);
+        System.out.printf("%-41s", name);
 
         // measure
         int trials = 0;
@@ -326,7 +327,7 @@ public class Main {
         if (printConfidence) {
             double confidenceWidth = Stats.confidence(1 - confidenceLevel, stats.getSampleStandardDeviation(), stats.getCount()) / stats.getAverage();
 
-            System.out.printf("%-40s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f  %4.2f %s %s\n",
+            System.out.printf("%-41s :  %7.2f MB/s (+/-%4.1f %% stdv) (+/-%4.1f %% conf, %6d trials)  %7.2f Mfloat/s  %7.2f ns/f  %4.2f %s %s\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -339,7 +340,7 @@ public class Main {
                     baselines.get(reference)
             );
         } else {
-            System.out.printf("%-40s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f  %7.2f %s %s\n",
+            System.out.printf("%-41s :  %7.2f MB/s (+/-%4.1f %%)  %7.2f Mfloat/s  %9.2f ns/f  %7.2f %s %s\n",
                     name,
                     volumeMB * 1e9 / stats.getAverage(),
                     stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -353,8 +354,8 @@ public class Main {
     }
 
     private void printStatsHeaderMarkdown() {
-        System.out.println("|Method                                  | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |");
-        System.out.println("|----------------------------------------|------:|-----:|------:|--------:|--------:|--------|");
+        System.out.println("|Method                                   | MB/s  |stdev|Mfloats/s| ns/f   | speedup | JDK    |");
+        System.out.println("|-----------------------------------------|------:|-----:|------:|--------:|--------:|--------|");
     }
 
     private void printStatsMarkdown(List<String> lines, double volumeMB, String name, VarianceStatistics stats, Map<String, BenchmarkFunction> functions, Map<String, VarianceStatistics> results, Map<String, Character> baselines) {
@@ -363,7 +364,7 @@ public class Main {
         boolean isBaseline = reference.equals(name);
         String speedupOrBaseline = isBaseline ? "=" : "*";
         Character first = baselines.isEmpty() ? null : baselines.values().iterator().next();
-        System.out.printf("|%-40s|%7.2f|%4.1f %%|%7.2f|%9.2f|%7.2f%s%s|%-8s|\n",
+        System.out.printf("|%-41s|%7.2f|%4.1f %%|%7.2f|%9.2f|%7.2f%s%s|%-8s|\n",
                 name,
                 volumeMB * 1e9 / stats.getAverage(),
                 stats.getSampleStandardDeviation() * 100 / stats.getAverage(),
@@ -464,6 +465,17 @@ public class Main {
         ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
         for (byte[] st : s) {
             double x = p.parseDouble(st);
+            answer += x;
+        }
+        return answer;
+    }
+
+    private double sumConfigurableDoubleFromByteArrayCIViaString(List<byte[]> s) {
+        double answer = 0;
+        NumberFormatSymbols symbols = getNumberFormatSymbols();
+        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
+        for (byte[] st : s) {
+            double x = p.parseDouble(new String(st, StandardCharsets.UTF_8));
             answer += x;
         }
         return answer;

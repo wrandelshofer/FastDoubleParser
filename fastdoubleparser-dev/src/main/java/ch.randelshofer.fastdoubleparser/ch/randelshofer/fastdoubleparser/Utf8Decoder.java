@@ -34,59 +34,58 @@ class Utf8Decoder {
         boolean invalid = false;
         int charIndex = 0;
         int limit = offset + length;
-        int remainingContinuations = 0;
-        int acc = 0;
-        int minLegalValue = 0;
-        for (int i = offset; i < limit; i++) {
+        int value;
+        int c1, c2, c3;
+        int i = offset;
+        while (i < limit) {
             byte b = bytes[i];
-            switch (Integer.numberOfLeadingZeros(~(byte) b << 24)) {
+            int opcode = Integer.numberOfLeadingZeros(~(byte) b << 24);
+            if (i + opcode > limit) throw new NumberFormatException("UTF-8 code point is incomplete");
+            switch (opcode) {
                 case 0:
                     // process code points U+0000 to U+007f
                     // decode 0b0aaa_aaaa to 0b0000_0000_0aaa_aaaa
                     chars[charIndex++] = (char) b;
+                    i++;
                     break;
                 case 1:
-                    // process the continuation of a code point
-                    acc = (acc << 6) | b & 0b111111;
-                    remainingContinuations--;
-                    invalid |= remainingContinuations < 0;// continuation at start of character is illegal
-                    if (remainingContinuations == 0) {
-                        if (acc >= 0x010000) {
-                            chars[charIndex++] = (char) (0xd800 | ((acc - 0x10000) >>> 10) & 0b1111111111);
-                            chars[charIndex++] = (char) (0xdc00 | (acc - 0x10000) & 0b1111111111);
-                        } else {
-                            chars[charIndex++] = (char) acc;
-                        }
-                        // the UTF-16 surrogates (U+D800 through U+DFFF) are not legal Unicode
-                        invalid |= acc < minLegalValue | 0xd800 <= acc && acc <= 0xdfff;
-                    }
+                    invalid = true;
+                    i = limit;
                     break;
                 case 2:
                     // process code points U+0080 to U+07ff
                     // decode 0b110a_aaaa 0b10bb_bbbb to 0b0000_aaaa_abb_bbbb
-                    invalid |= remainingContinuations > 0;
-                    acc = b & 0b11111;
-                    remainingContinuations = 1;
-                    minLegalValue = 0x0080;
+                    c1 = bytes[i + 1];
+                    value = (b & 0b11111) << 6 | c1 & 0b111111;
+                    invalid |= value < 0x0080 | (c1 & 0xc0) != 0x80;
+                    chars[charIndex++] = (char) value;
+                    i += 2;
                     break;
                 case 3:
                     // process code points U+0800 to U+ffff
                     // decode 0b1110_aaaa 0b10bb_bbbb 0b10cc_cccc to 0baaaa_bbbb_bbcc_cccc
-                    invalid |= remainingContinuations > 0;
-                    acc = b & 0b1111;
-                    remainingContinuations = 2;
-                    minLegalValue = 0x0800;
+                    c1 = bytes[i + 1];
+                    c2 = bytes[i + 2];
+                    value = (b & 0b1111) << 12 | (c1 & 0b111111) << 6 | c2 & 0b111111;
+                    invalid |= value < 0x0800 | (c1 & c2 & 0xc0) != 0x80;
+                    chars[charIndex++] = (char) value;
+                    i += 3;
                     break;
                 case 4:
                     // process code points U+010000 to U+10ffff
                     // decode 0b1111_0aaa 0b10bb_bbbb 0b10cc_cccc 0b10dd_dddd to 0ba_aabb_bbbb_cccc_ccdd_dddd
-                    invalid |= remainingContinuations > 0;
-                    acc = b & 0b111;
-                    minLegalValue = 0x010000;
-                    remainingContinuations = 3;
+                    c1 = bytes[i + 1];
+                    c2 = bytes[i + 2];
+                    c3 = bytes[i + 2];
+                    value = (b & 0b111) << 18 | (c1 & 0b111111) << 12 | (c2 & 0b111111) << 6 | c3 & 0b111111;
+                    chars[charIndex++] = (char) (0xd800 | ((value - 0x10000) >>> 10) & 0b1111111111);
+                    chars[charIndex++] = (char) (0xdc00 | (value - 0x10000) & 0b1111111111);
+                    invalid |= value < 0x010000 | (c1 & c2 & c3 & 0xc0) != 0x80;
+                    i += 4;
                     break;
                 default:
                     invalid = true;
+                    i = limit;
                     break;
             }
         }
