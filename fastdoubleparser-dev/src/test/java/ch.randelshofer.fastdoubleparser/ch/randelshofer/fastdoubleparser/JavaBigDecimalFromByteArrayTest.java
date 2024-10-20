@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class JavaBigDecimalFromByteArrayTest {
+public final class JavaBigDecimalFromByteArrayTest {
 
 
     @TestFactory

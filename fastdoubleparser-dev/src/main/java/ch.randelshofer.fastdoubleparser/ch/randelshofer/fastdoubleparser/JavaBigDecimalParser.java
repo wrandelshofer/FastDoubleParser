@@ -93,7 +93,7 @@ import java.math.BigInteger;
  *     <dd><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigDecimal.html#%3Cinit%3E(java.lang.String)">docs.oracle.com</a></dd>
  * </dl>
  */
-public class JavaBigDecimalParser {
+public final class JavaBigDecimalParser {
 
     private static final JavaBigDecimalFromByteArray BYTE_ARRAY_PARSER = new JavaBigDecimalFromByteArray();
 

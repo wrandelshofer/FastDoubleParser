@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 /**
  * Decodes UTF-8 encoded bytes to a character array.
  */
-class Utf8Decoder {
+final class Utf8Decoder {
     private Utf8Decoder() {
     }
 

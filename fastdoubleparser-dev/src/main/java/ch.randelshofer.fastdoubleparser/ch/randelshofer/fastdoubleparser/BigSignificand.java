@@ -12,7 +12,7 @@ import java.nio.ByteOrder;
 /**
  * A mutable non-negative significand with a fixed number of bits.
  */
-class BigSignificand {
+final class BigSignificand {
     private static final long LONG_MASK = 0xffffffffL;
     private final static VarHandle readIntBE =
             MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.BIG_ENDIAN);

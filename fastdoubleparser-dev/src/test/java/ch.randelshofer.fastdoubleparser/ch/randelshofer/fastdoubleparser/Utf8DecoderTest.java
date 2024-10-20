@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class Utf8DecoderTest {
+public final class Utf8DecoderTest {
 
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     @ParameterizedTest

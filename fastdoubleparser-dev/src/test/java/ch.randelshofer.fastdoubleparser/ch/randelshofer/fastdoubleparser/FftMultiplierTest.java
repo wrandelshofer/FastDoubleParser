@@ -15,7 +15,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class FftMultiplierTest {
+public final class FftMultiplierTest {
     private boolean longRunningTests = !"false".equals(System.getProperty("enableLongRunningTests"));
 
     @TestFactory

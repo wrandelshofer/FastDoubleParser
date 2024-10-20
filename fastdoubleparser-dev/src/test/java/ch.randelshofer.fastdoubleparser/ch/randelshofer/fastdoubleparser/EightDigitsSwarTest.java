@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class EightDigitsSwarTest {
+public final class EightDigitsSwarTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTests_Dec() {
         return Stream.concat(

@@ -28,7 +28,7 @@ import static java.lang.Math.abs;
  * </ul>
  * </p>
  */
-public class DoubleSum implements DoubleConsumer {
+public final class DoubleSum implements DoubleConsumer {
     private double sum = 0.0;
     private double c = 0.0;
     private List<Double> values = new ArrayList<>();

@@ -147,7 +147,7 @@ import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR
  *     <dd><a href="https://docs.oracle.com/javase/specs/jls/se18/html/jls-3.html#jls-3.10.2">docs.oracle.com</a></dd>
  * </dl>
  */
-public class JavaDoubleParser {
+public final class JavaDoubleParser {
 
     private static final JavaDoubleBitsFromByteArray BYTE_ARRAY_PARSER = new JavaDoubleBitsFromByteArray();
 

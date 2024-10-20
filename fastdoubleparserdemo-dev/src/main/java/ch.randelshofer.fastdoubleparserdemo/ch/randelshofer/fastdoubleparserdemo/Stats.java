@@ -11,7 +11,7 @@ import static java.lang.Math.sqrt;
 /**
  * Provides utility methods for statistics calculations.
  */
-public class Stats {
+public final class Stats {
     private Stats() {
         // prevent instantiation
     }

@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhComplex {
+public final class JmhComplex {
 
 
     private double ar, ai;

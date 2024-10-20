@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser.bte;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
-class ByteTrieOfOne implements ByteTrie {
+final class ByteTrieOfOne implements ByteTrie {
     private final byte[] chars;
 
     public ByteTrieOfOne(Set<String> set) {

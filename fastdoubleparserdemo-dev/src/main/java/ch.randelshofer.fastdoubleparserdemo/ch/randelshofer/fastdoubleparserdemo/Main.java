@@ -66,7 +66,7 @@ import java.util.stream.Stream;
  *     <dd><a href="https://dri.es/files/oopsla07-georges.pdf">dri.es</a></dd>
  * </dl>
  */
-public class Main {
+public final class Main {
     /**
      * Number of trials must be ≥ 30 to approximate normal distribution of
      * the test samples.

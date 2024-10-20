@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class VirtualCharSequence implements CharSequence {
+public final class VirtualCharSequence implements CharSequence {
     private final int length;
     private final char fill;
     private final char[] prefix;

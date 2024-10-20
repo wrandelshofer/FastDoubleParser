@@ -70,7 +70,7 @@ import java.math.BigInteger;
  *     <dt>Java SE 17 &amp; JDK 17, JavaDoc, Class BigInteger</dt>
  *     <dd><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigInteger.html#%3Cinit%3E(java.lang.String,int)">docs.oracle.com</a></dd>
  * </dl> */
-public class JavaBigIntegerParser {
+public final class JavaBigIntegerParser {
 
     private static final JavaBigIntegerFromByteArray BYTE_ARRAY_PARSER = new JavaBigIntegerFromByteArray();
 

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit tests for {@link BigSignificand}.
  */
-public class BigSignificandTest {
+public final class BigSignificandTest {
     @Test
     public void shouldAddValuesThatExceedIntValueRange() {
         int value = 2_000_000_000;

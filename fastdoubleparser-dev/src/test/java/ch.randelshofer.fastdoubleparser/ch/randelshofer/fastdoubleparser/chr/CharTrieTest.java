@@ -11,7 +11,7 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CharTrieTest {
+public final class CharTrieTest {
     @Test
     public void shouldAddAndRetrieve() {
         CharTrieOfFew trie = new CharTrieOfFew(new HashSet<>(Arrays.asList("e", "E", "Exp")));

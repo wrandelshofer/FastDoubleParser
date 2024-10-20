@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class JavaBigDecimalFromCharSequenceTest {
+public final class JavaBigDecimalFromCharSequenceTest {
 
     @TestFactory
     public Stream<DynamicTest> dynamicTests_parseBigDecimal_CharSequence() {

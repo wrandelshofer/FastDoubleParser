@@ -30,7 +30,7 @@ import static java.lang.Math.sqrt;
  * </ul>
  * </p>
  */
-public class VarianceStatistics implements DoubleConsumer {
+public final class VarianceStatistics implements DoubleConsumer {
     /**
      * We use e DoubleSummaryStatistics here, because it can sum
      * doubles with compensation.

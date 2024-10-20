@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * A set of {@code char} with linear search.
  */
-class CharSetOfFew implements CharSet {
+final class CharSetOfFew implements CharSet {
     private final char[] chars;
 
     public CharSetOfFew(Set<Character> set) {

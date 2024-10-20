@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link JavaFloatParser}
  */
-public class JavaFloatParserTest {
+public final class JavaFloatParserTest {
     public static final int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
     @TestFactory

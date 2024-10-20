@@ -11,7 +11,7 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ByteTrieTest {
+public final class ByteTrieTest {
     @Test
     public void shouldAddAndRetrieve() {
         ByteTrieOfFew trie = new ByteTrieOfFew(new HashSet<>(Arrays.asList("e", "E", "Exp")));

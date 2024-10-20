@@ -16,7 +16,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 /**
  * Factory for String data and their expected {@link BigDecimal} value.
  */
-public class BigDecimalTestDataFactory {
+public final class BigDecimalTestDataFactory {
     private BigDecimalTestDataFactory() {
 
     }

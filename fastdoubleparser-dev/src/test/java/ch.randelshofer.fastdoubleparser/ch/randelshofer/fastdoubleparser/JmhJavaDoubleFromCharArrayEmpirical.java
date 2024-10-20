@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaDoubleFromCharArrayEmpirical {
+public final class JmhJavaDoubleFromCharArrayEmpirical {
     @Param({
             "0"
             , "365"

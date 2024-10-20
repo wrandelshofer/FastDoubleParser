@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ByteToIntMapTest {
+public final class ByteToIntMapTest {
     @Test
     public void shouldFindDigit() {
         List<Character> digits = Arrays.asList('h', 'a', 'm', 'b', 'u', 'r', 'g', 'e', 'f', 'o');

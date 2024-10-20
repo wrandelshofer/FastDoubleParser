@@ -13,7 +13,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.splitFloor16;
 /**
  * Parses digits.
  */
-class ParseDigitsTaskByteArray {
+final class ParseDigitsTaskByteArray {
     /**
      * Don't let anyone instantiate this class.
      */

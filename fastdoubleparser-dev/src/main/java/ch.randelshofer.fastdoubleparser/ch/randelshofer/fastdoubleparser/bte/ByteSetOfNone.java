@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser.bte;
 
-class ByteSetOfNone implements ByteSet {
+final class ByteSetOfNone implements ByteSet {
 
     ByteSetOfNone() {
     }

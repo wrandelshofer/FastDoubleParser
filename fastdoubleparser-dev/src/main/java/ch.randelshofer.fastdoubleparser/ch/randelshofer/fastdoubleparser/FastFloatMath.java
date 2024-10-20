@@ -15,7 +15,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.unsignedMultiplyH
  * See {@link JavaDoubleParser} for a description of
  * {@code FloatingPointLiteral}.
  */
-class FastFloatMath {
+final class FastFloatMath {
     /**
      * Bias used in the exponent of a float.
      */

@@ -110,7 +110,7 @@ import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR
  *     {@link Integer#MAX_VALUE} - 4 = 2,147,483,643 characters.</li>
  * </ul>
  */
-public class ConfigurableDoubleParser {
+public final class ConfigurableDoubleParser {
     private final NumberFormatSymbols symbols;
     private ConfigurableDoubleBitsFromCharSequence charSequenceParser;
     private ConfigurableDoubleBitsFromCharArray charArrayParser;

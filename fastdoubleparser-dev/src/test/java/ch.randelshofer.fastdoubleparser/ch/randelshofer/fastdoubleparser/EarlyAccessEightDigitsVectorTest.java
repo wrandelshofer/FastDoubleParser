@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EarlyAccessEightDigitsVectorTest {
+public final class EarlyAccessEightDigitsVectorTest {
 
     void testDec(String s, int offset, int expected) {
         char[] chars = s.toCharArray();

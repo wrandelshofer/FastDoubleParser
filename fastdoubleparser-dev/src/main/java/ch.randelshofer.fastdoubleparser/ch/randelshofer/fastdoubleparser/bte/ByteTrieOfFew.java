@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * A trie for testing if a String is contained in a set of Strings.
  */
-class ByteTrieOfFew implements ByteTrie {
+final class ByteTrieOfFew implements ByteTrie {
     private ByteTrieNode root = new ByteTrieNode();
 
     public ByteTrieOfFew(Set<String> set) {

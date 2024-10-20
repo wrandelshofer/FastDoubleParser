@@ -17,7 +17,7 @@ import java.util.Locale;
 import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConfigurableDoubleParserTestDataFactory {
+public final class ConfigurableDoubleParserTestDataFactory {
 
     public static List<NumberTestData> createLocalizedTestData(Locale locale) {
         String languageTag = locale.toLanguageTag();

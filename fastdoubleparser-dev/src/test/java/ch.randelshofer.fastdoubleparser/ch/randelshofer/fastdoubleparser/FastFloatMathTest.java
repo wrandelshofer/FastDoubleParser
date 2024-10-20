@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link FastFloatMath}.
  */
-public class FastFloatMathTest {
+public final class FastFloatMathTest {
 
     @Test
     public void bruteForce() {

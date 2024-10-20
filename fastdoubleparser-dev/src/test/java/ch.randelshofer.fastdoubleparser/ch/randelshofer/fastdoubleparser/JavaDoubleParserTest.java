@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link JavaDoubleParser}
  */
-public class JavaDoubleParserTest {
+public final class JavaDoubleParserTest {
     public static final int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {

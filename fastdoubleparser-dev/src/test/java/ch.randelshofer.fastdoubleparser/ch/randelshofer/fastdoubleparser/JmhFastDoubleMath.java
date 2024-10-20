@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhFastDoubleMath {
+public final class JmhFastDoubleMath {
     private boolean negative;
     private long significand;
     private int exponent;

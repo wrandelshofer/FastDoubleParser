@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class SystemInfo {
+public final class SystemInfo {
     /**
      * Don't let anyone instantiate this class.
      */

@@ -85,7 +85,7 @@ import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.lookupHex;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhEightDigits {
+public final class JmhEightDigits {
     @Param({"12345678", "12345x78"})
     public String eightDigitsCharSequence;
     public char[] eightDigitsCharArray;

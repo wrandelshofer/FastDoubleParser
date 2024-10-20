@@ -30,7 +30,7 @@ import java.nio.ByteOrder;
  * </dl>
  * </p>
  */
-class FastDoubleSwar {
+final class FastDoubleSwar {
 
     private final static VarHandle readLongLE =
             MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);

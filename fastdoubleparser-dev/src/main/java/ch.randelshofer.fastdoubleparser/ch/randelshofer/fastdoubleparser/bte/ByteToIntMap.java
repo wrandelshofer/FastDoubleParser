@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * A primitive map {@literal Map<char,int>}.
  */
-class ByteToIntMap implements ByteDigitSet, ByteSet {
+final class ByteToIntMap implements ByteDigitSet, ByteSet {
 
 
     public ByteToIntMap(Collection<Character> chars) {

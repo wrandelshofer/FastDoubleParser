@@ -28,7 +28,7 @@ import java.util.Set;
  *                           └─→ node ['N','N']
  * </pre>
  */
-class CharTrieOfFewIgnoreCase implements CharTrie {
+final class CharTrieOfFewIgnoreCase implements CharTrie {
     private CharTrieNode root = new CharTrieNode();
 
     public CharTrieOfFewIgnoreCase(Set<String> set) {

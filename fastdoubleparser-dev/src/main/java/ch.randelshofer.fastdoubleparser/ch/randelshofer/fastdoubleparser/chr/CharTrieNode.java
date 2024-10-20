@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Arrays;
 
-class CharTrieNode {
+final class CharTrieNode {
     private char[] chars = new char[0];
     private CharTrieNode[] children = new CharTrieNode[0];
     private boolean isEnd;

@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class EightDigitsTestDataFactory {
+public final class EightDigitsTestDataFactory {
     private EightDigitsTestDataFactory() {
     }
 

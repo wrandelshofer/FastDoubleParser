@@ -6,7 +6,7 @@ package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Set;
 
-class CharSetOfOne implements CharSet {
+final class CharSetOfOne implements CharSet {
     private final char ch;
 
     CharSetOfOne(Set<Character> set) {

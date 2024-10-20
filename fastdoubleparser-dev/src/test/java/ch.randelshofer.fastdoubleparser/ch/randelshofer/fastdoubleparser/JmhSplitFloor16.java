@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 2, time = 1)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
-public class JmhSplitFloor16 {
+public final class JmhSplitFloor16 {
     private static final int TO_MAX = 1024 + 1;
     private static final int FROM_MAX = 100;
     private static final int DATA_LENGTH = TO_MAX - FROM_MAX;

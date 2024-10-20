@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhScalb {
+public final class JmhScalb {
     public static final int DOUBLE_EXPONENT_BIAS = 1023;
     /**
      * The number of bits in the significand, including the implicit bit.

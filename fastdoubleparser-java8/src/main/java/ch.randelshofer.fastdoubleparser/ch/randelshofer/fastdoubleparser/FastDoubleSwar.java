@@ -25,7 +25,7 @@ package ch.randelshofer.fastdoubleparser;
  * </dl>
  * </p>
  */
-class FastDoubleSwar {
+final class FastDoubleSwar {
 
     /**
      * Checks if '0' <= c && c <= '9'.

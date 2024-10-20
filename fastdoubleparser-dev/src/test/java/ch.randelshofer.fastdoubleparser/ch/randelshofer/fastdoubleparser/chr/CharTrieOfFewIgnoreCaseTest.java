@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CharTrieOfFewIgnoreCaseTest {
+public final class CharTrieOfFewIgnoreCaseTest {
     @Test
     public void shouldMatchString() {
         Set<String> strings = new LinkedHashSet<>(Arrays.asList("NaN", "інф"));

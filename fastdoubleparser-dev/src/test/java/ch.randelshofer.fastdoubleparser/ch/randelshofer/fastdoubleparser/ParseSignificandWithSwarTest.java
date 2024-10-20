@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class ParseSignificandWithSwarTest {
+public final class ParseSignificandWithSwarTest {
     /**
      * Matches a decimal point at any of the eight possible characters.
      * The mask is eight times the '.' character 0x2e: "........";

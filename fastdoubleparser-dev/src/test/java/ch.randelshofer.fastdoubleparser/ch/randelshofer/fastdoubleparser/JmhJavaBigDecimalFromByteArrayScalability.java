@@ -56,7 +56,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaBigDecimalFromByteArrayScalability {
+public final class JmhJavaBigDecimalFromByteArrayScalability {
     @Param({
             "1"
             , "10"

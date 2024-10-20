@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-class FastIntegerMath {
+final class FastIntegerMath {
     public static final BigInteger FIVE = BigInteger.valueOf(5);
     final static BigInteger TEN_POW_16 = BigInteger.valueOf(10_000_000_000_000_000L);
     final static BigInteger FIVE_POW_16 = BigInteger.valueOf(152_587_890_625L);

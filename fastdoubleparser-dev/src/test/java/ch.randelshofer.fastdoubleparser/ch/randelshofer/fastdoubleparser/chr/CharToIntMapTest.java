@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CharToIntMapTest {
+public final class CharToIntMapTest {
     @Test
     public void shouldFindDigit() {
         List<Character> digits = Arrays.asList('〇', '一', '二', '三', '四', '五', '六', '七', '八', '九');

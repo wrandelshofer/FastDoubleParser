@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * A trie for testing if a String is contained in a set of Strings.
  */
-class CharTrieOfFew implements CharTrie {
+final class CharTrieOfFew implements CharTrie {
     private CharTrieNode root = new CharTrieNode();
 
     public CharTrieOfFew(Set<String> set) {

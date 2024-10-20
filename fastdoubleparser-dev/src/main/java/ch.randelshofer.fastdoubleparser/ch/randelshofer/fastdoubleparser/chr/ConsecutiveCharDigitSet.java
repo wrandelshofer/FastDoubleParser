@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser.chr;
 
-class ConsecutiveCharDigitSet implements CharDigitSet {
+final class ConsecutiveCharDigitSet implements CharDigitSet {
     private final char zeroDigit;
 
     public ConsecutiveCharDigitSet(char zeroDigit) {

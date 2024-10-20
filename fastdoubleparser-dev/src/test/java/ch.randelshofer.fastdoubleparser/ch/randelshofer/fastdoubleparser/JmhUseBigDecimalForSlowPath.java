@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhUseBigDecimalForSlowPath {
+public final class JmhUseBigDecimalForSlowPath {
     @Param({
             "7.3177701707893310e15"//Outside Clinger fast path, bail-out in semi-fast path, 7.3177701707893310e+15
             , "9007199254740991e22"//Inside Clinger fast path (max_clinger_significand, max_clinger_exponent), 9007199254740991e22

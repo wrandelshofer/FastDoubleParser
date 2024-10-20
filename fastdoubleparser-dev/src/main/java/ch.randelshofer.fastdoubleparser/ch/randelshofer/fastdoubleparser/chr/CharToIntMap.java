@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * A primitive map {@literal Map<char,int>}.
  */
-class CharToIntMap implements CharDigitSet, CharSet {
+final class CharToIntMap implements CharDigitSet, CharSet {
 
 
     public CharToIntMap(Collection<Character> chars) {

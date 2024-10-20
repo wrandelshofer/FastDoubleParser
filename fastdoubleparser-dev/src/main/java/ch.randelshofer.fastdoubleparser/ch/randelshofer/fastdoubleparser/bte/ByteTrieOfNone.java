@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser.bte;
 
-class ByteTrieOfNone implements ByteTrie {
+final class ByteTrieOfNone implements ByteTrie {
 
 
     @Override

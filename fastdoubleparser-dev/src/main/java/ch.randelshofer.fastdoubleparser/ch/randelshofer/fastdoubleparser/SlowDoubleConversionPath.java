@@ -10,7 +10,7 @@ import ch.randelshofer.fastdoubleparser.chr.CharDigitSet;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-class SlowDoubleConversionPath {
+final class SlowDoubleConversionPath {
     private SlowDoubleConversionPath() {
     }
 

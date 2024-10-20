@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser.chr;
 
-class CharSetOfNone implements CharSet {
+final class CharSetOfNone implements CharSet {
 
     CharSetOfNone() {
     }

@@ -25,7 +25,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.unsignedMultiplyH
  * </dl>
  * </p>
  */
-class FastDoubleMath {
+final class FastDoubleMath {
     /**
      * Bias used in the exponent of a double.
      */

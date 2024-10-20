@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link FastDoubleMath}.
  */
-public class FastDoubleMathTest {
+public final class FastDoubleMathTest {
 
 
     @TestFactory

@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * Generate random numbers in a gamma corrected random number distribution function.
  */
-public class GenerateNumberFormatNumbers {
+public final class GenerateNumberFormatNumbers {
     private double gammaCorrection(double value, double invGamma) {
         return Math.pow(value, invGamma);
     }

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 /**
  * Tests class {@link new ConfigurableDoubleParser()}
  */
-public class ConfigurableDoubleParserTest {
+public final class ConfigurableDoubleParserTest {
 
     @TestFactory
     public Stream<DynamicNode> dynamicTests_parseDouble_CharSequence() {

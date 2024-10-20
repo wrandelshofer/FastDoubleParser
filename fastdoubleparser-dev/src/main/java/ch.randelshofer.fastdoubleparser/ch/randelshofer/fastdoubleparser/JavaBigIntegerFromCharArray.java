@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOf10Floor16;
 
-class JavaBigIntegerFromCharArray extends AbstractBigIntegerParser {
+final class JavaBigIntegerFromCharArray extends AbstractBigIntegerParser {
 
     /**
      * Parses a {@code BigIntegerLiteral} as specified in {@link JavaBigIntegerParser}.

@@ -4,7 +4,7 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-public class MiniTest {
+public final class MiniTest {
     public static void main(String... args) {
         //ConfigurableDoubleParser p = new ConfigurableDoubleParser();
         //double v=p.parseDouble("7.3177701707893310e+15");//Outside Clinger fast path, bail-out in semi-fast path, 7.3177701707893310e+15

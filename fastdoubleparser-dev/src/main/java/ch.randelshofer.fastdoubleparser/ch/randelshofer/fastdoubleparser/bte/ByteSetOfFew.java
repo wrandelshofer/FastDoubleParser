@@ -11,14 +11,14 @@ import java.util.Set;
 /**
  * A set of {@code char} with linear search.
  */
-class ByteSetOfFew implements ByteSet {
+final class ByteSetOfFew implements ByteSet {
     private final byte[] bytes;
 
     public ByteSetOfFew(Set<Character> set) {
         byte[] tmp = new byte[set.size() * 4];
         int i = 0;
         for (char ch : set) {
-            for (byte b : new String(new char[]{ch}).getBytes(StandardCharsets.UTF_8)) {
+            for (byte b : String.valueOf(ch).getBytes(StandardCharsets.UTF_8)) {
                 tmp[i++] = b;
             }
         }

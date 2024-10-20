@@ -46,7 +46,7 @@ import java.util.Set;
  *  node ['Ф'0xa4]   node ['ф'0x84]
  * </pre>
  */
-class ByteTrieOfFewIgnoreCase implements ByteTrie {
+final class ByteTrieOfFewIgnoreCase implements ByteTrie {
     private ByteTrieNode root = new ByteTrieNode();
 
     public ByteTrieOfFewIgnoreCase(Set<String> set) {

@@ -6,7 +6,7 @@ package ch.randelshofer.fastdoubleparser.bte;
 
 import java.util.Set;
 
-class ByteSetOfOne implements ByteSet {
+final class ByteSetOfOne implements ByteSet {
     private final byte ch;
 
     ByteSetOfOne(Set<Character> set) {

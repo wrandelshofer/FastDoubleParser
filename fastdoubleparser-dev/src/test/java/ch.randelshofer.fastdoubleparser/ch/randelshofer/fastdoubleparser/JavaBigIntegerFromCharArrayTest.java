@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-public class JavaBigIntegerFromCharArrayTest {
+public final class JavaBigIntegerFromCharArrayTest {
 
     @TestFactory
     public Stream<DynamicTest> dynamicTests_parseBigInteger_charArray() {

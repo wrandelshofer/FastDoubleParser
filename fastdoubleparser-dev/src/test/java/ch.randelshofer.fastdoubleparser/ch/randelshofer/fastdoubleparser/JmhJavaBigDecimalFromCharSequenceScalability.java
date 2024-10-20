@@ -55,7 +55,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public class JmhJavaBigDecimalFromCharSequenceScalability {
+public final class JmhJavaBigDecimalFromCharSequenceScalability {
 
 
     @Param({

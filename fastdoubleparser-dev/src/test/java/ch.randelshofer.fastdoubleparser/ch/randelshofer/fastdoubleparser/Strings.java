@@ -7,7 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class Strings {
+public final class Strings {
     public static StringBuilder repeatStringBuilder(String str, int count) {
         StringBuilder b = new StringBuilder(str.length() * count);
         while (count-- > 0) {

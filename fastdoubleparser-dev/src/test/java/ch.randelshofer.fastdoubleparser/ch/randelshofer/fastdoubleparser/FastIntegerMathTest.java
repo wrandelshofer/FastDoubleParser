@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FastIntegerMathTest {
+public final class FastIntegerMathTest {
     @Test
     public void testUnsignedMultiplyHigh() {
         long actualHigh = FastIntegerMath.unsignedMultiplyHigh(0x123456789ABCDEF0L, 0x10L);

@@ -6,7 +6,7 @@ package ch.randelshofer.fastdoubleparser.chr;
 
 import java.util.Set;
 
-class CharTrieOfOneSingleChar implements CharTrie {
+final class CharTrieOfOneSingleChar implements CharTrie {
     private final char ch;
 
     public CharTrieOfOneSingleChar(Set<String> set) {

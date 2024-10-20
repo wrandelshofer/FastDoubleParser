@@ -36,7 +36,7 @@ import static jdk.incubator.vector.VectorOperators.UNSIGNED_LE;
  * </dl>
  * </p>
  */
-class FastDoubleVector {
+final class FastDoubleVector {
     private static final IntVector POWERS_OF_10 = IntVector.fromArray(IntVector.SPECIES_256,
             new int[]{1000_0000, 100_0000, 10_0000, 10000, 1000, 100, 10, 1}, 0);
     private static final IntVector POWERS_OF_16_SHIFTS_BE = IntVector.fromArray(IntVector.SPECIES_256,

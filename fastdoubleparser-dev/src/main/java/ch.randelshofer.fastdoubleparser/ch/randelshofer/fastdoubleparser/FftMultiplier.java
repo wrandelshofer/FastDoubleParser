@@ -24,7 +24,7 @@ import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
  * <dd><a href="https://github.com/tbuktu/bigint/tree/floatfft">github.com</a></dd>
  * </dl>
  */
-class FftMultiplier {
+final class FftMultiplier {
 
     public static final double COS_0_25 = Math.cos(0.25 * Math.PI);
     public static final double SIN_0_25 = Math.sin(0.25 * Math.PI);

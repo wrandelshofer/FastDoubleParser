@@ -11,7 +11,7 @@ import java.nio.IntBuffer;
 /**
  * A mutable significand with a fixed number of bits.
  */
-class BigSignificand {
+final class BigSignificand {
     private static final long LONG_MASK = 0xffffffffL;
     private final int numInts;
     private final int[] x;

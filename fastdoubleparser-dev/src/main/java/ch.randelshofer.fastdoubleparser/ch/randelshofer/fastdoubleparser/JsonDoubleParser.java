@@ -42,7 +42,7 @@ import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR
  *     <dd><a href="https://www.ietf.org/rfc/rfc8259.txt">www.ietf.org</a></dd>
  * </dl>
  */
-public class JsonDoubleParser {
+public final class JsonDoubleParser {
 
     private static final JsonDoubleBitsFromByteArray BYTE_ARRAY_PARSER = new JsonDoubleBitsFromByteArray();
 

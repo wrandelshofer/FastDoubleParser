@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SlowDoubleConversionPathTest {
+final class SlowDoubleConversionPathTest {
     @Test
     public void shouldComputeBigDecimal() {
         String str = "12345678901234.9876543210987";
