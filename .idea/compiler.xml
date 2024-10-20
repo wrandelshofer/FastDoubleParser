@@ -38,13 +38,13 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FastDoubleParser" target="20" />
-      <module name="FastDoubleParser (1)" target="20" />
+      <module name="FastDoubleParser" target="24" />
+      <module name="FastDoubleParser (1)" target="24" />
       <module name="fastdoubleparser-java19" target="19" />
       <module name="fastdoubleparser-java22" target="22" />
-      <module name="FastDoubleParser-JavaEarlyAccess" target="20" />
+      <module name="FastDoubleParser-JavaEarlyAccess" target="24" />
       <module name="FastDoubleParserDemo" target="19" />
-      <module name="FastDoubleParserDemo-JavaEarlyAccess" target="20" />
+      <module name="FastDoubleParserDemo-JavaEarlyAccess" target="24" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -55,7 +55,7 @@
       <module name="FastDoubleParser-Java17" options="-Xlint:all" />
       <module name="FastDoubleParser-Java19" options="-Xlint:all" />
       <module name="FastDoubleParser-Java8" options="-Xlint:all" />
-      <module name="FastDoubleParser-JavaEarlyAccess" options="-Xlint:all --enable-preview" />
+      <module name="FastDoubleParser-JavaEarlyAccess" options="-Xlint:all" />
       <module name="FastDoubleParserDemo" options="" />
       <module name="FastDoubleParserDemo-Java11" options="-Xlint:all" />
       <module name="FastDoubleParserDemo-Java17" options="-Xlint:all" />
@@ -63,7 +63,7 @@
       <module name="FastDoubleParserDemo-Java8" options="-Xlint:all" />
       <module name="FastDoubleParserDemo-JavaEarlyAccess" options="-Xlint:all" />
       <module name="fastdoubleparser" options="" />
-      <module name="fastdoubleparser-dev" options="-Xlint:all --enable-preview" />
+      <module name="fastdoubleparser-dev" options="-Xlint:all" />
       <module name="fastdoubleparser-java11" options="" />
       <module name="fastdoubleparser-java17" options="" />
       <module name="fastdoubleparser-java19" options="" />

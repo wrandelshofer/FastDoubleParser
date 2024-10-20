@@ -149,36 +149,6 @@ The computation times are given for a Mac mini 2018 with Intel(R) Core(TM) i7-87
 
 ## Performance measurements
 
-### Random double numbers in the range from 0 to 1
-
-Most input lines look like this: `0.4011441469603171`.
-
-Mac Mini (2018)<br>
-CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
-
-| Method                      |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK     |
-|-----------------------------|-------:|-------:|----------:|-------:|--------:|---------|
-| java.lang.Double            |  90.34 |  3.9 % |      5.19 | 192.84 |    1.00 | 24-beta |
-| java.lang.Float             | 100.09 |  3.7 % |      5.75 | 174.05 |    1.00 | 24-beta |
-| java.math.BigDecimal        | 185.08 |  5.5 % |     10.62 |  94.13 |    1.00 | 24-beta |
-| JavaDoubleParser String     | 544.88 | 13.0 % |     31.28 |  31.97 |    6.03 | 24-beta |
-| JavaDoubleParser char[]     | 617.45 | 11.2 % |     35.44 |  28.21 |    6.83 | 24-beta |
-| JavaDoubleParser byte[]     | 736.46 |  3.1 % |     42.27 |  23.66 |    8.15 | 24-beta |
-| JsonDoubleParser String     | 591.50 |  8.3 % |     33.95 |  29.45 |    6.55 | 24-beta |
-| JsonDoubleParser char[]     | 696.54 |  6.1 % |     39.98 |  25.01 |    7.71 | 24-beta |
-| JsonDoubleParser byte[]     | 655.92 |  3.1 % |     37.65 |  26.56 |    7.26 | 24-beta |
-| JavaFloatParser  String     | 551.75 |  6.3 % |     31.67 |  31.57 |    5.51 | 24-beta |
-| JavaFloatParser  char[]     | 708.39 |  6.2 % |     40.66 |  24.59 |    7.08 | 24-beta |
-| JavaFloatParser  byte[]     | 736.70 |  5.9 % |     42.29 |  23.65 |    7.36 | 24-beta |
-| JavaBigDecimalParser String | 530.96 |  8.2 % |     30.48 |  32.81 |    2.87 | 24-beta |
-| JavaBigDecimalParser char[] | 637.52 |  6.0 % |     36.59 |  27.33 |    3.44 | 24-beta |
-| JavaBigDecimalParser byte[] | 659.48 |  2.9 % |     37.85 |  26.42 |    3.56 | 24-beta |
-
-
-
 ### The data file `canada.txt`
 
 This file contains numbers in the range from -128 to +128.
@@ -186,82 +156,35 @@ Most input lines look like this: `52.038048000000117`.
 
 Mac Mini (2018)<br>
 CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
+OS: Mac OS X, 15.0.1, 12 processors available<br>
+VM: Java 24, OpenJDK 64-Bit Server VM, Oracle Corporation, 24-ea+20-2362<br>
 
-| Method                      |   MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK     |
-|-----------------------------|-------:|-------:|----------:|-------:|--------:|---------|
-| java.lang.Double            |  84.62 |  3.2 % |      4.86 | 205.64 |    1.00 | 24-beta |
-| java.lang.Float             | 100.81 |  4.4 % |      5.79 | 172.62 |    1.00 | 24-beta |
-| java.math.BigDecimal        | 322.73 |  8.6 % |     18.55 |  53.92 |    1.00 | 24-beta |
-| JavaDoubleParser String     | 406.95 | 10.3 % |     23.39 |  42.76 |    4.81 | 24-beta |
-| JavaDoubleParser char[]     | 627.35 |  8.4 % |     36.05 |  27.74 |    7.41 | 24-beta |
-| JavaDoubleParser byte[]     | 685.50 |  6.6 % |     39.39 |  25.38 |    8.10 | 24-beta |
-| JsonDoubleParser String     | 400.24 |  5.9 % |     23.00 |  43.48 |    4.73 | 24-beta |
-| JsonDoubleParser char[]     | 573.10 |  3.8 % |     32.93 |  30.36 |    6.77 | 24-beta |
-| JsonDoubleParser byte[]     | 693.39 |  3.1 % |     39.85 |  25.10 |    8.19 | 24-beta |
-| JavaFloatParser  String     | 390.37 |  4.4 % |     22.43 |  44.58 |    3.87 | 24-beta |
-| JavaFloatParser  char[]     | 637.53 |  4.1 % |     36.64 |  27.29 |    6.32 | 24-beta |
-| JavaFloatParser  byte[]     | 634.38 |  3.4 % |     36.46 |  27.43 |    6.29 | 24-beta |
-| JavaBigDecimalParser String | 465.26 |  5.7 % |     26.74 |  37.40 |    1.44 | 24-beta |
-| JavaBigDecimalParser char[] | 652.82 |  8.6 % |     37.52 |  26.66 |    2.02 | 24-beta |
-| JavaBigDecimalParser byte[] | 633.94 |  4.0 % |     36.43 |  27.45 |    1.96 | 24-beta |
+| Method                                  |   MB/s |  stdev | Mfloats/s |    ns/f | speedup | JDK   |
+|-----------------------------------------|-------:|-------:|----------:|--------:|--------:|-------|
+| java.lang.Double                        |  88.84 |  3.8 % |      5.11 |  195.87 |  1.00=a | 24-ea |
+| java.lang.Float                         | 101.30 |  3.7 % |      5.82 |  171.78 |  1.00=b | 24-ea |
+| java.math.BigDecimal                    | 321.36 |  8.6 % |     18.47 |   54.15 |  1.00=c | 24-ea |
+| java.text.NumberFormat                  |  45.79 |  3.0 % |      2.63 |  379.99 |  1.00=d | 24-ea |
+| com.ibm.icu.text.NumberFormat           |  15.98 |  3.0 % |      0.92 | 1088.62 |  1.00=e | 24-ea |
+| JavaDoubleParser CharSequence           | 393.16 |  9.2 % |     22.59 |   44.26 |  4.43*a | 24-ea |
+| JavaDoubleParser char[]                 | 595.25 | 12.8 % |     34.21 |   29.23 |  6.70*a | 24-ea |
+| JavaDoubleParser byte[]                 | 685.38 | 10.1 % |     39.39 |   25.39 |  7.71*a | 24-ea |
+| JsonDoubleParser CharSequence           | 391.58 |  9.8 % |     22.50 |   44.44 |  4.41*a | 24-ea |
+| JsonDoubleParser char[]                 | 609.59 | 10.4 % |     35.03 |   28.55 |  6.86*a | 24-ea |
+| JsonDoubleParser byte[]                 | 675.52 |  9.2 % |     38.82 |   25.76 |  7.60*a | 24-ea |
+| JavaFloatParser  CharSequence           | 402.35 |  9.1 % |     23.12 |   43.25 |  3.97*b | 24-ea |
+| JavaFloatParser  char[]                 | 712.35 | 10.5 % |     40.94 |   24.43 |  7.03*b | 24-ea |
+| JavaFloatParser  byte[]                 | 626.70 |  9.4 % |     36.01 |   27.77 |  6.19*b | 24-ea |
+| JavaBigDecimalParser CharSequence       | 428.92 | 17.7 % |     24.65 |   40.57 |  1.33*c | 24-ea |
+| JavaBigDecimalParser char[]             | 660.18 | 12.2 % |     37.94 |   26.36 |  2.05*c | 24-ea |
+| JavaBigDecimalParser byte[]             | 669.97 | 11.5 % |     38.50 |   25.97 |  2.08*c | 24-ea |
+| ConfigurableDoubleParser CharSequence   | 335.02 |  9.2 % |     19.25 |   51.94 |  7.32*d | 24-ea |
+| ConfigurableDoubleParser char[]         | 527.14 | 12.1 % |     30.29 |   33.01 | 11.51*d | 24-ea |
+| ConfigurableDoubleParser byte[]         | 474.35 |  7.6 % |     27.26 |   36.69 | 10.36*d | 24-ea |
+| ConfigurableDoubleParserCI CharSequence | 330.35 |  9.9 % |     18.98 |   52.67 |  7.21*d | 24-ea |
+| ConfigurableDoubleParserCI char[]       | 519.32 |  9.8 % |     29.84 |   33.51 | 11.34*d | 24-ea |
+| ConfigurableDoubleParserCI byte[]       | 406.10 |  7.4 % |     23.34 |   42.85 |  8.87*d | 24-ea |
 
-
-
-
-### The data file `mesh.txt`
-
-This file contains input lines like `1749`, and `0.539081215858`.
-
-Mac Mini (2018)<br>
-CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
-
-| Method                      |   MB/s |  stdev | Mfloats/s |  ns/f | speedup | JDK     |
-|-----------------------------|-------:|-------:|----------:|------:|--------:|---------|
-| java.lang.Double            | 233.08 | 11.3 % |     31.75 | 31.49 |    1.00 | 24-beta |
-| java.lang.Float             | 115.75 |  5.9 % |     15.77 | 63.42 |    1.00 | 24-beta |
-| java.math.BigDecimal        | 245.43 | 12.4 % |     33.43 | 29.91 |    1.00 | 24-beta |
-| JavaDoubleParser String     | 328.64 | 13.6 % |     44.77 | 22.34 |    1.41 | 24-beta |
-| JavaDoubleParser char[]     | 472.90 |  4.0 % |     64.42 | 15.52 |    2.03 | 24-beta |
-| JavaDoubleParser byte[]     | 481.44 |  9.1 % |     65.59 | 15.25 |    2.07 | 24-beta |
-| JsonDoubleParser String     | 340.62 |  5.7 % |     46.40 | 21.55 |    1.46 | 24-beta |
-| JsonDoubleParser char[]     | 419.50 |  6.8 % |     57.15 | 17.50 |    1.80 | 24-beta |
-| JsonDoubleParser byte[]     | 436.21 |  7.2 % |     59.42 | 16.83 |    1.87 | 24-beta |
-| JavaFloatParser  String     | 321.18 |  7.1 % |     43.75 | 22.86 |    2.77 | 24-beta |
-| JavaFloatParser  char[]     | 428.64 |  5.4 % |     58.39 | 17.13 |    3.70 | 24-beta |
-| JavaFloatParser  byte[]     | 438.92 |  4.3 % |     59.79 | 16.72 |    3.79 | 24-beta |
-| JavaBigDecimalParser String | 344.87 |  6.2 % |     46.98 | 21.29 |    1.41 | 24-beta |
-| JavaBigDecimalParser char[] | 452.22 |  7.0 % |     61.60 | 16.23 |    1.84 | 24-beta |
-| JavaBigDecimalParser byte[] | 469.67 |  8.3 % |     63.98 | 15.63 |    1.91 | 24-beta |
-
-
-
-### The data file `canada_hex.txt`
-
-This file contains numbers in the range from -128 to +128 in hexadecimal notation.
-Most input lines look like this: `-0x1.09219008205fcp6`.
-
-Mac Mini (2018)<br>
-CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
-OS: Mac OS X, 14.6.1, 12 processors available<br>
-VM: Java 24, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 24-beta+13<br>
--XX:CompileCommand=inline,java/lang/String.charAt<br>
-
-| Method                  |   MB/s | stdev | Mfloats/s |   ns/f | speedup | JDK     |
-|-------------------------|-------:|------:|----------:|-------:|--------:|---------|
-| java.lang.Double        |  41.65 | 3.2 % |      2.28 | 437.87 |    1.00 | 24-beta |
-| java.lang.Float         |  41.70 | 3.0 % |      2.29 | 437.39 |    1.00 | 24-beta |
-| JavaDoubleParser String | 413.23 | 9.7 % |     22.66 |  44.14 |    9.92 | 24-beta |
-| JavaDoubleParser char[] | 558.89 | 7.8 % |     30.64 |  32.63 |   13.42 | 24-beta |
-| JavaDoubleParser byte[] | 787.78 | 7.1 % |     43.19 |  23.15 |   18.91 | 24-beta |
-| JavaFloatParser  String | 411.22 | 7.4 % |     22.55 |  44.35 |    9.86 | 24-beta |
-| JavaFloatParser  char[] | 468.57 | 6.7 % |     25.69 |  38.92 |   11.24 | 24-beta |
-| JavaFloatParser  byte[] | 788.61 | 2.9 % |     43.24 |  23.13 |   18.91 | 24-beta |
 
 
 ### Comparison with C version
@@ -280,34 +203,34 @@ on the same computer:
     model: generate random numbers uniformly in the interval [0.0.1.0]
     volume: 100000 floats
     volume = 2.09808 MB 
-    netlib                      :   317.31 MB/s (+/- 6.0 %)    15.12 Mfloat/s      66.12 ns/f 
-    doubleconversion            :   263.89 MB/s (+/- 4.2 %)    12.58 Mfloat/s      79.51 ns/f 
-    strtod                      :    86.13 MB/s (+/- 3.7 %)     4.10 Mfloat/s     243.61 ns/f 
-    abseil                      :   467.27 MB/s (+/- 9.0 %)    22.27 Mfloat/s      44.90 ns/f 
-    fastfloat                   :   880.79 MB/s (+/- 6.6 %)    41.98 Mfloat/s      23.82 ns/f 
+    netlib                       :   317.31 MB/s (+/- 6.0 %)    15.12 Mfloat/s      66.12 ns/f 
+    doubleconversion             :   263.89 MB/s (+/- 4.2 %)    12.58 Mfloat/s      79.51 ns/f 
+    strtod                       :    86.13 MB/s (+/- 3.7 %)     4.10 Mfloat/s     243.61 ns/f 
+    abseil                       :   467.27 MB/s (+/- 9.0 %)    22.27 Mfloat/s      44.90 ns/f 
+    fastfloat                    :   880.79 MB/s (+/- 6.6 %)    41.98 Mfloat/s      23.82 ns/f 
 
     Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22.0.1+8-16
-    java.lang.Double            :    94.32 MB/s (+/- 3.1 %)     5.41 Mfloat/s     184.73 ns/f     1.00 speedup
-    JavaDoubleParser String     :   585.84 MB/s (+/-12.4 %)    33.62 Mfloat/s      29.74 ns/f     6.21 speedup
-    JavaDoubleParser char[]     :   659.27 MB/s (+/- 9.6 %)    37.84 Mfloat/s      26.43 ns/f     6.99 speedup
-    JavaDoubleParser byte[]     :   729.46 MB/s (+/- 9.7 %)    41.86 Mfloat/s      23.89 ns/f     7.73 speedup
+    java.lang.Double             :    94.32 MB/s (+/- 3.1 %)     5.41 Mfloat/s     184.73 ns/f     1.00 speedup
+    JavaDoubleParser CharSequence:   585.84 MB/s (+/-12.4 %)    33.62 Mfloat/s      29.74 ns/f     6.21 speedup
+    JavaDoubleParser char[]      :   659.27 MB/s (+/- 9.6 %)    37.84 Mfloat/s      26.43 ns/f     6.99 speedup
+    JavaDoubleParser byte[]      :   729.46 MB/s (+/- 9.7 %)    41.86 Mfloat/s      23.89 ns/f     7.73 speedup
 
 '
 
     $ ./build/benchmarks/benchmark -f data/canada.txt
     # read 111126 lines 
     volume = 1.93374 MB 
-    netlib                      :   337.79 MB/s (+/- 5.8 %)    19.41 Mfloat/s      51.52 ns/f 
-    doubleconversion            :   254.22 MB/s (+/- 6.0 %)    14.61 Mfloat/s      68.45 ns/f 
-    strtod                      :    73.33 MB/s (+/- 7.1 %)     4.21 Mfloat/s     237.31 ns/f 
-    abseil                      :   411.11 MB/s (+/- 7.3 %)    23.63 Mfloat/s      42.33 ns/f 
-    fastfloat                   :   741.32 MB/s (+/- 5.3 %)    42.60 Mfloat/s      23.47 ns/f 
+    netlib                       :   337.79 MB/s (+/- 5.8 %)    19.41 Mfloat/s      51.52 ns/f 
+    doubleconversion             :   254.22 MB/s (+/- 6.0 %)    14.61 Mfloat/s      68.45 ns/f 
+    strtod                       :    73.33 MB/s (+/- 7.1 %)     4.21 Mfloat/s     237.31 ns/f 
+    abseil                       :   411.11 MB/s (+/- 7.3 %)    23.63 Mfloat/s      42.33 ns/f 
+    fastfloat                    :   741.32 MB/s (+/- 5.3 %)    42.60 Mfloat/s      23.47 ns/f 
 
      Java 22, OpenJDK 64-Bit Server VM, Oracle Corporation, 22.0.1+8-16
-    java.lang.Double            :    87.48 MB/s (+/- 3.2 %)     5.03 Mfloat/s     198.93 ns/f     1.00 speedup
-    JavaDoubleParser String     :   386.93 MB/s (+/- 8.8 %)    22.24 Mfloat/s      44.97 ns/f     4.42 speedup
-    JavaDoubleParser char[]     :   637.55 MB/s (+/- 9.0 %)    36.64 Mfloat/s      27.29 ns/f     7.29 speedup
-    JavaDoubleParser byte[]     :   694.16 MB/s (+/- 7.9 %)    39.89 Mfloat/s      25.07 ns/f     7.94 speedup
+    java.lang.Double             :    87.48 MB/s (+/- 3.2 %)     5.03 Mfloat/s     198.93 ns/f     1.00 speedup
+    JavaDoubleParser CharSequence:   386.93 MB/s (+/- 8.8 %)    22.24 Mfloat/s      44.97 ns/f     4.42 speedup
+    JavaDoubleParser char[]      :   637.55 MB/s (+/- 9.0 %)    36.64 Mfloat/s      27.29 ns/f     7.29 speedup
+    JavaDoubleParser byte[]      :   694.16 MB/s (+/- 7.9 %)    39.89 Mfloat/s      25.07 ns/f     7.94 speedup
 
 # Building and running the code
 

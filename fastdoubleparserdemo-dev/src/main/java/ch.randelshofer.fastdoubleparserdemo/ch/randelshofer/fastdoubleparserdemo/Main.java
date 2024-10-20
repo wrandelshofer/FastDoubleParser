@@ -215,9 +215,7 @@ public class Main {
                 new BenchmarkFunction("ConfigurableDoubleParser byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArray(byteArrayLines)),
                 new BenchmarkFunction("ConfigurableDoubleParserCI CharSequence", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharSequenceCI(lines)),
                 new BenchmarkFunction("ConfigurableDoubleParserCI char[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromCharArrayCI(charArrayLines)),
-                new BenchmarkFunction("ConfigurableDoubleParserCI byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArrayCI(byteArrayLines)),
-                new BenchmarkFunction("ConfigurableDoubleParserCI String(byte[])", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArrayCIViaString(byteArrayLines))
-
+                new BenchmarkFunction("ConfigurableDoubleParserCI byte[]", "java.text.NumberFormat", () -> sumConfigurableDoubleFromByteArrayCI(byteArrayLines))
         );
         for (BenchmarkFunction b : benchmarkFunctions) {
             functions.put(b.title, b);
@@ -448,17 +446,6 @@ public class Main {
         ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
         for (byte[] st : s) {
             double x = p.parseDouble(st);
-            answer += x;
-        }
-        return answer;
-    }
-
-    private double sumConfigurableDoubleFromByteArrayCIViaString(List<byte[]> s) {
-        double answer = 0;
-        NumberFormatSymbols symbols = getNumberFormatSymbols();
-        ConfigurableDoubleParser p = new ConfigurableDoubleParser(symbols, true);
-        for (byte[] st : s) {
-            double x = p.parseDouble(new String(st, StandardCharsets.UTF_8));
             answer += x;
         }
         return answer;

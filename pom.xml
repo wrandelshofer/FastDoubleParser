@@ -63,7 +63,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javaVersion>23</javaVersion>
+    <javaVersion>24</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- FIXME output timestamp does not work with Java 23, because maven-compiler-plugin 3.13.0 tries to disassemble to module-info -->

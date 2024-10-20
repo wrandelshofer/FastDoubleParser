@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main-Dev canada" type="Application" factoryName="Application">
-    <option name="ALTERNATIVE_JRE_PATH" value="/Library/Java/JavaVirtualMachines/zulu-20.jdk/Contents/Home" />
+    <option name="ALTERNATIVE_JRE_PATH" value="/Library/Java/JavaVirtualMachines/jdk-24.jdk/Contents/Home" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="fastdoubleparserdemo-dev" />
     <option name="PROGRAM_PARAMETERS" value="--markdown data/canada.txt" />
-    <option name="VM_PARAMETERS" value="--enable-preview -XX:CompileCommand=inline,java/lang/String.charAt" />
+    <option name="VM_PARAMETERS" value="-XX:CompileCommand=inline,java/lang/String.charAt" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
     <extension name="coverage">
       <pattern>
