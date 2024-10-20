@@ -261,7 +261,7 @@ on the same computer:
 This project requires **at least** the items below to build it from source:
 
 - Maven 3.9.9
-- OpenJDK SE 22
+- OpenJDK SE 23
 
 This project contains optimised code for various JDK versions.
 If you intend to assess the fitness and/or performance of this project for all supported
@@ -271,37 +271,37 @@ JDKs, you **also need to** install the following items:
 - OpenJDK SE 11
 - OpenJDK SE 17
 - OpenJDK SE 21
-- OpenJDK SE 22
+- OpenJDK SE 23
 
 When you clone the code repository from github. you can choose from the following branches:
 
 - `main` Aims to contain only working code.
 - `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
-  that are included in Java 22.
+  that are included in Java 23.
 
-## Command sequence with Java SE 22 on macOS:
+## Command sequence with Java SE 23 on macOS:
 
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
 cd FastDoubleParser 
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-22.jdk/Contents/Home 
-javac --enable-preview -source 22 -d out -encoding utf8 --module-source-path fastdoubleparser-dev/src/main/java --module ch.randelshofer.fastdoubleparser    
-javac --enable-preview -source 22 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-dev/src/main/java --module ch.randelshofer.fastdoubleparserdemo
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home 
+javac --enable-preview -source 23 -d out -encoding utf8 --module-source-path fastdoubleparser-dev/src/main/java --module ch.randelshofer.fastdoubleparser    
+javac --enable-preview -source 23 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-dev/src/main/java --module ch.randelshofer.fastdoubleparserdemo
 java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt   
 java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt   
 java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt   
 ```
 
-## Command sequence with Azul Zulu Java SE 8, 11, 17, 21, and 22, and Maven 3.9.8 on macOS:
+## Command sequence with Azul Zulu Java SE 8, 11, 17, 21, and 23, and Maven 3.9.8 on macOS:
 
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
 cd FastDoubleParser
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-22.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home 
 mvn clean
 mvn package
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-22.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home 
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
 java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
@@ -328,12 +328,12 @@ java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/tar
 java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 ```
 
-## IntelliJ IDEA with Java SE 8, 11, 17, 21, 22 on macOS
+## IntelliJ IDEA with Java SE 8, 11, 17, 21, 23 on macOS
 
 Prerequisites:
 
-1. Install the following Java SDKs: 8, 11, 17, 21, 22.
-   _If you do not need to edit the code, you only need to install the Java 22 SDK._
+1. Install the following Java SDKs: 8, 11, 17, 21, 23.
+   _If you do not need to edit the code, you only need to install the Java 23 SDK._
 2. Install IntelliJ IDEA
 
 Steps:
@@ -369,7 +369,7 @@ The majority of the code is located in the module named **fastdoubleparser-dev**
 and **fastdoubleparserdemo-dev**.
 The code in these modules uses early access features of the Java 20 SDK.
 
-Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java21**, **-Java22**
+Modules which have a name that ends in **-Java8**, **-Java11**, **-Java17**, **-Java21**, **-Java23**
 contain deltas of the **-dev** modules.
 
 The delta code is located in the **source** and **test** folders of the module.
