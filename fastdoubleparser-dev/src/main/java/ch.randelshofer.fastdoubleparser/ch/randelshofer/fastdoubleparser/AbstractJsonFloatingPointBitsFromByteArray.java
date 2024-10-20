@@ -38,7 +38,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
         if (isNegative) {
             ch = charAt(str, ++index, endIndex);
             if (ch == 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
+                return SYNTAX_ERROR_BITS;
             }
         }
 
@@ -48,7 +48,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
             if (ch == '0') {
-                throw new NumberFormatException(SYNTAX_ERROR);
+                return SYNTAX_ERROR_BITS;
             }
         }
 
@@ -123,7 +123,7 @@ abstract class AbstractJsonFloatingPointBitsFromByteArray extends AbstractFloatV
         // ------------------------
         if (illegal || index < endIndex
                 || !hasLeadingZero && digitCount == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow

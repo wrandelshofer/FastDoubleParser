@@ -4,6 +4,9 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR_BITS;
+
 /**
  * Parses a {@code double} value; the supported syntax is compatible with
  * {@code number} in the JSON format specification.
@@ -81,6 +84,7 @@ public class JsonDoubleParser {
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_SEQUENCE_PARSER.parseNumber(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -114,6 +118,7 @@ public class JsonDoubleParser {
      */
     public static double parseDouble(byte[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = BYTE_ARRAY_PARSER.parseNumber(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -145,6 +150,7 @@ public class JsonDoubleParser {
      */
     public static double parseDouble(char[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_ARRAY_PARSER.parseNumber(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
         return Double.longBitsToDouble(bitPattern);
     }
 }

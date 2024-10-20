@@ -67,7 +67,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
         // -------------------
         int index = skipFormatCharacters(str, offset, endIndex);
         if (index == endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
         byte ch = str[index];
 
@@ -81,7 +81,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
             index += plusSignChar.match(str, index, endIndex);
         }
         if (index == endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Parse significand
@@ -167,7 +167,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
         // Check if FloatingPointLiteral is complete
         // ------------------------
         if (illegal || index < endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -229,7 +229,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
                 return isNegative ? negativeInfinity() : positiveInfinity();
             }
         }
-        throw new NumberFormatException(SYNTAX_ERROR);
+        return SYNTAX_ERROR_BITS;
     }
 
     /**

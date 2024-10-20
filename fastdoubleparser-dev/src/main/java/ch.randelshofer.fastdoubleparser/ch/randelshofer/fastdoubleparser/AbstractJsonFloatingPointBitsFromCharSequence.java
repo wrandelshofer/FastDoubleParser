@@ -38,7 +38,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         if (isNegative) {
             ch = charAt(str, ++index, endIndex);
             if (ch == 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
+                return SYNTAX_ERROR_BITS;
             }
         }
 
@@ -48,7 +48,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
             if (ch == '0') {
-                throw new NumberFormatException(SYNTAX_ERROR);
+                return SYNTAX_ERROR_BITS;
             }
         }
 
@@ -125,7 +125,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharSequence extends AbstractFlo
         // ------------------------
         if (illegal || index < endIndex
                 || !hasLeadingZero && digitCount == 0) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow

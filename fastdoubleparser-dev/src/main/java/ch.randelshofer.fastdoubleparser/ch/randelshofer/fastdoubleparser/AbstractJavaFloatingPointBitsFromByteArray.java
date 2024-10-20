@@ -152,7 +152,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // ------------------------
         index = skipWhitespace(str, index, endIndex);
         if (illegal || index < endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -210,7 +210,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // -------------------
         int index = skipWhitespace(str, offset, endIndex);
         if (index == endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
         byte ch = str[index];
 
@@ -220,7 +220,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         if (isNegative || ch == '+') {
             ch = charAt(str, ++index, endIndex);
             if (ch == 0) {
-                throw new NumberFormatException(SYNTAX_ERROR);
+                return SYNTAX_ERROR_BITS;
             }
         }
 
@@ -345,7 +345,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         if (illegal || index < endIndex
                 || digitCount == 0
                 || !hasExponent) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -402,7 +402,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             }
         }
         }
-        throw new NumberFormatException(SYNTAX_ERROR);
+        return SYNTAX_ERROR_BITS;
     }
 
     /**

@@ -17,6 +17,12 @@ abstract class AbstractNumberParser {
      * when the syntax is illegal.
      */
     public static final String SYNTAX_ERROR = "illegal syntax";
+
+    /**
+     * Uses the unused mantissa of a NaN value to encode a syntax error.
+     */
+    public static final long SYNTAX_ERROR_BITS = 0x7ff8000000000000L + 1L;
+
     /**
      * Message text for the {@link NumberFormatException} that is thrown
      * when there are too many input digits.

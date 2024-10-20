@@ -8,6 +8,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.Collection;
 import java.util.Objects;
 
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR_BITS;
+
 /**
  * Parses a floating point value with configurable {@link NumberFormatSymbols}.
  * <p>
@@ -159,6 +162,7 @@ public class ConfigurableDoubleParser {
 
     /**
      * Gets the number format symbols of this parser.
+     *
      * @return the number format symbols
      */
     public NumberFormatSymbols getNumberFormatSymbols() {
@@ -232,6 +236,7 @@ public class ConfigurableDoubleParser {
         }
         return true;
     }
+
     /**
      * Creates a new instance with decimal format symbols and case sensitivity.
      * <p>
@@ -293,7 +298,7 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char sequence could not be parsed
      */
     public double parseDouble(CharSequence str) {
-        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str, 0, str.length()));
+        return parseDouble(str, 0, str.length());
     }
 
     /**
@@ -305,7 +310,9 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char sequence could not be parsed
      */
     public double parseDouble(CharSequence str, int offset, int length) {
-        return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(str, offset, length));
+        long bitPattern = getCharSequenceParser().parseFloatingPointLiteral(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        return Double.longBitsToDouble(bitPattern);
     }
 
     /**
@@ -316,7 +323,7 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(char[] str) {
-        return Double.longBitsToDouble(getCharArrayParser().parseFloatingPointLiteral(str, 0, str.length));
+        return parseDouble(str, 0, str.length);
     }
 
     /**
@@ -328,7 +335,9 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(char[] str, int offset, int length) {
-        return Double.longBitsToDouble(getCharArrayParser().parseFloatingPointLiteral(str, offset, length));
+        long bitPattern = getCharArrayParser().parseFloatingPointLiteral(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        return Double.longBitsToDouble(bitPattern);
     }
 
     /**
@@ -351,17 +360,16 @@ public class ConfigurableDoubleParser {
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(byte[] str, int offset, int length) {
+        long bitPattern;
         if (isAscii || !ignoreCase && isAllSingleCharSymbolsAscii) {
-            return Double.longBitsToDouble(getByteArrayAsciiParser().parseFloatingPointLiteral(str, offset, length));
+            bitPattern = getByteArrayAsciiParser().parseFloatingPointLiteral(str, offset, length);
         } else if (isDigitsAscii) {
-            return Double.longBitsToDouble(getByteArrayUtf8Parser().parseFloatingPointLiteral(str, offset, length));
+            bitPattern = getByteArrayUtf8Parser().parseFloatingPointLiteral(str, offset, length);
         } else {
-            /*
-            String string = new String(str, offset, length, StandardCharsets.UTF_8);
-            return Double.longBitsToDouble(getCharSequenceParser().parseFloatingPointLiteral(string,0,string.length()));
-            */
             Utf8Decoder.Result result = Utf8Decoder.decode(str, offset, length);
-            return Double.longBitsToDouble(getCharArrayParser().parseFloatingPointLiteral(result.chars(), 0, result.length()));
+            bitPattern = getCharArrayParser().parseFloatingPointLiteral(result.chars(), 0, result.length());
         }
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        return Double.longBitsToDouble(bitPattern);
     }
 }

@@ -76,7 +76,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         // -------------------
         int index = skipFormatCharacters(str, offset, endIndex);
         if (index == endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
         char ch = str[index];
 
@@ -86,7 +86,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         if (isNegative || isPlusSign(ch)) {
             ++index;
             if (index == endIndex) {
-                throw new NumberFormatException(SYNTAX_ERROR);
+                return SYNTAX_ERROR_BITS;
             }
         }
 
@@ -168,7 +168,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         // Check if FloatingPointLiteral is complete
         // ------------------------
         if (illegal || index < endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -238,7 +238,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
                 return isNegative ? negativeInfinity() : positiveInfinity();
             }
         }
-        throw new NumberFormatException(SYNTAX_ERROR);
+        return SYNTAX_ERROR_BITS;
     }
 
     /**

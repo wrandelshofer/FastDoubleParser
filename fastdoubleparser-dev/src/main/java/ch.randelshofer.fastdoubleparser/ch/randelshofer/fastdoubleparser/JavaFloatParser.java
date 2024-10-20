@@ -4,6 +4,9 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
+import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR_BITS;
+
 /**
  * Parses a {@code float} value; the supported syntax is compatible with
  * {@link Float#valueOf(String)}.
@@ -67,6 +70,7 @@ public class JavaFloatParser {
      */
     public static float parseFloat(CharSequence str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_SEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
         return Float.intBitsToFloat((int) bitPattern);
     }
 
@@ -99,6 +103,7 @@ public class JavaFloatParser {
      */
     public static float parseFloat(byte[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = BYTE_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
         return Float.intBitsToFloat((int) bitPattern);
     }
 
@@ -130,6 +135,7 @@ public class JavaFloatParser {
      */
     public static float parseFloat(char[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
+        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
         return Float.intBitsToFloat((int) bitPattern);
     }
 }

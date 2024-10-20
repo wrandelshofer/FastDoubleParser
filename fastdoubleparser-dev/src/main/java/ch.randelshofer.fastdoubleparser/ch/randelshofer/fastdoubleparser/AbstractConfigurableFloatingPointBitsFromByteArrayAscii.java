@@ -76,7 +76,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         // -------------------
         int index = skipFormatCharacters(str, offset, endIndex);
         if (index == endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
         byte ch = str[index];
 
@@ -86,7 +86,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         if (isNegative || isPlusSign(ch)) {
             ++index;
             if (index == endIndex) {
-                throw new NumberFormatException(SYNTAX_ERROR);
+                return SYNTAX_ERROR_BITS;
             }
         }
 
@@ -167,7 +167,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         // Check if FloatingPointLiteral is complete
         // ------------------------
         if (illegal || index < endIndex) {
-            throw new NumberFormatException(SYNTAX_ERROR);
+            return SYNTAX_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -237,7 +237,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
                 return isNegative ? negativeInfinity() : positiveInfinity();
             }
         }
-        throw new NumberFormatException(SYNTAX_ERROR);
+        return SYNTAX_ERROR_BITS;
     }
 
     /**
