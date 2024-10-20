@@ -266,8 +266,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
      * @param exponentOfTruncatedSignificand the exponent value of the truncated
      *                                       significand
      * @param exponentValue                  the exponent of the float value without considering the significand
-     * @param startIndex
-     * @param endIndex
+     * @param startIndex                     the start index of the literal in str
+     * @param endIndex                       the end index of the literal in str
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
