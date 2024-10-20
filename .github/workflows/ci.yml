@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        java: [ 23 ]
+        java: [ 24-ea ]
         arch: [ x64 ]
         dist: [ zulu ]
       fail-fast: false

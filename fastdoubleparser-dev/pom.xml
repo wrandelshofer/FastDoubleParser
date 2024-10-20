@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
   <name>fastdoubleparser-dev</name>
   <properties>
-    <javaVersion>23</javaVersion>
+    <javaVersion>24</javaVersion>
     <maven.install.skip>true</maven.install.skip>
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <maven.deploy.skip>true</maven.deploy.skip>

@@ -222,7 +222,7 @@ public record NumberFormatSymbols(Set<Character> decimalSeparator, Set<Character
         if (digits.length() == 10) return digits;
         if (digits.length() != 1)
             throw new IllegalArgumentException("digits must have length 1 or 10, digits=\"" + digits + "\"");
-        var buf = new StringBuilder(10);
+        StringBuilder buf = new StringBuilder(10);
         char zeroChar = digits.charAt(0);
         for (int i = 0; i < 10; i++) {
             buf.append((char) (zeroChar + i));
