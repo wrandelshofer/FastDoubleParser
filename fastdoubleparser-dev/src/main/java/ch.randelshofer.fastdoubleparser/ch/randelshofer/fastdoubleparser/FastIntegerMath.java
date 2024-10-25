@@ -138,8 +138,33 @@ class FastIntegerMath {
         }
     }
 
-    static long unsignedMultiplyHigh(long x, long y) {//since Java 18
-        return Math.unsignedMultiplyHigh(x, y);
+    /**
+     * Workaround for a bug in the Zing JVM.
+     * <pre>
+     * OpenJDK Runtime Environment Zing24.09.0.0+5 (build 21.0.4+4-LTS)
+     * Zing 64-Bit Tiered VM Zing24.09.0.0+5 (build 21.0.4-zing_24.09.0.0-b5-release-linux-X86_64, mixed mode)
+     * </pre>
+     * Instead of calling {@link Math#unsignedMultiplyHigh(long, long)}
+     * we use our own implementation.
+     *
+     * @param x the first value
+     * @param y the second value
+     * @return the result
+     */
+    //static long unsignedMultiplyHigh(long x, long y) {//since Java 18
+    //    return Math.unsignedMultiplyHigh(x, y);
+    //}
+    static long unsignedMultiplyHigh(long x, long y) {//before Java 18
+        long x0 = x & 0xffffffffL, x1 = x >>> 32;
+        long y0 = y & 0xffffffffL, y1 = y >>> 32;
+        long p11 = x1 * y1, p01 = x0 * y1;
+        long p10 = x1 * y0, p00 = x0 * y0;
+
+        // 64-bit product + two 32-bit values
+        long middle = p10 + (p00 >>> 32) + (p01 & 0xffffffffL);
+
+        // 64-bit product + two 32-bit values
+        return p11 + (middle >>> 32) + (p01 >>> 32);
     }
 
     /**

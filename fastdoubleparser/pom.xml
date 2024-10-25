@@ -84,7 +84,7 @@
             </configuration>
           </execution>
           <execution>
-              <id>copy-sources-from-fastdoubleparser-java21</id>
+              <id>copy-sources-from-fastdoubleparser-java22</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>copy-resources</goal>
