@@ -68,7 +68,7 @@
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
     <!-- FIXME output timestamp does not work with Java 23, because maven-compiler-plugin 3.13.0 tries to disassemble to module-info -->
     <!-- project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp -->
-    <revision>2024-10-20_114324cc</revision>
+    <revision>3.0</revision>
     <license.url>
       https://github.com/wrandelshofer/FastDoubleParser/blob/9a3ccae38254c9bf84b5e6a218a47675bf80ed9f/LICENSE
     </license.url>
