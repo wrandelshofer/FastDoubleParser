@@ -178,6 +178,37 @@ The computation times are given for a Mac mini 2018 with Intel(R) Core(TM) i7-87
 This file contains numbers in the range from -128 to +128.
 Most input lines look like this: `52.038048000000117`.
 
+CPU: Apple M2 Max<br>
+OS: Mac OS X, 14.7, 12 processors available<br>
+VM: Java 23, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 23.0.1+11<br>
+-XX:CompileCommand=inline,java/lang/String.charAt
+
+| Method                                  |    MB/s |  stdev | Mfloats/s |   ns/f | speedup | JDK    |
+|-----------------------------------------|--------:|-------:|----------:|-------:|--------:|--------|
+| java.lang.Double                        |  107.96 |  2.0 % |      6.20 | 161.19 |  1.00=a | 23.0.1 |
+| java.lang.Float                         |  118.12 |  3.1 % |      6.79 | 147.32 |  1.00=b | 23.0.1 |
+| java.math.BigDecimal                    |  400.25 |  4.8 % |     23.00 |  43.48 |  1.00=c | 23.0.1 |
+| java.text.NumberFormat                  |   72.06 |  1.6 % |      4.14 | 241.49 |  1.00=d | 23.0.1 |
+| com.ibm.icu.text.NumberFormat           |   24.32 |  2.7 % |      1.40 | 715.62 |  1.00=e | 23.0.1 |
+| JavaDoubleParser CharSequence           |  532.05 |  4.3 % |     30.58 |  32.71 |  4.93*a | 23.0.1 |
+| JavaDoubleParser char[]                 |  973.38 |  7.1 % |     55.94 |  17.88 |  9.02*a | 23.0.1 |
+| JavaDoubleParser byte[]                 |  962.18 |  8.0 % |     55.29 |  18.09 |  8.91*a | 23.0.1 |
+| JsonDoubleParser CharSequence           |  575.45 |  5.8 % |     33.07 |  30.24 |  5.33*a | 23.0.1 |
+| JsonDoubleParser char[]                 |  991.20 |  6.2 % |     56.96 |  17.56 |  9.18*a | 23.0.1 |
+| JsonDoubleParser byte[]                 |  990.74 |  5.5 % |     56.93 |  17.56 |  9.18*a | 23.0.1 |
+| JavaFloatParser  CharSequence           |  572.02 |  6.0 % |     32.87 |  30.42 |  4.84*b | 23.0.1 |
+| JavaFloatParser  char[]                 | 1007.96 | 21.5 % |     57.92 |  17.26 |  8.53*b | 23.0.1 |
+| JavaFloatParser  byte[]                 | 1011.75 |  6.3 % |     58.14 |  17.20 |  8.57*b | 23.0.1 |
+| JavaBigDecimalParser CharSequence       |  773.44 |  5.9 % |     44.45 |  22.50 |  1.93*c | 23.0.1 |
+| JavaBigDecimalParser char[]             | 1140.28 |  6.3 % |     65.53 |  15.26 |  2.85*c | 23.0.1 |
+| JavaBigDecimalParser byte[]             | 1097.82 | 15.1 % |     63.09 |  15.85 |  2.74*c | 23.0.1 |
+| ConfigurableDoubleParser CharSequence   |  483.99 |  5.6 % |     27.81 |  35.95 |  6.72*d | 23.0.1 |
+| ConfigurableDoubleParser char[]         |  689.58 |  7.1 % |     39.63 |  25.23 |  9.57*d | 23.0.1 |
+| ConfigurableDoubleParser byte[]         |  625.56 |  4.4 % |     35.95 |  27.82 |  8.68*d | 23.0.1 |
+| ConfigurableDoubleParserCI CharSequence |  493.74 |  5.4 % |     28.37 |  35.24 |  6.85*d | 23.0.1 |
+| ConfigurableDoubleParserCI char[]       |  701.50 |  4.6 % |     40.31 |  24.81 |  9.73*d | 23.0.1 |
+| ConfigurableDoubleParserCI byte[]       |  531.04 |  6.5 % |     30.52 |  32.77 |  7.37*d | 23.0.1 |
+
 Mac Mini (2018)<br>
 CPU: Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz<br>
 OS: Mac OS X, 15.0.1, 12 processors available<br>
