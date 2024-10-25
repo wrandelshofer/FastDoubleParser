@@ -247,14 +247,13 @@ final class FastFloatMath {
         mantissa >>>= 1;
 
         // Here we have mantissa < (1<<24), unless there was an overflow
-        if (mantissa >= (1L << FLOAT_SIGNIFICAND_WIDTH)) {
-            // This will happen when parsing values such as 7.2057594037927933e+16 ??
-            mantissa = (1L << (FLOAT_SIGNIFICAND_WIDTH - 1));
+        if (mantissa == (1L << FLOAT_SIGNIFICAND_WIDTH)) {
+            // This will happen when parsing values such as 1.4757395E20
+            mantissa = 0;
             lz--; // undo previous addition
+        } else {
+            mantissa &= ~(1L << (FLOAT_SIGNIFICAND_WIDTH - 1));
         }
-
-        mantissa &= ~(1L << (FLOAT_SIGNIFICAND_WIDTH - 1));
-
 
         long real_exponent = exponent - lz;
         // we have to check that real_exponent is in range, otherwise we bail out
