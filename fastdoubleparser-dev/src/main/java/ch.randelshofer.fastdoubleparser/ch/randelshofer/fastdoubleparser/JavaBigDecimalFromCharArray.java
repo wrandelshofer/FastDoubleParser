@@ -14,7 +14,7 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloo
 
 
 /**
- * Parses a {@code double} from a {@code byte} array.
+ * Parses a {@link BigDecimal} from a {@code byte} array.
  */
 final class JavaBigDecimalFromCharArray extends AbstractBigDecimalParser {
     /**

@@ -15,11 +15,7 @@ public final class CharToIntMapTest {
     @Test
     public void shouldFindDigit() {
         List<Character> digits = Arrays.asList('〇', '一', '二', '三', '四', '五', '六', '七', '八', '九');
-        CharToIntMap charMap = new CharToIntMap(digits.size());
-        for (int i = 0, digitsSize = digits.size(); i < digitsSize; i++) {
-            charMap.put(digits.get(i), i);
-        }
-
+        CharToIntMap charMap = new CharToIntMap(digits);
         for (int i = 0, digitsSize = digits.size(); i < digitsSize; i++) {
             char d = digits.get(i);
             int actual = charMap.getOrDefault(d, 10);

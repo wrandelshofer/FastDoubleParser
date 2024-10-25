@@ -48,7 +48,17 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
         , "--enable-preview"
         , "-Xmx24g"
 
-        //       ,"-XX:+UnlockDiagnosticVMOptions", "-XX:PrintAssemblyOptions=intel", "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
+        // to print assembly code install hsdis for your platform:
+        //  https://chriswhocodes.com/hsdis/
+        //
+        // https://wiki.openjdk.org/display/HotSpot/PrintAssembly
+        // "-XX:+UnlockDiagnosticVMOptions",
+        // "-XX:+PrintInlining",
+        // "-XX:+PrintIntrinsics"
+        // "-XX:+PrintAssembly",
+        // "-XX:+LogCompilation"
+        // "-XX:PrintAssemblyOptions=intel",
+        // "-XX:CompileCommand=print,ch/randelshofer/fastdoubleparser/JavaBigDecimalParser.*"
 
 })
 @Measurement(iterations = 1)
@@ -56,7 +66,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeatStringBuilder;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public final class JmhJavaBigDecimalFromCharArrayScalability {
+public class JmhJavaBigDecimalFromCharArrayScalability {
     @Param({
             "1"
             , "10"

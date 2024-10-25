@@ -19,18 +19,34 @@ public final class Utf8DecoderTest {
     @SuppressWarnings("UnnecessaryUnicodeEscape")
     @ParameterizedTest
     @ValueSource(strings = {
-            "lowerbounds\u0000\u0080\u0800\ud800\udc00",
-            "upperbounds\u007f\u07ff\uffff\udbff\udfff"})
+            "lowerbounds:\u0000\u0080\u0800\ud800\udc00",
+            "upperbounds:\u007f\u07ff\uffff\udbff\udfff",
+            "twobytes1char:Распу́тин",
+            "threebytes1char:孔夫子",
+            "fourbytes2char:𐀀𐀁𐀂𐀃",
+            "grouped:abcd" + "ÀÁÂÃ" + "ՀՁՂՃ" + "ठडढण" + "𐀀" + "𐀁𐀂𐀃",
+            "mixed:aÀՀठ" + "𐀀" + "𐀃" + "णՃÃd",
+    })
     public void shouldDecode(String str) {
         byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
-        Utf8Decoder.Result actual = Utf8Decoder.decode(bytes, 0, bytes.length);
+        char[] chars = new char[bytes.length];
+        int actualLength = Utf8Decoder.decode(bytes, 0, bytes.length, chars, 0);
         char[] expected = str.toCharArray();
 
-        String actualStr = new String(actual.chars(), 0, actual.length());
+        /*
+        for (int i = 0; i < actualLength; i++) {
+            System.out.print(" '" + chars[i] + "'" + Integer.toHexString(chars[i]));
+        }
+        System.out.println();
+
+         */
+        String actualStr = new String(chars, 0, actualLength);
+
         assertEquals(str, actualStr);
 
-        assertEquals(expected.length, actual.length());
-        assertArrayEquals(expected, Arrays.copyOf(actual.chars(), actual.length()));
+
+        assertEquals(expected.length, actualLength);
+        assertArrayEquals(expected, Arrays.copyOf(chars, actualLength));
     }
 
     @SuppressWarnings("UnnecessaryUnicodeEscape")
@@ -54,6 +70,6 @@ public final class Utf8DecoderTest {
             bytes[i] = (byte) Integer.parseInt(hexes[i], 16);
 
         }
-        assertThrows(NumberFormatException.class, () -> Utf8Decoder.decode(bytes, 0, bytes.length));
+        assertThrows(NumberFormatException.class, () -> Utf8Decoder.decode(bytes, 0, bytes.length, new char[bytes.length], 0));
     }
 }

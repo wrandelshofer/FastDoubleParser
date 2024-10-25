@@ -1,8 +1,12 @@
 /*
- * @(#)JavaBigDecimalFromByteArray.java
+ * @(#)JavaBigDecimalFromCharArray.java
  * Copyright © 2024 Werner Randelshofer, Switzerland. MIT License.
  */
 package ch.randelshofer.fastdoubleparser;
+
+import ch.randelshofer.fastdoubleparser.chr.CharDigitSet;
+import ch.randelshofer.fastdoubleparser.chr.CharSet;
+import ch.randelshofer.fastdoubleparser.chr.CharTrie;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,19 +17,28 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTen
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 
 
-
 /**
  * Parses a {@link BigDecimal} from a {@code byte} array.
  */
-final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
+final class ConfigurableBigDecimalFromCharArray extends AbstractBigDecimalParser {
+    private final CharDigitSet digitSet;
+    private final CharSet minusSignChar;
+    private final CharSet plusSignChar;
+    private final CharSet decimalSeparator;
+    private final CharSet groupingSeparator;
+    private final CharTrie exponentSeparatorTrie;
 
     /**
      * Creates a new instance.
      */
-    public JavaBigDecimalFromByteArray() {
-
+    public ConfigurableBigDecimalFromCharArray(NumberFormatSymbols symbols, boolean ignoreCase) {
+        this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator(), ignoreCase);
+        this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator(), ignoreCase);
+        this.digitSet = CharDigitSet.copyOf(symbols.digits());
+        this.minusSignChar = CharSet.copyOf(symbols.minusSign(), ignoreCase);
+        this.exponentSeparatorTrie = CharTrie.copyOf(symbols.exponentSeparator(), ignoreCase);
+        this.plusSignChar = CharSet.copyOf(symbols.plusSign(), ignoreCase);
     }
-
 
     /**
      * Parses a {@code BigDecimalString} as specified in {@link JavaBigDecimalParser}.
@@ -38,7 +51,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
      * @throws IllegalArgumentException if offset or length are illegal
      * @throws NumberFormatException    if the input string can not be parsed successfully
      */
-    public BigDecimal parseBigDecimalString(byte[] str, int offset, int length) {
+    public BigDecimal parseBigDecimalString(char[] str, int offset, int length) {
         try {
             final int endIndex = checkBounds(str.length, offset, length);
             if (hasManyDigits(length)) {
@@ -50,7 +63,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
             final int exponentIndicatorIndex;
 
             int index = offset;
-            byte ch = charAt(str, index, endIndex);
+            char ch = charAt(str, index, endIndex);
             boolean illegal = false;
 
 
@@ -143,7 +156,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
     /**
      * Parses a big decimal string that has many digits.
      */
-    BigDecimal parseBigDecimalStringWithManyDigits(byte[] str, int offset, int length) {
+    BigDecimal parseBigDecimalStringWithManyDigits(char[] str, int offset, int length) {
         final int integerPartIndex;
         final int nonZeroIntegerPartIndex;
         int nonZeroFractionalPartIndex = -1;
@@ -152,7 +165,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
 
         final int endIndex = offset + length;
         int index = offset;
-        byte ch = charAt(str, index, endIndex);
+        char ch = charAt(str, index, endIndex);
         boolean illegal = false;
 
         // Parse optional sign
@@ -249,7 +262,8 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
         illegal |= integerPartIndex == decimalPointIndex && decimalPointIndex == exponentIndicatorIndex;
         checkParsedBigDecimalBounds(illegal, index, endIndex, digitCountWithoutLeadingZeros, exponent);
 
-        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent);
+        return valueOfBigDecimalString(str, nonZeroIntegerPartIndex, decimalPointIndex, nonZeroFractionalPartIndex, exponentIndicatorIndex, isNegative, (int) exponent
+        );
     }
 
     /**
@@ -276,7 +290,7 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
      * @param exponent                   the exponent value
      * @return the parsed big decimal
      */
-    BigDecimal valueOfBigDecimalString(byte[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
+    BigDecimal valueOfBigDecimalString(char[] str, int integerPartIndex, int decimalPointIndex, int nonZeroFractionalPartIndex, int exponentIndicatorIndex, boolean isNegative, int exponent) {
         int fractionDigitsCount = exponentIndicatorIndex - decimalPointIndex - 1;
         int nonZeroFractionDigitsCount = exponentIndicatorIndex - nonZeroFractionalPartIndex;
         int integerDigitsCount = decimalPointIndex - integerPartIndex;
@@ -293,9 +307,9 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
             if (integerDigitsCount > RECURSION_THRESHOLD) {
                 powersOfTen = createPowersOfTenFloor16Map();
                 fillPowersOfNFloor16Recursive(powersOfTen, integerPartIndex, decimalPointIndex);
-                integerPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen, RECURSION_THRESHOLD);
+                integerPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, integerPartIndex, decimalPointIndex, powersOfTen, RECURSION_THRESHOLD);
             } else {
-                integerPart = ParseDigitsTaskByteArray.parseDigitsIterative(str, integerPartIndex, decimalPointIndex);
+                integerPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, integerPartIndex, decimalPointIndex);
             }
         } else {
             integerPart = BigInteger.ZERO;
@@ -310,9 +324,9 @@ final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
                     powersOfTen = createPowersOfTenFloor16Map();
                 }
                 fillPowersOfNFloor16Recursive(powersOfTen, nonZeroFractionalPartIndex, exponentIndicatorIndex);
-                fractionalPart = ParseDigitsTaskByteArray.parseDigitsRecursive(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen, RECURSION_THRESHOLD);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsRecursive(str, nonZeroFractionalPartIndex, exponentIndicatorIndex, powersOfTen, RECURSION_THRESHOLD);
             } else {
-                fractionalPart = ParseDigitsTaskByteArray.parseDigitsIterative(str, nonZeroFractionalPartIndex, exponentIndicatorIndex);
+                fractionalPart = ParseDigitsTaskCharArray.parseDigitsIterative(str, nonZeroFractionalPartIndex, exponentIndicatorIndex);
             }
             // If the integer part is 0, we can just use the fractional part.
             if (integerPart.signum() == 0) {

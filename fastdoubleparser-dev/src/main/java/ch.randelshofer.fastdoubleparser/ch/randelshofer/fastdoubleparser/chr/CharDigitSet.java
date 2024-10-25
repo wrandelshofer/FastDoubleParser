@@ -12,6 +12,8 @@ import java.util.List;
  * Interface for sets of digit characters.
  */
 public interface CharDigitSet {
+    char getZeroChar();
+
     /**
      * Returns a value in the range 0 to 9 if the specified character is a digit.
      * Otherwise, Returns a value greater than 9.

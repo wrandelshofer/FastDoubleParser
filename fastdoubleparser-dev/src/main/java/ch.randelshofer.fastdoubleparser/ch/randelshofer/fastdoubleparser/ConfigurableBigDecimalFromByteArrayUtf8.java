@@ -4,6 +4,9 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
+import ch.randelshofer.fastdoubleparser.bte.ByteDigitSet;
+import ch.randelshofer.fastdoubleparser.bte.ByteTrie;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
@@ -13,17 +16,27 @@ import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTen
 import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
 
 
-
 /**
  * Parses a {@link BigDecimal} from a {@code byte} array.
  */
-final class JavaBigDecimalFromByteArray extends AbstractBigDecimalParser {
+final class ConfigurableBigDecimalFromByteArrayUtf8 extends AbstractBigDecimalParser {
+    private final ByteDigitSet digitSet;
+    private final ByteTrie minusSignChar;
+    private final ByteTrie plusSignChar;
+    private final ByteTrie decimalSeparator;
+    private final ByteTrie groupingSeparator;
+    private final ByteTrie exponentSeparatorTrie;
 
     /**
      * Creates a new instance.
      */
-    public JavaBigDecimalFromByteArray() {
-
+    public ConfigurableBigDecimalFromByteArrayUtf8(NumberFormatSymbols symbols, boolean ignoreCase) {
+        this.decimalSeparator = ByteTrie.copyOfChars(symbols.decimalSeparator(), ignoreCase);
+        this.groupingSeparator = ByteTrie.copyOfChars(symbols.groupingSeparator(), ignoreCase);
+        this.digitSet = ByteDigitSet.copyOf(symbols.digits());
+        this.minusSignChar = ByteTrie.copyOfChars(symbols.minusSign(), ignoreCase);
+        this.exponentSeparatorTrie = ByteTrie.copyOf(symbols.exponentSeparator(), ignoreCase);
+        this.plusSignChar = ByteTrie.copyOfChars(symbols.plusSign(), ignoreCase);
     }
 
 

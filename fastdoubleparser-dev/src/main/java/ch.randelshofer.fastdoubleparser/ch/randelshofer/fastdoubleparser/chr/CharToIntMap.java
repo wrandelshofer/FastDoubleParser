@@ -11,42 +11,37 @@ import java.util.Collection;
  */
 final class CharToIntMap implements CharDigitSet, CharSet {
 
+    private final char zeroChar;
+    private final Node[] table;
 
     public CharToIntMap(Collection<Character> chars) {
-        this(chars.size());
+        int n = (-1 >>> Integer.numberOfLeadingZeros(chars.size() * 2)) + 1;
+        this.table = new Node[n];
         int i = 0;
         for (char ch : chars) {
             put(ch, i++);
         }
+        zeroChar = chars.iterator().next();
     }
+
 
     @Override
     public boolean containsKey(char key) {
         return getOrDefault(key, -1) >= 0;
     }
 
-    @Override
-    public int toDigit(char ch) {
-        return getOrDefault(ch, 10);
+    private int getIndex(char key) {
+        return key & (table.length - 1);
     }
 
-    private static class Node {
-        char key;
-        int value;
-        Node next;
-
-        public Node(char key, int value) {
-            this.key = key;
-            this.value = value;
+    public int getOrDefault(char key, int defaultValue) {
+        int index = getIndex(key);
+        Node found = table[index];
+        while (found != null) {
+            if (found.key == key) return found.value;
+            found = found.next;
         }
-    }
-
-    private Node[] table;
-
-    public CharToIntMap(int maxSize) {
-        // int n = BigInteger.valueOf(maxSize*2).nextProbablePrime().intValue();
-        int n = (-1 >>> Integer.numberOfLeadingZeros(maxSize * 2)) + 1;
-        this.table = new Node[n];
+        return defaultValue;
     }
 
     public void put(char key, int value) {
@@ -66,17 +61,24 @@ final class CharToIntMap implements CharDigitSet, CharSet {
         }
     }
 
-    private int getIndex(char key) {
-        return key & (table.length - 1);
+    @Override
+    public char getZeroChar() {
+        return zeroChar;
     }
 
-    public int getOrDefault(char key, int defaultValue) {
-        int index = getIndex(key);
-        Node found = table[index];
-        while (found != null) {
-            if (found.key == key) return found.value;
-            found = found.next;
+    @Override
+    public int toDigit(char ch) {
+        return getOrDefault(ch, 10);
+    }
+
+    private static class Node {
+        char key;
+        int value;
+        Node next;
+
+        public Node(char key, int value) {
+            this.key = key;
+            this.value = value;
         }
-        return defaultValue;
     }
 }

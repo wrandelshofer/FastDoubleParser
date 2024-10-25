@@ -43,14 +43,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
      */
     abstract long negativeInfinity();
 
-    private boolean isDecimalSeparator(char ch) {
-        return decimalSeparator.containsKey(ch);
-    }
-
-    private boolean isGroupingSeparator(char ch) {
-        return groupingSeparator.containsKey(ch);
-    }
-
 
     /**
      * Parses a {@code FloatingPointLiteral} production with optional leading and trailing
@@ -83,8 +75,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
 
         // Parse optional sign
         // -------------------
-        final boolean isNegative = isMinusSign(ch);
-        if (isNegative || isPlusSign(ch)) {
+        final boolean isNegative = minusSignChar.containsKey(ch);
+        if (isNegative || plusSignChar.containsKey(ch)) {
             ++index;
             if (index == endIndex) {
                 return SYNTAX_ERROR_BITS;
@@ -94,8 +86,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
 
         // Parse significand
         // -----------------
-        // Note: a multiplication by a constant is cheaper than an
-        //       arbitrary integer multiplication.
         long significand = 0;// significand is treated as an unsigned long
         final int significandStartIndex = index;
         int decimalSeparatorIndex = -1;
@@ -109,11 +99,11 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
             if (digit < 10) {
                 // This might overflow, we deal with it later.
                 significand = 10 * significand + digit;
-            } else if (isDecimalSeparator(ch)) {
+            } else if (decimalSeparator.containsKey(ch)) {
                 illegal |= integerDigitCount >= 0;
                 decimalSeparatorIndex = index;
                 integerDigitCount = index - significandStartIndex - groupingCount;
-            } else if (isGroupingSeparator(ch)) {
+            } else if (groupingSeparator.containsKey(ch)) {
                 illegal |= decimalSeparatorIndex != -1;
                 groupingCount++;
             } else {
@@ -141,8 +131,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
             index += count;
             index = skipFormatCharacters(str, index, endIndex);
             ch = charAt(str, index, endIndex);
-            boolean isExponentNegative = isMinusSign(ch);
-            if (isExponentNegative || isPlusSign(ch)) {
+            boolean isExponentNegative = minusSignChar.containsKey(ch);
+            if (isExponentNegative || plusSignChar.containsKey(ch)) {
                 ch = charAt(str, ++index, endIndex);
             }
             int digit = digitSet.toDigit(ch);
@@ -202,14 +192,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharSequence extends Abs
                 decimalSeparatorIndex + 1, significandEndIndex,
                 isNegative, significand, exponent, isSignificandTruncated,
                 exponentOfTruncatedSignificand, expNumber, offset, endIndex);
-    }
-
-    private boolean isMinusSign(char c) {
-        return minusSignChar.containsKey(c);
-    }
-
-    private boolean isPlusSign(char c) {
-        return plusSignChar.containsKey(c);
     }
 
     /**

@@ -163,6 +163,10 @@ final class FastDoubleSwar {
         return (int) readIntBE.get(a, offset);
     }
 
+    public static int readIntLE(byte[] a, int offset) {
+        return (int) readIntLE.get(a, offset);
+    }
+
     public static long readLongBE(byte[] a, int offset) {
         return (long) readLongBE.get(a, offset);
     }
