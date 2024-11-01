@@ -46,7 +46,7 @@ import static ch.randelshofer.fastdoubleparser.Strings.repeat;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @State(Scope.Benchmark)
-public final class JmhBigIntegerScalability {
+public class JmhBigIntegerScalability {
 
 
     @Param({
