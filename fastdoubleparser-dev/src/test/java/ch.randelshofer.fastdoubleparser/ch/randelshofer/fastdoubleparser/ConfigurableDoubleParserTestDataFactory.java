@@ -21,7 +21,9 @@ public final class ConfigurableDoubleParserTestDataFactory {
 
     public static List<NumberTestData> createLocalizedTestData(Locale locale) {
         String languageTag = locale.toLanguageTag();
-        NumberFormat f = NumberFormat.getNumberInstance(locale);
+        DecimalFormat f = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+        f.applyPattern("####,##0.0######E0##");
+        NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(f.getDecimalFormatSymbols());
         List<NumberTestData> list = new ArrayList<>();
         for (double v : new double[]{
                 1_234_567.89,
@@ -31,7 +33,11 @@ public final class ConfigurableDoubleParserTestDataFactory {
                 Double.POSITIVE_INFINITY,
                 Double.NEGATIVE_INFINITY,
                 Double.NaN}) {
-            list.add(new NumberTestData(languageTag + " " + f.format(v), locale, f.format(v), v));
+            String formatted = f.format(v);
+            list.add(new NumberTestData(languageTag + " " + formatted, locale, formatted, v));
+            list.add(new NumberTestData(languageTag + " IC " + formatted, locale, symbols, true, formatted, v));
+            list.add(new NumberTestData(languageTag + " IC-uppercase " + formatted.toUpperCase(), locale, symbols, true, formatted.toUpperCase(), v));
+            list.add(new NumberTestData(languageTag + " IC-lowercase " + formatted.toUpperCase().toLowerCase(), locale, symbols, true, formatted.toUpperCase().toLowerCase(), v));
         }
 
         return list;

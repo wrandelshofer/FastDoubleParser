@@ -133,29 +133,31 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         // Parse exponent number
         // ---------------------
         int expNumber = 0;
-        int count = exponentSeparatorTrie.match(str, index, endIndex);
-        if (count > 0) {
-            index += count;
-            index = skipFormatCharacters(str, index, endIndex);
-            ch = charAt(str, index, endIndex);
-            boolean isExponentNegative = isMinusSign(ch);
-            if (isExponentNegative || isPlusSign(ch)) {
-                ch = charAt(str, ++index, endIndex);
-            }
-            int digit = digitSet.toDigit(ch);
-            illegal |= digit >= 10;
-            do {
-                // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + digit;
+        if (digitCount > 0) {
+            int count = exponentSeparatorTrie.match(str, index, endIndex);
+            if (count > 0) {
+                index += count;
+                index = skipFormatCharacters(str, index, endIndex);
+                ch = charAt(str, index, endIndex);
+                boolean isExponentNegative = isMinusSign(ch);
+                if (isExponentNegative || isPlusSign(ch)) {
+                    ch = charAt(str, ++index, endIndex);
                 }
-                ch = charAt(str, ++index, endIndex);
-                digit = digitSet.toDigit(ch);
-            } while (digit < 10);
-            if (isExponentNegative) {
-                expNumber = -expNumber;
+                int digit = digitSet.toDigit(ch);
+                illegal |= digit >= 10;
+                do {
+                    // Guard against overflow
+                    if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                        expNumber = 10 * expNumber + digit;
+                    }
+                    ch = charAt(str, ++index, endIndex);
+                    digit = digitSet.toDigit(ch);
+                } while (digit < 10);
+                if (isExponentNegative) {
+                    expNumber = -expNumber;
+                }
+                exponent += expNumber;
             }
-            exponent += expNumber;
         }
 
         // Parse NaN or Infinity (this occurs rarely)

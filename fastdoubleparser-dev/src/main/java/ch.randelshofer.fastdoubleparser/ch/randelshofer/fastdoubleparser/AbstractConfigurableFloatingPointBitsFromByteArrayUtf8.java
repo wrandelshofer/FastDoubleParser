@@ -130,6 +130,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
         // Parse exponent number
         // ---------------------
         int expNumber = 0;
+        if (digitCount > 0) {
         int count = exponentSeparatorTrie.match(str, index, endIndex);
         if (count > 0) {
             index += count;
@@ -156,6 +157,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
                 expNumber = -expNumber;
             }
             exponent += expNumber;
+        }
         }
 
         // Parse NaN or Infinity (this occurs rarely)

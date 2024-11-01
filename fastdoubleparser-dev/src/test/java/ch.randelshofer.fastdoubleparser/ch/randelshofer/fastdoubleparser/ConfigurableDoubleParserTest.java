@@ -83,7 +83,12 @@ public final class ConfigurableDoubleParserTest {
     @TestFactory
     public List<DynamicNode> dynamicTests_parseDouble_Localized() {
         List<DynamicNode> list = new ArrayList<>();
-        for (Locale locale : new Locale[]{new Locale("de,CH"), new Locale("fr", "FR"), new Locale("ar")}) {
+        for (Locale locale : new Locale[]{
+                new Locale("ar"),
+                new Locale("de,CH"),
+                new Locale("fi"),
+                new Locale("fr", "FR"),
+        }) {
 
             DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) NumberFormat.getNumberInstance(locale)).getDecimalFormatSymbols();
             List<NumberTestData> dataList = new ArrayList<>();
