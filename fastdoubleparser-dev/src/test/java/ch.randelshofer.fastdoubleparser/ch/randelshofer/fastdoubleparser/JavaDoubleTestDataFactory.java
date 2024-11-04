@@ -107,6 +107,9 @@ public abstract class JavaDoubleTestDataFactory {
                 new NumberTestData("1.2e-3", 1.2e-3),
                 new NumberTestData("1.2E-3", 1.2e-3),
                 new NumberTestData("1.2e-3", 1.2e-3),
+                new NumberTestData("1.2e+3", 1.2e+3),
+                new NumberTestData("1.2E+3", 1.2e+3),
+                new NumberTestData("1.2e+3", 1.2e+3),
 
 
                 new NumberTestData("1", 1),

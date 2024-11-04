@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -27,7 +28,7 @@ public final class GenerateNumberFormatNumbers {
     public void generate(Path path, NumberFormat f, DecimalFormat fsc, double range, int size, double gamma, String digits) throws IOException {
         Random rng = new Random();
         double invGamma = 1 / gamma;
-        try (BufferedWriter w = Files.newBufferedWriter(path)) {
+        try (BufferedWriter w = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             rng.doubles(size)
                     .map(v -> gammaCorrection(v, invGamma))
                     .map(v -> v * range)
@@ -45,6 +46,7 @@ public final class GenerateNumberFormatNumbers {
         }
     }
 
+
     private String replaceDigits(String str, String digits) {
         if (digits == null) return str;
         StringBuilder buf = new StringBuilder(str);
@@ -59,13 +61,12 @@ public final class GenerateNumberFormatNumbers {
     }
 
     public static void main(String... args) throws IOException, ParseException {
-        Locale locale = Locale.forLanguageTag("ka-GE");
+        Locale locale = Locale.forLanguageTag("ar");
         DecimalFormat f = (DecimalFormat) NumberFormat.getNumberInstance(locale);
         DecimalFormat fsc = (DecimalFormat) NumberFormat.getNumberInstance(locale);
         fsc.applyPattern("####,##0.0######E0##");
         String digits = null;
         DecimalFormatSymbols symbols = f.getDecimalFormatSymbols();
-
         /*
         symbols.setExponentSeparator("*10^");
         f.setDecimalFormatSymbols(symbols);

@@ -112,6 +112,9 @@ public abstract class JavaFloatTestDataFactory {
                 new NumberTestData("1.2e-3", 1.2e-3f),
                 new NumberTestData("1.2E-3", 1.2e-3f),
                 new NumberTestData("1.2e-3", 1.2e-3f),
+                new NumberTestData("1.2e+3", 1.2e+3f),
+                new NumberTestData("1.2E+3", 1.2e+3f),
+                new NumberTestData("1.2e+3", 1.2e+3f),
 
                 new NumberTestData("FloatTypeSuffix", "1d", 1f),
                 new NumberTestData("FloatTypeSuffix", "1.2d", 1.2f),

@@ -332,7 +332,7 @@ final class FftMultiplier {
                 int idx = Math.min(Math.max(0, bitIdx >> 3), mag.length - 4);
                 magComponent >>>= (prevIdx - idx) << 3;
                 int shift = bitPadding - bitIdx + (idx << 3);
-                magComponent |= (fftElem & bitMask) << shift;
+                magComponent |= (int) ((fftElem & bitMask) << shift);
                 FastDoubleSwar.writeIntBE(mag, idx, magComponent);
 
                 prevIdx = idx;

@@ -19,6 +19,8 @@ import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createDataForBadConfiguredStrings;
+import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createDataForLegalConfiguredStrings;
 import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createLocalizedTestData;
 import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createNumberFormatSymbolsTestData;
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalClingerInputClasses;
@@ -72,6 +74,8 @@ public final class ConfigurableDoubleParserTest {
         list.addAll(createDataForDoubleDecimalLimits());
         list.addAll(createDataForBadStrings());
         list.addAll(createDataForLegalDecStrings());
+        list.addAll(createDataForLegalConfiguredStrings());
+        list.addAll(createDataForBadConfiguredStrings());
         list.addAll(createDataForDoubleDecimalClingerInputClasses());
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
