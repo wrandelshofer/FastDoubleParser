@@ -187,14 +187,16 @@ public final class ConfigurableDoubleParserTestDataFactory {
                 locale
         );
         NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(dfs);
-        symbols.withMinusSign(new LinkedHashSet<>(Arrays.asList('-', '\u061C')));
 
         DecimalFormat fmt = new DecimalFormat("#00.0####E0", dfs);
         for (double n : new double[]{3e-9, -7e8, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
             list.add(new NumberTestData(locale + " " + fmt.format(n), locale, symbols, fmt.format(n), n));
         }
-        list.add(new NumberTestData(locale + " customized locale, U+061C followed by - sign", locale, symbols, true, "\u061C-١٢٣٬٤٥٦٫٧٨٩", -123_456.789));
-        // list.add(new NumberTestData(locale+" customized locale, U+061C not followed by - sign", locale, symbols, true, "\u061C١٢٣٬٤٥٦٫٧٨٩", -123_456.789));
+        list.add(new NumberTestData(locale + " locale, U+061C followed by '-' sign", locale, symbols, true, "\u061C-١٢٣٬٤٥٦٫٧٨٩", -123_456.789));
+
+        NumberFormatSymbols symbols2 = symbols.withMinusSign(new LinkedHashSet<>(Arrays.asList('-', '\u061C')));
+        list.add(new NumberTestData(locale + " customized locale, U+061C followed by '-' sign, with U+061C as a format symbol", locale, symbols2, true, "\u061C-١٢٣٬٤٥٦٫٧٨٩", null));
+        list.add(new NumberTestData(locale + " customized locale, U+061C not followed by '-' sign, with U+061C as a format symbol", locale, symbols2, true, "\u061C١٢٣٬٤٥٦٫٧٨٩", -123_456.789));
 
         return list;
     }

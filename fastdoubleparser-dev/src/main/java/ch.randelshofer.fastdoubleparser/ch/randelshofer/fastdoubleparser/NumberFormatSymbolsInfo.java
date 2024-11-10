@@ -76,13 +76,13 @@ class NumberFormatSymbolsInfo {
     static boolean containsFormatChars(NumberFormatSymbols symbols) {
         FormatCharSet formatCharSet = new FormatCharSet();
         return containsChars(symbols.decimalSeparator(), formatCharSet)
-                && containsChars(symbols.groupingSeparator(), formatCharSet)
-                && containsChars(symbols.exponentSeparator(), formatCharSet)
-                && containsChars(symbols.minusSign(), formatCharSet)
-                && containsChars(symbols.plusSign(), formatCharSet)
-                && containsChars(symbols.infinity(), formatCharSet)
-                && containsChars(symbols.nan(), formatCharSet)
-                && containsChars(symbols.digits(), formatCharSet)
+                || containsChars(symbols.groupingSeparator(), formatCharSet)
+                || containsChars(symbols.exponentSeparator(), formatCharSet)
+                || containsChars(symbols.minusSign(), formatCharSet)
+                || containsChars(symbols.plusSign(), formatCharSet)
+                || containsChars(symbols.infinity(), formatCharSet)
+                || containsChars(symbols.nan(), formatCharSet)
+                || containsChars(symbols.digits(), formatCharSet)
                 ;
     }
 

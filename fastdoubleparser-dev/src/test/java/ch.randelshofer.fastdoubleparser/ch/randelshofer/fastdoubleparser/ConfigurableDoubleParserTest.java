@@ -154,6 +154,13 @@ public final class ConfigurableDoubleParserTest {
                     }
                     assertEquals(d.expectedThrowableClass(), e.getClass());
                 }
+            } else if (d.expectedValue() == null) {
+                try {
+                    double actual = f.applyAsDouble(d);
+                    fail("should throw an exception but returned " + actual);
+                } catch (Exception e) {
+                    //success
+                }
             } else {
                 double actual = f.applyAsDouble(d);
                 assertEquals(d.expectedValue().doubleValue(), actual);
