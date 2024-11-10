@@ -5,11 +5,13 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.text.DecimalFormatSymbols;
-import java.util.Collection;
 import java.util.Objects;
 
 import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
 import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR_BITS;
+import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isAscii;
+import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isDigitsTokensAscii;
+import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isMostlyAscii;
 
 /**
  * Parses a floating point value with configurable {@link NumberFormatSymbols}.
@@ -182,64 +184,7 @@ public final class ConfigurableDoubleParser {
         return ignoreCase;
     }
 
-    /**
-     * Returns true if all symbols are ASCII code points in the range U+0000 to U+007f.
-     */
-    private boolean isAscii(NumberFormatSymbols symbols) {
-        return isAsciiCharCollection(symbols.decimalSeparator())
-                && isAsciiCharCollection(symbols.groupingSeparator())
-                && isAsciiStringCollection(symbols.exponentSeparator())
-                && isAsciiCharCollection(symbols.minusSign())
-                && isAsciiCharCollection(symbols.plusSign())
-                && isAsciiStringCollection(symbols.infinity())
-                && isAsciiStringCollection(symbols.nan())
-                && isAsciiCharCollection(symbols.digits())
-                ;
-    }
 
-    /**
-     * Returns true if all single character symbols are ASCII code points in the range U+0000 to U+007f.
-     */
-    private boolean isMostlyAscii(NumberFormatSymbols symbols) {
-        return isAsciiCharCollection(symbols.decimalSeparator())
-                && isAsciiCharCollection(symbols.groupingSeparator())
-                //        && isAsciiStringCollection(symbols.exponentSeparator())
-                && isAsciiCharCollection(symbols.minusSign())
-                && isAsciiCharCollection(symbols.plusSign())
-                //      && isAsciiStringCollection(symbols.infinity())
-                //        && isAsciiStringCollection(symbols.nan())
-                && isAsciiCharCollection(symbols.digits())
-                ;
-    }
-
-    private boolean isDigitsTokensAscii(NumberFormatSymbols symbols) {
-        return //isAsciiCharCollection(symbols.decimalSeparator())
-                //  && isAsciiCharCollection(symbols.groupingSeparator())
-                //        && isAsciiStringCollection(symbols.exponentSeparator())
-                //  && isAsciiCharCollection(symbols.minusSign())
-                // && isAsciiCharCollection(symbols.plusSign())
-                //      && isAsciiStringCollection(symbols.infinity())
-                //        && isAsciiStringCollection(symbols.nan())
-                isAsciiCharCollection(symbols.digits())
-                ;
-    }
-
-    private boolean isAsciiStringCollection(Collection<String> collection) {
-        for (String str : collection) {
-            for (int i = 0; i < str.length(); i++) {
-                char ch = str.charAt(i);
-                if (ch > 0x7f) return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isAsciiCharCollection(Collection<Character> collection) {
-        for (char ch : collection) {
-            if (ch > 0x7f) return false;
-        }
-        return true;
-    }
 
     /**
      * Creates a new instance with decimal format symbols and case sensitivity.

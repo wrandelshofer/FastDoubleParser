@@ -30,6 +30,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         this.plusSign = ByteSet.copyOf(symbols.plusSign(), ignoreCase);
         this.nan = ByteTrie.copyOf(symbols.nan(), ignoreCase);
         this.infinity = ByteTrie.copyOf(symbols.infinity(), ignoreCase);
+
     }
 
     /**

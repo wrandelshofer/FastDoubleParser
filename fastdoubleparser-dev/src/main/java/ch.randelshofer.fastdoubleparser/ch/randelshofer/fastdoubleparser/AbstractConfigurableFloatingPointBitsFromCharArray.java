@@ -6,7 +6,9 @@ package ch.randelshofer.fastdoubleparser;
 
 import ch.randelshofer.fastdoubleparser.chr.CharDigitSet;
 import ch.randelshofer.fastdoubleparser.chr.CharSet;
+import ch.randelshofer.fastdoubleparser.chr.CharSetOfNone;
 import ch.randelshofer.fastdoubleparser.chr.CharTrie;
+import ch.randelshofer.fastdoubleparser.chr.FormatCharSet;
 
 /**
  * Configurable floating point parser.
@@ -20,6 +22,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
     private final CharTrie nan;
     private final CharTrie infinity;
     private final CharTrie exponentSeparator;
+    private final CharSet formatChar;
 
     public AbstractConfigurableFloatingPointBitsFromCharArray(NumberFormatSymbols symbols, boolean ignoreCase) {
         this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator(), ignoreCase);
@@ -30,6 +33,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         this.plusSign = CharSet.copyOf(symbols.plusSign(), ignoreCase);
         this.nan = CharTrie.copyOf(symbols.nan(), ignoreCase);
         this.infinity = CharTrie.copyOf(symbols.infinity(), ignoreCase);
+        this.formatChar = NumberFormatSymbolsInfo.containsFormatChars(symbols) ? new CharSetOfNone() : new FormatCharSet();
     }
 
     /**
@@ -230,8 +234,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
      * @param endIndex end index (exclusive) of the string
      * @return index after the optional format character
      */
-    private static int skipFormatCharacters(char[] str, int index, int endIndex) {
-        while (index < endIndex && Character.getType(str[index]) == Character.FORMAT) {
+    private int skipFormatCharacters(char[] str, int index, int endIndex) {
+        while (index < endIndex && formatChar.containsKey(str[index])) {
             index++;
         }
         return index;
