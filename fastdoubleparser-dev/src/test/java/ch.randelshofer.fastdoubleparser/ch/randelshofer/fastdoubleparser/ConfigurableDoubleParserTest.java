@@ -149,6 +149,7 @@ public final class ConfigurableDoubleParserTest {
                     fail("should throw an exception but returned " + actual);
                 } catch (IllegalArgumentException e) {
                     if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
+                        System.err.println("Error parsing \"" + d.input() + "\"");
                         e.printStackTrace();
                         assertEquals(d.expectedErrorMessage(), e.getMessage());
                     }
