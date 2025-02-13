@@ -255,6 +255,9 @@ public final class NumberTestData {
                 this.ignoreCase == that.ignoreCase;
     }
 
+    public NumberTestData withSymbols(NumberFormatSymbols s) {
+        return new NumberTestData(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, expectedErrorMessage, expectedThrowableClass, locale, s, ignoreCase);
+    }
     @Override
     public int hashCode() {
         return Objects.hash(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, expectedErrorMessage, expectedThrowableClass, locale, symbols, ignoreCase);
