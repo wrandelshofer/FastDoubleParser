@@ -166,7 +166,7 @@ public final class ConfigurableDoubleParserTest {
                     double actual = f.applyAsDouble(d);
                     assertEquals(d.expectedValue().doubleValue(), actual);
                 } catch (NumberFormatException e) {
-                    fail("Error parsing \"" + d.input() + "\"", e);
+                    fail("Error parsing \"" + d.input() + "\" with symbols " + d.symbols(), e);
                 }
             }
         }
