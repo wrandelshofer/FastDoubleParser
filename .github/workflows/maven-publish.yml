@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '24-ea'
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-java@v4
         with: # running setup-java again overwrites the settings.xml
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '24-ea'
           server-id: maven # Value of the distributionManagement/repository/id field of the pom.xml
           server-username: MAVEN_USERNAME # env variable for username in deploy
           server-password: MAVEN_CENTRAL_TOKEN # env variable for token in deploy
