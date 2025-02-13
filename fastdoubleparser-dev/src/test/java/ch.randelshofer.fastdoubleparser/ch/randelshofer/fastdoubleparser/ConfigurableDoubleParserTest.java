@@ -147,11 +147,10 @@ public final class ConfigurableDoubleParserTest {
                 try {
                     double actual = f.applyAsDouble(d);
                     fail("should throw an exception but returned " + actual);
-                } catch (IllegalArgumentException e) {
+                } catch (Exception e) {
                     if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
-                        System.err.println("Error parsing \"" + d.input() + "\"");
                         e.printStackTrace();
-                        assertEquals(d.expectedErrorMessage(), e.getMessage());
+                        assertEquals(d.expectedErrorMessage(), e.getMessage(), "Did throw an exception with an unexpected error emssage");
                     }
                     assertEquals(d.expectedThrowableClass(), e.getClass());
                 }
@@ -163,8 +162,12 @@ public final class ConfigurableDoubleParserTest {
                     //success
                 }
             } else {
-                double actual = f.applyAsDouble(d);
-                assertEquals(d.expectedValue().doubleValue(), actual);
+                try {
+                    double actual = f.applyAsDouble(d);
+                    assertEquals(d.expectedValue().doubleValue(), actual);
+                } catch (NumberFormatException e) {
+                    fail("Error parsing \"" + d.input() + "\"", e);
+                }
             }
         }
     }
