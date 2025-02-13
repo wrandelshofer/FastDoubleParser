@@ -112,9 +112,10 @@ public final class ConfigurableDoubleParserTest {
 
 
     public void performTestDecimalFormatSymbols(NumberTestData u, DecimalFormatSymbols decimalFormatSymbols) {
-        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input()));
-        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input().toString().toCharArray()));
-        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input().toString().getBytes(StandardCharsets.UTF_8)));
+        u = u.withSymbols(NumberFormatSymbols.fromDecimalFormatSymbols(decimalFormatSymbols));
+        test(u, d -> new ConfigurableDoubleParser(d.symbols(), d.ignoreCase()).parseDouble(d.input()));
+        test(u, d -> new ConfigurableDoubleParser(d.symbols(), d.ignoreCase()).parseDouble(d.input().toString().toCharArray()));
+        test(u, d -> new ConfigurableDoubleParser(d.symbols(), d.ignoreCase()).parseDouble(d.input().toString().getBytes(StandardCharsets.UTF_8)));
     }
 
     @TestFactory

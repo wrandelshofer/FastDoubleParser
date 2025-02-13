@@ -34,6 +34,10 @@ public record NumberTestData(String title,
                 locale, symbols, false);
     }
 
+    public NumberTestData withSymbols(NumberFormatSymbols s) {
+        return new NumberTestData(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, expectedErrorMessage, expectedThrowableClass, locale, s, ignoreCase);
+    }
+
     public NumberTestData(CharSequence input, Number expectedValue) {
         this(input.toString(), input, 0, input.length(), 0, input.length(),
                 10, expectedValue, null,
