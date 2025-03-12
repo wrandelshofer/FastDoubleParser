@@ -5,6 +5,7 @@
 package ch.randelshofer.fastdoubleparser;
 
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static ch.randelshofer.fastdoubleparser.FastDoubleMath.fastScalb;
 import static ch.randelshofer.fastdoubleparser.FastDoubleSwar.fma;
@@ -48,7 +49,7 @@ final class FftMultiplier {
     /**
      * for FFTs of length up to 2^19
      */
-    private static final int ROOTS_CACHE2_SIZE = 20;
+    private static final int ROOTS2_CACHE_SIZE = 20;
     /**
      * The threshold value for using 3-way Toom-Cook multiplication.
      */
@@ -58,13 +59,13 @@ final class FftMultiplier {
      * elements representing all (2^(k+2))-th roots between 0 and pi/2.
      * Used for FFT multiplication.
      */
-    private volatile static ComplexVector[] ROOTS2_CACHE = new ComplexVector[ROOTS_CACHE2_SIZE];
+    private final static AtomicReferenceArray<ComplexVector> ROOTS2_CACHE = new AtomicReferenceArray<>(ROOTS2_CACHE_SIZE);
     /**
      * Sets of complex roots of unity. The set at index k contains 3*2^k
      * elements representing all (3*2^(k+2))-th roots between 0 and pi/2.
      * Used for FFT multiplication.
      */
-    private volatile static ComplexVector[] ROOTS3_CACHE = new ComplexVector[ROOTS3_CACHE_SIZE];
+    private final static AtomicReferenceArray<ComplexVector> ROOTS3_CACHE = new AtomicReferenceArray<>(ROOTS3_CACHE_SIZE);
 
     /**
      * Returns the maximum number of bits that one double precision number can fit without
@@ -351,11 +352,11 @@ final class FftMultiplier {
     private static ComplexVector[] getRootsOfUnity2(int logN) {
         ComplexVector[] roots = new ComplexVector[logN + 1];
         for (int i = logN; i >= 0; i -= 2) {
-            if (i < ROOTS_CACHE2_SIZE) {
-                if (ROOTS2_CACHE[i] == null) {
-                    ROOTS2_CACHE[i] = calculateRootsOfUnity(1 << i);
+            if (i < ROOTS2_CACHE_SIZE) {
+                if (ROOTS2_CACHE.get(i) == null) {
+                    ROOTS2_CACHE.set(i, calculateRootsOfUnity(1 << i));
                 }
-                roots[i] = ROOTS2_CACHE[i];
+                roots[i] = ROOTS2_CACHE.get(i);
             } else {
                 roots[i] = calculateRootsOfUnity(1 << i);
             }
@@ -371,10 +372,10 @@ final class FftMultiplier {
      */
     private static ComplexVector getRootsOfUnity3(int logN) {
         if (logN < ROOTS3_CACHE_SIZE) {
-            if (ROOTS3_CACHE[logN] == null) {
-                ROOTS3_CACHE[logN] = calculateRootsOfUnity(3 << logN);
+            if (ROOTS3_CACHE.get(logN) == null) {
+                ROOTS3_CACHE.set(logN, calculateRootsOfUnity(3 << logN));
             }
-            return ROOTS3_CACHE[logN];
+            return ROOTS3_CACHE.get(logN);
         } else {
             return calculateRootsOfUnity(3 << logN);
         }
