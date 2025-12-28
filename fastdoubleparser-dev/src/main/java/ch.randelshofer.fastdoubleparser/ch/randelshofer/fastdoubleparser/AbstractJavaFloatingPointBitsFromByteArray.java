@@ -77,6 +77,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         int swarLimit = Math.min(endIndex - 4, 1 << 30);
         for (; index < endIndex; index++) {
             ch = str[index];
+            if (ch == '_') continue;
             int digit = (char) (ch - '0');
             if (digit < 10) {
                 // This might overflow, we deal with it later.
