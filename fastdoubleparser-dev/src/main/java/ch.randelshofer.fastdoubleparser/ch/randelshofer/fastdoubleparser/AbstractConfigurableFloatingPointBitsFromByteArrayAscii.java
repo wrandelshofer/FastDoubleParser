@@ -9,10 +9,10 @@ import ch.randelshofer.fastdoubleparser.bte.ByteSet;
 import ch.randelshofer.fastdoubleparser.bte.ByteTrie;
 
 /**
- * Configurable floating point parser for input data given in ASCII.
+ * Configurable floating point parser for input data given in 7-bit ASCII.
  */
 abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends AbstractFloatValueParser {
-    private final ByteDigitSet digitSet;
+    protected final ByteDigitSet digitSet;
     private final ByteSet minusSignChar;
     private final ByteSet plusSignChar;
     private final ByteSet decimalSeparator;
@@ -72,9 +72,9 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
     public final long parseFloatingPointLiteral(byte[] str, int offset, int length) {
         final int endIndex = checkBounds(str.length, offset, length);
 
-        // Skip leading format characters
+        // Start at offset
         // -------------------
-        int index = skipFormatCharacters(str, offset, endIndex);
+        int index = offset;
         if (index == endIndex) {
             return SYNTAX_ERROR_BITS;
         }
@@ -136,7 +136,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         int count = exponentSeparatorTrie.match(str, index, endIndex);
         if (count > 0) {
             index += count;
-            index = skipFormatCharacters(str, index, endIndex);
             ch = charAt(str, index, endIndex);
             boolean isExponentNegative = isMinusSign(ch);
             if (isExponentNegative || isPlusSign(ch)) {
@@ -209,21 +208,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
         return plusSignChar.containsKey(c);
     }
 
-    /**
-     * Skips all format characters.
-     *
-     * @param str      a string
-     * @param index    start index (inclusive) of the optional white space
-     * @param endIndex end index (exclusive) of the optional white space
-     * @return index after the optional format character
-     */
-    private static int skipFormatCharacters(byte[] str, int index, int endIndex) {
-        while (index < endIndex && Character.getType(str[index]) == Character.FORMAT) {
-            index++;
-        }
-        return index;
-    }
-
     private long parseNaNOrInfinity(byte[] str, int index, int endIndex, boolean isNegative) {
         int nanMatch = nanTrie.match(str, index, endIndex);
         if (nanMatch > 0) {
@@ -275,9 +259,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayAscii extends A
                                       long significand, int exponent, boolean isSignificandTruncated,
                                       int exponentOfTruncatedSignificand, int exponentValue, int startIndex, int endIndex);
 
-    protected double slowPathToDouble(byte[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, int exponentValue) {
-        return SlowDoubleConversionPath.toDouble(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue);
-    }
 
 
 }
