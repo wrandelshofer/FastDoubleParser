@@ -24,12 +24,15 @@ import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isMostlyA
  * <dt><i>FloatingPointLiteral:</i></dt>
  * <dd><i>[Sign] NaN</i></dd>
  * <dd><i>[Sign] Infinity</i></dd>
- * <dd><i>[Sign] DecimalFloatingPointLiteral</i></dd>
+ * <dd><i>NaN [Sign]</i></dd>
+ * <dd><i>Infinity [Sign]</i></dd>
+ * <dd><i>DecimalFloatingPointLiteral</i></dd>
  * </dl>
  *
  * <dl>
  * <dt><i>DecimalFloatingPointLiteral:</i>
- * <dd><i>DecSignificand [DecExponent]</i>
+ * <dd><i>[Sign] DecSignificand [DecExponent]</i>
+ * <dd><i>DecSignificand [Sign] [DecExponent]</i>
  * </dl>
  *
  * <dl>
@@ -57,6 +60,7 @@ import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isMostlyA
  * <dl>
  * <dt><i>DecExponent:</i>
  * <dd><i>ExponentIndicator [Sign] Digits</i>
+ * <dd><i>ExponentIndicator Digits [Sign]</i>
  * </dl>
  *
  * <dl>

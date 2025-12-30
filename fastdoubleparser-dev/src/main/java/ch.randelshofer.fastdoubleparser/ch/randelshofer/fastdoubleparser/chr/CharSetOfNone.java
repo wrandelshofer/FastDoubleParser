@@ -4,9 +4,9 @@
  */
 package ch.randelshofer.fastdoubleparser.chr;
 
-final class CharSetOfNone implements CharSet {
+public final class CharSetOfNone implements CharSet {
 
-    CharSetOfNone() {
+    public CharSetOfNone() {
     }
 
     public boolean containsKey(char ch) {

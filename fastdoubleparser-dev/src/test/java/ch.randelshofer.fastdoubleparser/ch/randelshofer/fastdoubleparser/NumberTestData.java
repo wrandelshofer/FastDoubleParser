@@ -151,4 +151,8 @@ public record NumberTestData(String title,
                 10, null, expectedErrorMessage,
                 expectedThrowableClass, Locale.ENGLISH, null, false);
     }
+
+    public NumberTestData withSymbols(NumberFormatSymbols s) {
+        return new NumberTestData(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, expectedErrorMessage, expectedThrowableClass, locale, s, ignoreCase);
+    }
 }

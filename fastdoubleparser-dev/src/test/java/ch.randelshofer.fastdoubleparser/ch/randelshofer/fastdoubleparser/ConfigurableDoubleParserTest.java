@@ -19,6 +19,8 @@ import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createDataForBadConfiguredStrings;
+import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createDataForLegalConfiguredStrings;
 import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createLocalizedTestData;
 import static ch.randelshofer.fastdoubleparser.ConfigurableDoubleParserTestDataFactory.createNumberFormatSymbolsTestData;
 import static ch.randelshofer.fastdoubleparser.FloatValueTestDataFactory.createDataForDoubleDecimalClingerInputClasses;
@@ -72,6 +74,8 @@ public class ConfigurableDoubleParserTest {
         list.addAll(createDataForDoubleDecimalLimits());
         list.addAll(createDataForBadStrings());
         list.addAll(createDataForLegalDecStrings());
+        list.addAll(createDataForLegalConfiguredStrings());
+        list.addAll(createDataForBadConfiguredStrings());
         list.addAll(createDataForDoubleDecimalClingerInputClasses());
         list.addAll(createDataForLegalCroppedStrings());
         list.addAll(createFloatTestDataForInputClassesInMethodParseFloatValue());
@@ -83,7 +87,12 @@ public class ConfigurableDoubleParserTest {
     @TestFactory
     public List<DynamicNode> dynamicTests_parseDouble_Localized() {
         List<DynamicNode> list = new ArrayList<>();
-        for (Locale locale : new Locale[]{new Locale("de", "CH"), new Locale("fr", "FR"), new Locale("ar")}) {
+        for (Locale locale : new Locale[]{
+                new Locale("ar"),
+                new Locale("de", "CH"),
+                new Locale("fi"),
+                new Locale("fr", "FR"),
+        }) {
 
             DecimalFormatSymbols decimalFormatSymbols = ((DecimalFormat) NumberFormat.getNumberInstance(locale)).getDecimalFormatSymbols();
             List<NumberTestData> dataList = new ArrayList<>();
@@ -103,9 +112,10 @@ public class ConfigurableDoubleParserTest {
 
 
     public void performTestDecimalFormatSymbols(NumberTestData u, DecimalFormatSymbols decimalFormatSymbols) {
-        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input()));
-        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input().toString().toCharArray()));
-        test(u, d -> new ConfigurableDoubleParser(decimalFormatSymbols, u.ignoreCase()).parseDouble(d.input().toString().getBytes(StandardCharsets.UTF_8)));
+        u = u.withSymbols(NumberFormatSymbols.fromDecimalFormatSymbols(decimalFormatSymbols));
+        test(u, d -> new ConfigurableDoubleParser(d.symbols(), d.ignoreCase()).parseDouble(d.input()));
+        test(u, d -> new ConfigurableDoubleParser(d.symbols(), d.ignoreCase()).parseDouble(d.input().toString().toCharArray()));
+        test(u, d -> new ConfigurableDoubleParser(d.symbols(), d.ignoreCase()).parseDouble(d.input().toString().getBytes(StandardCharsets.UTF_8)));
     }
 
     @TestFactory
@@ -138,16 +148,27 @@ public class ConfigurableDoubleParserTest {
                 try {
                     double actual = f.applyAsDouble(d);
                     fail("should throw an exception but returned " + actual);
-                } catch (IllegalArgumentException e) {
+                } catch (Exception e) {
                     if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
                         e.printStackTrace();
-                        assertEquals(d.expectedErrorMessage(), e.getMessage());
+                        assertEquals(d.expectedErrorMessage(), e.getMessage(), "Did throw an exception with an unexpected error emssage");
                     }
                     assertEquals(d.expectedThrowableClass(), e.getClass());
                 }
+            } else if (d.expectedValue() == null) {
+                try {
+                    double actual = f.applyAsDouble(d);
+                    fail("should throw an exception but returned " + actual);
+                } catch (Exception e) {
+                    //success
+                }
             } else {
-                double actual = f.applyAsDouble(d);
-                assertEquals(d.expectedValue().doubleValue(), actual);
+                try {
+                    double actual = f.applyAsDouble(d);
+                    assertEquals(d.expectedValue().doubleValue(), actual);
+                } catch (NumberFormatException e) {
+                    fail("Error parsing \"" + d.input() + "\" with symbols " + d.symbols(), e);
+                }
             }
         }
     }

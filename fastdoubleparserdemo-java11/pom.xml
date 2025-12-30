@@ -20,7 +20,9 @@
 
   <build>
     <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparserdemo</sourceDirectory>
-    <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparserdemo</testSourceDirectory>
+    <testSourceDirectory>
+      src/main/java/ch.randelshofer.fastdoubleparserdemo/ch/randelshofer/fastdoubleparserdemo/test/java/ch.randelshofer.fastdoubleparserdemo
+    </testSourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>

@@ -6,30 +6,34 @@ package ch.randelshofer.fastdoubleparser;
 
 import ch.randelshofer.fastdoubleparser.chr.CharDigitSet;
 import ch.randelshofer.fastdoubleparser.chr.CharSet;
+import ch.randelshofer.fastdoubleparser.chr.CharSetOfNone;
 import ch.randelshofer.fastdoubleparser.chr.CharTrie;
+import ch.randelshofer.fastdoubleparser.chr.FormatCharSet;
 
 /**
  * Configurable floating point parser.
  */
 abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends AbstractFloatValueParser {
     private final CharDigitSet digitSet;
-    private final CharSet minusSignChar;
-    private final CharSet plusSignChar;
+    private final CharSet minusSign;
+    private final CharSet plusSign;
     private final CharSet decimalSeparator;
     private final CharSet groupingSeparator;
-    private final CharTrie nanTrie;
-    private final CharTrie infinityTrie;
-    private final CharTrie exponentSeparatorTrie;
+    private final CharTrie nan;
+    private final CharTrie infinity;
+    private final CharTrie exponentSeparator;
+    private final CharSet formatChar;
 
     public AbstractConfigurableFloatingPointBitsFromCharArray(NumberFormatSymbols symbols, boolean ignoreCase) {
         this.decimalSeparator = CharSet.copyOf(symbols.decimalSeparator(), ignoreCase);
         this.groupingSeparator = CharSet.copyOf(symbols.groupingSeparator(), ignoreCase);
         this.digitSet = CharDigitSet.copyOf(symbols.digits());
-        this.minusSignChar = CharSet.copyOf(symbols.minusSign(), ignoreCase);
-        this.exponentSeparatorTrie = CharTrie.copyOf(symbols.exponentSeparator(), ignoreCase);
-        this.plusSignChar = CharSet.copyOf(symbols.plusSign(), ignoreCase);
-        this.nanTrie = CharTrie.copyOf(symbols.nan(), ignoreCase);
-        this.infinityTrie = CharTrie.copyOf(symbols.infinity(), ignoreCase);
+        this.minusSign = CharSet.copyOf(symbols.minusSign(), ignoreCase);
+        this.exponentSeparator = CharTrie.copyOf(symbols.exponentSeparator(), ignoreCase);
+        this.plusSign = CharSet.copyOf(symbols.plusSign(), ignoreCase);
+        this.nan = CharTrie.copyOf(symbols.nan(), ignoreCase);
+        this.infinity = CharTrie.copyOf(symbols.infinity(), ignoreCase);
+        this.formatChar = NumberFormatSymbolsInfo.containsFormatChars(symbols) ? new CharSetOfNone() : new FormatCharSet();
     }
 
     /**
@@ -42,14 +46,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
      * {@code long}
      */
     abstract long negativeInfinity();
-
-    private boolean isDecimalSeparator(char ch) {
-        return decimalSeparator.containsKey(ch);
-    }
-
-    private boolean isGroupingSeparator(char ch) {
-        return groupingSeparator.containsKey(ch);
-    }
 
     /**
      * Parses a {@code FloatingPointLiteral} production with optional leading and trailing
@@ -80,10 +76,12 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         }
         char ch = str[index];
 
-        // Parse optional sign
+        // Parse optional sign before significand
         // -------------------
-        final boolean isNegative = isMinusSign(ch);
-        if (isNegative || isPlusSign(ch)) {
+        boolean isNegative = minusSign.containsKey(ch);
+        boolean isSignificandSigned = false;
+        if (isNegative || plusSign.containsKey(ch)) {
+            isSignificandSigned = true;
             ++index;
             if (index == endIndex) {
                 return SYNTAX_ERROR_BITS;
@@ -107,11 +105,11 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
             if (digit < 10) {
                 // This might overflow, we deal with it later.
                 significand = 10 * significand + digit;
-            } else if (isDecimalSeparator(ch)) {
+            } else if (decimalSeparator.containsKey(ch)) {
                 illegal |= integerDigitCount >= 0;
                 decimalSeparatorIndex = index;
                 integerDigitCount = index - significandStartIndex - groupingCount;
-            } else if (isGroupingSeparator(ch)) {
+            } else if (groupingSeparator.containsKey(ch)) {
                 illegal |= decimalSeparatorIndex != -1;
                 groupingCount++;
             } else {
@@ -131,38 +129,64 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         }
         illegal |= digitCount == 0 && significandEndIndex > significandStartIndex;
 
-        // Parse exponent number
-        // ---------------------
-        int expNumber = 0;
-        int count = exponentSeparatorTrie.match(str, index, endIndex);
-        if (count > 0) {
-            index += count;
-            index = skipFormatCharacters(str, index, endIndex);
-            ch = charAt(str, index, endIndex);
-            boolean isExponentNegative = isMinusSign(ch);
-            if (isExponentNegative || isPlusSign(ch)) {
-                ch = charAt(str, ++index, endIndex);
-            }
-            int digit = digitSet.toDigit(ch);
-            illegal |= digit >= 10;
-            do {
-                // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
-                    expNumber = 10 * expNumber + digit;
-                }
-                ch = charAt(str, ++index, endIndex);
-                digit = digitSet.toDigit(ch);
-            } while (digit < 10);
-            if (isExponentNegative) {
-                expNumber = -expNumber;
-            }
-            exponent += expNumber;
-        }
-
         // Parse NaN or Infinity (this occurs rarely)
         // ---------------------
         if (!illegal && digitCount == 0) {
-            return parseNaNOrInfinity(str, index, endIndex, isNegative);
+            return parseNaNOrInfinity(str, index, endIndex, isNegative, isSignificandSigned);
+        }
+
+        // Parse optional sign after significand
+        // -------------------
+        if (index < endIndex && !isSignificandSigned) {
+            isNegative = minusSign.containsKey(ch);
+            if (isNegative || plusSign.containsKey(ch)) {
+                index++;
+            }
+        }
+
+        // Parse exponent number
+        // ---------------------
+        int expNumber = 0;
+        boolean isExponentSigned = false;
+        if (digitCount > 0) {
+            int count = exponentSeparator.match(str, index, endIndex);
+            if (count > 0) {
+                index += count;
+                index = skipFormatCharacters(str, index, endIndex);
+
+                // Parse optional sign before exponent number
+                ch = charAt(str, index, endIndex);
+                boolean isExponentNegative = minusSign.containsKey(ch);
+                if (isExponentNegative || plusSign.containsKey(ch)) {
+                    ch = charAt(str, ++index, endIndex);
+                    isExponentSigned = true;
+                }
+
+                int digit = digitSet.toDigit(ch);
+                illegal |= digit >= 10;
+                do {
+                    // Guard against overflow
+                    if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                        expNumber = 10 * expNumber + digit;
+                    }
+                    ch = charAt(str, ++index, endIndex);
+                    digit = digitSet.toDigit(ch);
+                } while (digit < 10);
+
+
+                // Parse optional sign after exponent number
+                if (!isExponentSigned) {
+                    isExponentNegative = minusSign.containsKey(ch);
+                    if (isExponentNegative || plusSign.containsKey(ch)) {
+                        index++;
+                    }
+                }
+
+                if (isExponentNegative) {
+                    expNumber = -expNumber;
+                }
+                exponent += expNumber;
+            }
         }
 
         // Check if FloatingPointLiteral is complete
@@ -202,39 +226,44 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
                 exponentOfTruncatedSignificand, expNumber, offset, endIndex);
     }
 
-    private boolean isMinusSign(char c) {
-        return minusSignChar.containsKey(c);
-    }
-
-    private boolean isPlusSign(char c) {
-        return plusSignChar.containsKey(c);
-    }
-
     /**
      * Skips all format characters.
      *
-     * @param str      a string
-     * @param index    start index (inclusive) of the optional white space
-     * @param endIndex end index (exclusive) of the optional white space
+     * @param str      a char array that contains a string
+     * @param index    start index (inclusive) of the string
+     * @param endIndex end index (exclusive) of the string
      * @return index after the optional format character
      */
-    private static int skipFormatCharacters(char[] str, int index, int endIndex) {
-        while (index < endIndex && Character.getType(str[index]) == Character.FORMAT) {
+    private int skipFormatCharacters(char[] str, int index, int endIndex) {
+        while (index < endIndex && formatChar.containsKey(str[index])) {
             index++;
         }
         return index;
     }
 
-    private long parseNaNOrInfinity(char[] str, int index, int endIndex, boolean isNegative) {
-        int nanMatch = nanTrie.match(str, index, endIndex);
+    private long parseNaNOrInfinity(char[] str, int index, int endIndex, boolean isNegative, boolean isSignificandSigned) {
+        int nanMatch = nan.match(str, index, endIndex);
         if (nanMatch > 0) {
-            if (index + nanMatch == endIndex) {
-                return nan();
+            index += nanMatch;
+            if (index < endIndex && !isSignificandSigned) {
+                char ch = str[index];
+                if (minusSign.containsKey(ch) || plusSign.containsKey(ch)) {
+                    index++;
+                }
             }
+            return (index == endIndex) ? nan() : SYNTAX_ERROR_BITS;
         }
-        int infinityMatch = infinityTrie.match(str, index, endIndex);
+        int infinityMatch = infinity.match(str, index, endIndex);
         if (infinityMatch > 0) {
-            if (index + infinityMatch == endIndex) {
+            index += infinityMatch;
+            if (index < endIndex && !isSignificandSigned) {
+                char ch = str[index];
+                isNegative = minusSign.containsKey(ch);
+                if (isNegative || plusSign.containsKey(ch)) {
+                    index++;
+                }
+            }
+            if (index == endIndex) {
                 return isNegative ? negativeInfinity() : positiveInfinity();
             }
         }
@@ -267,8 +296,8 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
      * @param exponentOfTruncatedSignificand the exponent value of the truncated
      *                                       significand
      * @param exponentValue                  the exponent of the float value without considering the significand
-     * @param startIndex the start index of the literal in str
-     * @param endIndex the end index of the literal in str
+     * @param startIndex                     the start index of the literal in str
+     * @param endIndex                       the end index of the literal in str
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
