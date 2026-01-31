@@ -48,8 +48,10 @@ final class Utf8Decoder {
         int i = offset;
         while (i < limit) {
             byte b = in[i];
-            int opcode = Integer.numberOfLeadingZeros(~(byte) b << 24);
-            if (i + opcode > limit) throw new NumberFormatException("UTF-8 code point is incomplete");
+            int opcode = Integer.numberOfLeadingZeros(~b << 24);
+            if (i + opcode > limit) {
+                throw new NumberFormatException("UTF-8 code point is incomplete");
+            }
             switch (opcode) {
                 case 0:
                     // process code points U+0000 to U+007f

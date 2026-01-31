@@ -8,9 +8,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormatSymbols;
 import java.util.Objects;
 
-import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isAscii;
-import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isDigitsTokensAscii;
-import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isMostlyAscii;
+import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.*;
 
 /**
  * Parses a floating point value with configurable {@link NumberFormatSymbols}.

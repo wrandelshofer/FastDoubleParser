@@ -37,7 +37,7 @@ abstract class AbstractFloatValueParser extends AbstractNumberParser {
      * The decimal exponent of a double has a range of -324 to +308.
      * The hexadecimal exponent of a double has a range of -1022 to +1023.
      */
-    final static int MAX_EXPONENT_NUMBER = 1024;
+    final static int OVERFLOW_EXPONENT_NUMBER = 1024;
 
 
 }

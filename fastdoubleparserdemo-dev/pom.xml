@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>ch.randelshofer</groupId>
-    <artifactId>fastdoubleparser-parentproject</artifactId>
-    <version>${revision}</version>
-  </parent>
-  <artifactId>fastdoubleparserdemo-dev</artifactId>
-  <packaging>jar</packaging>
-  <properties>
-    <javaVersion>23</javaVersion>
-    <maven.compiler.source>${javaVersion}</maven.compiler.source>
-    <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <maven.install.skip>true</maven.install.skip>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
-    <maven.deploy.skip>true</maven.deploy.skip>
-  </properties>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ch.randelshofer</groupId>
+        <artifactId>fastdoubleparser-parentproject</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>fastdoubleparserdemo-dev</artifactId>
+    <packaging>jar</packaging>
+    <properties>
+        <javaVersion>26</javaVersion>
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
-  <name>fastdoubleparserdemo-dev</name>
+    <name>fastdoubleparserdemo-dev</name>
 
-  <build>
-    <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparserdemo</sourceDirectory>
-    <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparserdemo</testSourceDirectory>
-  </build>
+    <build>
+        <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparserdemo</sourceDirectory>
+        <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparserdemo</testSourceDirectory>
+    </build>
 
-  <dependencies>
-    <dependency>
-      <groupId>ch.randelshofer</groupId>
-      <artifactId>fastdoubleparser-dev</artifactId>
-      <version>${revision}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.ibm.icu</groupId>
-      <artifactId>icu4j</artifactId>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>ch.randelshofer</groupId>
+            <artifactId>fastdoubleparser-dev</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -34,6 +34,9 @@ final class FastDoubleMath {
      * The number of bits in the significand, including the implicit bit.
      */
     public static final int DOUBLE_SIGNIFICAND_WIDTH = 53;
+    /**
+     * The maximal number of decimal digits required to identify a double value.
+     */
     public static final int MAX_REQUIRED_DIGITS = 768;
     /**
      * Smallest power of 10 value of the exponent.

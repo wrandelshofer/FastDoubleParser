@@ -48,7 +48,11 @@ abstract class AbstractBigDecimalParser extends ch.randelshofer.fastdoubleparser
     static final int RECURSION_THRESHOLD = 400;
 
 
-    protected final static long MAX_EXPONENT_NUMBER = Integer.MAX_VALUE;
+    /**
+     * This must be 1 digit more than the actual maximal exponent number supported
+     * by BigDecimal.
+     */
+    protected final static long OVERFLOW_EXPONENT_NUMBER = Integer.MAX_VALUE * 10L;
     /**
      * See {@link JavaBigDecimalParser}.
      */

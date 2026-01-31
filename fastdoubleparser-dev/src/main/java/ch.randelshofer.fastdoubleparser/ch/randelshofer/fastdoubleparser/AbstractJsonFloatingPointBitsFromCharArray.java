@@ -42,12 +42,12 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
             }
         }
 
-        // Parse optional leading zero
+        // Parse zero
         // ---------------------------
         final boolean hasLeadingZero = ch == '0';
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
-            if (ch == '0') {
+            if ('0' <= ch && ch <= '9') {
                 return SYNTAX_ERROR_BITS;
             }
         }
@@ -107,7 +107,7 @@ abstract class AbstractJsonFloatingPointBitsFromCharArray extends AbstractFloatV
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);

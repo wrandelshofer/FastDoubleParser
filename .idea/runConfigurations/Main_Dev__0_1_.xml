@@ -3,8 +3,9 @@
     <option name="ALTERNATIVE_JRE_PATH" value="/Library/Java/JavaVirtualMachines/zulu-20.jdk/Contents/Home" />
     <option name="MAIN_CLASS_NAME" value="ch.randelshofer.fastdoubleparserdemo.Main" />
     <module name="fastdoubleparserdemo-dev" />
+    <option name="PROGRAM_PARAMETERS" value="--markdown" />
     <option name="VM_PARAMETERS" value="--enable-preview -XX:CompileCommand=inline,java/lang/String.charAt -XX:CompileCommand=inline,java/lang/CharSequence.charAt" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/FastDoubleParserDemo" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/fastdoubleparserdemo-dev" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="ch.randelshofer.fastdoubleparser.impl.*" />

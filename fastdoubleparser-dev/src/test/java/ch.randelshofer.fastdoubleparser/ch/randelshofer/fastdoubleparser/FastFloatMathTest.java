@@ -16,6 +16,12 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
  * Tests class {@link FastFloatMath}.
+ * <p>
+ * The goal of this test is to achieve 100% code coverage (in the class, method, line and branch metric)
+ * in the following source files:
+ * <ul>
+ *     <li>{@link FastDoubleMath}</li>
+ * </ul>
  */
 public final class FastFloatMathTest {
 

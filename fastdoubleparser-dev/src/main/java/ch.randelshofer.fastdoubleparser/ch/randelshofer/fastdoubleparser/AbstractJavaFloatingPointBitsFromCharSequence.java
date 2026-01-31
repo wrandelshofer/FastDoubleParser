@@ -64,7 +64,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    private long parseDecFloatLiteral(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative) {
+    private long parseDecLiteral(CharSequence str, int index, int startIndex, int endIndex, boolean isNegative) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -124,7 +124,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
@@ -230,12 +230,12 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
             if ((ch | 0x20) == 'x') {// equals ignore case
-                return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
+                return parseHexLiteral(str, index + 1, offset, endIndex, isNegative);
             }
             index--;//push the leading zero back
         }
 
-        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative);
+        return parseDecLiteral(str, index, offset, endIndex, isNegative);
     }
 
     /**
@@ -261,7 +261,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    private long parseHexFloatLiteral(
+    private long parseHexLiteral(
             CharSequence str, int index, int startIndex, int endIndex, boolean isNegative) {
 
         // Parse HexSignificand
@@ -301,7 +301,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             virtualIndexOfPoint = significandEndIndex;
         } else {
             digitCount = significandEndIndex - significandStartIndex - 1;
-            exponent = Math.min(virtualIndexOfPoint - index + 1, AbstractFloatValueParser.MAX_EXPONENT_NUMBER) * 4;
+            exponent = Math.min(virtualIndexOfPoint - index + 1, AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) * 4;
         }
 
         // Parse exponent
@@ -318,7 +318,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
@@ -378,34 +378,34 @@ abstract class AbstractJavaFloatingPointBitsFromCharSequence extends AbstractFlo
 
     private long parseNaNOrInfinity(CharSequence str, int index, int endIndex, boolean isNegative) {
         if (index < endIndex) {
-        if (str.charAt(index) == 'N') {
-            if (index + 2 < endIndex
-                    // && str.charAt(index) == 'N'
-                    && str.charAt(index + 1) == 'a'
-                    && str.charAt(index + 2) == 'N') {
+            if (str.charAt(index) == 'N') {
+                if (index + 2 < endIndex
+                        // && str.charAt(index) == 'N'
+                        && str.charAt(index + 1) == 'a'
+                        && str.charAt(index + 2) == 'N') {
 
-                index = skipWhitespace(str, index + 3, endIndex);
-                if (index == endIndex) {
-                    return nan();
+                    index = skipWhitespace(str, index + 3, endIndex);
+                    if (index == endIndex) {
+                        return nan();
+                    }
+                }
+            } else {
+                if (index + 7 < endIndex
+                        && str.charAt(index) == 'I'
+                        && str.charAt(index + 1) == 'n'
+                        && str.charAt(index + 2) == 'f'
+                        && str.charAt(index + 3) == 'i'
+                        && str.charAt(index + 4) == 'n'
+                        && str.charAt(index + 5) == 'i'
+                        && str.charAt(index + 6) == 't'
+                        && str.charAt(index + 7) == 'y'
+                ) {
+                    index = skipWhitespace(str, index + 8, endIndex);
+                    if (index == endIndex) {
+                        return isNegative ? negativeInfinity() : positiveInfinity();
+                    }
                 }
             }
-        } else {
-            if (index + 7 < endIndex
-                    && str.charAt(index) == 'I'
-                    && str.charAt(index + 1) == 'n'
-                    && str.charAt(index + 2) == 'f'
-                    && str.charAt(index + 3) == 'i'
-                    && str.charAt(index + 4) == 'n'
-                    && str.charAt(index + 5) == 'i'
-                    && str.charAt(index + 6) == 't'
-                    && str.charAt(index + 7) == 'y'
-            ) {
-                index = skipWhitespace(str, index + 8, endIndex);
-                if (index == endIndex) {
-                    return isNegative ? negativeInfinity() : positiveInfinity();
-                }
-            }
-        }
         }
         return SYNTAX_ERROR_BITS;
     }

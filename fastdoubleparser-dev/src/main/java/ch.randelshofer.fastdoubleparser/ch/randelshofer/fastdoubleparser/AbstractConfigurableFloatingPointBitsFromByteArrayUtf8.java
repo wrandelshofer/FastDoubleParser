@@ -11,7 +11,7 @@ import ch.randelshofer.fastdoubleparser.bte.ByteTrie;
  * Configurable floating point parser for input data given in UTF-8.
  */
 abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends AbstractFloatValueParser {
-    private final ByteDigitSet digitSet;
+    protected final ByteDigitSet digitSet;
     private final ByteTrie minusSign;
     private final ByteTrie plusSign;
     private final ByteTrie decimalSeparator;
@@ -75,7 +75,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
         }
         boolean isSignificandSigned = matchCount > 0;
         if (index == endIndex) {
-            return SYNTAX_ERROR_BITS;
+            return EMPTY_ERROR_BITS;
         }
 
         // Parse significand
@@ -155,7 +155,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
                 illegal |= digit >= 10;
                 do {
                     // Guard against overflow
-                    if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                    if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                         expNumber = 10 * expNumber + digit;
                     }
                     ch = charAt(str, ++index, endIndex);
@@ -286,10 +286,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromByteArrayUtf8 extends Ab
     abstract long valueOfFloatLiteral(byte[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative,
                                       long significand, int exponent, boolean isSignificandTruncated,
                                       int exponentOfTruncatedSignificand, int exponentValue, int startIndex, int endIndex);
-
-    protected double slowPathToDouble(byte[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, int exponentValue) {
-        return SlowDoubleConversionPath.toDouble(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue);
-    }
 
 
 }

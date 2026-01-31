@@ -28,6 +28,21 @@ final class FastFloatMath {
     private final static int FLOAT_MAX_EXPONENT_POWER_OF_TEN = 38;
     private final static int FLOAT_MIN_EXPONENT_POWER_OF_TWO = Float.MIN_EXPONENT;
     private final static int FLOAT_MAX_EXPONENT_POWER_OF_TWO = Float.MAX_EXPONENT;
+
+    /**
+     * The maximal number of decimal digits required to identify a double value.
+     * <p>
+     * The significand of a float has 24 bits. The maximal value has all these bits set to 1.
+     * The smallest normal power of two exponent is -126.
+     * <p>
+     * 1.11111111111111111111111 * 2e-126
+     * <p>
+     * Written out longhand in binary it is 149 bits, 125 leading zeros followed by 24 1s.
+     * <p>
+     * See <a href="https://www.exploringbinary.com/maximum-number-of-decimal-digits-in-binary-floating-point-numbers/">exploringbinary.com</a>
+     */
+    public static final int MAX_REQUIRED_DIGITS = 113;
+
     /**
      * Precomputed powers of ten from 10^0 to 10^10. These
      * can be represented exactly using the float type.

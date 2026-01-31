@@ -6,15 +6,7 @@ package ch.randelshofer.fastdoubleparser;
 
 
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Defines a set of symbols for {@link ConfigurableDoubleParser}.
@@ -327,6 +319,43 @@ public final class NumberFormatSymbols {
                 nan,
                 digits);
     }
+
+    /**
+     * Creates a new instance with the following minus signs symbols:
+     * <dl>
+     *     <dt>U+002D</dt><dd>Hyphen-Minus</dd>
+     *     <dt>U+ff0d</dt><dd>Fullwidth Hyphen-Minus</dd>
+     *     <dt>U+fe63</dt><dd>Small Hyphen-Minus</dd>
+     *     <dt>U+2010</dt><dd>Hyphen</dd>
+     *     <dt>U+2011</dt><dd>Non-Breaking Hyphen</dd>
+     *     <dt>U+2012</dt><dd>Figure Dash</dd>
+     *     <dt>U+2013</dt><dd>En Dash</dd>
+     *     <dt>U+2212</dt><dd>Minus Sign</dd>
+     *     <dt>U+207b</dt><dd>Superscript Minus</dd>
+     *     <dt>U+208b</dt><dd>Subscript Minus</dd>
+     *     <dt>U+2796</dt><dd>Heavy Minus Sign</dd>
+     * </dl>
+     *
+     * @return a new instance
+     */
+    public NumberFormatSymbols withLenientMinusSigns() {
+        //noinspection UnnecessaryUnicodeEscape
+        return withMinusSign(new LinkedHashSet<>(Arrays.asList(new Character[]{
+                        '\u002d',     // Hyphen-Minus
+                        '\uff0d',  // Fullwidth Hyphen-Minus
+                        '\ufe63',  // Small Hyphen-Minus
+                        '\u2010',  // Hyphen
+                        '\u2011',  // Non-Breaking Hyphen
+                        '\u2012',  // Figure Dash
+                        '\u2013',  // En Dash
+                        '\u2212',  // Minus Sign
+                        '\u207b',  // Superscript Minus
+                        '\u208b',  // Subscript Minus
+                        '\u2796'   // Heavy Minus Sign
+                }
+        )));
+    }
+
 
     /**
      * Creates a new instance with the specified NaN symbols.

@@ -12,9 +12,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NavigableMap;
 
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.computePowerOfTen;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.createPowersOfTenFloor16Map;
-import static ch.randelshofer.fastdoubleparser.FastIntegerMath.fillPowersOfNFloor16Recursive;
+import static ch.randelshofer.fastdoubleparser.FastIntegerMath.*;
 
 
 /**
@@ -128,7 +126,7 @@ final class ConfigurableBigDecimalFromByteArrayAscii extends AbstractBigDecimalP
                 illegal |= digit >= 10;
                 do {
                     // Guard against overflow
-                    if (expNumber < MAX_EXPONENT_NUMBER) {
+                    if (expNumber < OVERFLOW_EXPONENT_NUMBER) {
                         expNumber = 10 * (expNumber) + digit;
                     }
                     ch = charAt(str, ++index, endIndex);
@@ -247,7 +245,7 @@ final class ConfigurableBigDecimalFromByteArrayAscii extends AbstractBigDecimalP
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < MAX_EXPONENT_NUMBER) {
+                if (expNumber < OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * (expNumber) + digit;
                 }
                 ch = charAt(str, ++index, endIndex);

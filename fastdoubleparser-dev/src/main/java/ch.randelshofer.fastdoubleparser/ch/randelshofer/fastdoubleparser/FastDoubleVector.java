@@ -4,17 +4,9 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import jdk.incubator.vector.ByteVector;
-import jdk.incubator.vector.IntVector;
-import jdk.incubator.vector.LongVector;
-import jdk.incubator.vector.ShortVector;
-import jdk.incubator.vector.VectorMask;
+import jdk.incubator.vector.*;
 
-import static jdk.incubator.vector.VectorOperators.ADD;
-import static jdk.incubator.vector.VectorOperators.LSHL;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_GE;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_GT;
-import static jdk.incubator.vector.VectorOperators.UNSIGNED_LE;
+import static jdk.incubator.vector.VectorOperators.*;
 
 /**
  * This class provides methods for parsing multiple characters at once using
@@ -81,7 +73,7 @@ final class FastDoubleVector {
         ShortVector vec = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset)
                 .sub((short) '0');
         // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
+        if (vec.compare(UGT, 9).anyTrue()) {
             return -1;
         }
         return (int) vec
@@ -112,7 +104,7 @@ final class FastDoubleVector {
                 .sub((short) '0');
 
         // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
+        if (vec.compare(UGT, 9).anyTrue()) {
             return -1;
         }
         return (int) vec
@@ -134,7 +126,7 @@ final class FastDoubleVector {
         ByteVector vec = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset)
                 .sub((byte) '0');
         // With an unsigned gt we only need to check for > 9
-        if (vec.compare(UNSIGNED_GT, 9).anyTrue()) {
+        if (vec.compare(UGT, 9).anyTrue()) {
             return -1;
         }
         return (int) vec
@@ -154,9 +146,9 @@ final class FastDoubleVector {
                 .withLane(1, second)
                 .reinterpretAsShorts();
         ShortVector lowerCase = c.or((short) 0x20);
-        VectorMask<Short> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
-        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
-                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
+        VectorMask<Short> ge_a = lowerCase.compare(UGE, 'a');
+        if (!c.compare(UGE, '0').and(c.compare(ULE, '9'))
+                .or(ge_a.and(lowerCase.compare(ULE, 'f')))
                 .allTrue()) {
             return -1;
         }
@@ -179,9 +171,9 @@ final class FastDoubleVector {
     public static long tryToParseEightHexDigitsUtf16(char[] a, int offset) {
         ShortVector c = ShortVector.fromCharArray(ShortVector.SPECIES_128, a, offset);
         ShortVector lowerCase = c.or((short) 0x20);
-        VectorMask<Short> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
-        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
-                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
+        VectorMask<Short> ge_a = lowerCase.compare(UGE, 'a');
+        if (!c.compare(UGE, '0').and(c.compare(ULE, '9'))
+                .or(ge_a.and(lowerCase.compare(ULE, 'f')))
                 .allTrue()) {
             return -1;
         }
@@ -203,9 +195,9 @@ final class FastDoubleVector {
     public static long tryToParseEightHexDigitsUtf8(byte[] a, int offset) {
         ByteVector c = ByteVector.fromArray(ByteVector.SPECIES_64, a, offset);
         ByteVector lowerCase = c.or((byte) 0x20);
-        VectorMask<Byte> ge_a = lowerCase.compare(UNSIGNED_GE, 'a');
-        if (!c.compare(UNSIGNED_GE, '0').and(c.compare(UNSIGNED_LE, '9'))
-                .or(ge_a.and(lowerCase.compare(UNSIGNED_LE, 'f')))
+        VectorMask<Byte> ge_a = lowerCase.compare(UGE, 'a');
+        if (!c.compare(UGE, '0').and(c.compare(ULE, '9'))
+                .or(ge_a.and(lowerCase.compare(ULE, 'f')))
                 .allTrue()) {
             return -1;
         }

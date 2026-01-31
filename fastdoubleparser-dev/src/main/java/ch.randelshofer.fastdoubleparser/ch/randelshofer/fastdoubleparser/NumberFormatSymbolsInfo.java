@@ -56,6 +56,18 @@ class NumberFormatSymbolsInfo {
                 ;
     }
 
+    static boolean isLeftToRight(NumberFormatSymbols symbols) {
+        return isLeftToRightCharCollection(symbols.decimalSeparator())
+                && isLeftToRightCharCollection(symbols.groupingSeparator())
+                && isLeftToRightCollection(symbols.exponentSeparator())
+                && isLeftToRightCharCollection(symbols.minusSign())
+                && isLeftToRightCharCollection(symbols.plusSign())
+                && isLeftToRightCollection(symbols.infinity())
+                && isLeftToRightCollection(symbols.nan())
+                && isLeftToRightCharCollection(symbols.digits())
+                ;
+    }
+
     static boolean isAsciiStringCollection(Collection<String> collection) {
         for (String str : collection) {
             for (int i = 0; i < str.length(); i++) {
@@ -104,5 +116,30 @@ class NumberFormatSymbolsInfo {
             }
         }
         return false;
+    }
+
+    static boolean isLeftToRightCollection(Collection<String> collection) {
+        for (String str : collection) {
+            for (int i = 0; i < str.length(); i++) {
+                char ch = str.charAt(i);
+                if (!isLeftToRight(ch)) return false;
+            }
+        }
+        return true;
+    }
+
+    static boolean isLeftToRightCharCollection(Collection<Character> collection) {
+        for (char ch : collection) {
+            if (!isLeftToRight(ch)) return false;
+        }
+        return true;
+    }
+
+    static boolean isLeftToRight(char ch) {
+        byte directionality = Character.getDirectionality(ch);
+        if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT) return false;
+        if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC) return false;
+        if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE) return false;
+        return true;
     }
 }

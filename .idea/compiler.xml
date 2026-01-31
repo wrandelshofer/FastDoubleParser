@@ -29,12 +29,20 @@
         <module name="FastDoubleParserDemo-JavaEarlyAccess" />
         <module name="fastdoubleparser-java8" />
         <module name="FastDoubleParser-JavaEarlyAccess" />
+        <module name="fastdoubleparserdemo-java25" />
         <module name="FastDoubleParserDemo-Java11" />
-        <module name="fastdoubleparserdemo-java23" />
         <module name="fastdoubleparserdemo-java8" />
         <module name="FastDoubleParserDemo-Java17" />
         <module name="fastdoubleparser-java21" />
-        <module name="fastdoubleparser-java23" />
+        <module name="fastdoubleparser-java25" />
+      </profile>
+      <profile name="Annotation profile for Parent project for fastdoubleparser" enabled="true">
+        <sourceOutputDir name="../generated-sources/annotations" />
+        <sourceTestOutputDir name="../generated-test-sources/test-annotations" />
+        <module name="fastdoubleparser.test" />
+        <module name="fastdoubleparser.main" />
+        <module name="fastdoubleparserdemo.main" />
+        <module name="fastdoubleparserdemo.test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -42,6 +50,7 @@
       <module name="FastDoubleParser (1)" target="24" />
       <module name="fastdoubleparser-java19" target="19" />
       <module name="fastdoubleparser-java22" target="22" />
+      <module name="fastdoubleparser-java23" target="23" />
       <module name="FastDoubleParser-JavaEarlyAccess" target="24" />
       <module name="FastDoubleParserDemo" target="19" />
       <module name="FastDoubleParserDemo-JavaEarlyAccess" target="24" />

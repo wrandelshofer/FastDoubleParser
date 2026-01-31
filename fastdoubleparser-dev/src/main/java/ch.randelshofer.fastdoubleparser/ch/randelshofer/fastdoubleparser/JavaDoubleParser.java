@@ -4,9 +4,6 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
-import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR_BITS;
-
 /**
  * Parses a {@code double} value; the supported syntax is compatible with
  * {@link Double#valueOf(String)}.
@@ -188,17 +185,16 @@ public final class JavaDoubleParser {
      */
     public static double parseDouble(CharSequence str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_SEQUENCE_PARSER.parseFloatingPointLiteral(str, offset, length);
-        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        AbstractNumberParser.maybeThrowException(bitPattern);
         return Double.longBitsToDouble(bitPattern);
     }
-
 
 
     /**
      * Convenience method for calling {@link #parseDouble(byte[], int, int)}.
      *
      * @param str the string to be parsed, a byte array with characters
-     *            in ISO-8859-1, ASCII or UTF-8 encoding
+     *            in ASCII or UTF-8 encoding
      * @return the parsed value
      * @throws NullPointerException     if the string is null
      * @throws IllegalArgumentException if offset or length are illegal
@@ -213,7 +209,7 @@ public final class JavaDoubleParser {
      * into a {@code double} value.
      *
      * @param str    the string to be parsed, a byte array with characters
-     *               in ISO-8859-1, ASCII or UTF-8 encoding
+     *               in ASCII or UTF-8 encoding
      * @param offset The index of the first byte to parse
      * @param length The number of bytes to parse
      * @return the parsed value
@@ -223,7 +219,7 @@ public final class JavaDoubleParser {
      */
     public static double parseDouble(byte[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = BYTE_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
-        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        AbstractNumberParser.maybeThrowException(bitPattern);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -246,7 +242,7 @@ public final class JavaDoubleParser {
      * See {@link JavaDoubleParser} for the syntax of {@code FloatingPointLiteral}.
      *
      * @param str    the string to be parsed, a byte array with characters
-     *               in ISO-8859-1, ASCII or UTF-8 encoding
+     *               in ASCII or UTF-8 encoding
      * @param offset The index of the first character to parse
      * @param length The number of characters to parse
      * @return the parsed value
@@ -256,7 +252,7 @@ public final class JavaDoubleParser {
      */
     public static double parseDouble(char[] str, int offset, int length) throws NumberFormatException {
         long bitPattern = CHAR_ARRAY_PARSER.parseFloatingPointLiteral(str, offset, length);
-        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        AbstractNumberParser.maybeThrowException(bitPattern);
         return Double.longBitsToDouble(bitPattern);
     }
 }

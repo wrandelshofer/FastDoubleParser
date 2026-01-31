@@ -4,131 +4,97 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.nio.charset.StandardCharsets;
 
-import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createLongRunningFloatTestData;
-import static ch.randelshofer.fastdoubleparser.JavaFloatTestDataFactory.createRegularFloatTestData;
-import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toByteArray;
-import static ch.randelshofer.fastdoubleparser.VirtualCharSequence.toCharArray;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
  * Tests class {@link JavaFloatParser}
+ * <p>
+ * The goal of this test is to achieve 100% code coverage (in the class, method, line and branch metric)
+ * in the following source files:
+ * <ul>
+ *     <li>{@link AbstractFloatValueParser}</li>
+ *     <li>{@link AbstractJavaFloatingPointBitsFromByteArray}</li>
+ *     <li>{@link AbstractJavaFloatingPointBitsFromCharArray}</li>
+ *     <li>{@link AbstractJavaFloatingPointBitsFromCharSequence}</li>
+ *     <li>{@link JavaFloatBitsFromByteArray}</li>
+ *     <li>{@link JavaFloatBitsFromCharArray}</li>
+ *     <li>{@link JavaFloatBitsFromCharSequence}</li>
+ *     <li>{@link JavaFloatParser}</li>
+ * </ul>
  */
 public final class JavaFloatParserTest {
-    public static final int EXPECTED_MAX_INPUT_LENGTH = Integer.MAX_VALUE - 4;
 
-    @TestFactory
-    public Stream<DynamicNode> dynamicTests_parseFloat_CharSequence() {
-        return createRegularFloatTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charLength() <= AbstractFloatValueParser.MAX_INPUT_LENGTH
-                        && t.charOffset() == 0)
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input()))));
-    }
 
-    @TestFactory
-    public Stream<DynamicNode> dynamicTests_parseFloat_CharSequence_Int_Int() {
-        return createRegularFloatTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(u.input(), u.charOffset(), u.charLength()))));
-    }
-
-    @TestFactory
-    @Disabled("long running test")
-    public Stream<DynamicNode> dynamicTests_parseFloat_CharSequence_int_int_longRunningTests() {
-        ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat((u.input()), u.charOffset(), u.charLength());
-        return createLongRunningFloatTestData()
-                        .map(t -> dynamicTest(t.title(),
-                                () -> test(t, lambda)));
-    }
-
-    @TestFactory
-    public Stream<DynamicNode> dynamicTests_parseFloat_byteArray() {
-        return createRegularFloatTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.byteLength() <= EXPECTED_MAX_INPUT_LENGTH
-                        && t.charOffset() == 0)
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t,
-                                u -> JavaFloatParser.parseFloat(toByteArray(u.input())
-                                ))));
-    }
-
-    @TestFactory
-    public Stream<DynamicNode> dynamicTests_parseFloat_byteArray_int_int() {
-        return createRegularFloatTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(toByteArray(u.input()),
-                                u.byteOffset(), u.byteLength()))));
-    }
-
-    @TestFactory
-    @Disabled("long running test")
-    public Stream<DynamicNode> dynamicTests_parseFloat_byteArray_int_int_longRunningTests() {
-        ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat(toByteArray(u.input()), u.charOffset(), u.charLength());
-        return createLongRunningFloatTestData()
-                        .map(t -> dynamicTest(t.title(),
-                                () -> test(t, lambda)));
-    }
-
-    @TestFactory
-    public Stream<DynamicNode> dynamicTests_parseFloat_charArray() {
-        return createRegularFloatTestData().stream()
-                .filter(t -> t.charLength() == t.input().length()
-                        && t.charLength() <= EXPECTED_MAX_INPUT_LENGTH
-                        && t.charOffset() == 0)
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(toCharArray(u.input())))));
-    }
-
-    @TestFactory
-    public Stream<DynamicNode> dynamicTests_parseFloat_charArray_int_int() {
-        return createRegularFloatTestData().stream()
-                .map(t -> dynamicTest(t.title(),
-                        () -> test(t, u -> JavaFloatParser.parseFloat(toCharArray(u.input()),
-                                u.charOffset(), u.charLength()))));
-    }
-
-    @TestFactory
-    @Disabled("long running test")
-    public Stream<DynamicNode> dynamicTests_parseFloat_charArray_int_int_longRunningTests() {
-        ToFloatFunction<NumberTestData> lambda = u -> JavaFloatParser.parseFloat(toCharArray(u.input()), u.charOffset(), u.charLength());
-        return createLongRunningFloatTestData()
-                        .map(t -> dynamicTest(t.title(),
-                                () -> test(t, lambda)));
-    }
-
-    protected void test(NumberTestData d, ToFloatFunction<NumberTestData> f) {
-        if (d.expectedErrorMessage() != null) {
-            try {
-                float actual = f.applyAsFloat(d);
-                fail("should throw an exception but returned " + actual);
-            } catch (IllegalArgumentException e) {
-                if (!Objects.equals(d.expectedErrorMessage(), e.getMessage())) {
-                    e.printStackTrace();
-                    assertEquals(d.expectedErrorMessage(), e.getMessage());
-                }
-                assertEquals(d.expectedThrowableClass(), e.getClass());
-            }
+    @ParameterizedTest
+    @MethodSource("ch.randelshofer.fastdoubleparser.JavaFloatParserDataSource#parseFloat_CharSequence")
+    public void parseFloat_CharSequence(NumberTestData d) {
+        if (d.expectedThrowableClass() == null) {
+            float actual = JavaFloatParser.parseFloat(d.input());
+            assertEquals(d.expectedValue().floatValue(), actual);
         } else {
-            float actual = f.applyAsFloat(d);
-            assertEquals(d.expectedValue().floatValue(), actual, () -> d.input().toString());
+            MoreAssertions.assertThrows(d.expectedErrorMessage(), d.expectedThrowableClass(), () -> JavaFloatParser.parseFloat(d.input()));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("ch.randelshofer.fastdoubleparser.JavaFloatParserDataSource#parseFloat_CharSequence_int_int")
+    public void parseFloat_CharSequence_int_int(NumberTestData d) {
+        if (d.expectedThrowableClass() == null) {
+            float actual = JavaFloatParser.parseFloat(d.input(), d.charOffset(), d.charLength());
+            assertEquals(d.expectedValue().floatValue(), actual);
+        } else {
+            MoreAssertions.assertThrows(d.expectedErrorMessage(), d.expectedThrowableClass(), () -> JavaFloatParser.parseFloat(d.input(), d.charOffset(), d.charLength()));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("ch.randelshofer.fastdoubleparser.JavaFloatParserDataSource#parseFloat_byteArray")
+    public void parseFloat_byteArray(NumberTestData d) {
+        if (d.expectedThrowableClass() == null) {
+            float actual = JavaFloatParser.parseFloat(d.input().toString().getBytes(StandardCharsets.UTF_8));
+            assertEquals(d.expectedValue().floatValue(), actual);
+        } else {
+            MoreAssertions.assertThrows(d.expectedErrorMessage(), d.expectedThrowableClass(), () -> JavaFloatParser.parseFloat(d.input().toString().getBytes(StandardCharsets.UTF_8)));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("ch.randelshofer.fastdoubleparser.JavaFloatParserDataSource#parseFloat_byteArray_int_int")
+    public void parseFloat_byteArray_int_int(NumberTestData d) {
+        if (d.expectedThrowableClass() == null) {
+            float actual = JavaFloatParser.parseFloat(d.input().toString().getBytes(StandardCharsets.UTF_8), d.byteOffset(), d.byteLength());
+            assertEquals(d.expectedValue().floatValue(), actual);
+        } else {
+            MoreAssertions.assertThrows(d.expectedErrorMessage(), d.expectedThrowableClass(), () -> JavaFloatParser.parseFloat(d.input().toString().getBytes(StandardCharsets.UTF_8), d.byteOffset(), d.byteLength()));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("ch.randelshofer.fastdoubleparser.JavaFloatParserDataSource#parseFloat_charArray")
+    public void parseFloat_charArray(NumberTestData d) {
+        if (d.expectedThrowableClass() == null) {
+            float actual = JavaFloatParser.parseFloat(d.input().toString().toCharArray());
+            assertEquals(d.expectedValue().floatValue(), actual);
+        } else {
+            MoreAssertions.assertThrows(d.expectedErrorMessage(), d.expectedThrowableClass(), () -> JavaFloatParser.parseFloat(d.input().toString().toCharArray()));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("ch.randelshofer.fastdoubleparser.JavaFloatParserDataSource#parseFloat_charArray_int_int")
+    public void parseFloat_charArray_int_int(NumberTestData d) {
+        if (d.expectedThrowableClass() == null) {
+            float actual = JavaFloatParser.parseFloat(d.input().toString().toCharArray(), d.charOffset(), d.charLength());
+            assertEquals(d.expectedValue().floatValue(), actual);
+        } else {
+            MoreAssertions.assertThrows(d.expectedErrorMessage(), d.expectedThrowableClass(), () -> JavaFloatParser.parseFloat(d.input().toString().toCharArray(), d.charOffset(), d.charLength()));
         }
     }
 
 
-    @FunctionalInterface
-    public interface ToFloatFunction<T> {
-
-        float applyAsFloat(T value);
-    }
 }

@@ -43,9 +43,9 @@ or from a public Maven using the following dependency descriptor:
 ```xml
 
 <dependency>
-  <groupId>ch.randelshofer</groupId>
-  <artifactId>fastdoubleparser</artifactId>
-  <version>…version…</version>
+    <groupId>ch.randelshofer</groupId>
+    <artifactId>fastdoubleparser</artifactId>
+    <version>…version…</version>
 </dependency>
 ```
 
@@ -157,7 +157,6 @@ The multiplications in the frequency domain can be performed in `O(N log N (log 
 where `N` is the number of digits.
 In contrast, conventional multiplication algorithms in the time domain need `O(N²)` time.
 
-
 ### Memory usage and computation time
 
 The memory usage depends on the result type and the maximal supported input character length.
@@ -177,6 +176,37 @@ The computation times are given for a Mac mini 2018 with Intel(R) Core(TM) i7-87
 
 This file contains numbers in the range from -128 to +128.
 Most input lines look like this: `52.038048000000117`.
+
+CPU: Apple M4 Pro
+OS: Mac OS X, 26.2, 14 processors available
+VM: Java 26, OpenJDK 64-Bit Server VM, Azul Systems, Inc., 26-beta+23
+-XX:CompileCommand=inline,java/lang/String.charAt, -XX:CompileCommand=inline,java/lang/CharSequence.charAt
+
+| Method                                  |    MB/s | stdev | Mfloats/s |   ns/f | speedup | JDK     |
+|-----------------------------------------|--------:|------:|----------:|-------:|--------:|---------|
+| java.lang.Double                        |  418.66 | 4.2 % |     24.03 |  41.61 |  1.00=a | 26-beta |
+| java.lang.Float                         |  436.42 | 3.9 % |     25.05 |  39.92 |  1.00=b | 26-beta |
+| java.math.BigDecimal                    |  369.31 | 4.7 % |     21.20 |  47.17 |  1.00=c | 26-beta |
+| java.text.NumberFormat                  |  221.23 | 2.7 % |     12.70 |  78.74 |  1.00=d | 26-beta |
+| com.ibm.icu.text.NumberFormat           |   39.61 | 1.5 % |      2.27 | 439.78 |  1.00=e | 26-beta |
+| JavaDoubleParser CharSequence           |  700.38 | 7.9 % |     40.20 |  24.87 |  1.67*a | 26-beta |
+| JavaDoubleParser char[]                 | 1297.44 | 8.0 % |     74.48 |  13.43 |  3.10*a | 26-beta |
+| JavaDoubleParser byte[]                 | 1311.97 | 8.4 % |     75.31 |  13.28 |  3.13*a | 26-beta |
+| JsonDoubleParser CharSequence           |  721.04 | 3.5 % |     41.39 |  24.16 |  1.72*a | 26-beta |
+| JsonDoubleParser char[]                 | 1362.95 | 4.8 % |     78.24 |  12.78 |  3.26*a | 26-beta |
+| JsonDoubleParser byte[]                 | 1203.45 | 5.4 % |     69.08 |  14.48 |  2.87*a | 26-beta |
+| JavaFloatParser CharSequence            |  649.77 | 3.5 % |     37.30 |  26.81 |  1.49*b | 26-beta |
+| JavaFloatParser char[]                  | 1279.45 | 6.2 % |     73.45 |  13.62 |  2.93*b | 26-beta |
+| JavaFloatParser byte[]                  | 1234.81 | 5.6 % |     70.88 |  14.11 |  2.83*b | 26-beta |
+| JavaBigDecimalParser CharSequence       |  887.87 | 8.1 % |     50.97 |  19.62 |  2.40*c | 26-beta |
+| JavaBigDecimalParser char[]             | 1326.93 | 9.2 % |     76.17 |  13.13 |  3.59*c | 26-beta |
+| JavaBigDecimalParser byte[]             | 1365.42 | 6.5 % |     78.38 |  12.76 |  3.70*c | 26-beta |
+| ConfigurableDoubleParser CharSequence   |  586.63 | 4.5 % |     33.68 |  29.70 |  2.65*d | 26-beta |
+| ConfigurableDoubleParser char[]         |  956.78 | 5.5 % |     54.92 |  18.21 |  4.32*d | 26-beta |
+| ConfigurableDoubleParser byte[]         |  984.55 | 5.6 % |     56.52 |  17.69 |  4.45*d | 26-beta |
+| ConfigurableDoubleParserCI CharSequence |  581.35 | 3.6 % |     33.37 |  29.97 |  2.63*d | 26-beta |
+| ConfigurableDoubleParserCI char[]       |  933.47 | 7.2 % |     53.59 |  18.66 |  4.22*d | 26-beta |
+| ConfigurableDoubleParserCI byte[]       |  946.50 | 8.6 % |     54.33 |  18.40 |  4.28*d | 26-beta |
 
 CPU: Apple M2 Max<br>
 OS: Mac OS X, 14.7, 12 processors available<br>
@@ -240,8 +270,6 @@ VM: Java 24, OpenJDK 64-Bit Server VM, Oracle Corporation, 24-ea+20-2362<br>
 | ConfigurableDoubleParserCI char[]       | 519.32 |  9.8 % |     29.84 |   33.51 | 11.34*d | 24-ea |
 | ConfigurableDoubleParserCI byte[]       | 406.10 |  7.4 % |     23.34 |   42.85 |  8.87*d | 24-ea |
 
-
-
 ### Comparison with C version
 
 For comparison. here are the test results
@@ -302,7 +330,8 @@ JDKs, you **also need to** install the following items:
 - OpenJDK SE 11
 - OpenJDK SE 17
 - OpenJDK SE 21
-- OpenJDK SE 23
+- OpenJDK SE 25
+- OpenJDK SE 26
 
 When you clone the code repository from github. you can choose from the following branches:
 
@@ -310,53 +339,60 @@ When you clone the code repository from github. you can choose from the followin
 - `dev` This code may or may not work. This code uses the experimental Vector API, and the Foreign Memory Access API,
   that are included in Java 23.
 
-## Command sequence with Java SE 23 on macOS:
-
-```shell
-git clone https://github.com/wrandelshofer/FastDoubleParser.git
-cd FastDoubleParser 
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home 
-javac --enable-preview -source 23 -d out -encoding utf8 --module-source-path fastdoubleparser-dev/src/main/java --module ch.randelshofer.fastdoubleparser    
-javac --enable-preview -source 23 -d out -encoding utf8 -p out --module-source-path fastdoubleparserdemo-dev/src/main/java --module ch.randelshofer.fastdoubleparserdemo
-java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt   
-java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt   
-java -XX:CompileCommand=inline,java/lang/String.charAt --enable-preview -p out -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt   
-```
-
-## Command sequence with Azul Zulu Java SE 8, 11, 17, 21, and 23, and Maven 3.9.8 on macOS:
+## Command sequence with Azul Zulu Java SE 8, 11, 17, 21, and 25, and OpenJDK 26, and Maven 3.9.8 on macOS:
 
 ```shell
 git clone https://github.com/wrandelshofer/FastDoubleParser.git
 cd FastDoubleParser
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home 
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-26.jdk/Contents/Home 
 mvn clean
 mvn package
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-23.jdk/Contents/Home 
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-25.jdk/Contents/Home 
+mvn clean -pl fastdoubleparser-java25
+mvn test -pl fastdoubleparser-java25
+
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home 
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+mvn clean -pl fastdoubleparser-java21
+mvn test -pl fastdoubleparser-java21
+
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home 
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+mvn clean -pl fastdoubleparser-java17
+mvn test -pl fastdoubleparser-java17
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home 
+mvn clean -pl fastdoubleparser-java11
+mvn test -pl fastdoubleparser-java11
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home 
+mvn clean -pl fastdoubleparser-java8
+mvn test -pl fastdoubleparser-java8
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-25.jdk/Contents/Home 
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home 
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home 
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -p fastdoubleparser/target:fastdoubleparserdemo/target -m ch.randelshofer.fastdoubleparserdemo/ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-8.jdk/Contents/Home
-java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown
-java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
-java -XX:CompileCommand=inline,java/lang/String.charAt -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
+java -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown
+java -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada.txt
+java -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/mesh.txt
+java -cp "fastdoubleparser/target/*:fastdoubleparserdemo/target/*" ch.randelshofer.fastdoubleparserdemo.Main --markdown FastDoubleParserDemo/data/canada_hex.txt
 ```
 
 ## IntelliJ IDEA with Java SE 8, 11, 17, 21, 23 on macOS

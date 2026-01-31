@@ -64,7 +64,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
      * otherwise, {@code -1L}.
      */
 
-    private long parseDecFloatLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative) {
+    private long parseDecLiteral(byte[] str, int index, int startIndex, int endIndex, boolean isNegative) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -122,7 +122,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
@@ -210,7 +210,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         // -------------------
         int index = skipWhitespace(str, offset, endIndex);
         if (index == endIndex) {
-            return SYNTAX_ERROR_BITS;
+            return EMPTY_ERROR_BITS;
         }
         byte ch = str[index];
 
@@ -230,12 +230,12 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
             if ((ch | 0x20) == 'x') {// equals ignore case
-                return parseHexFloatingPointLiteral(str, index + 1, offset, endIndex, isNegative);
+                return parseHexLiteral(str, index + 1, offset, endIndex, isNegative);
             }
             index--;//push the leading zero back
         }
 
-        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative);
+        return parseDecLiteral(str, index, offset, endIndex, isNegative);
     }
 
     /**
@@ -261,7 +261,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    private long parseHexFloatingPointLiteral(
+    private long parseHexLiteral(
             byte[] str, int index, int startIndex, int endIndex, boolean isNegative) {
 
         // Parse HexSignificand
@@ -303,7 +303,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             virtualIndexOfPoint = significandEndIndex;
         } else {
             digitCount = significandEndIndex - significandStartIndex - 1;
-            exponent = Math.min(virtualIndexOfPoint - index + 1, AbstractFloatValueParser.MAX_EXPONENT_NUMBER) * 4;
+            exponent = Math.min(virtualIndexOfPoint - index + 1, AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) * 4;
         }
 
         // Parse exponent
@@ -320,7 +320,7 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * (expNumber) + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
@@ -380,27 +380,27 @@ abstract class AbstractJavaFloatingPointBitsFromByteArray extends AbstractFloatV
 
     private long parseNaNOrInfinity(byte[] str, int index, int endIndex, boolean isNegative) {
         if (index < endIndex) {
-        if (str[index] == 'N') {
-            if (index + 2 < endIndex
-                    // && str[index] == 'N'
-                    && str[index + 1] == 'a'
-                    && str[index + 2] == 'N') {
+            if (str[index] == 'N') {
+                if (index + 2 < endIndex
+                        // && str[index] == 'N'
+                        && str[index + 1] == 'a'
+                        && str[index + 2] == 'N') {
 
-                index = skipWhitespace(str, index + 3, endIndex);
-                if (index == endIndex) {
-                    return nan();
+                    index = skipWhitespace(str, index + 3, endIndex);
+                    if (index == endIndex) {
+                        return nan();
+                    }
+                }
+            } else {
+                if (index + 7 < endIndex
+                        && FastDoubleSwar.readLongLE(str, index) == 0x7974696e69666e49L//Infinity
+                ) {
+                    index = skipWhitespace(str, index + 8, endIndex);
+                    if (index == endIndex) {
+                        return isNegative ? negativeInfinity() : positiveInfinity();
+                    }
                 }
             }
-        } else {
-            if (index + 7 < endIndex
-                    && FastDoubleSwar.readLongLE(str, index) == 0x7974696e69666e49L//Infinity
-            ) {
-                index = skipWhitespace(str, index + 8, endIndex);
-                if (index == endIndex) {
-                    return isNegative ? negativeInfinity() : positiveInfinity();
-                }
-            }
-        }
         }
         return SYNTAX_ERROR_BITS;
     }

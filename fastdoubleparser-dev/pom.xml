@@ -1,53 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>ch.randelshofer</groupId>
-    <artifactId>fastdoubleparser-parentproject</artifactId>
-    <version>${revision}</version>
-  </parent>
-  <artifactId>fastdoubleparser-dev</artifactId>
-  <packaging>jar</packaging>
-  <name>fastdoubleparser-dev</name>
-  <properties>
-    <javaVersion>23</javaVersion>
-    <maven.compiler.source>${javaVersion}</maven.compiler.source>
-    <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <maven.install.skip>true</maven.install.skip>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
-    <maven.deploy.skip>true</maven.deploy.skip>
-  </properties>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ch.randelshofer</groupId>
+        <artifactId>fastdoubleparser-parentproject</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>fastdoubleparser-dev</artifactId>
+    <packaging>jar</packaging>
+    <name>fastdoubleparser-dev</name>
+    <properties>
+        <javaVersion>25</javaVersion>
+        <maven.compiler.source>${javaVersion}</maven.compiler.source>
+        <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
-  <build>
-    <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparser</sourceDirectory>
-    <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparser</testSourceDirectory>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/resources/ch.randelshofer.fastdoubleparser</directory>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <compilerArgs>
-            <arg>-Xlint:all</arg>
-            <!--            <arg>&#45;&#45;enable-preview</arg>-->
-          </compilerArgs>
-        </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <!--            <argLine>&#45;&#45;enable-preview &#45;&#45;add-modules jdk.incubator.vector -Xmx20g</argLine>-->
-            <argLine>-Xmx20g</argLine>
-            <parallel>classesAndMethods</parallel>
-            <forkCount>4</forkCount>
-          </configuration>
-        </plugin>
-      </plugins>
-  </build>
+    <build>
+        <sourceDirectory>${basedir}/src/main/java/ch.randelshofer.fastdoubleparser</sourceDirectory>
+        <testSourceDirectory>${basedir}/src/test/java/ch.randelshofer.fastdoubleparser</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources/ch.randelshofer.fastdoubleparser</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <!--            <arg>&#45;&#45;enable-preview</arg>-->
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!--            <argLine>&#45;&#45;enable-preview &#45;&#45;add-modules jdk.incubator.vector -Xmx20g</argLine>-->
+                    <argLine>-Xmx20g</argLine>
+                    <parallel>classesAndMethods</parallel>
+                    <forkCount>4</forkCount>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

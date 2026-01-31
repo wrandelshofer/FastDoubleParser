@@ -67,7 +67,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    private long parseDecFloatLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative) {
+    private long parseDecLiteral(char[] str, int index, int startIndex, int endIndex, boolean isNegative) {
         // Parse significand
         // -----------------
         // Note: a multiplication by a constant is cheaper than an
@@ -125,7 +125,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * expNumber + digit;
                 }
                 ch = charAt(str, ++index, endIndex);
@@ -231,12 +231,12 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
         if (hasLeadingZero) {
             ch = charAt(str, ++index, endIndex);
             if ((ch | 0x20) == 'x') {// equals ignore case
-                return parseHexFloatLiteral(str, index + 1, offset, endIndex, isNegative);
+                return parseHexLiteral(str, index + 1, offset, endIndex, isNegative);
             }
             index--;//push the leading zero back
         }
 
-        return parseDecFloatLiteral(str, index, offset, endIndex, isNegative);
+        return parseDecLiteral(str, index, offset, endIndex, isNegative);
     }
 
     /**
@@ -262,7 +262,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
      * @return the bit pattern of the parsed value, if the input is legal;
      * otherwise, {@code -1L}.
      */
-    private long parseHexFloatLiteral(
+    private long parseHexLiteral(
             char[] str, int index, int startIndex, int endIndex, boolean isNegative) {
 
         // Parse HexSignificand
@@ -304,7 +304,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             virtualIndexOfPoint = significandEndIndex;
         } else {
             digitCount = significandEndIndex - significandStartIndex - 1;
-            exponent = Math.min(virtualIndexOfPoint - index + 1, AbstractFloatValueParser.MAX_EXPONENT_NUMBER) * 4;
+            exponent = Math.min(virtualIndexOfPoint - index + 1, AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) * 4;
         }
 
         // Parse exponent
@@ -321,7 +321,7 @@ abstract class AbstractJavaFloatingPointBitsFromCharArray extends AbstractFloatV
             illegal |= digit >= 10;
             do {
                 // Guard against overflow
-                if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                     expNumber = 10 * (expNumber) + digit;
                 }
                 ch = charAt(str, ++index, endIndex);

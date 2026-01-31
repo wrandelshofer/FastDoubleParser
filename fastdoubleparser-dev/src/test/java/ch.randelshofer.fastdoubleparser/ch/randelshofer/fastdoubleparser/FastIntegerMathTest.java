@@ -13,6 +13,15 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Tests class {@link FastIntegerMath}.
+ * <p>
+ * The goal of this test is to achieve 100% code coverage (in the class, method, line and branch metric)
+ * in the following source files:
+ * <ul>
+ *     <li>{@link FastIntegerMath}</li>
+ * </ul>
+ */
 public final class FastIntegerMathTest {
     @Test
     public void testUnsignedMultiplyHigh() {

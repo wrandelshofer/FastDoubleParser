@@ -7,11 +7,7 @@ package ch.randelshofer.fastdoubleparser;
 import java.text.DecimalFormatSymbols;
 import java.util.Objects;
 
-import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR;
-import static ch.randelshofer.fastdoubleparser.AbstractNumberParser.SYNTAX_ERROR_BITS;
-import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isAscii;
-import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isDigitsTokensAscii;
-import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.isMostlyAscii;
+import static ch.randelshofer.fastdoubleparser.NumberFormatSymbolsInfo.*;
 
 /**
  * Parses a floating point value with configurable {@link NumberFormatSymbols}.
@@ -121,8 +117,8 @@ public final class ConfigurableDoubleParser {
     private ConfigurableDoubleBitsFromCharSequence charSequenceParser;
     private ConfigurableDoubleBitsFromCharArray charArrayParser;
     private final boolean ignoreCase;
-    private final boolean isAllSingleCharSymbolsAscii;
     private final boolean isDigitsAscii;
+    private final boolean isLeftToRight;
     private final boolean isAscii;
     private ConfigurableDoubleBitsFromByteArrayAscii byteArrayAsciiParser;
     private ConfigurableDoubleBitsFromByteArrayUtf8 byteArrayUtf8Parser;
@@ -161,8 +157,8 @@ public final class ConfigurableDoubleParser {
         Objects.requireNonNull(symbols, "symbols");
         this.symbols = symbols;
         this.ignoreCase = ignoreCase;
-        this.isAllSingleCharSymbolsAscii = isMostlyAscii(symbols);
         this.isDigitsAscii = isDigitsTokensAscii(symbols);
+        this.isLeftToRight = isLeftToRight(symbols);
         this.isAscii = isAscii(symbols);
     }
 
@@ -183,7 +179,6 @@ public final class ConfigurableDoubleParser {
     public boolean isIgnoreCase() {
         return ignoreCase;
     }
-
 
 
     /**
@@ -257,7 +252,7 @@ public final class ConfigurableDoubleParser {
      */
     public double parseDouble(CharSequence str, int offset, int length) {
         long bitPattern = getCharSequenceParser().parseFloatingPointLiteral(str, offset, length);
-        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        AbstractNumberParser.maybeThrowException(bitPattern);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -282,7 +277,7 @@ public final class ConfigurableDoubleParser {
      */
     public double parseDouble(char[] str, int offset, int length) {
         long bitPattern = getCharArrayParser().parseFloatingPointLiteral(str, offset, length);
-        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        AbstractNumberParser.maybeThrowException(bitPattern);
         return Double.longBitsToDouble(bitPattern);
     }
 
@@ -300,23 +295,23 @@ public final class ConfigurableDoubleParser {
     /**
      * Parses a double value from a substring of the specified byte array.
      *
-     * @param str    a byte array
+     * @param str    a byte array containing UTF-8 encoded characters
      * @param offset the start offset of the substring
      * @param length the length of the substring
      * @throws NumberFormatException if the provided char array could not be parsed
      */
     public double parseDouble(byte[] str, int offset, int length) {
         long bitPattern;
-        if (isAscii || !ignoreCase && isAllSingleCharSymbolsAscii) {
+        if (isAscii) {
             bitPattern = getByteArrayAsciiParser().parseFloatingPointLiteral(str, offset, length);
-        } else if (isDigitsAscii) {
+        } else if (isDigitsAscii && isLeftToRight) {
             bitPattern = getByteArrayUtf8Parser().parseFloatingPointLiteral(str, offset, length);
         } else {
             char[] chars = new char[length];
             int charsLength = Utf8Decoder.decode(str, offset, length, chars, 0);
             bitPattern = getCharArrayParser().parseFloatingPointLiteral(chars, 0, charsLength);
         }
-        if (bitPattern == SYNTAX_ERROR_BITS) throw new NumberFormatException(SYNTAX_ERROR);
+        AbstractNumberParser.maybeThrowException(bitPattern);
         return Double.longBitsToDouble(bitPattern);
     }
 }

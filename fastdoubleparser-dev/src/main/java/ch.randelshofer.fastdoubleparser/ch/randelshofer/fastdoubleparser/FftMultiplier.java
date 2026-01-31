@@ -48,7 +48,7 @@ final class FftMultiplier {
     /**
      * for FFTs of length up to 2^19
      */
-    private static final int ROOTS_CACHE2_SIZE = 20;
+    private static final int ROOTS2_CACHE_SIZE = 20;
     /**
      * The threshold value for using 3-way Toom-Cook multiplication.
      */
@@ -58,7 +58,7 @@ final class FftMultiplier {
      * elements representing all (2^(k+2))-th roots between 0 and pi/2.
      * Used for FFT multiplication.
      */
-    private volatile static ComplexVector[] ROOTS2_CACHE = new ComplexVector[ROOTS_CACHE2_SIZE];
+    private volatile static ComplexVector[] ROOTS2_CACHE = new ComplexVector[ROOTS2_CACHE_SIZE];
     /**
      * Sets of complex roots of unity. The set at index k contains 3*2^k
      * elements representing all (3*2^(k+2))-th roots between 0 and pi/2.
@@ -351,7 +351,7 @@ final class FftMultiplier {
     private static ComplexVector[] getRootsOfUnity2(int logN) {
         ComplexVector[] roots = new ComplexVector[logN + 1];
         for (int i = logN; i >= 0; i -= 2) {
-            if (i < ROOTS_CACHE2_SIZE) {
+            if (i < ROOTS2_CACHE_SIZE) {
                 if (ROOTS2_CACHE[i] == null) {
                     ROOTS2_CACHE[i] = calculateRootsOfUnity(1 << i);
                 }
@@ -544,6 +544,7 @@ final class FftMultiplier {
         }
         // Squaring is slightly faster than multiplication.
         // We check for identity here and not for equality, because an equality check of big integers is very expensive.
+        //noinspection NumberEquality
         if (b == a) {
             return square(b);
         }

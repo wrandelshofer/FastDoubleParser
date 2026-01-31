@@ -16,12 +16,27 @@ abstract class AbstractNumberParser {
      * Message text for the {@link NumberFormatException} that is thrown
      * when the syntax is illegal.
      */
-    public static final String SYNTAX_ERROR = "illegal syntax";
+    public static final String SYNTAX_ERROR = "illegal value";
+    public static final String ILLEGAL_FLOATING_POINT_VALUE = "illegal numeric value, infinity, or NaN";
+    public static final String EXPONENT_OVERFLOW_ERROR = "exponent is too large";
+    public static final String ILLEGAL_EXPONENT_ERROR = "illegal exponent value";
+    public static final String ILLEGAL_SIGNIFICAND_ERROR = "illegal numeric value";
+    public static final String EMPTY_ERROR = "empty String";
 
     /**
      * Uses the unused mantissa of a NaN value to encode a syntax error.
      */
-    public static final long SYNTAX_ERROR_BITS = 0x7ff8000000000000L + 1L;
+    public static final long SYNTAX_ERROR_BIT_PATTERN_MASK = 0xffffffff_00000000L;
+    /**
+     * Uses the unused mantissa of a NaN value to encode a syntax error.
+     */
+    public static final long SYNTAX_ERROR_BIT_PATTERN = 0x7ff80001_00000000L;
+    public static final long SYNTAX_ERROR_BITS = SYNTAX_ERROR_BIT_PATTERN + 1L;
+    public static final long EMPTY_ERROR_BITS = SYNTAX_ERROR_BIT_PATTERN + 3L;
+    public static final long INCOMPLETE_NUMERIC_VALUE_INFINITY_OR_NAN_ERROR_BITS = SYNTAX_ERROR_BIT_PATTERN + 5L;
+    public static final long EXPONENT_OVERFLOW_ERROR_BITS = SYNTAX_ERROR_BIT_PATTERN + 6L;
+    public static final long ILLEGAL_SIGNIFICAND_ERROR_BITS = SYNTAX_ERROR_BIT_PATTERN + 7L;
+    public static final long ILLEGAL_EXPONENT_ERROR_BITS = SYNTAX_ERROR_BIT_PATTERN + 8L;
 
     /**
      * Message text for the {@link NumberFormatException} that is thrown
@@ -161,5 +176,38 @@ abstract class AbstractNumberParser {
             throw new IllegalArgumentException(ILLEGAL_OFFSET_OR_ILLEGAL_LENGTH);
         }
         return length + offset;
+    }
+
+    protected static void maybeThrowException(long bitPattern) {
+        if ((bitPattern & SYNTAX_ERROR_BIT_PATTERN_MASK) == SYNTAX_ERROR_BIT_PATTERN) {
+            String msg;
+            switch ((int) bitPattern) {
+                case (int) AbstractNumberParser.SYNTAX_ERROR_BITS:
+                    msg = AbstractNumberParser.SYNTAX_ERROR;
+                    break;
+                case (int) ILLEGAL_SIGNIFICAND_ERROR_BITS:
+                    msg = ILLEGAL_SIGNIFICAND_ERROR;
+                    break;
+                case (int) AbstractNumberParser.EXPONENT_OVERFLOW_ERROR_BITS:
+                    msg = AbstractNumberParser.EXPONENT_OVERFLOW_ERROR;
+                    break;
+                case (int) ILLEGAL_EXPONENT_ERROR_BITS:
+                    msg = ILLEGAL_EXPONENT_ERROR;
+                    break;
+                case (int) AbstractNumberParser.INCOMPLETE_NUMERIC_VALUE_INFINITY_OR_NAN_ERROR_BITS:
+                    msg = AbstractNumberParser.ILLEGAL_FLOATING_POINT_VALUE;
+                    break;
+                case (int) AbstractNumberParser.EMPTY_ERROR_BITS:
+                    msg = AbstractNumberParser.EMPTY_ERROR;
+                    break;
+                default:
+                    msg = null;
+                    break;
+            }
+            if (msg != null) {
+                throw new NumberFormatException(msg);
+            }
+        }
+
     }
 }

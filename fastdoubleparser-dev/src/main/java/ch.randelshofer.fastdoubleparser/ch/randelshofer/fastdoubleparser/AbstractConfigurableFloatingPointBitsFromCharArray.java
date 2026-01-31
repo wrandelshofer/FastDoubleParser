@@ -4,17 +4,13 @@
  */
 package ch.randelshofer.fastdoubleparser;
 
-import ch.randelshofer.fastdoubleparser.chr.CharDigitSet;
-import ch.randelshofer.fastdoubleparser.chr.CharSet;
-import ch.randelshofer.fastdoubleparser.chr.CharSetOfNone;
-import ch.randelshofer.fastdoubleparser.chr.CharTrie;
-import ch.randelshofer.fastdoubleparser.chr.FormatCharSet;
+import ch.randelshofer.fastdoubleparser.chr.*;
 
 /**
  * Configurable floating point parser.
  */
 abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends AbstractFloatValueParser {
-    private final CharDigitSet digitSet;
+    protected final CharDigitSet digitSet;
     private final CharSet minusSign;
     private final CharSet plusSign;
     private final CharSet decimalSeparator;
@@ -72,7 +68,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         // -------------------
         int index = skipFormatCharacters(str, offset, endIndex);
         if (index == endIndex) {
-            return SYNTAX_ERROR_BITS;
+            return EMPTY_ERROR_BITS;
         }
         char ch = str[index];
 
@@ -84,21 +80,19 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
             isSignificandSigned = true;
             ++index;
             if (index == endIndex) {
-                return SYNTAX_ERROR_BITS;
+                return INCOMPLETE_NUMERIC_VALUE_INFINITY_OR_NAN_ERROR_BITS;
             }
+            index = skipFormatCharacters(str, index, endIndex);
         }
 
         // Parse significand
         // -----------------
-        // Note: a multiplication by a constant is cheaper than an
-        //       arbitrary integer multiplication.
         long significand = 0;// significand is treated as an unsigned long
         final int significandStartIndex = index;
         int decimalSeparatorIndex = -1;
         int integerDigitCount = -1;
         int groupingCount = 0;
         boolean illegal = false;
-
         for (; index < endIndex; index++) {
             ch = str[index];
             int digit = digitSet.toDigit(ch);
@@ -128,6 +122,9 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
             exponent = integerDigitCount - digitCount;
         }
         illegal |= digitCount == 0 && significandEndIndex > significandStartIndex;
+        if (illegal) {
+            return ILLEGAL_SIGNIFICAND_ERROR_BITS;
+        }
 
         // Parse NaN or Infinity (this occurs rarely)
         // ---------------------
@@ -146,11 +143,14 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
 
         // Parse exponent number
         // ---------------------
+        index = skipFormatCharacters(str, index, endIndex);
         int expNumber = 0;
+        boolean hasExponent = false;
         boolean isExponentSigned = false;
         if (digitCount > 0) {
             int count = exponentSeparator.match(str, index, endIndex);
             if (count > 0) {
+                hasExponent = true;
                 index += count;
                 index = skipFormatCharacters(str, index, endIndex);
 
@@ -166,7 +166,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
                 illegal |= digit >= 10;
                 do {
                     // Guard against overflow
-                    if (expNumber < AbstractFloatValueParser.MAX_EXPONENT_NUMBER) {
+                    if (expNumber < AbstractFloatValueParser.OVERFLOW_EXPONENT_NUMBER) {
                         expNumber = 10 * expNumber + digit;
                     }
                     ch = charAt(str, ++index, endIndex);
@@ -192,7 +192,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
         // Check if FloatingPointLiteral is complete
         // ------------------------
         if (illegal || index < endIndex) {
-            return SYNTAX_ERROR_BITS;
+            return hasExponent ? ILLEGAL_EXPONENT_ERROR_BITS : ILLEGAL_SIGNIFICAND_ERROR_BITS;
         }
 
         // Re-parse significand in case of a potential overflow
@@ -251,7 +251,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
                     index++;
                 }
             }
-            return (index == endIndex) ? nan() : SYNTAX_ERROR_BITS;
+            return (index == endIndex) ? nan() : INCOMPLETE_NUMERIC_VALUE_INFINITY_OR_NAN_ERROR_BITS;
         }
         int infinityMatch = infinity.match(str, index, endIndex);
         if (infinityMatch > 0) {
@@ -267,7 +267,7 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
                 return isNegative ? negativeInfinity() : positiveInfinity();
             }
         }
-        return SYNTAX_ERROR_BITS;
+        return INCOMPLETE_NUMERIC_VALUE_INFINITY_OR_NAN_ERROR_BITS;
     }
 
     /**
@@ -304,10 +304,6 @@ abstract class AbstractConfigurableFloatingPointBitsFromCharArray extends Abstra
     abstract long valueOfFloatLiteral(char[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative,
                                       long significand, int exponent, boolean isSignificandTruncated,
                                       int exponentOfTruncatedSignificand, int exponentValue, int startIndex, int endIndex);
-
-    protected double slowPathToDouble(char[] str, int integerStartIndex, int integerEndIndex, int fractionStartIndex, int fractionEndIndex, boolean isSignificandNegative, int exponentValue) {
-        return SlowDoubleConversionPath.toDouble(str, digitSet, integerStartIndex, integerEndIndex, fractionStartIndex, fractionEndIndex, isSignificandNegative, exponentValue);
-    }
 
 
 }
