@@ -227,7 +227,7 @@ public class JavaDoubleDataSource {
         }
 
         // Check for duplicate entries
-        var set = new LinkedHashSet<NumberTestData>();
+        LinkedHashSet<NumberTestData> set = new LinkedHashSet<NumberTestData>();
         for (int i = 0; i < list.size(); i++) {
             if (!set.add(list.get(i))) {
                 System.err.println(JavaDoubleDataSource.class + " [" + (i + 1) + "] " + list.get(i) + " is a duplicate");

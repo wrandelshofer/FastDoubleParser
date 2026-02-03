@@ -6,7 +6,11 @@ package ch.randelshofer.fastdoubleparser;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ConfigurableDoubleParserDataSource {
@@ -92,8 +96,8 @@ public class ConfigurableDoubleParserDataSource {
             locales = new ArrayList<>(Arrays.asList(Locale.getAvailableLocales()));
         } else {
             locales = new ArrayList<>(List.of(
-                    Locale.of("en", "US"),
-                    Locale.of("ar"))
+                    new Locale("en", "US"),
+                    new Locale("ar"))
             );
         }
 
@@ -103,10 +107,10 @@ public class ConfigurableDoubleParserDataSource {
                 list.addAll(createLocalizedTestData(locale, DecimalFormatSymbols.getInstance(locale), baseList));
             }
         }
-        DecimalFormatSymbols decSymbols = DecimalFormatSymbols.getInstance(Locale.of("de", "CH"));
+        DecimalFormatSymbols decSymbols = DecimalFormatSymbols.getInstance(new Locale("de", "CH"));
         decSymbols.setGroupingSeparator('’');//U+2019 RIGHT SINGLE QUOTATION MARK
-        list.addAll(createLocalizedTestData(Locale.of("de", "CH"), decSymbols));
-        String languageTag = Locale.of("de", "CH").toLanguageTag() + "_CUSTOM";
+        list.addAll(createLocalizedTestData(new Locale("de", "CH"), decSymbols));
+        String languageTag = new Locale("de", "CH").toLanguageTag() + "_CUSTOM";
         DecimalFormat f = new DecimalFormat("#,##0.###", decSymbols);
         NumberFormatSymbols symbols = NumberFormatSymbols.fromDecimalFormatSymbols(decSymbols);
         Set<String> newValue = new java.util.HashSet<>();
@@ -118,10 +122,10 @@ public class ConfigurableDoubleParserDataSource {
                 1_234_567.89,
                 -1_234_567.89}) {
             String formatted = f.format(v);
-            list.add(new NumberTestData(languageTag + " " + formatted, Locale.of("de", "CH"), formatted, v).withSymbols(symbols));
-            list.add(new NumberTestData(languageTag + " IC " + formatted, Locale.of("de", "CH"), symbols, true, formatted, v));
-            list.add(new NumberTestData(languageTag + " IC-uppercase " + formatted.toUpperCase(), Locale.of("de", "CH"), symbols, true, formatted.toUpperCase(), v));
-            list.add(new NumberTestData(languageTag + " IC-lowercase " + formatted.toUpperCase().toLowerCase(), Locale.of("de", "CH"), symbols, true, formatted.toUpperCase().toLowerCase(), v));
+            list.add(new NumberTestData(languageTag + " " + formatted, new Locale("de", "CH"), formatted, v).withSymbols(symbols));
+            list.add(new NumberTestData(languageTag + " IC " + formatted, new Locale("de", "CH"), symbols, true, formatted, v));
+            list.add(new NumberTestData(languageTag + " IC-uppercase " + formatted.toUpperCase(), new Locale("de", "CH"), symbols, true, formatted.toUpperCase(), v));
+            list.add(new NumberTestData(languageTag + " IC-lowercase " + formatted.toUpperCase().toLowerCase(), new Locale("de", "CH"), symbols, true, formatted.toUpperCase().toLowerCase(), v));
         }
         // scientific pattern
         f = new DecimalFormat("#,###,##0.0########E0", decSymbols);
@@ -132,13 +136,13 @@ public class ConfigurableDoubleParserDataSource {
                 Double.NEGATIVE_INFINITY,
                 Double.NaN}) {
             String formatted = f.format(v);
-            list.add(new NumberTestData(languageTag + " " + formatted, Locale.of("de", "CH"), formatted, v).withSymbols(symbols));
-            list.add(new NumberTestData(languageTag + " IC " + formatted, Locale.of("de", "CH"), symbols, true, formatted, v));
-            list.add(new NumberTestData(languageTag + " IC-uppercase " + formatted.toUpperCase(), Locale.of("de", "CH"), symbols, true, formatted.toUpperCase(), v));
-            list.add(new NumberTestData(languageTag + " IC-lowercase " + formatted.toUpperCase().toLowerCase(), Locale.of("de", "CH"), symbols, true, formatted.toUpperCase().toLowerCase(), v));
+            list.add(new NumberTestData(languageTag + " " + formatted, new Locale("de", "CH"), formatted, v).withSymbols(symbols));
+            list.add(new NumberTestData(languageTag + " IC " + formatted, new Locale("de", "CH"), symbols, true, formatted, v));
+            list.add(new NumberTestData(languageTag + " IC-uppercase " + formatted.toUpperCase(), new Locale("de", "CH"), symbols, true, formatted.toUpperCase(), v));
+            list.add(new NumberTestData(languageTag + " IC-lowercase " + formatted.toUpperCase().toLowerCase(), new Locale("de", "CH"), symbols, true, formatted.toUpperCase().toLowerCase(), v));
         }
-        list.add(new NumberTestData(languageTag + " Inf", Locale.of("de", "CH"), symbols, true, "Inf", Double.POSITIVE_INFINITY));
-        list.add(new NumberTestData(languageTag + " Infi", Locale.of("de", "CH"), symbols, true, "Infi", null).withException(AbstractFloatValueParser.ILLEGAL_FLOATING_POINT_VALUE, NumberFormatException.class));
+        list.add(new NumberTestData(languageTag + " Inf", new Locale("de", "CH"), symbols, true, "Inf", Double.POSITIVE_INFINITY));
+        list.add(new NumberTestData(languageTag + " Infi", new Locale("de", "CH"), symbols, true, "Infi", null).withException(AbstractFloatValueParser.ILLEGAL_FLOATING_POINT_VALUE, NumberFormatException.class));
 
 
         return list;
@@ -148,7 +152,7 @@ public class ConfigurableDoubleParserDataSource {
         List<NumberTestData> baseList = JavaDoubleDataSource.createFloatTestDataForInputClassesInMethodParseDecLiteral();
         List<NumberTestData> list = new ArrayList<>();
         List<Locale> locales;
-        for (Locale locale : new Locale[]{Locale.of("de", "CH")}) {
+        for (Locale locale : new Locale[]{new Locale("de", "CH")}) {
             DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
             symbols.setGroupingSeparator('’');//U+2019 RIGHT SINGLE QUOTATION MARK
             list.addAll(createLocalizedTestData(locale, symbols));

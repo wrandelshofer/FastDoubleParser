@@ -65,6 +65,11 @@ public final class NumberTestData {
                 locale, symbols, false);
     }
 
+    public NumberTestData(String title, CharSequence input) {
+        this(title, input, AbstractNumberParser.SYNTAX_ERROR, NumberFormatException.class);
+    }
+
+
     public NumberTestData(CharSequence input, Number expectedValue) {
         this(input.toString(), input, 0, input.length(), 0, input.length(),
                 10, expectedValue, null,
@@ -258,6 +263,11 @@ public final class NumberTestData {
     public NumberTestData withSymbols(NumberFormatSymbols s) {
         return new NumberTestData(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, expectedErrorMessage, expectedThrowableClass, locale, s, ignoreCase);
     }
+
+    public NumberTestData withException(String msg, Class<? extends Throwable> e) {
+        return new NumberTestData(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, msg, e, locale, symbols, ignoreCase);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(title, input, charOffset, charLength, byteOffset, byteLength, radix, expectedValue, expectedErrorMessage, expectedThrowableClass, locale, symbols, ignoreCase);
