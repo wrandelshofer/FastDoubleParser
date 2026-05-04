@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.randelshofer/fastdoubleparser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.randelshofer/fastdoubleparser)
+[![Maven Central](https://maven-badges.sml.io/maven-central/ch.randelshofer/fastdoubleparser/badge.svg)](https://search.maven.org/artifact/ch.randelshofer/fastdoubleparser)
 
 # FastDoubleParser
 
